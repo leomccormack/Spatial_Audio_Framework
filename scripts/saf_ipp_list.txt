@@ -2,6 +2,8 @@ ippsFFTGetSize_R_32f
 ippsDFTGetSize_R_32f
 ippsFFTGetSize_C_32f
 ippsDFTGetSize_C_32f
+ippsFFTGetSize_C_32fc
+ippsDFTGetSize_C_32fc
 ippsFFTInit_R_32f
 ippsDFTInit_R_32f
 ippsFFTInit_C_32fc

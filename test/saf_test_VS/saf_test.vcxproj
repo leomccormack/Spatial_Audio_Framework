@@ -111,17 +111,17 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP;SAF_ENABLE_NETCDF</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../timer;../unity;../;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../include;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../dependencies/Win64/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;saf_ipp_custom.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>saf_mkl_custom_lp64.lib;saf_ipp_custom.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -154,10 +154,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP;SAF_ENABLE_NETCDF</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;../../dependencies/Win64/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../timer;../unity;../;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../framework/include;../../examples/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../include;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -165,7 +165,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../../dependencies/Win64/lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>saf_mkl_custom_lp64.lib;libszip.lib;libzlib.lib;libhdf5.lib;libhdf5_hl.lib;netcdf.lib;saf_ipp_custom.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>saf_mkl_custom_lp64.lib;saf_ipp_custom.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -250,10 +250,20 @@
     <ClInclude Include="..\..\framework\resources\speex_resampler\resample_sse.h" />
     <ClInclude Include="..\..\framework\resources\speex_resampler\speexdsp_types.h" />
     <ClInclude Include="..\..\framework\resources\speex_resampler\speex_resampler.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\crc32.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\deflate.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\inffast.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\inffixed.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\inflate.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\inftrees.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\trees.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\zconf.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\zlib.h" />
+    <ClInclude Include="..\..\framework\resources\zlib\zutil.h" />
+    <ClInclude Include="..\include\resources\timer.h" />
+    <ClInclude Include="..\include\resources\unity.h" />
+    <ClInclude Include="..\include\resources\unity_internals.h" />
     <ClInclude Include="..\saf_test.h" />
-    <ClInclude Include="..\timer\timer.h" />
-    <ClInclude Include="..\unity\unity.h" />
-    <ClInclude Include="..\unity\unity_internals.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\examples\src\ambi_bin\ambi_bin.c" />
@@ -331,24 +341,32 @@
     <ClCompile Include="..\..\framework\resources\kissFFT\kiss_fftr.c" />
     <ClCompile Include="..\..\framework\resources\md_malloc\md_malloc.c" />
     <ClCompile Include="..\..\framework\resources\speex_resampler\resample.c" />
-    <ClCompile Include="..\saf_test.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\saf_test_wrapper.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\timer\timer.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="..\unity\unity.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\adler32.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\compress.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\crc32.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\deflate.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\infback.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\inffast.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\inflate.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\inftrees.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\trees.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\uncompr.c" />
+    <ClCompile Include="..\..\framework\resources\zlib\zutil.c" />
+    <ClCompile Include="..\src\resources\timer.c" />
+    <ClCompile Include="..\src\resources\unity.c" />
+    <ClCompile Include="..\src\saf_test.c" />
+    <ClCompile Include="..\src\saf_test_wrapper.cpp" />
+    <ClCompile Include="..\src\test__cdf4sap_module.c" />
+    <ClCompile Include="..\src\test__examples.c" />
+    <ClCompile Include="..\src\test__hoa_module.c" />
+    <ClCompile Include="..\src\test__hrir_module.c" />
+    <ClCompile Include="..\src\test__resources.c" />
+    <ClCompile Include="..\src\test__reverb_module.c" />
+    <ClCompile Include="..\src\test__sh_module.c" />
+    <ClCompile Include="..\src\test__sofa_reader_module.c" />
+    <ClCompile Include="..\src\test__tracker_module.c" />
+    <ClCompile Include="..\src\test__utilities_module.c" />
+    <ClCompile Include="..\src\test__vbap_module.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

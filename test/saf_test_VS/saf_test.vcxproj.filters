@@ -130,17 +130,17 @@
     <Filter Include="framework\modules\saf_sofa_reader\libmysofa\internal">
       <UniqueIdentifier>{1c3987c3-226c-400b-ae1d-c8aec9bc8c95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\resources\zlib">
+      <UniqueIdentifier>{c334b493-b000-421b-8033-60c18f39501d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\resources">
+      <UniqueIdentifier>{253098d3-2323-4e27-8410-e406c63efad7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\resources">
+      <UniqueIdentifier>{e6107f79-fc69-4fbd-83f8-5e72be084d87}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\timer\timer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\unity\unity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\unity\unity_internals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\saf_test.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -387,20 +387,47 @@
     <ClInclude Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\mysofa_internal.h">
       <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\crc32.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\deflate.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\inffast.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\inffixed.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\inflate.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\inftrees.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\trees.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\zconf.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\zlib.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\resources\zlib\zutil.h">
+      <Filter>framework\resources\zlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\resources\timer.h">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\resources\unity.h">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\resources\unity_internals.h">
+      <Filter>Header Files\resources</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\timer\timer.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\unity\unity.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\saf_test.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\saf_test_wrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\examples\src\ambi_bin\ambi_bin.c">
       <Filter>examples\src\ambi_bin</Filter>
     </ClCompile>
@@ -625,6 +652,84 @@
     </ClCompile>
     <ClCompile Include="..\..\framework\modules\saf_sofa_reader\libmysofa\internal\mysofa_internal.c">
       <Filter>framework\modules\saf_sofa_reader\libmysofa\internal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\adler32.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\compress.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\crc32.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\deflate.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\infback.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\inffast.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\inflate.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\inftrees.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\trees.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\uncompr.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\resources\zlib\zutil.c">
+      <Filter>framework\resources\zlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__cdf4sap_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__examples.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__hoa_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__hrir_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__resources.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__reverb_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__sh_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__sofa_reader_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__tracker_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__utilities_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__vbap_module.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\resources\timer.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\resources\unity.c">
+      <Filter>Source Files\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\saf_test.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\saf_test_wrapper.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

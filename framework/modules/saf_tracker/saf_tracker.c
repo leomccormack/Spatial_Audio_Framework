@@ -263,6 +263,7 @@ void tracker3d_step
             (*target_var_xyz)[nt*3+1] = S_max->P[nt].p11;
             (*target_var_xyz)[nt*3+2] = S_max->P[nt].p22;
 
+# if 0
             /* Apply the corresponding importance weight */
             w_sum = S_max->W;
             (*target_pos_xyz)[nt*3]   *= S_max->W;
@@ -297,6 +298,7 @@ void tracker3d_step
             (*target_var_xyz)[nt*3]   /= w_sum;
             (*target_var_xyz)[nt*3+1] /= w_sum;
             (*target_var_xyz)[nt*3+2] /= w_sum;
+#endif
         }
 #ifdef TRACKER_VERBOSE
         printf("%s\n", c_str);
