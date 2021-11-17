@@ -257,7 +257,6 @@
  *       SAF_ENABLE_SOFA_READER_MODULE
  *   Optionally, if SAF_ENABLE_NETCDF is defined, then the netcdf library must
  *   also be linked to your project.
- *   More information can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
  * ## Dependencies
  *   saf_utilities.h, saf_hrir.h, zlib, netcdf (optional)
  *

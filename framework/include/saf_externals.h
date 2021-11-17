@@ -275,9 +275,6 @@
  *
  * The "mysofa" interface, e.g. mysofa_load(), may also be used directly in
  * either case.
- *
- * Instructions regarding where to find and how to link the "netcdf" library
- *     can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md
  */
 # ifdef SAF_ENABLE_NETCDF
 #  include <netcdf.h>

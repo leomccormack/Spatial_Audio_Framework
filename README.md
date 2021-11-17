@@ -51,7 +51,6 @@ To enable optional framework modules, simply add the relevant pre-processor defi
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
 ```
-Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. [Instructions on how to install/link this dependency can be found here](docs/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
 ### Additional options
 
