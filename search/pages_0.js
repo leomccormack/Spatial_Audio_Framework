@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dependencies_20for_20the_20saf_5fsofa_5freader_20module_0',['Dependencies for the saf_sofa_reader Module',['../md_docs__s_o_f_a__r_e_a_d_e_r__m_o_d_u_l_e__d_e_p_e_n_d_e_n_c_i_e_s.html',1,'']]]
+  ['framework_20structure_0',['Framework Structure',['../md_docs__f_r_a_m_e_w_o_r_k__s_t_r_u_c_t_u_r_e.html',1,'']]]
 ];

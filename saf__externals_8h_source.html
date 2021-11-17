@@ -325,85 +325,82 @@ $(document).ready(function(){initNavTree('saf__externals_8h_source.html',''); in
 <div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="comment"> *</span></div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span><span class="comment"> * The &quot;mysofa&quot; interface, e.g. mysofa_load(), may also be used directly in</span></div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="comment"> * either case.</span></div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span><span class="comment"> * Instructions regarding where to find and how to link the &quot;netcdf&quot; library</span></div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="comment"> *     can be found in: docs/SOFA_READER_MODULE_DEPENDENCIES.md</span></div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span><span class="preprocessor"># ifdef SAF_ENABLE_NETCDF</span></div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span><span class="preprocessor">#  include &lt;netcdf.h&gt;</span></div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span><span class="preprocessor"># endif</span></div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span><span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span><span class="comment">/*                   Configuration and Status Flags/Strings                   */</span></div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span><span class="comment">/* ========================================================================== */</span></div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span><span class="comment">/* Currently employed performance library: */</span></div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span><span class="preprocessor">#if defined(SAF_USE_INTEL_MKL_LP64)</span></div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;Intel MKL (LP64)&quot;</span></div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span><span class="preprocessor">#elif defined(SAF_USE_INTEL_MKL_ILP64)</span></div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;Intel MKL (ILP64)&quot;</span></div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span><span class="preprocessor">#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)</span></div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;OpenBLAS with LAPACKE&quot;</span></div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span><span class="preprocessor">#elif defined(SAF_USE_ATLAS)</span></div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;ATLAS&quot;</span></div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span><span class="preprocessor">#elif defined(__APPLE__) &amp;&amp; defined(SAF_USE_APPLE_ACCELERATE)</span></div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;Apple Accelerate&quot;</span></div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;NONE&quot;</span></div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span> </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="comment">/* Status of Intel IPP */</span></div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span><span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="preprocessor"># define SAF_INTEL_IPP_STATUS_STRING &quot;Enabled&quot;</span></div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span><span class="preprocessor"># define SAF_INTEL_IPP_STATUS_STRING &quot;Disabled&quot;</span></div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span><span class="comment">/* Status of FFTW */</span></div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span><span class="preprocessor">#if defined(SAF_USE_FFTW)</span></div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span><span class="preprocessor"># define SAF_FFTW_STATUS_STRING &quot;Enabled&quot;</span></div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span><span class="preprocessor"># define SAF_FFTW_STATUS_STRING &quot;Disabled&quot;</span></div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span><span class="comment">/* Status of SIMD intrinsics */</span></div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span><span class="preprocessor">#if defined(SAF_ENABLE_SIMD)</span></div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="preprocessor"># define SAF_SIMD_STATUS_STRING &quot;Enabled&quot;</span></div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="comment">/* Which SIMD intrinsics are currently enabled? */</span></div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span><span class="preprocessor"># if defined(__AVX512F__)</span></div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;SSE, SSE2, SSE3, AVX, AVX2, AVX512F&quot;</span></div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span><span class="preprocessor"># elif defined(__AVX__) &amp;&amp; defined(__AVX2__)</span></div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;SSE, SSE2, SSE3, AVX, AVX2&quot;</span></div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span><span class="preprocessor"># elif defined(__SSE__) &amp;&amp; defined(__SSE2__) &amp;&amp; defined(__SSE3__)</span></div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;SSE, SSE2, SSE3&quot;</span></div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span><span class="preprocessor"># else</span></div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;None&quot;</span></div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span><span class="preprocessor"># endif</span></div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span><span class="preprocessor"># define SAF_SIMD_STATUS_STRING &quot;Disabled&quot;</span></div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span><span class="preprocessor"># define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;None&quot;</span></div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="comment">/* Status of netCDF */</span></div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span><span class="preprocessor">#if defined(SAF_ENABLE_NETCDF)</span></div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span><span class="preprocessor"># define SAF_NETCDF_STATUS_STRING &quot;Enabled&quot;</span></div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span><span class="preprocessor">#else</span></div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span><span class="preprocessor"># define SAF_NETCDF_STATUS_STRING &quot;Disabled&quot;</span></div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span><span class="preprocessor">#endif</span></div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span> </div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno"><a class="line" href="saf__externals_8h.html#ac41fd0a2edfe7e09400fcd75b6c42fbe">  347</a></span><span class="preprocessor">#define SAF_EXTERNALS_CONFIGURATION_STRING  \</span></div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span><span class="preprocessor">    &quot;Current SAF externals configuration: &quot;</span>                               &quot;\n&quot; \</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    &quot; - Performance library: &quot; SAF_CURRENT_PERFORMANCE_LIBRARY_STRING     &quot;\n&quot; \</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    &quot; - Intel IPP status:    &quot; SAF_INTEL_IPP_STATUS_STRING                &quot;\n&quot; \</div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    &quot; - FFTW status:         &quot; SAF_FFTW_STATUS_STRING                     &quot;\n&quot; \</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    &quot; - SIMD status:         &quot; SAF_SIMD_STATUS_STRING                     &quot;\n&quot; \</div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>    &quot; - Enabled intrinsics:  &quot; SAF_ENABLED_SIMD_INTRINSICS_STRING         &quot;\n&quot; \</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>    &quot; - netCDF status:       &quot; SAF_NETCDF_STATUS_STRING                   &quot;\n&quot;</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span> </div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span> </div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span><span class="preprocessor">#endif </span><span class="comment">/* __SAF_EXTERNALS_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span><span class="preprocessor"># ifdef SAF_ENABLE_NETCDF</span></div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span><span class="preprocessor">#  include &lt;netcdf.h&gt;</span></div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span><span class="preprocessor"># endif</span></div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span> </div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span><span class="comment">/*                   Configuration and Status Flags/Strings                   */</span></div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span><span class="comment">/* ========================================================================== */</span></div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span> </div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span><span class="comment">/* Currently employed performance library: */</span></div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span><span class="preprocessor">#if defined(SAF_USE_INTEL_MKL_LP64)</span></div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;Intel MKL (LP64)&quot;</span></div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span><span class="preprocessor">#elif defined(SAF_USE_INTEL_MKL_ILP64)</span></div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;Intel MKL (ILP64)&quot;</span></div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span><span class="preprocessor">#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)</span></div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;OpenBLAS with LAPACKE&quot;</span></div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span><span class="preprocessor">#elif defined(SAF_USE_ATLAS)</span></div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;ATLAS&quot;</span></div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span><span class="preprocessor">#elif defined(__APPLE__) &amp;&amp; defined(SAF_USE_APPLE_ACCELERATE)</span></div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;Apple Accelerate&quot;</span></div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span><span class="preprocessor"># define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING &quot;NONE&quot;</span></div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span> </div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span><span class="comment">/* Status of Intel IPP */</span></div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span><span class="preprocessor">#if defined(SAF_USE_INTEL_IPP)</span></div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span><span class="preprocessor"># define SAF_INTEL_IPP_STATUS_STRING &quot;Enabled&quot;</span></div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span><span class="preprocessor"># define SAF_INTEL_IPP_STATUS_STRING &quot;Disabled&quot;</span></div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span><span class="comment">/* Status of FFTW */</span></div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span><span class="preprocessor">#if defined(SAF_USE_FFTW)</span></div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span><span class="preprocessor"># define SAF_FFTW_STATUS_STRING &quot;Enabled&quot;</span></div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span><span class="preprocessor"># define SAF_FFTW_STATUS_STRING &quot;Disabled&quot;</span></div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span> </div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span><span class="comment">/* Status of SIMD intrinsics */</span></div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span><span class="preprocessor">#if defined(SAF_ENABLE_SIMD)</span></div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span><span class="preprocessor"># define SAF_SIMD_STATUS_STRING &quot;Enabled&quot;</span></div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span><span class="comment">/* Which SIMD intrinsics are currently enabled? */</span></div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span><span class="preprocessor"># if defined(__AVX512F__)</span></div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;SSE, SSE2, SSE3, AVX, AVX2, AVX512F&quot;</span></div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span><span class="preprocessor"># elif defined(__AVX__) &amp;&amp; defined(__AVX2__)</span></div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;SSE, SSE2, SSE3, AVX, AVX2&quot;</span></div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span><span class="preprocessor"># elif defined(__SSE__) &amp;&amp; defined(__SSE2__) &amp;&amp; defined(__SSE3__)</span></div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;SSE, SSE2, SSE3&quot;</span></div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span><span class="preprocessor"># else</span></div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span><span class="preprocessor">#  define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;None&quot;</span></div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span><span class="preprocessor"># endif</span></div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span><span class="preprocessor"># define SAF_SIMD_STATUS_STRING &quot;Disabled&quot;</span></div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span><span class="preprocessor"># define SAF_ENABLED_SIMD_INTRINSICS_STRING &quot;None&quot;</span></div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span><span class="comment">/* Status of netCDF */</span></div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span><span class="preprocessor">#if defined(SAF_ENABLE_NETCDF)</span></div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span><span class="preprocessor"># define SAF_NETCDF_STATUS_STRING &quot;Enabled&quot;</span></div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span><span class="preprocessor"># define SAF_NETCDF_STATUS_STRING &quot;Disabled&quot;</span></div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span> </div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno"><a class="line" href="saf__externals_8h.html#ac41fd0a2edfe7e09400fcd75b6c42fbe">  344</a></span><span class="preprocessor">#define SAF_EXTERNALS_CONFIGURATION_STRING  \</span></div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span><span class="preprocessor">    &quot;Current SAF externals configuration: &quot;</span>                               &quot;\n&quot; \</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>    &quot; - Performance library: &quot; SAF_CURRENT_PERFORMANCE_LIBRARY_STRING     &quot;\n&quot; \</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>    &quot; - Intel IPP status:    &quot; SAF_INTEL_IPP_STATUS_STRING                &quot;\n&quot; \</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>    &quot; - FFTW status:         &quot; SAF_FFTW_STATUS_STRING                     &quot;\n&quot; \</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    &quot; - SIMD status:         &quot; SAF_SIMD_STATUS_STRING                     &quot;\n&quot; \</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>    &quot; - Enabled intrinsics:  &quot; SAF_ENABLED_SIMD_INTRINSICS_STRING         &quot;\n&quot; \</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    &quot; - netCDF status:       &quot; SAF_NETCDF_STATUS_STRING                   &quot;\n&quot;</div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span> </div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span> </div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span><span class="preprocessor">#endif </span><span class="comment">/* __SAF_EXTERNALS_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
@@ -411,7 +408,7 @@ $(document).ready(function(){initNavTree('saf__externals_8h_source.html',''); in
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_dd40116cd1cfebdc77a7c7114b29912e.html">include</a></li><li class="navelem"><a class="el" href="saf__externals_8h.html">saf_externals.h</a></li>
-    <li class="footer">Generated on Wed Nov 17 2021 11:36:47 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Wed Nov 17 2021 15:51:30 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
