@@ -125,83 +125,84 @@ $(document).ready(function(){initNavTree('saf__reverb_8h_source.html',''); initR
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="comment">/* ========================================================================== */</span></div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="comment">/*</span></div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="comment"> * Note that this simulator is based on the shoebox-roomsim MATLAB library</span></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment"> * (BSD-3-Clause License) found here: https://github.com/polarch/shoebox-roomsim</span></div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno"><a class="line" href="group___reverb.html#gadcc46a52e7b23231d700877864b831e2">   51</a></span><span class="preprocessor">#define IMS_MAX_NUM_SOURCES 128</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="group___reverb.html#gade6691adf17d4e97d1566a7bce6ab0db">   54</a></span><span class="preprocessor">#define IMS_MAX_NUM_RECEIVERS 16</span></div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structims__rir.html">   57</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>_ims_rir{</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordtype">float</span>* data;        </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordtype">int</span> length, nChannels;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>} <a class="code hl_struct" href="structims__rir.html">ims_rir</a>;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gac0c2934d49567126400205c3619597cb">ims_shoebox_create</a>(<span class="keywordtype">void</span>** phIms,</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>                        <span class="keywordtype">float</span> roomDimensions[3],</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                        <span class="keywordtype">float</span>* abs_wall,</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                        <span class="keywordtype">float</span> lowestOctaveBand,</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                        <span class="keywordtype">int</span> nOctBands,</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                        <span class="keywordtype">float</span> c_ms,</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>                        <span class="keywordtype">float</span> fs);</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gaabfce02f423a55cc60919cedd152805a">ims_shoebox_destroy</a>(<span class="keywordtype">void</span>** phIms);</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga98f2f41b6b11adc3f76c9574584ca7e4">ims_shoebox_computeEchograms</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                                  <span class="keywordtype">int</span> maxN,</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                                  <span class="keywordtype">float</span> maxTime_s);</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gab454a1a24911b3911d6d8638e3ac3c1a">ims_shoebox_renderRIRs</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>                            <span class="keywordtype">int</span> fractionalDelaysFLAG);</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga6d063c79c4718703ea53adbd206f8329">ims_shoebox_applyEchogramTD</a>(<span class="comment">/* Input Arguments */</span></div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>                                 <span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                                 <span class="keywordtype">long</span> receiverID,</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                                 <span class="keywordtype">int</span> nSamples,</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                                 <span class="keywordtype">int</span> fractionalDelaysFLAG);</div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="comment"> * found here: https://github.com/polarch/shoebox-roomsim</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="comment"> * (Copyright (c) 2017, Archontis Politis, BSD-3-Clause License)</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="group___reverb.html#gadcc46a52e7b23231d700877864b831e2">   52</a></span><span class="preprocessor">#define IMS_MAX_NUM_SOURCES 128</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="group___reverb.html#gade6691adf17d4e97d1566a7bce6ab0db">   55</a></span><span class="preprocessor">#define IMS_MAX_NUM_RECEIVERS 16</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structims__rir.html">   58</a></span><span class="keyword">typedef</span> <span class="keyword">struct </span>_ims_rir{</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keywordtype">float</span>* data;        </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordtype">int</span> length, nChannels;</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>} <a class="code hl_struct" href="structims__rir.html">ims_rir</a>;</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gac0c2934d49567126400205c3619597cb">ims_shoebox_create</a>(<span class="keywordtype">void</span>** phIms,</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>                        <span class="keywordtype">float</span> roomDimensions[3],</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>                        <span class="keywordtype">float</span>* abs_wall,</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                        <span class="keywordtype">float</span> lowestOctaveBand,</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                        <span class="keywordtype">int</span> nOctBands,</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>                        <span class="keywordtype">float</span> c_ms,</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>                        <span class="keywordtype">float</span> fs);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gaabfce02f423a55cc60919cedd152805a">ims_shoebox_destroy</a>(<span class="keywordtype">void</span>** phIms);</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga98f2f41b6b11adc3f76c9574584ca7e4">ims_shoebox_computeEchograms</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                                  <span class="keywordtype">int</span> maxN,</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                                  <span class="keywordtype">float</span> maxTime_s);</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gab454a1a24911b3911d6d8638e3ac3c1a">ims_shoebox_renderRIRs</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>                            <span class="keywordtype">int</span> fractionalDelaysFLAG);</div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span> </div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga6d063c79c4718703ea53adbd206f8329">ims_shoebox_applyEchogramTD</a>(<span class="comment">/* Input Arguments */</span></div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>                                 <span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>                                 <span class="keywordtype">long</span> receiverID,</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>                                 <span class="keywordtype">int</span> nSamples,</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>                                 <span class="keywordtype">int</span> fractionalDelaysFLAG);</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span> </div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span><span class="comment">/* =========================== Set/Get functions ============================ */</span></div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span> </div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga0d98415908e422f55d7dd178b7070712">ims_shoebox_setRoomDimensions</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span>                                   <span class="keywordtype">float</span> new_roomDimensions[3]);</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span> </div>
-<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gaf2f60c1f14656e38eb62cfa6a293af2a">ims_shoebox_setWallAbsCoeffs</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>                                  <span class="keywordtype">float</span>* abs_wall);</div>
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span><span class="comment">/* =========================== Set/Get functions ============================ */</span></div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
+<div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga0d98415908e422f55d7dd178b7070712">ims_shoebox_setRoomDimensions</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>                                   <span class="keywordtype">float</span> new_roomDimensions[3]);</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gaf2f60c1f14656e38eb62cfa6a293af2a">ims_shoebox_setWallAbsCoeffs</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>                                  <span class="keywordtype">float</span>* abs_wall);</div>
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span> </div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="comment">/* ================== Add/Remove/Update Objects functions ==================== */</span></div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span> </div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keywordtype">int</span> <a class="code hl_function" href="group___reverb.html#ga59f818fd730d0510affdefef5573e0ab">ims_shoebox_addSource</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>                          <span class="keywordtype">float</span> position_xyz[3],</div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                          <span class="keywordtype">float</span>** pSrc_sig);</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span> </div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span><span class="keywordtype">int</span> <a class="code hl_function" href="group___reverb.html#ga59f53cd055df23a1aec877407f883ca9">ims_shoebox_addReceiverSH</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>                              <span class="keywordtype">int</span> sh_order,</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                              <span class="keywordtype">float</span> position_xyz[3],</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                              <span class="keywordtype">float</span>*** pSH_sigs);</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga7ddefce78e70aedafb37278084aef38a">ims_shoebox_updateSource</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>                              <span class="keywordtype">int</span> sourceID,</div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                              <span class="keywordtype">float</span> position_xyz[3]);</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span> </div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga99199a545b7b4293d991756d91b0c082">ims_shoebox_updateReceiver</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>                                <span class="keywordtype">int</span> receiverID,</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                                <span class="keywordtype">float</span> position_xyz[3]);</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga45b72cf3e6e5400973ea5403e9c60f03">ims_shoebox_removeSource</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>                              <span class="keywordtype">int</span> sourceID);</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gab98cb870c1cd865adc6306a16fbbc63c">ims_shoebox_removeReceiver</a>(<span class="keywordtype">void</span>* hIms,</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>                                <span class="keywordtype">int</span> receiverID);</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span> </div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span> </div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="comment">/* ================== Add/Remove/Update Objects functions ==================== */</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span><span class="keywordtype">int</span> <a class="code hl_function" href="group___reverb.html#ga59f818fd730d0510affdefef5573e0ab">ims_shoebox_addSource</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>                          <span class="keywordtype">float</span> position_xyz[3],</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>                          <span class="keywordtype">float</span>** pSrc_sig);</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="keywordtype">int</span> <a class="code hl_function" href="group___reverb.html#ga59f53cd055df23a1aec877407f883ca9">ims_shoebox_addReceiverSH</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>                              <span class="keywordtype">int</span> sh_order,</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>                              <span class="keywordtype">float</span> position_xyz[3],</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>                              <span class="keywordtype">float</span>*** pSH_sigs);</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span> </div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga7ddefce78e70aedafb37278084aef38a">ims_shoebox_updateSource</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>                              <span class="keywordtype">int</span> sourceID,</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                              <span class="keywordtype">float</span> position_xyz[3]);</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga99199a545b7b4293d991756d91b0c082">ims_shoebox_updateReceiver</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>                                <span class="keywordtype">int</span> receiverID,</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>                                <span class="keywordtype">float</span> position_xyz[3]);</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#ga45b72cf3e6e5400973ea5403e9c60f03">ims_shoebox_removeSource</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>                              <span class="keywordtype">int</span> sourceID);</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span><span class="keywordtype">void</span> <a class="code hl_function" href="group___reverb.html#gab98cb870c1cd865adc6306a16fbbc63c">ims_shoebox_removeReceiver</a>(<span class="keywordtype">void</span>* hIms,</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>                                <span class="keywordtype">int</span> receiverID);</div>
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>} <span class="comment">/* extern &quot;C&quot; */</span></div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="preprocessor">#endif  </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="preprocessor">#endif </span><span class="comment">/* __SAF_REVERB_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> <span class="comment">/* doxygen addtogroup Reverb */</span></div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span> </div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span><span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>} <span class="comment">/* extern &quot;C&quot; */</span></div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span><span class="preprocessor">#endif  </span><span class="comment">/* __cplusplus */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span> </div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span><span class="preprocessor">#endif </span><span class="comment">/* __SAF_REVERB_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span> <span class="comment">/* doxygen addtogroup Reverb */</span></div>
 <div class="ttc" id="agroup___reverb_html_ga0d98415908e422f55d7dd178b7070712"><div class="ttname"><a href="group___reverb.html#ga0d98415908e422f55d7dd178b7070712">ims_shoebox_setRoomDimensions</a></div><div class="ttdeci">void ims_shoebox_setRoomDimensions(void *hIms, float new_roomDimensions[3])</div><div class="ttdoc">Sets new room dimensions.</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8c_source.html#l00541">saf_reverb.c:542</a></div></div>
 <div class="ttc" id="agroup___reverb_html_ga45b72cf3e6e5400973ea5403e9c60f03"><div class="ttname"><a href="group___reverb.html#ga45b72cf3e6e5400973ea5403e9c60f03">ims_shoebox_removeSource</a></div><div class="ttdeci">void ims_shoebox_removeSource(void *hIms, int sourceID)</div><div class="ttdoc">Removes a specific source from the simulation.</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8c_source.html#l00792">saf_reverb.c:793</a></div></div>
 <div class="ttc" id="agroup___reverb_html_ga59f53cd055df23a1aec877407f883ca9"><div class="ttname"><a href="group___reverb.html#ga59f53cd055df23a1aec877407f883ca9">ims_shoebox_addReceiverSH</a></div><div class="ttdeci">int ims_shoebox_addReceiverSH(void *hIms, int sh_order, float position_xyz[3], float ***pSH_sigs)</div><div class="ttdoc">Adds a spherical harmonic (SH) receiver object to the simulator of a given order, and returns a uniqu...</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8c_source.html#l00649">saf_reverb.c:650</a></div></div>
@@ -215,7 +216,7 @@ $(document).ready(function(){initNavTree('saf__reverb_8h_source.html',''); initR
 <div class="ttc" id="agroup___reverb_html_gab98cb870c1cd865adc6306a16fbbc63c"><div class="ttname"><a href="group___reverb.html#gab98cb870c1cd865adc6306a16fbbc63c">ims_shoebox_removeReceiver</a></div><div class="ttdeci">void ims_shoebox_removeReceiver(void *hIms, int receiverID)</div><div class="ttdoc">Removes a specific receiver from the simulation.</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8c_source.html#l00825">saf_reverb.c:826</a></div></div>
 <div class="ttc" id="agroup___reverb_html_gac0c2934d49567126400205c3619597cb"><div class="ttname"><a href="group___reverb.html#gac0c2934d49567126400205c3619597cb">ims_shoebox_create</a></div><div class="ttdeci">void ims_shoebox_create(void **phIms, float roomDimensions[3], float *abs_wall, float lowestOctaveBand, int nOctBands, float c_ms, float fs)</div><div class="ttdoc">Creates an instance of ims_shoebox room simulator.</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8c_source.html#l00036">saf_reverb.c:37</a></div></div>
 <div class="ttc" id="agroup___reverb_html_gaf2f60c1f14656e38eb62cfa6a293af2a"><div class="ttname"><a href="group___reverb.html#gaf2f60c1f14656e38eb62cfa6a293af2a">ims_shoebox_setWallAbsCoeffs</a></div><div class="ttdeci">void ims_shoebox_setWallAbsCoeffs(void *hIms, float *abs_wall)</div><div class="ttdoc">Sets new wall absorption coefficients per wall and per band.</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8c_source.html#l00567">saf_reverb.c:568</a></div></div>
-<div class="ttc" id="astructims__rir_html"><div class="ttname"><a href="structims__rir.html">ims_rir</a></div><div class="ttdoc">Output format of the rendered room impulse responses (RIR)</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8h_source.html#l00057">saf_reverb.h:57</a></div></div>
+<div class="ttc" id="astructims__rir_html"><div class="ttname"><a href="structims__rir.html">ims_rir</a></div><div class="ttdoc">Output format of the rendered room impulse responses (RIR)</div><div class="ttdef"><b>Definition:</b> <a href="saf__reverb_8h_source.html#l00058">saf_reverb.h:58</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
@@ -223,7 +224,7 @@ $(document).ready(function(){initNavTree('saf__reverb_8h_source.html',''); initR
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_31bb7ce361ce860d54dca28109c7baca.html">saf_reverb</a></li><li class="navelem"><a class="el" href="saf__reverb_8h.html">saf_reverb.h</a></li>
-    <li class="footer">Generated on Thu Oct 28 2021 13:31:47 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Wed Nov 17 2021 11:36:47 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

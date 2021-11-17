@@ -238,67 +238,74 @@ $(document).ready(function(){initNavTree('saf__utilities_8h_source.html',''); in
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span><span class="comment"> *   https://github.com/xiph/speexdsp/</span></div>
 <div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span><span class="comment"> */</span></div>
 <div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span><span class="preprocessor">#include &quot;../../resources/speex_resampler/speex_resampler.h&quot;</span></div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span><span class="comment">/* For cross-platform complex number support */</span></div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__complex_8h.html">saf_utility_complex.h</a>&quot;</span></div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="comment">/* For sorting vectors */</span></div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__sort_8h.html">saf_utility_sort.h</a>&quot;</span></div>
-<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span> </div>
-<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span><span class="comment">/* Filter coefficients and filterbanks (IIR/FIR) */</span></div>
-<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__filters_8h.html">saf_utility_filters.h</a>&quot;</span></div>
-<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span> </div>
-<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="comment">/* Many handy linear algebra functions based on CBLAS/LAPACK. Additionally, some</span></div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="comment"> * optimised proprietary Intel MKL and Apple Accelerate routines are employed</span></div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="comment"> * (for e.g. vector-vector products, addition etc.) if available; otherwise</span></div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span><span class="comment"> * reverting to default implementations. */</span></div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__veclib_8h.html">saf_utility_veclib.h</a>&quot;</span></div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span> </div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="comment">/* For computing spherical/cylindrical Bessel and Hankel functions and their</span></div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="comment"> * derivatives */</span></div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__bessel_8h.html">saf_utility_bessel.h</a>&quot;</span></div>
-<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
-<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="comment">/* Wrappers for different FFT implementations */</span></div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__fft_8h.html">saf_utility_fft.h</a>&quot;</span></div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span> </div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span><span class="comment">/* For data compression/decompression (Lempel–Ziv 1977 and Huffman coding based)</span></div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span><span class="comment"> * The original source code can be found here (BSD-3-Clause license):</span></div>
+<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span><span class="comment"> *   https://github.com/madler/zlib</span></div>
+<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="preprocessor">#include &quot;../../resources/zlib/zlib.h&quot;</span></div>
+<div class="line"><a id="l00190" name="l00190"></a><span class="lineno">  190</span> </div>
+<div class="line"><a id="l00191" name="l00191"></a><span class="lineno">  191</span><span class="comment">/* For cross-platform complex number support */</span></div>
+<div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__complex_8h.html">saf_utility_complex.h</a>&quot;</span></div>
+<div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="comment">/* For sorting vectors */</span></div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__sort_8h.html">saf_utility_sort.h</a>&quot;</span></div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span> </div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span><span class="comment">/* Filter coefficients and filterbanks (IIR/FIR) */</span></div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__filters_8h.html">saf_utility_filters.h</a>&quot;</span></div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span><span class="comment">/* Many handy linear algebra functions based on CBLAS/LAPACK. Additionally, some</span></div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="comment"> * optimised proprietary Intel MKL and Apple Accelerate routines are employed</span></div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span><span class="comment"> * (for e.g. vector-vector products, addition etc.) if available; otherwise</span></div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span><span class="comment"> * reverting to default implementations. */</span></div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__veclib_8h.html">saf_utility_veclib.h</a>&quot;</span></div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="comment">/* Matrix and multi-channel convolvers */</span></div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__matrix_conv_8h.html">saf_utility_matrixConv.h</a>&quot;</span></div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span><span class="comment">/* Pitch shifting algorithms */</span></div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__pitch_8h.html">saf_utility_pitch.h</a>&quot;</span></div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span><span class="comment">/* A collection of signal decorrelators */</span></div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__decor_8h.html">saf_utility_decor.h</a>&quot;</span></div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span><span class="comment">/* For misc. functions */</span></div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__misc_8h.html">saf_utility_misc.h</a>&quot;</span></div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span> </div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span><span class="comment">/* For computational geometry functions */</span></div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__geometry_8h.html">saf_utility_geometry.h</a>&quot;</span></div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span> </div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span><span class="comment">/* For an implementation of the hybrid complex quadrature mirror filterbank */</span></div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__qmf_8h.html">saf_utility_qmf.h</a>&quot;</span></div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span><span class="comment">/* Various presets for loudspeaker arrays and uniform distributions of points on</span></div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span><span class="comment"> * spheres. */</span></div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__loudspeaker__presets_8h.html">saf_utility_loudspeaker_presets.h</a>&quot;</span></div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span><span class="comment">/* For computing spherical/cylindrical Bessel and Hankel functions and their</span></div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span><span class="comment"> * derivatives */</span></div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__bessel_8h.html">saf_utility_bessel.h</a>&quot;</span></div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span> </div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="comment">/* Wrappers for different FFT implementations */</span></div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__fft_8h.html">saf_utility_fft.h</a>&quot;</span></div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="comment">/* Matrix and multi-channel convolvers */</span></div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__matrix_conv_8h.html">saf_utility_matrixConv.h</a>&quot;</span></div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span> </div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span><span class="comment">/* Pitch shifting algorithms */</span></div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__pitch_8h.html">saf_utility_pitch.h</a>&quot;</span></div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="comment">/* A collection of signal decorrelators */</span></div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__decor_8h.html">saf_utility_decor.h</a>&quot;</span></div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span><span class="comment">/* For misc. functions */</span></div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__misc_8h.html">saf_utility_misc.h</a>&quot;</span></div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span> </div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span><span class="comment">/* For computational geometry functions */</span></div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__geometry_8h.html">saf_utility_geometry.h</a>&quot;</span></div>
 <div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span> </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="comment">/* Various presets for microphone and hydrophone arrays. */</span></div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__sensorarray__presets_8h.html">saf_utility_sensorarray_presets.h</a>&quot;</span></div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span><span class="comment">/* For an implementation of the hybrid complex quadrature mirror filterbank */</span></div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__qmf_8h.html">saf_utility_qmf.h</a>&quot;</span></div>
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span> </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span><span class="comment">/* A modified version of the alias-free STFT implementation by Juha Vilkamo.</span></div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span><span class="comment"> * The original source code can be found here (MIT license):</span></div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span><span class="comment"> *   https://github.com/jvilkamo/afSTFT</span></div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span><span class="comment"> * The design is also detailed in chapter 1 of [1]</span></div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="comment"> *</span></div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="comment"> * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric</span></div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="comment"> *          time--frequency domain spatial audio. John Wiley &amp; Sons,</span></div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="comment"> *          Incorporated.</span></div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="comment"> */</span></div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="preprocessor">#include &quot;../../resources/afSTFT/afSTFTlib.h&quot;</span></div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span> </div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="preprocessor">#endif </span><span class="comment">/* __SAF_UTILITIES_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span> <span class="comment">/* doxygen addtogroup Utilities */</span></div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span><span class="comment">/* Various presets for loudspeaker arrays and uniform distributions of points on</span></div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span><span class="comment"> * spheres. */</span></div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__loudspeaker__presets_8h.html">saf_utility_loudspeaker_presets.h</a>&quot;</span></div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="comment">/* Various presets for microphone and hydrophone arrays. */</span></div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="preprocessor">#include &quot;<a class="code" href="saf__utility__sensorarray__presets_8h.html">saf_utility_sensorarray_presets.h</a>&quot;</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="comment">/* A modified version of the alias-free STFT implementation by Juha Vilkamo.</span></div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="comment"> * The original source code can be found here (MIT license):</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="comment"> *   https://github.com/jvilkamo/afSTFT</span></div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span><span class="comment"> * The design is also detailed in chapter 1 of [1]</span></div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span><span class="comment"> *</span></div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="comment"> * @see [1] Pulkki, V., Delikaris-Manias, S. and Politis, A. 2018. Parametric</span></div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span><span class="comment"> *          time--frequency domain spatial audio. John Wiley &amp; Sons,</span></div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span><span class="comment"> *          Incorporated.</span></div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span><span class="comment"> */</span></div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span><span class="preprocessor">#include &quot;../../resources/afSTFT/afSTFTlib.h&quot;</span></div>
+<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span> </div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="preprocessor">#endif </span><span class="comment">/* __SAF_UTILITIES_H_INCLUDED__ */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span> <span class="comment">/* doxygen addtogroup Utilities */</span></div>
 <div class="ttc" id="asaf__utility__bessel_8h_html"><div class="ttname"><a href="saf__utility__bessel_8h.html">saf_utility_bessel.h</a></div><div class="ttdoc">A collection of routines for computing spherical and cylindrical Bessel and Hankel functions,...</div></div>
 <div class="ttc" id="asaf__utility__complex_8h_html"><div class="ttname"><a href="saf__utility__complex_8h.html">saf_utility_complex.h</a></div><div class="ttdoc">Contains wrappers for handling complex numbers across both C99-compliant compilers and Microsoft Visu...</div></div>
 <div class="ttc" id="asaf__utility__decor_8h_html"><div class="ttname"><a href="saf__utility__decor_8h.html">saf_utility_decor.h</a></div><div class="ttdoc">A collection of signal decorrelators.</div></div>
@@ -320,7 +327,7 @@ $(document).ready(function(){initNavTree('saf__utilities_8h_source.html',''); in
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utilities_8h.html">saf_utilities.h</a></li>
-    <li class="footer">Generated on Thu Oct 28 2021 13:31:47 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Wed Nov 17 2021 11:36:48 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
