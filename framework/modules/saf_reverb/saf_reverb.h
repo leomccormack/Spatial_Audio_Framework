@@ -39,7 +39,8 @@ extern "C" {
 /* ========================================================================== */
 /*
  * Note that this simulator is based on the shoebox-roomsim MATLAB library
- * (BSD-3-Clause License) found here: https://github.com/polarch/shoebox-roomsim
+ * found here: https://github.com/polarch/shoebox-roomsim
+ * (Copyright (c) 2017, Archontis Politis, BSD-3-Clause License)
  */
 
 /**

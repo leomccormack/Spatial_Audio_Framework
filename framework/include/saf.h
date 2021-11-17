@@ -67,7 +67,7 @@
 /** @defgroup SOFA_Reader  saf_sofa_reader
  *  @brief    SOFA file reading module */
 /** @defgroup Tracker      saf_tracker
- *  @brief    Particle-filtering-based tracker */
+ *  @brief    Particle-filtering based 3D multi-target tracker */
 
 
 /* ========================================================================== */
