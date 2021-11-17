@@ -550,7 +550,7 @@ void saf_rfft_create
     h->p_bwd = fftwf_plan_dft_c2r_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_ESTIMATE);
 #elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
-    if(ceilf(log2f(N)) == floorf(log2f(N))){
+    if((int)(log2f((float)N)+1.0f) == (int)(log2f((float)N))){
         h->useIPPfft_FLAG = 1;
         h->log2n = (int)(log2f((float)N)+0.1f);
         ippsFFTGetSize_R_32f(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
@@ -769,7 +769,7 @@ void saf_fft_create
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     saf_assert(N>=2, "Only even (non zero) FFT sizes are supported");
-	h->useKissFFT_FLAG = 0;
+    h->useKissFFT_FLAG = 0;
 #if defined(SAF_USE_FFTW)
     h->fwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
     h->bwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
@@ -779,7 +779,7 @@ void saf_fft_create
     h->p_bwd = fftwf_plan_dft_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_BACKWARD, FFTW_ESTIMATE);
 #elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
-    if(ceilf(log2f(N)) == floorf(log2f(N))){
+    if((int)(log2f((float)N) + 1.0f) == (int)(log2f((float)N))){
         h->useIPPfft_FLAG = 1;
         h->log2n = (int)(log2f((float)N)+0.1f);
         ippsFFTGetSize_C_32fc(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
@@ -797,8 +797,8 @@ void saf_fft_create
         h->memInit = (Ipp8u*)ippMalloc(h->specBufferSize);
         ippsDFTInit_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->hDFTspec, h->memInit);
     }
-	if (h->memInit)
-		ippFree(h->memInit);
+    if (h->memInit)
+        ippFree(h->memInit);
 #elif defined(SAF_USE_APPLE_ACCELERATE)
 # ifdef SAF_USE_INTERLEAVED_VDSP
     h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
@@ -863,8 +863,8 @@ void saf_fft_destroy
             if(h->hDFTspec)
                 ippFree(h->hDFTspec);
         }
-		if (h->buffer)
-			ippFree(h->buffer);
+        if (h->buffer)
+            ippFree(h->buffer);
 #elif defined(SAF_USE_APPLE_ACCELERATE)
         if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP

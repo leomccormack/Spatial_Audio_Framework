@@ -33,6 +33,10 @@
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4244)
+#endif
+
 #include "internal/hdf_reader.h"
 #include "internal/kdtree.h"
 #include "internal/mysofa_internal.h"

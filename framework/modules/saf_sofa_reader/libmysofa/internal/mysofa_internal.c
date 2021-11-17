@@ -40,6 +40,10 @@
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 
+#ifdef _MSC_VER
+#pragma warning( disable : 4244)
+#endif
+
 #ifndef _USE_MATH_DEFINES
 # define _USE_MATH_DEFINES
 #endif // !_USE_MATH_DEFINES

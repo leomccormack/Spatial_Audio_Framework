@@ -175,10 +175,15 @@ void tracker3d_step
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, kt, ob, maxIdx, nt, nt2;
-    float Neff, w_sum;
+    int i, kt, ob, maxIdx, nt;
+    float Neff;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
-    MCS_data* S_max, *S_tmp;
+    MCS_data* S_max;
+#if 0
+    int nt2;
+    float w_sum;
+    MCS_data* S_tmp;
+#endif
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
     memset(c_str, 0, 256*sizeof(char));

@@ -248,8 +248,8 @@ static int readOHDRHeaderMessageDatatype(struct READER *reader,
 
   switch (dt->class_and_version & 0xf) {
   case 0: /* int */
-    dt->u.i.bit_offset = readValue(reader, 2);
-    dt->u.i.bit_precision = readValue(reader, 2);
+    dt->u.i.bit_offset = (uint16_t)readValue(reader, 2);
+    dt->u.i.bit_precision = (uint16_t)readValue(reader, 2);
     mylog("    INT bit %d %d %d %d\n", dt->u.i.bit_offset,
           dt->u.i.bit_precision, dt->class_and_version >> 4, dt->size);
     break;
@@ -527,7 +527,7 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
 
     if (validAddress(reader, data_address)) {
       store = ftell(reader->fhd);
-      if (fseek(reader->fhd, data_address, SEEK_SET) < 0)
+      if (fseek(reader->fhd, (long)data_address, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
       if (!data->data) {
         if (data_size > 0x10000000)
@@ -540,7 +540,7 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
       err = (int)fread(data->data, 1, data_size, reader->fhd);
       if (err != (int)data_size)
         return MYSOFA_READ_ERROR; // LCOV_EXCL_LINE
-      if (fseek(reader->fhd, store, SEEK_SET) < 0)
+      if (fseek(reader->fhd, (long)store, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
     }
     break;
@@ -565,11 +565,11 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
 
     size = data->datalayout_chunk[dimensionality - 1];
     for (i = 0; i < data->ds.dimensionality; i++)
-      size *= data->ds.dimension_size[i];
+      size *= (unsigned int)data->ds.dimension_size[i];
 
     if (validAddress(reader, data_address) && dimensionality <= 4) {
       store = ftell(reader->fhd);
-      if (fseek(reader->fhd, data_address, SEEK_SET) < 0)
+      if (fseek(reader->fhd, (long)data_address, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
       if (!data->data) {
         if (size > 0x10000000)
@@ -582,7 +582,7 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
       err = treeRead(reader, data);
       if (err)
         return err; // LCOV_EXCL_LINE
-      if (fseek(reader->fhd, store, SEEK_SET) < 0)
+      if (fseek(reader->fhd, (long)store, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
     }
     break;
@@ -924,7 +924,7 @@ static int readOHDRHeaderMessageContinue(struct READER *reader,
 
   store = ftell(reader->fhd);
 
-  if (fseek(reader->fhd, offset, SEEK_SET) < 0)
+  if (fseek(reader->fhd, (long)offset, SEEK_SET) < 0)
     return errno; // LCOV_EXCL_LINE
 
   err = readOCHK(reader, dataobject, offset + length);
@@ -1186,7 +1186,7 @@ static int readOHDRmessages(struct READER *reader,
     }
   }
 
-  if (fseek(fhd, end_of_messages + 4, SEEK_SET) < 0) /* skip checksum */
+  if (fseek(fhd, (long)end_of_messages + 4, SEEK_SET) < 0) /* skip checksum */
     return errno;
 
   return MYSOFA_OK;
@@ -1269,7 +1269,7 @@ int dataobjectRead(struct READER *reader, struct DATAOBJECT *dataobject,
 
   /* parse message attribute info */
   if (validAddress(reader, dataobject->ai.fractal_heap_address)) {
-    if (fseek(reader->fhd, dataobject->ai.fractal_heap_address, SEEK_SET) < 0)
+    if (fseek(reader->fhd, (long)dataobject->ai.fractal_heap_address, SEEK_SET) < 0)
       return errno;
     err = fractalheapRead(reader, dataobject, &dataobject->attributes_heap);
     if (err)
@@ -1278,7 +1278,7 @@ int dataobjectRead(struct READER *reader, struct DATAOBJECT *dataobject,
 
   /* parse message link info */
   if (validAddress(reader, dataobject->li.fractal_heap_address)) {
-    fseek(reader->fhd, dataobject->li.fractal_heap_address, SEEK_SET);
+    fseek(reader->fhd, (long)dataobject->li.fractal_heap_address, SEEK_SET);
     err = fractalheapRead(reader, dataobject, &dataobject->objects_heap);
     if (err)
       return err;

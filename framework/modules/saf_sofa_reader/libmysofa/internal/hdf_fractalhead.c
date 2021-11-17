@@ -44,7 +44,7 @@
 
 #define MAX_NAME_LENGTH (0x100)
 
-static int log2i(int a) { return round(log2(a)); }
+static int log2i(int a) { return (int)round(log2(a)); }
 
 static int directblockRead(struct READER *reader, struct DATAOBJECT *dataobject,
                            struct FRACTALHEAP *fractalheap) {
@@ -95,11 +95,11 @@ static int directblockRead(struct READER *reader, struct DATAOBJECT *dataobject,
     if (fseek(reader->fhd, 4, SEEK_CUR))
       return errno; // LCOV_EXCL_LINE
 
-  offset_size = ceilf(log2f(fractalheap->maximum_heap_size) / 8);
+  offset_size = (int)ceilf(log2f(fractalheap->maximum_heap_size) / 8);
   if (fractalheap->maximum_direct_block_size < fractalheap->maximum_size)
-    length_size = ceilf(log2f(fractalheap->maximum_direct_block_size) / 8);
+    length_size = (int)ceilf(log2f((float)fractalheap->maximum_direct_block_size) / 8);
   else
-    length_size = ceilf(log2f(fractalheap->maximum_size) / 8);
+    length_size = (int)ceilf(log2f((float)fractalheap->maximum_size) / 8);
 
   mylog(" %d %" PRIu64 " %d\n", size, block_offset, offset_size);
 
@@ -260,7 +260,7 @@ static int directblockRead(struct READER *reader, struct DATAOBJECT *dataobject,
         dataobject->directory = dir;
 
         store = ftell(reader->fhd);
-        if (fseek(reader->fhd, heap_header_address, SEEK_SET)) {
+        if (fseek(reader->fhd, (long)heap_header_address, SEEK_SET)) {
           free(name);   // LCOV_EXCL_LINE
           return errno; // LCOV_EXCL_LINE
         }
@@ -509,7 +509,7 @@ static int indirectblockRead(struct READER *reader,
     mylog(">> %d %" PRIX64 " %d\n", k, child_direct_block, size);
     if (validAddress(reader, child_direct_block)) {
       store = ftell(reader->fhd);
-      if (fseek(reader->fhd, child_direct_block, SEEK_SET) < 0)
+      if (fseek(reader->fhd, (long)child_direct_block, SEEK_SET) < 0)
         return errno;
       err = directblockRead(reader, dataobject, fractalheap);
       if (err)
@@ -529,7 +529,7 @@ static int indirectblockRead(struct READER *reader,
 
     if (validAddress(reader, child_direct_block)) {
       store = ftell(reader->fhd);
-      if (fseek(reader->fhd, child_indirect_block, SEEK_SET) < 0)
+      if (fseek(reader->fhd, (long)child_indirect_block, SEEK_SET) < 0)
         return errno;
       err = indirectblockRead(reader, dataobject, fractalheap, iblock_size * 2);
       if (err)
@@ -658,7 +658,7 @@ int fractalheapRead(struct READER *reader, struct DATAOBJECT *dataobject,
 
   if (validAddress(reader, fractalheap->address_of_root_block)) {
 
-    if (fseek(reader->fhd, fractalheap->address_of_root_block, SEEK_SET) < 0)
+    if (fseek(reader->fhd, (long)fractalheap->address_of_root_block, SEEK_SET) < 0)
       return errno;
     if (fractalheap->current_row)
       err = indirectblockRead(reader, dataobject, fractalheap,
