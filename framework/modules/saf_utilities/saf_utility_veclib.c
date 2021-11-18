@@ -61,6 +61,8 @@
 # define SAF_VECLIB_USE_CLAPACK_INTERFACE        /**< LAPACK interface */
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
 # define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
+#elif defined(SAF_USE_GSL)
+# define SAF_VECLIB_USE_GSL_LINALG /**< No LAPACK interface, use alternatives */
 #else
 # error No LAPACK interface was specified!
 #endif

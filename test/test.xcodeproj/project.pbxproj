@@ -1265,8 +1265,8 @@
 					../examples/include,
 					"../framework/include/**",
 					../dependencies/MacOSX/include,
-					/opt/intel/compilers_and_libraries/mac/mkl/include,
-					/opt/intel/compilers_and_libraries/mac/ipp/include,
+					/opt/intel/oneapi/mkl/latest/include,
+					/opt/intel/oneapi/ipp/latest/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1277,9 +1277,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
-					"-lsaf_ipp_custom",
 					"-lsaf_mkl_custom_lp64",
-					"-L/usr/local/lib",
+					"-lsaf_ipp_custom",
 					"-Wl,-rpath,/usr/local/lib",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include;
@@ -1310,8 +1309,8 @@
 					../examples/include,
 					"../framework/include/**",
 					../dependencies/MacOSX/include,
-					/opt/intel/compilers_and_libraries/mac/mkl/include,
-					/opt/intel/compilers_and_libraries/mac/ipp/include,
+					/opt/intel/oneapi/mkl/latest/include,
+					/opt/intel/oneapi/ipp/latest/include,
 				);
 				INSTALL_PATH = bin/;
 				LIBRARY_SEARCH_PATHS = ../dependencies/MacOSX/lib;
@@ -1322,9 +1321,8 @@
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
-					"-lsaf_ipp_custom",
 					"-lsaf_mkl_custom_lp64",
-					"-L/usr/local/lib",
+					"-lsaf_ipp_custom",
 					"-Wl,-rpath,/usr/local/lib",
 				);
 				PRIVATE_HEADERS_FOLDER_PATH = /usr/local/include;

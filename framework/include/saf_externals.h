@@ -174,6 +174,17 @@
  */
 # include "Accelerate/Accelerate.h"
 
+#elif defined(SAF_USE_GSL)
+/*
+ * Using the GNU Scientific Library (GSL)
+ *
+ * Please feel free to try it out and report back. Note also that certain LAPACK
+ * functions used in saf_utility_veclib will need to be swapped out for
+ * equivalent functions in GSL
+ */
+# warning Using GNU Scientific Library (GSL) is currently experimental
+# include "gsl_cblas.h"
+
 #else
 /*
  * If you would like to use some other CBLAS/LAPACK supporting library then
