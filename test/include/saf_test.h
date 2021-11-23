@@ -220,6 +220,9 @@ void test__computeSectorCoeffsEP(void);
  * Testing that for T-designs, the condition numbers are all equal to 1 */
 void test__checkCondNumberSHTReal(void);
 /**
+ * Test grid weight approximation */
+void test__calculateGridWeights(void);
+/**
  * Testing the DoA estimation performance of sphMUSIC() */
 void test__sphMUSIC(void);
 /**

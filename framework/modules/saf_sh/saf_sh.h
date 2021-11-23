@@ -655,6 +655,15 @@ void checkCondNumberSHTReal(/* Input arguments */
                             float* cond_N);
 
 
+int calculateGridWeights
+(/* Input arguments */
+    float* dirs_rad,
+    int nDirs,
+    int order,
+    /* Output arguments */
+    float* w);
+
+
 /* ========================================================================== */
 /*                     Localisation Functions in the SHD                      */
 /* ========================================================================== */

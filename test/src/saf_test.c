@@ -123,6 +123,7 @@ int main_test(void) {
     RUN_TEST(test__complex2realSHMtx);
     RUN_TEST(test__computeSectorCoeffsEP);
     RUN_TEST(test__checkCondNumberSHTReal);
+    RUN_TEST(test__calculateGridWeights);
     RUN_TEST(test__sphMUSIC);
     RUN_TEST(test__sphPWD);
     RUN_TEST(test__sphESPRIT);

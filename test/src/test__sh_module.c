@@ -423,6 +423,31 @@ void test__checkCondNumberSHTReal(void){
     }
 }
 
+void test__calculateGridWeights(void){
+    int i, nDirs, order, nSH;
+    float* t_dirs_deg, *t_dirs_rad, *w;
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int testOrder = 3;
+    /* Pull an appropriate t-design */
+    t_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2 * testOrder -1];
+    nDirs = __Tdesign_nPoints_per_degree[2 * testOrder - 1];
+    t_dirs_rad = (float *) malloc1d(nDirs*2 *sizeof(float));
+    for(i=0; i<2*nDirs; i++)
+        t_dirs_rad[i] = DEG2RAD(t_dirs_deg[i]);
+    for(i=0; i<nDirs; i++)
+        t_dirs_rad[i*2+1] = SAF_PI/2.0f - t_dirs_rad[i*2+1];
+    w = malloc(nDirs * sizeof(float));
+    order =  calculateGridWeights(t_dirs_rad,nDirs,-1,w);
+
+    TEST_ASSERT_EQUAL(testOrder, order);
+    for (i=0; i<nDirs; i++){
+        TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance,FOURPI/nDirs, w[i]);
+    }
+
+}
+
 void test__sphMUSIC(void){
     int i, j, k, nGrid, nSH, nSrcs, srcInd_1, srcInd_2;
     float test_dirs_deg[2][2];
