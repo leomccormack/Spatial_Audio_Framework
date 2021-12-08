@@ -149,6 +149,11 @@ int main_test(void) {
 #ifdef SAF_ENABLE_TRACKER_MODULE
     RUN_TEST(test__tracker3d);
 #endif /* SAF_ENABLE_TRACKER_MODULE */
+    
+/* SAF HADES module unit tests */
+#ifdef SAF_ENABLE_HADES_MODULE
+    RUN_TEST(test__hades);
+#endif /* SAF_ENABLE_HADES_MODULE */
 
     /* SAF resources unit tests */
     RUN_TEST(test__afSTFT);

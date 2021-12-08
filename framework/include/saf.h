@@ -68,6 +68,8 @@
  *  @brief    SOFA file reading module */
 /** @defgroup Tracker      saf_tracker
  *  @brief    Particle-filtering based 3D multi-target tracker */
+/** @defgroup HADES    saf_hades
+ *  @brief    HADES framework */
 
 
 /* ========================================================================== */
@@ -75,7 +77,7 @@
 /* ========================================================================== */
 
 /* The license governing SAF is configuration dependent */
-#if defined(SAF_ENABLE_TRACKER_MODULE) 
+#if defined(SAF_ENABLE_TRACKER_MODULE) || defined(SAF_ENABLE_HADES_MODULE)
 /** The Spatial_Audio_Framework is governed by the GNU GPLv2 License */
 # define SAF_LICENSE_STRING "GNU GPLv2"
 #else
@@ -285,6 +287,27 @@
 # define SAF_TRACKER_MODULE
 # include "../modules/saf_tracker/saf_tracker.h"
 #endif /* SAF_ENABLE_TRACKER_MODULE */
+
+#ifdef SAF_ENABLE_HADES_MODULE
+/**
+ * SAF Module: HADES
+ *
+ * HADES is a framework for parametric binaural rendering of sound scenes
+ * captured by microphone arrays. The emphasis is on the use of head-worn
+ * microphone arrays, for example, those that may be integrated into augmented
+ * reality devices or future binaural hearing aids.
+ *
+ * ## Enable instructions
+ *   Add this pre-processor definition to your project to enable this module:
+ *       SAF_ENABLE_HADES_MODULE
+ * ## Dependencies
+ *   saf_utilities, saf_vbap, saf_hrir, saf_cdf4sap
+ *
+ * @license GNU GPLv2
+ */
+# define SAF_HADES_MODULE
+# include "../modules/saf_hades/saf_hades.h"
+#endif /* SAF_ENABLE_HADES_MODULE */
 
 
 #endif /* SAF_H_INCLUDED */
