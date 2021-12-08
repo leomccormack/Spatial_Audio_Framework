@@ -10,6 +10,7 @@ option(SAF_BUILD_EXAMPLES            "Build SAF examples."                      
 option(SAF_BUILD_EXTRAS              "Build SAF extras."                          OFF)
 option(SAF_ENABLE_SOFA_READER_MODULE "Enable the SAF SOFA READER module"          OFF)
 option(SAF_ENABLE_TRACKER_MODULE     "Enable the SAF TRACKER module"              OFF)
+option(SAF_ENABLE_HADES_MODULE       "Enable the SAF HADES module"                OFF)
 option(SAF_USE_INTEL_IPP             "Use Intel IPP for the FFT, resampler, etc." OFF)
 option(SAF_USE_FFTW                  "Use FFTW3 for the FFT."                     OFF)
 option(SAF_ENABLE_SIMD               "Enable the use of SSE3, AVX2, AVX512"       OFF)

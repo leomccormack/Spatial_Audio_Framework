@@ -49,3 +49,12 @@ if(SAF_ENABLE_TRACKER_MODULE)
         ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker.c
     )
 endif()
+if(SAF_ENABLE_HADES_MODULE)
+    target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_analysis.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_internal.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_synthesis.c
+    )
+endif()

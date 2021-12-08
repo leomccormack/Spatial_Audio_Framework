@@ -336,11 +336,23 @@ endif()
 if(SAF_ENABLE_TRACKER_MODULE)
     message(STATUS "saf_tracker module enabled. ")
 
-    # Indicate to saf that the saf_sofa_reader module should be enabled
+    # Indicate to saf that the saf_tracker module should be enabled
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_TRACKER_MODULE=${SAF_ENABLE_TRACKER_MODULE})
 
 else()
     message(STATUS "saf_tracker module disabled.")
+endif()
+
+############################################################################
+# Enable/Disable HADES module
+if(SAF_ENABLE_HADES_MODULE)
+    message(STATUS "saf_hades module enabled. ")
+
+    # Indicate to saf that the saf_hades module should be enabled
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_HADES_MODULE=${SAF_ENABLE_HADES_MODULE})
+
+else()
+    message(STATUS "saf_hades module disabled.")
 endif()
 
 
