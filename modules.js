@@ -8,5 +8,6 @@ var modules =
     [ "saf_reverb", "group___reverb.html", "group___reverb" ],
     [ "saf_vbap", "group___v_b_a_p.html", "group___v_b_a_p" ],
     [ "saf_sofa_reader", "group___s_o_f_a___reader.html", "group___s_o_f_a___reader" ],
-    [ "saf_tracker", "group___tracker.html", "group___tracker" ]
+    [ "saf_tracker", "group___tracker.html", "group___tracker" ],
+    [ "saf_hades", "group___h_a_d_e_s.html", "group___h_a_d_e_s" ]
 ];

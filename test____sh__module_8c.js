@@ -1,5 +1,6 @@
 var test____sh__module_8c =
 [
+    [ "test__calculateGridWeights", "test____sh__module_8c.html#a0dc0f8c8aacddf5f3cc6a19b7ba254be", null ],
     [ "test__checkCondNumberSHTReal", "test____sh__module_8c.html#aa8b8eef199b8983d3b18cbf453fc2cf0", null ],
     [ "test__complex2realSHMtx", "test____sh__module_8c.html#aa287f898d7c0f64e7823c09bc11824fa", null ],
     [ "test__computeSectorCoeffsEP", "test____sh__module_8c.html#aa313ae6eb64e8ab4db6b5482882ac348", null ],
