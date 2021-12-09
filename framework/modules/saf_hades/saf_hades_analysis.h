@@ -145,7 +145,6 @@ void hades_analysis_reset(hades_analysis_handle const hAna);
  *       and their spatial covariance matrices per band. These containers can
  *       then be passed to hades_synthesis_apply() to reproduce the encoded
  *       scene over the target setup.
- * @warning "input" must be in the ACN/N3D convention.
  *
  * @param[in]  hAna      hades analysis handle
  * @param[in]  input     Input buffer; nChannels x blocksize
@@ -183,8 +182,6 @@ int hades_analysis_getNbands(hades_analysis_handle const hAna);
  * Returns a pointer to the covariance matrix averaging scalar [0..1], which can
  * be changed at run-time
  *
- * @note This is only used when covAvgOption=HADES_AVG_COV_RECURSIVELY
- *
  * @param[in] hAna hades analysis handle
  * @returns pointer to the covariance matrix averaging scalar (or NULL if hAna
  *          is not initialised); 1 x 1
@@ -210,9 +207,9 @@ int hades_analysis_getProcDelay(hades_analysis_handle const hAna);
  * estimated by an analyser for one 'blocksize'
  *
  * @note There should be one container per analyser, but this container can be
- *       passed to multiple different decoders. You may also create multiple
+ *       passed to multiple different synthesisers. You may also create multiple
  *       containers, fill them using an analyser, store them, and pass them to
- *       the decoder(s) later.
+ *       the synthesiser(s) later.
  *
  * @param[in] phPCon (&) address of hades parameter container handle
  * @param[in] hAna   hades analysis handle
