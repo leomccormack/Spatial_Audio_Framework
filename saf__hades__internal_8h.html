@@ -94,11 +94,15 @@ $(document).ready(function(){initNavTree('saf__hades__internal_8h.html',''); ini
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#nested-classes">Data Structures</a> &#124;
+<a href="#define-members">Macros</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">saf_hades_internal.h File Reference<div class="ingroups"><a class="el" href="group___h_a_d_e_s.html">saf_hades</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Internal header for the HADES module (#SAF_HADES_MODULE)  
+<p>Internal header for the HADES module (<a class="el" href="saf_8h.html#ab6f0ef4b2d9cd26064b92d9749aab4c8" title="SAF Module: HADES.">SAF_HADES_MODULE</a>)  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="saf__hades__analysis_8h_source.html">saf_hades_analysis.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf__hades__synthesis_8h_source.html">saf_hades_synthesis.h</a>&quot;</code><br />
@@ -106,8 +110,54 @@ $(document).ready(function(){initNavTree('saf__hades__internal_8h.html',''); ini
 <code>#include &quot;<a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>&quot;</code><br />
 </div>
 <p><a href="saf__hades__internal_8h_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Data Structures</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_cx_mic.html">CxMic</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper struct for averaging covariance matrices (block-wise)  <a href="struct_cx_mic.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhades__analysis__data.html">hades_analysis_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main structure for hades analysis.  <a href="structhades__analysis__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhades__synthesis__data.html">hades_synthesis_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main structure for hades synthesis.  <a href="structhades__synthesis__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhades__param__container__data.html">hades_param_container_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parameter container to store the data from an analyser for one blocksize of audio.  <a href="structhades__param__container__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhades__radial__editor__data.html">hades_radial_editor_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main structure for hades radial (360degree) gain and direct-to-diffuse ratio editor.  <a href="structhades__radial__editor__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structhades__signal__container__data.html">hades_signal_container_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Signal container to store one block of TF-domain audio data.  <a href="structhades__signal__container__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
+Macros</h2></td></tr>
+<tr class="memitem:a665d8e59df965086b9af90b401de1609"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__internal_8h.html#a665d8e59df965086b9af90b401de1609">HADES_MAX_BLOCKSIZE</a>&#160;&#160;&#160;( 4096 )</td></tr>
+<tr class="memdesc:a665d8e59df965086b9af90b401de1609"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum supported blocksize.  <a href="saf__hades__internal_8h.html#a665d8e59df965086b9af90b401de1609">More...</a><br /></td></tr>
+<tr class="separator:a665d8e59df965086b9af90b401de1609"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a7632dfe4846ab8d4acded4c3a3401535"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__internal_8h.html#a7632dfe4846ab8d4acded4c3a3401535">hades_getInterpolatedHRTFs</a> (<a class="el" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> const hAna, <a class="el" href="saf__hades__synthesis_8h.html#aa1948d3aacdc116d9f1e8e36c40c79ce">HADES_HRTF_INTERP_OPTIONS</a> interpOption, <a class="el" href="structhades__binaural__config.html">hades_binaural_config</a> *binConfig, float *target_dirs_deg, int nTargetDirs, float_complex *hrtf_interp)</td></tr>
+<tr class="memdesc:a7632dfe4846ab8d4acded4c3a3401535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binaural filter interpolator.  <a href="saf__hades__internal_8h.html#a7632dfe4846ab8d4acded4c3a3401535">More...</a><br /></td></tr>
+<tr class="separator:a7632dfe4846ab8d4acded4c3a3401535"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a584563901f5ef87cbab18ca9a2b72110"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__internal_8h.html#a584563901f5ef87cbab18ca9a2b72110">hades_sdMUSIC_create</a> (void **const phMUSIC, int nMics, float *grid_dirs_deg, int nDirs)</td></tr>
+<tr class="memdesc:a584563901f5ef87cbab18ca9a2b72110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of the space-domain MUSIC implementation.  <a href="saf__hades__internal_8h.html#a584563901f5ef87cbab18ca9a2b72110">More...</a><br /></td></tr>
+<tr class="separator:a584563901f5ef87cbab18ca9a2b72110"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10dac80ec499a9a15e00adb988903e17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__internal_8h.html#a10dac80ec499a9a15e00adb988903e17">hades_sdMUSIC_destroy</a> (void **const phMUSIC)</td></tr>
+<tr class="memdesc:a10dac80ec499a9a15e00adb988903e17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of the spherical harmonic domain MUSIC implementation, which may be used for computing pseudo-spectrums for visualisation/DoA estimation purposes.  <a href="saf__hades__internal_8h.html#a10dac80ec499a9a15e00adb988903e17">More...</a><br /></td></tr>
+<tr class="separator:a10dac80ec499a9a15e00adb988903e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79f34d8711464a08e419e78242adde81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__internal_8h.html#a79f34d8711464a08e419e78242adde81">hades_sdMUSIC_compute</a> (void *const hMUSIC, float_complex *A_grid, float_complex *Vn, int nSrcs, float *P_music, int *peak_inds)</td></tr>
+<tr class="memdesc:a79f34d8711464a08e419e78242adde81"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes a pseudo-spectrum based on the MUSIC algorithm optionally returning the grid indices corresponding to the N highest peaks (N=nSrcs)  <a href="saf__hades__internal_8h.html#a79f34d8711464a08e419e78242adde81">More...</a><br /></td></tr>
+<tr class="separator:a79f34d8711464a08e419e78242adde81"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af68da11c6bdc5bd0ea9e84f4dc39758a"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__internal_8h.html#af68da11c6bdc5bd0ea9e84f4dc39758a">hades_comedie</a> (float *lambda, int N)</td></tr>
+<tr class="memdesc:af68da11c6bdc5bd0ea9e84f4dc39758a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an estimate of the diffuseness, based on [1].  <a href="saf__hades__internal_8h.html#af68da11c6bdc5bd0ea9e84f4dc39758a">More...</a><br /></td></tr>
+<tr class="separator:af68da11c6bdc5bd0ea9e84f4dc39758a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >Internal header for the HADES module (#SAF_HADES_MODULE) </p>
+<div class="textblock"><p >Internal header for the HADES module (<a class="el" href="saf_8h.html#ab6f0ef4b2d9cd26064b92d9749aab4c8" title="SAF Module: HADES.">SAF_HADES_MODULE</a>) </p>
 <p >The framework for binaural rendering of Hearing-Assistive/Augmented-reality Devices (HADES) is described further in [1].</p>
 <dl class="section see"><dt>See also</dt><dd>[1] paper submitted for review.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack and Janani Fernandez </dd></dl>
@@ -115,14 +165,291 @@ $(document).ready(function(){initNavTree('saf__hades__internal_8h.html',''); ini
 <dl class="section user"><dt>License</dt><dd>GNU GPLv2 </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="saf__hades__internal_8h_source.html">saf_hades_internal.h</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Macro Definition Documentation</h2>
+<a id="a665d8e59df965086b9af90b401de1609" name="a665d8e59df965086b9af90b401de1609"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a665d8e59df965086b9af90b401de1609">&#9670;&nbsp;</a></span>HADES_MAX_BLOCKSIZE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define HADES_MAX_BLOCKSIZE&#160;&#160;&#160;( 4096 )</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Maximum supported blocksize. </p>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__internal_8h_source.html#l00049">49</a> of file <a class="el" href="saf__hades__internal_8h_source.html">saf_hades_internal.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="af68da11c6bdc5bd0ea9e84f4dc39758a" name="af68da11c6bdc5bd0ea9e84f4dc39758a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af68da11c6bdc5bd0ea9e84f4dc39758a">&#9670;&nbsp;</a></span>hades_comedie()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float hades_comedie </td>
+          <td>(</td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>lambda</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>N</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns an estimate of the diffuseness, based on [1]. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">lambda</td><td>Eigenvalues; N x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">N</td><td>Number of eigenvalues </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>an estimate of the diffuseness</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>[1] Epain, N. and Jin, C.T., 2016. Spherical harmonic signal covariance and sound field diffuseness. IEEE/ACM Transactions on Audio, Speech, and Language Processing, 24(10), pp.1796-1807. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__internal_8c_source.html#l00238">238</a> of file <a class="el" href="saf__hades__internal_8c_source.html">saf_hades_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a7632dfe4846ab8d4acded4c3a3401535" name="a7632dfe4846ab8d4acded4c3a3401535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7632dfe4846ab8d4acded4c3a3401535">&#9670;&nbsp;</a></span>hades_getInterpolatedHRTFs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_getInterpolatedHRTFs </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hAna</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#aa1948d3aacdc116d9f1e8e36c40c79ce">HADES_HRTF_INTERP_OPTIONS</a>&#160;</td>
+          <td class="paramname"><em>interpOption</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structhades__binaural__config.html">hades_binaural_config</a> *&#160;</td>
+          <td class="paramname"><em>binConfig</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>target_dirs_deg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nTargetDirs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>hrtf_interp</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Binaural filter interpolator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hAna</td><td>hades analysis handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">interpOption</td><td>see <a class="el" href="saf__hades__synthesis_8h.html#aa1948d3aacdc116d9f1e8e36c40c79ce" title="HRTF interpolation options for hades_synthesis.">HADES_HRTF_INTERP_OPTIONS</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">binConfig</td><td>Binaural configuration </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">target_dirs_deg</td><td>Target/interpolation dirs, in degrees; FLAT: nTargetDirs x 2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nTargetDirs</td><td>Number of target/interpolation directions </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">hrtf_interp</td><td>The interpolated HRTFs; nBands x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x nTargetDirs </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__internal_8c_source.html#l00038">38</a> of file <a class="el" href="saf__hades__internal_8c_source.html">saf_hades_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a79f34d8711464a08e419e78242adde81" name="a79f34d8711464a08e419e78242adde81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79f34d8711464a08e419e78242adde81">&#9670;&nbsp;</a></span>hades_sdMUSIC_compute()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_sdMUSIC_compute </td>
+          <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hMUSIC</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>A_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>Vn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nSrcs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>P_music</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>peak_inds</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes a pseudo-spectrum based on the MUSIC algorithm optionally returning the grid indices corresponding to the N highest peaks (N=nSrcs) </p>
+<dl class="section warning"><dt>Warning</dt><dd>The number of sources should not exceed: floor(nMics/2)!</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hMUSIC</td><td>sdMUSIC handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">A_grid</td><td>Scanning steering vectors; nMics x nGrid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">Vn</td><td>Noise subspace; FLAT: nSH x (nSH - nSrcs) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nSrcs</td><td>Number of sources </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">P_music</td><td>Pseudo-spectrum (set to NULL if not wanted); nDirs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">peak_inds</td><td>Indices corresponding to the "nSrcs" highest peaks in the pseudo-spectrum (set to NULL if not wanted); nSrcs x 1 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__internal_8c_source.html#l00173">173</a> of file <a class="el" href="saf__hades__internal_8c_source.html">saf_hades_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a584563901f5ef87cbab18ca9a2b72110" name="a584563901f5ef87cbab18ca9a2b72110"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a584563901f5ef87cbab18ca9a2b72110">&#9670;&nbsp;</a></span>hades_sdMUSIC_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_sdMUSIC_create </td>
+          <td>(</td>
+          <td class="paramtype">void **const&#160;</td>
+          <td class="paramname"><em>phMUSIC</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nMics</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>grid_dirs_deg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nDirs</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates an instance of the space-domain MUSIC implementation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phMUSIC</td><td>(&amp;) address of the sdMUSIC handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nMics</td><td>Number of microphones in the array </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">grid_dirs_deg</td><td>Scanning grid directions; FLAT: nDirs x 2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nDirs</td><td>Number of scanning directions </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__internal_8c_source.html#l00125">125</a> of file <a class="el" href="saf__hades__internal_8c_source.html">saf_hades_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a10dac80ec499a9a15e00adb988903e17" name="a10dac80ec499a9a15e00adb988903e17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10dac80ec499a9a15e00adb988903e17">&#9670;&nbsp;</a></span>hades_sdMUSIC_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_sdMUSIC_destroy </td>
+          <td>(</td>
+          <td class="paramtype">void **const&#160;</td>
+          <td class="paramname"><em>phMUSIC</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroys an instance of the spherical harmonic domain MUSIC implementation, which may be used for computing pseudo-spectrums for visualisation/DoA estimation purposes. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phMUSIC</td><td>(&amp;) address of the sdMUSIC handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__internal_8c_source.html#l00152">152</a> of file <a class="el" href="saf__hades__internal_8c_source.html">saf_hades_internal.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_6e57a165dbd28ce52ae59706161fa9df.html">saf_hades</a></li><li class="navelem"><a class="el" href="saf__hades__internal_8h.html">saf_hades_internal.h</a></li>
-    <li class="footer">Generated on Thu Dec 9 2021 08:56:15 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Thu Dec 9 2021 09:03:19 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

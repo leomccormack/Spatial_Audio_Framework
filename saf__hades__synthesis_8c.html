@@ -94,18 +94,57 @@ $(document).ready(function(){initNavTree('saf__hades__synthesis_8c.html',''); in
 </div>
 
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">saf_hades_synthesis.c File Reference<div class="ingroups"><a class="el" href="group___h_a_d_e_s.html">saf_hades</a></div></div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Source file for the HADES synthesis (#SAF_HADES_MODULE)  
+<p>Source file for the HADES synthesis (<a class="el" href="saf_8h.html#ab6f0ef4b2d9cd26064b92d9749aab4c8" title="SAF Module: HADES.">SAF_HADES_MODULE</a>)  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="saf__hades__synthesis_8h_source.html">saf_hades_synthesis.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf__hades__internal_8h_source.html">saf_hades_internal.h</a>&quot;</code><br />
 </div>
 <p><a href="saf__hades__synthesis_8c_source.html">Go to the source code of this file.</a></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a48bc239f23b58af4af11bf51cb3d5095"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a48bc239f23b58af4af11bf51cb3d5095">hades_radial_editor_create</a> (<a class="el" href="saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411">hades_radial_editor_handle</a> *const phREd, <a class="el" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> const hAna)</td></tr>
+<tr class="memdesc:a48bc239f23b58af4af11bf51cb3d5095"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates and returns a handle to an instance of a hades radial editor object, which allows for direction-dependent (360degree) manipulation of gains.  <a href="saf__hades__synthesis_8c.html#a48bc239f23b58af4af11bf51cb3d5095">More...</a><br /></td></tr>
+<tr class="separator:a48bc239f23b58af4af11bf51cb3d5095"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04d6422250187340593ec1b67343663a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a04d6422250187340593ec1b67343663a">hades_radial_editor_destroy</a> (<a class="el" href="saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411">hades_radial_editor_handle</a> *const phREd)</td></tr>
+<tr class="memdesc:a04d6422250187340593ec1b67343663a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of a hades radial editor object.  <a href="saf__hades__synthesis_8c.html#a04d6422250187340593ec1b67343663a">More...</a><br /></td></tr>
+<tr class="separator:a04d6422250187340593ec1b67343663a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dfdcd981ee11361c0689f1528a91fa8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a2dfdcd981ee11361c0689f1528a91fa8">hades_radial_editor_apply</a> (<a class="el" href="saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411">hades_radial_editor_handle</a> const hREd, <a class="el" href="saf__hades__analysis_8h.html#a8ffe809fcb35d05805a84f327da291b2">hades_param_container_handle</a> const hPCon, float dirGain_dB[360])</td></tr>
+<tr class="memdesc:a2dfdcd981ee11361c0689f1528a91fa8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the radial (360 degree) parameter editing.  <a href="saf__hades__synthesis_8c.html#a2dfdcd981ee11361c0689f1528a91fa8">More...</a><br /></td></tr>
+<tr class="separator:a2dfdcd981ee11361c0689f1528a91fa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b155ed30b3ac13dc3220e448f275042"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a9b155ed30b3ac13dc3220e448f275042">hades_synthesis_create</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> *const phSyn, <a class="el" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> const hAna, <a class="el" href="saf__hades__synthesis_8h.html#a6f5acbf7bb0e83995a91b06054b7119c">HADES_BEAMFORMER_TYPE</a> beamOption, int enableCM, int refIndices[2], <a class="el" href="structhades__binaural__config.html">hades_binaural_config</a> *binConfig, <a class="el" href="saf__hades__synthesis_8h.html#aa1948d3aacdc116d9f1e8e36c40c79ce">HADES_HRTF_INTERP_OPTIONS</a> interpOption)</td></tr>
+<tr class="memdesc:a9b155ed30b3ac13dc3220e448f275042"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates and returns a handle to an instance of a hades synthesis object.  <a href="saf__hades__synthesis_8c.html#a9b155ed30b3ac13dc3220e448f275042">More...</a><br /></td></tr>
+<tr class="separator:a9b155ed30b3ac13dc3220e448f275042"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab55d0297325a6d206e2a53ec3803b8b8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#ab55d0297325a6d206e2a53ec3803b8b8">hades_synthesis_destroy</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> *const phSyn)</td></tr>
+<tr class="memdesc:ab55d0297325a6d206e2a53ec3803b8b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of hades synthesis.  <a href="saf__hades__synthesis_8c.html#ab55d0297325a6d206e2a53ec3803b8b8">More...</a><br /></td></tr>
+<tr class="separator:ab55d0297325a6d206e2a53ec3803b8b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3d8d559e20b534b4e82941f7d0f1e5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#ab3d8d559e20b534b4e82941f7d0f1e5e">hades_synthesis_reset</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const hSyn)</td></tr>
+<tr class="memdesc:ab3d8d559e20b534b4e82941f7d0f1e5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flushes run-time buffers with zeros.  <a href="saf__hades__synthesis_8c.html#ab3d8d559e20b534b4e82941f7d0f1e5e">More...</a><br /></td></tr>
+<tr class="separator:ab3d8d559e20b534b4e82941f7d0f1e5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a743fe24767662fbe680f90bc479cc999"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a743fe24767662fbe680f90bc479cc999">hades_synthesis_apply</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const hSyn, <a class="el" href="saf__hades__analysis_8h.html#a8ffe809fcb35d05805a84f327da291b2">hades_param_container_handle</a> const hPCon, <a class="el" href="saf__hades__analysis_8h.html#a929e7872d4a502095b0b1e24049ab3d6">hades_signal_container_handle</a> const hSCon, int nChannels, int blocksize, float **output)</td></tr>
+<tr class="memdesc:a743fe24767662fbe680f90bc479cc999"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs hades synthesis.  <a href="saf__hades__synthesis_8c.html#a743fe24767662fbe680f90bc479cc999">More...</a><br /></td></tr>
+<tr class="separator:a743fe24767662fbe680f90bc479cc999"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5817cc33f8138e8693c957e6c78d125d"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a5817cc33f8138e8693c957e6c78d125d">hades_synthesis_getEqPtr</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const hSyn, int *nBands)</td></tr>
+<tr class="memdesc:a5817cc33f8138e8693c957e6c78d125d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the eq vector, which can be changed at run-time.  <a href="saf__hades__synthesis_8c.html#a5817cc33f8138e8693c957e6c78d125d">More...</a><br /></td></tr>
+<tr class="separator:a5817cc33f8138e8693c957e6c78d125d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab7f1fe5c47eb726f3a89beec60061ec"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#aab7f1fe5c47eb726f3a89beec60061ec">hades_synthesis_getStreamBalancePtr</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const hSyn, int *nBands)</td></tr>
+<tr class="memdesc:aab7f1fe5c47eb726f3a89beec60061ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the stream balance vector [0..2], which can be changed at run-time.  <a href="saf__hades__synthesis_8c.html#aab7f1fe5c47eb726f3a89beec60061ec">More...</a><br /></td></tr>
+<tr class="separator:aab7f1fe5c47eb726f3a89beec60061ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62b6ceb39a33999bbd47ed8c6dc97b34"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a62b6ceb39a33999bbd47ed8c6dc97b34">hades_synthesis_getSynthesisAveragingCoeffPtr</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const hSyn)</td></tr>
+<tr class="memdesc:a62b6ceb39a33999bbd47ed8c6dc97b34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a pointer to the synthesis averaging coefficient scalar [0..1], which can be changed at run-time.  <a href="saf__hades__synthesis_8c.html#a62b6ceb39a33999bbd47ed8c6dc97b34">More...</a><br /></td></tr>
+<tr class="separator:a62b6ceb39a33999bbd47ed8c6dc97b34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23bfe9c50c24dab46f1a89fa9603ad61"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__hades__synthesis_8c.html#a23bfe9c50c24dab46f1a89fa9603ad61">hades_synthesis_getProcDelay</a> (<a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const hSyn)</td></tr>
+<tr class="memdesc:a23bfe9c50c24dab46f1a89fa9603ad61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the synthesiser processing delay, in samples.  <a href="saf__hades__synthesis_8c.html#a23bfe9c50c24dab46f1a89fa9603ad61">More...</a><br /></td></tr>
+<tr class="separator:a23bfe9c50c24dab46f1a89fa9603ad61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p >Source file for the HADES synthesis (#SAF_HADES_MODULE) </p>
+<div class="textblock"><p >Source file for the HADES synthesis (<a class="el" href="saf_8h.html#ab6f0ef4b2d9cd26064b92d9749aab4c8" title="SAF Module: HADES.">SAF_HADES_MODULE</a>) </p>
 <p >The framework for binaural rendering of Hearing-Assistive/Augmented-reality Devices (HADES) is described further in [1].</p>
 <dl class="section see"><dt>See also</dt><dd>[1] paper submitted for review.</dd></dl>
 <dl class="section author"><dt>Author</dt><dd>Leo McCormack and Janani Fernandez </dd></dl>
@@ -113,14 +152,458 @@ $(document).ready(function(){initNavTree('saf__hades__synthesis_8c.html',''); in
 <dl class="section user"><dt>License</dt><dd>GNU GPLv2 </dd></dl>
 
 <p class="definition">Definition in file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a2dfdcd981ee11361c0689f1528a91fa8" name="a2dfdcd981ee11361c0689f1528a91fa8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dfdcd981ee11361c0689f1528a91fa8">&#9670;&nbsp;</a></span>hades_radial_editor_apply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_radial_editor_apply </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411">hades_radial_editor_handle</a> const&#160;</td>
+          <td class="paramname"><em>hREd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__analysis_8h.html#a8ffe809fcb35d05805a84f327da291b2">hades_param_container_handle</a> const&#160;</td>
+          <td class="paramname"><em>hPCon</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>dirGain_dB</em>[360]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Applies the radial (360 degree) parameter editing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hREd</td><td>hades radial editor handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hPCon</td><td>hades parameter container handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">dirGain_dB</td><td>Extra directional gains for the direct stream, in dB </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00073">73</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a48bc239f23b58af4af11bf51cb3d5095" name="a48bc239f23b58af4af11bf51cb3d5095"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48bc239f23b58af4af11bf51cb3d5095">&#9670;&nbsp;</a></span>hades_radial_editor_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_radial_editor_create </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411">hades_radial_editor_handle</a> *const&#160;</td>
+          <td class="paramname"><em>phREd</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hAna</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates and returns a handle to an instance of a hades radial editor object, which allows for direction-dependent (360degree) manipulation of gains. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phREd</td><td>(&amp;) address of hades radial editor handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hAna</td><td>hades analysis handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00043">43</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a04d6422250187340593ec1b67343663a" name="a04d6422250187340593ec1b67343663a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04d6422250187340593ec1b67343663a">&#9670;&nbsp;</a></span>hades_radial_editor_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_radial_editor_destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411">hades_radial_editor_handle</a> *const&#160;</td>
+          <td class="paramname"><em>phREd</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroys an instance of a hades radial editor object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phREd</td><td>(&amp;) address of hades radial editor handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00059">59</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a743fe24767662fbe680f90bc479cc999" name="a743fe24767662fbe680f90bc479cc999"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a743fe24767662fbe680f90bc479cc999">&#9670;&nbsp;</a></span>hades_synthesis_apply()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_synthesis_apply </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSyn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__analysis_8h.html#a8ffe809fcb35d05805a84f327da291b2">hades_param_container_handle</a> const&#160;</td>
+          <td class="paramname"><em>hPCon</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__analysis_8h.html#a929e7872d4a502095b0b1e24049ab3d6">hades_signal_container_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSCon</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nChannels</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>blocksize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float **&#160;</td>
+          <td class="paramname"><em>output</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Performs hades synthesis. </p>
+<dl class="section note"><dt>Note</dt><dd>If nChannels is higher than the number required by the configuration, then these extra channels are zero'd. If there are too few, then the channels are truncated.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSyn</td><td>hades synthesis handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hPCon</td><td>hades parameter container handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSCon</td><td>hades signal container handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nChannels</td><td>Number of channels in output buffer </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">blocksize</td><td>Number of samples in output buffer </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Output buffer; nChannels x blocksize </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00304">304</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a9b155ed30b3ac13dc3220e448f275042" name="a9b155ed30b3ac13dc3220e448f275042"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b155ed30b3ac13dc3220e448f275042">&#9670;&nbsp;</a></span>hades_synthesis_create()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_synthesis_create </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> *const&#160;</td>
+          <td class="paramname"><em>phSyn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hAna</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6f5acbf7bb0e83995a91b06054b7119c">HADES_BEAMFORMER_TYPE</a>&#160;</td>
+          <td class="paramname"><em>beamOption</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>enableCM</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>refIndices</em>[2], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structhades__binaural__config.html">hades_binaural_config</a> *&#160;</td>
+          <td class="paramname"><em>binConfig</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#aa1948d3aacdc116d9f1e8e36c40c79ce">HADES_HRTF_INTERP_OPTIONS</a>&#160;</td>
+          <td class="paramname"><em>interpOption</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Creates and returns a handle to an instance of a hades synthesis object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phSyn</td><td>(&amp;) address of hades synthesis handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">hAna</td><td>hades analysis handle </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">beamOption</td><td>see <a class="el" href="saf__hades__synthesis_8h.html#a6f5acbf7bb0e83995a91b06054b7119c" title="Beamforming options for hades_synthesis.">HADES_BEAMFORMER_TYPE</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">enableCM</td><td>0: disabled, 1: enable covariance matching </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">binConfig</td><td>Binaural configuration </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">interpOption</td><td>see <a class="el" href="saf__hades__synthesis_8h.html#aa1948d3aacdc116d9f1e8e36c40c79ce" title="HRTF interpolation options for hades_synthesis.">HADES_HRTF_INTERP_OPTIONS</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00102">102</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="ab55d0297325a6d206e2a53ec3803b8b8" name="ab55d0297325a6d206e2a53ec3803b8b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab55d0297325a6d206e2a53ec3803b8b8">&#9670;&nbsp;</a></span>hades_synthesis_destroy()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_synthesis_destroy </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> *const&#160;</td>
+          <td class="paramname"><em>phSyn</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroys an instance of hades synthesis. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">phSyn</td><td>(&amp;) address of hades synthesis handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00230">230</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a5817cc33f8138e8693c957e6c78d125d" name="a5817cc33f8138e8693c957e6c78d125d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5817cc33f8138e8693c957e6c78d125d">&#9670;&nbsp;</a></span>hades_synthesis_getEqPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float * hades_synthesis_getEqPtr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSyn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>nBands</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the eq vector, which can be changed at run-time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSyn</td><td>hades synthesis handle </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">nBands</td><td>(&amp;) Number of bands (set to NULL if not needed) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the eq vector (or NULL if hSyn is not initialised); nBands x 1 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00495">495</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a23bfe9c50c24dab46f1a89fa9603ad61" name="a23bfe9c50c24dab46f1a89fa9603ad61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a23bfe9c50c24dab46f1a89fa9603ad61">&#9670;&nbsp;</a></span>hades_synthesis_getProcDelay()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int hades_synthesis_getProcDelay </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSyn</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns the synthesiser processing delay, in samples. </p>
+<dl class="section note"><dt>Note</dt><dd>This is not inclusive of the time-frequency transform delay, as you may get this using <a class="el" href="saf__hades__analysis_8c.html#a1a1b02d4e1d4b3ca16690900aaf7c6b0" title="Returns the analyser processing delay, in samples.">hades_analysis_getProcDelay()</a>. The total delay is: <a class="el" href="saf__hades__analysis_8c.html#a1a1b02d4e1d4b3ca16690900aaf7c6b0" title="Returns the analyser processing delay, in samples.">hades_analysis_getProcDelay()</a> + <a class="el" href="saf__hades__synthesis_8h.html#a23bfe9c50c24dab46f1a89fa9603ad61" title="Returns the synthesiser processing delay, in samples.">hades_synthesis_getProcDelay()</a>. </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00542">542</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="aab7f1fe5c47eb726f3a89beec60061ec" name="aab7f1fe5c47eb726f3a89beec60061ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab7f1fe5c47eb726f3a89beec60061ec">&#9670;&nbsp;</a></span>hades_synthesis_getStreamBalancePtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float * hades_synthesis_getStreamBalancePtr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSyn</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>nBands</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the stream balance vector [0..2], which can be changed at run-time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSyn</td><td>hades synthesis handle </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">nBands</td><td>(&amp;) Number of bands (set to NULL if not needed) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the stream balance vector (or NULL if hSyn is not initialised); nBands x 1 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00513">513</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="a62b6ceb39a33999bbd47ed8c6dc97b34" name="a62b6ceb39a33999bbd47ed8c6dc97b34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62b6ceb39a33999bbd47ed8c6dc97b34">&#9670;&nbsp;</a></span>hades_synthesis_getSynthesisAveragingCoeffPtr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">float * hades_synthesis_getSynthesisAveragingCoeffPtr </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSyn</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Returns a pointer to the synthesis averaging coefficient scalar [0..1], which can be changed at run-time. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSyn</td><td>hades synthesis handle </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>pointer to the mixing matrix averaging coeff scalar (or NULL if hSyn is not initialised); 1 x 1 </dd></dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00531">531</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+<a id="ab3d8d559e20b534b4e82941f7d0f1e5e" name="ab3d8d559e20b534b4e82941f7d0f1e5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3d8d559e20b534b4e82941f7d0f1e5e">&#9670;&nbsp;</a></span>hades_synthesis_reset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void hades_synthesis_reset </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> const&#160;</td>
+          <td class="paramname"><em>hSyn</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Flushes run-time buffers with zeros. </p>
+<p >Call this ONCE before calling <a class="el" href="saf__hades__synthesis_8h.html#a743fe24767662fbe680f90bc479cc999" title="Performs hades synthesis.">hades_synthesis_apply()</a></p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">hSyn</td><td>hades synthesis handle </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__hades__synthesis_8c_source.html#l00286">286</a> of file <a class="el" href="saf__hades__synthesis_8c_source.html">saf_hades_synthesis.c</a>.</p>
+
+</div>
+</div>
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_6e57a165dbd28ce52ae59706161fa9df.html">saf_hades</a></li><li class="navelem"><a class="el" href="saf__hades__synthesis_8c.html">saf_hades_synthesis.c</a></li>
-    <li class="footer">Generated on Thu Dec 9 2021 08:56:15 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Thu Dec 9 2021 09:03:19 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

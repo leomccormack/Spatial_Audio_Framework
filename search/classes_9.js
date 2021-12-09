@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['m6_0',['M6',['../struct_m6.html',1,'']]],
-  ['matrixconv_5fdata_1',['matrixconv_data',['../structmatrixconv__data.html',1,'']]],
-  ['mcs_5fdata_2',['MCS_data',['../struct_m_c_s__data.html',1,'']]],
-  ['multiconv_5fdata_3',['multiconv_data',['../structmulticonv__data.html',1,'']]]
+  ['latticeapf_0',['latticeAPF',['../structlattice_a_p_f.html',1,'']]],
+  ['latticedecor_5fdata_1',['latticeDecor_data',['../structlattice_decor__data.html',1,'']]]
 ];

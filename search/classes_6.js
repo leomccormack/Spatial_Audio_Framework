@@ -1,10 +1,10 @@
 var searchData=
 [
-  ['ims_5fcore_5fworkspace_0',['ims_core_workspace',['../structims__core__workspace.html',1,'']]],
-  ['ims_5fpos_5fxyz_1',['ims_pos_xyz',['../structims__pos__xyz.html',1,'']]],
-  ['ims_5frec_5fobj_2',['ims_rec_obj',['../structims__rec__obj.html',1,'']]],
-  ['ims_5frir_3',['ims_rir',['../structims__rir.html',1,'']]],
-  ['ims_5fscene_5fdata_4',['ims_scene_data',['../structims__scene__data.html',1,'']]],
-  ['ims_5fsrc_5fobj_5',['ims_src_obj',['../structims__src__obj.html',1,'']]],
-  ['int_5fw_5fidx_6',['int_w_idx',['../structint__w__idx.html',1,'']]]
+  ['hades_5fanalysis_5fdata_0',['hades_analysis_data',['../structhades__analysis__data.html',1,'']]],
+  ['hades_5fbinaural_5fconfig_1',['hades_binaural_config',['../structhades__binaural__config.html',1,'']]],
+  ['hades_5fparam_5fcontainer_5fdata_2',['hades_param_container_data',['../structhades__param__container__data.html',1,'']]],
+  ['hades_5fradial_5feditor_5fdata_3',['hades_radial_editor_data',['../structhades__radial__editor__data.html',1,'']]],
+  ['hades_5fsdmusic_5fdata_4',['hades_sdMUSIC_data',['../structhades__sd_m_u_s_i_c__data.html',1,'']]],
+  ['hades_5fsignal_5fcontainer_5fdata_5',['hades_signal_container_data',['../structhades__signal__container__data.html',1,'']]],
+  ['hades_5fsynthesis_5fdata_6',['hades_synthesis_data',['../structhades__synthesis__data.html',1,'']]]
 ];

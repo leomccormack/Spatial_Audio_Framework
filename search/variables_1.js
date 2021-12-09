@@ -17,9 +17,12 @@ var searchData=
   ['are_5funit_5fvectors_14',['ARE_UNIT_VECTORS',['../structtracker3d__config.html#ab9c6164485bd05c7c14d24834f50ac94',1,'tracker3d_config']]],
   ['arrayspecs_15',['arraySpecs',['../structarray2sh__data.html#a776217f44753eed71987143f7b90b3cf',1,'array2sh_data']]],
   ['arraytype_16',['arrayType',['../structarray2sh__array_pars.html#a431b14ba8d32a9a97033debfa89e3656',1,'array2sh_arrayPars']]],
-  ['aspectratiooption_17',['aspectRatioOption',['../structdirass__data.html#a8a604f56da730831da807115ea370fe3',1,'dirass_data::aspectRatioOption()'],['../structpowermap__data.html#ad2f9b722371299d4ae909f5cfe9e5305',1,'powermap_data::aspectRatioOption()']]],
-  ['attack_5fms_18',['attack_ms',['../structambi__drc__data.html#a51311ee34e6b935533bfc685b2f5e628',1,'ambi_drc_data']]],
-  ['authorcontact_19',['AuthorContact',['../structsaf__sofa__container.html#ae2cb5d38ce0c4149dc5aa6e4f81f5077',1,'saf_sofa_container']]],
-  ['avg_5fms_20',['avg_ms',['../structsldoa__data.html#ad1fc54de95076f32c2be0d19abc5613e',1,'sldoa_data']]],
-  ['azi_5fdeg_21',['azi_deg',['../structsldoa__data.html#aff72c5b78ab5281cb815557fc6683620',1,'sldoa_data']]]
+  ['as_17',['As',['../structhades__synthesis__data.html#a4240ca636bcd3b09eda8f0c15c53cc74',1,'hades_synthesis_data']]],
+  ['as_5fl_18',['As_l',['../structhades__synthesis__data.html#ad47de4e559fe8c6e35d933a42a54bbce',1,'hades_synthesis_data']]],
+  ['as_5fr_19',['As_r',['../structhades__synthesis__data.html#a7ceadee3d25478fb420b118b661a84f9',1,'hades_synthesis_data']]],
+  ['aspectratiooption_20',['aspectRatioOption',['../structdirass__data.html#a8a604f56da730831da807115ea370fe3',1,'dirass_data::aspectRatioOption()'],['../structpowermap__data.html#ad2f9b722371299d4ae909f5cfe9e5305',1,'powermap_data::aspectRatioOption()']]],
+  ['attack_5fms_21',['attack_ms',['../structambi__drc__data.html#a51311ee34e6b935533bfc685b2f5e628',1,'ambi_drc_data']]],
+  ['authorcontact_22',['AuthorContact',['../structsaf__sofa__container.html#ae2cb5d38ce0c4149dc5aa6e4f81f5077',1,'saf_sofa_container']]],
+  ['avg_5fms_23',['avg_ms',['../structsldoa__data.html#ad1fc54de95076f32c2be0d19abc5613e',1,'sldoa_data']]],
+  ['azi_5fdeg_24',['azi_deg',['../structsldoa__data.html#aff72c5b78ab5281cb815557fc6683620',1,'sldoa_data']]]
 ];

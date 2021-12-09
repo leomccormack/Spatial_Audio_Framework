@@ -20,6 +20,7 @@ var saf__test_8h =
     [ "test__getSHrotMtxReal", "saf__test_8h.html#a8a5477ba3d6118be1ea4b962c573c9f9", null ],
     [ "test__getVoronoiWeights", "saf__test_8h.html#a195368bc46775c4a9370249c54b0bc35", null ],
     [ "test__gexpm", "saf__test_8h.html#aaf23bc179bbcae07de5ae4a83cfc6bba", null ],
+    [ "test__hades", "saf__test_8h.html#aacc4400dcc34cc31b86d73772a69ab6b", null ],
     [ "test__ims_shoebox_RIR", "saf__test_8h.html#a2221c87f296b695d87464eaa331d5cda", null ],
     [ "test__ims_shoebox_TD", "saf__test_8h.html#ae49109411cfcb133adfe23ee2c655218", null ],
     [ "test__latticeDecorrelator", "saf__test_8h.html#aeb7e6c04ac91cc3d90025bcac95e8549", null ],

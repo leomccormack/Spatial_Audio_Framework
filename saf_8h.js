@@ -3,6 +3,7 @@ var saf_8h =
     [ "MKSTRING", "saf_8h.html#aba0fb640ea3653b1ece6501d3b0cd7f0", null ],
     [ "MKSTRING_", "saf_8h.html#af0cbde7c74c0dd6349ae1adc978b9424", null ],
     [ "SAF_CDF4SAP_MODULE", "saf_8h.html#ac7a86922cec9850fb4ea80e7e1ac64fc", null ],
+    [ "SAF_HADES_MODULE", "saf_8h.html#ab6f0ef4b2d9cd26064b92d9749aab4c8", null ],
     [ "SAF_HOA_MODULE", "saf_8h.html#a9c2c7080a25d54c9d7bc99588935ea8f", null ],
     [ "SAF_HRIR_MODULE", "saf_8h.html#a2afda4360b65935e869ca8c4fd98fea1", null ],
     [ "SAF_LICENSE_STRING", "saf_8h.html#a8b83f86f63ef9d7d0b3608fc757722f6", null ],

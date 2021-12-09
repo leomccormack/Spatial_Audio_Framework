@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['m_0',['M',['../struct_m_c_s__data.html#afe80d0d11abf07a48bd6fa59c56ba550',1,'MCS_data']]],
+  ['m_0',['M',['../struct_m_c_s__data.html#afe80d0d11abf07a48bd6fa59c56ba550',1,'MCS_data::M()'],['../structhades__synthesis__data.html#a1a9bce9d9fd7bc1678e18d17d7097574',1,'hades_synthesis_data::M()']]],
   ['m0_1',['M0',['../structtracker3d__config.html#a0a26193f86bf7e28e2af72a3d7afde10',1,'tracker3d_config']]],
   ['m_5fdec_2',['M_dec',['../structambi__bin__codec_pars.html#ad297c74fb027c959068a93e4f2b8ffbf',1,'ambi_bin_codecPars::M_dec()'],['../structambi__dec__codec_pars.html#a3f3021281d08a469aea860191f1794e9',1,'ambi_dec_codecPars::M_dec()']]],
   ['m_5fdec_5fcmplx_3',['M_dec_cmplx',['../structambi__dec__codec_pars.html#ab3ef017e5778948dd71dec5eab10386d',1,'ambi_dec_codecPars']]],
@@ -10,7 +10,7 @@ var searchData=
   ['m_5fnorm_7',['M_norm',['../structambi__dec__codec_pars.html#afadc47cbbab1f9b424c035b09be3d494',1,'ambi_dec_codecPars']]],
   ['m_5frot_8',['M_rot',['../structambi__bin__data.html#a40cd7ac92d7e58ce19b972da5d57ea0a',1,'ambi_bin_data::M_rot()'],['../structrotator__data.html#a320737f2dd7670ce9fe44efff06869c0',1,'rotator_data::M_rot()']]],
   ['m_5frot_5fstatus_9',['M_rot_status',['../structrotator__data.html#a348619b0dfcb9d163421e9da898cf11c',1,'rotator_data']]],
-  ['masterorder_10',['masterOrder',['../structambi__dec__data.html#a8d93ed01e4cf2d89dbf322c12d4b0a66',1,'ambi_dec_data::masterOrder()'],['../structsldoa__data.html#ae0fb1b39d4482f50fd20363315a42947',1,'sldoa_data::masterOrder()'],['../structpowermap__data.html#ac70daf336e7de3f919b69d331da6e4f1',1,'powermap_data::masterOrder()']]],
+  ['masterorder_10',['masterOrder',['../structambi__dec__data.html#a8d93ed01e4cf2d89dbf322c12d4b0a66',1,'ambi_dec_data::masterOrder()'],['../structpowermap__data.html#ac70daf336e7de3f919b69d331da6e4f1',1,'powermap_data::masterOrder()'],['../structsldoa__data.html#ae0fb1b39d4482f50fd20363315a42947',1,'sldoa_data::masterOrder()']]],
   ['maxfreq_11',['maxFreq',['../structsldoa__data.html#a1a096602e79139e23c2e128e4e4f8ce2',1,'sldoa_data']]],
   ['maxfreq_5fhz_12',['maxFreq_hz',['../structdirass__data.html#ac377938f12ea1c7f89bde8535e33d9f4',1,'dirass_data']]],
   ['maxnactivetargets_13',['maxNactiveTargets',['../structtracker3d__config.html#a866c575c878bd7fc1b00ed7d345725fa',1,'tracker3d_config']]],
