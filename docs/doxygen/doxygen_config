@@ -2147,6 +2147,7 @@ INCLUDE_FILE_PATTERNS  =
 PREDEFINED             = SAF_USE_INTEL_MKL_LP64 \
                          SAF_ENABLE_TRACKER_MODULE \
                          SAF_ENABLE_SOFA_READER_MODULE \
+                         SAF_ENABLE_HADES_MODULE \
                          SAF_ENABLE_EXAMPLES_TESTS
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this

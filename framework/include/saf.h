@@ -68,7 +68,7 @@
  *  @brief    SOFA file reading module */
 /** @defgroup Tracker      saf_tracker
  *  @brief    Particle-filtering based 3D multi-target tracker */
-/** @defgroup HADES    saf_hades
+/** @defgroup HADES        saf_hades
  *  @brief    HADES framework */
 
 
