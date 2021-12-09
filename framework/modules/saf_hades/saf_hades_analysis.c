@@ -24,7 +24,7 @@
  * The framework for binaural rendering of Hearing-Assistive/Augmented-reality
  * Devices (HADES) is described further in [1].
  *
- * @see [1]
+ * @see [1] paper submitted for review.
  *
  * @author Leo McCormack and Janani Fernandez
  * @date 01.02.2021

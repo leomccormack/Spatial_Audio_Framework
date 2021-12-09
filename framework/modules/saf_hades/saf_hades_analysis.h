@@ -24,7 +24,7 @@
  * The framework for binaural rendering of Hearing-Assistive/Augmented-reality
  * Devices (HADES) is described further in [1].
  *
- * @see [1]
+ * @see [1] paper submitted for review.
  *
  * @author Leo McCormack and Janani Fernandez
  * @date 01.02.2021
@@ -57,14 +57,11 @@ typedef struct _hades_signal_container_data* hades_signal_container_handle;
 /* ========================================================================== */
 
 /**
- * Options for source number estimation (also known as "detection" in array
- * processing literature) for hades_analysis
- *
- * @note The #HADES_USE_SHDIFF_SORTE option only operates for orders > 1
+ * Options for diffuseness estimation for hades_analysis
  *
  * @see [1] Epain, N. and Jin, C.T., 2016. Spherical harmonic signal covariance
- *          and sound field diffuseness. IEEE/ACM Transactions on Audio, Speech,
- *          and Language Processing, 24(10), pp.1796-1807.
+ *        and sound field diffuseness. IEEE/ACM Transactions on Audio, Speech,
+ *        and Language Processing, 24(10), pp.1796-1807.
  */
 typedef enum {
     HADES_USE_COMEDIE /**< As in [1], after spatially whitening the array SCM */
@@ -137,13 +134,13 @@ void hades_analysis_destroy(/* Input Arguments */
 void hades_analysis_reset(hades_analysis_handle const hAna);
 
 /**
- * Performs hades encoding: forward time-frequency transform, source number
- * estimation and DoA estimation per band
+ * Performs hades encoding: forward time-frequency transform, diffuseness
+ * and DoA estimation per band
  *
  * @note See hades_param_container_create() and
  *       hades_signal_container_create() for creating the parameter and signal
  *       containers, respectively. The former contains the estimated spatial
- *       parameters (diffuseness, source number, DoA for each source), while
+ *       parameters (a diffuseness measure, DoA for each source), while
  *       the latter contains the input signals in the time-frequency domain,
  *       and their spatial covariance matrices per band. These containers can
  *       then be passed to hades_synthesis_apply() to reproduce the encoded

@@ -45,11 +45,13 @@ The [framework](docs/FRAMEWORK_STRUCTURE.md) comprises the following core module
 The framework also includes the following optional modules:
 * **saf_sofa_reader** - a simple SOFA file reader (**ISC** License).
 * **saf_tracker** - a particle-filtering based tracker (**GPLv2** License).
+* **saf_hades** - for binaural rendering of Hearing-Assistive/Augmented-reality Devices (HADES)  (**GPLv2** License).
 
 To enable optional framework modules, simply add the relevant pre-processor definition:
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
+SAF_ENABLE_HADES_MODULE        # to enable saf_hades
 ```
 
 ### Additional options
@@ -91,6 +93,7 @@ The available SAF-related CMake options (and their default values) are:
 -DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_LP64 # performance library to employ
 -DSAF_ENABLE_SOFA_READER_MODULE=0            # enable/disable the saf_sofa_reader module 
 -DSAF_ENABLE_TRACKER_MODULE=0                # enable/disable the saf_tracker module 
+-DSAF_ENABLE_HADES_MODULE=0                  # enable/disable the saf_hades module 
 -DSAF_BUILD_EXAMPLES=1                       # build saf examples
 -DSAF_BUILD_EXTRAS=0                         # build safmex etc.
 -DSAF_BUILD_TESTS=1                          # build unit testing program
@@ -201,6 +204,7 @@ then please feel free to do so and submit a pull request. We may also be able to
 * **Ville Pulkki** - algorithm design
 * **Juhani Paasonen** - C programming
 * **Chris Hold** - C programming and algorithm design 
+* **Janani Fernandez** - C programming and algorithm design 
 
 # License
 
