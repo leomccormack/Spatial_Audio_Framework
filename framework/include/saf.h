@@ -301,7 +301,7 @@
  *   Add this pre-processor definition to your project to enable this module:
  *       SAF_ENABLE_HADES_MODULE
  * ## Dependencies
- *   saf_utilities, saf_vbap, saf_hrir, saf_cdf4sap
+ *   saf_utilities.h, saf_vbap.h, saf_hrir.h, saf_cdf4sap.h
  *
  * @license GNU GPLv2
  */
