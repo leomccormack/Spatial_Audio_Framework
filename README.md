@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4707945.svg)](https://doi.org/10.5281/zenodo.4707945)
+![GitHub release (latest by date)](https://img.shields.io/github/v/release/leomccormack/Spatial_Audio_Framework) ![GitHub Release Date](https://img.shields.io/github/release-date/leomccormack/Spatial_Audio_Framework) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4707945.svg)](https://doi.org/10.5281/zenodo.4118286)  
 
 <img src="saf.svg"> 
 
@@ -15,7 +15,6 @@ Owing to its modular design, expanding the framework is relatively straightforwa
 
 The framework requires the following external libraries:
 * Any library (or libraries) conforming to the [CBLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms#Implementations) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) standards
-* (**Optional**) [netCDF](https://www.unidata.ucar.edu/software/netcdf/) for reading [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) files
 * (**Optional**) Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) for the FFT and/or resampler
 * (**Optional**) [FFTW](https://www.fftw.org/) for the FFT
 * (**Optional**) a SSE, AVX, AVX-512 supporting CPU
@@ -45,13 +44,14 @@ The [framework](docs/FRAMEWORK_STRUCTURE.md) comprises the following core module
 The framework also includes the following optional modules:
 * **saf_sofa_reader** - a simple SOFA file reader (**ISC** License).
 * **saf_tracker** - a particle-filtering based tracker (**GPLv2** License).
+* **saf_hades** - for binaural rendering of Hearing-Assistive/Augmented-reality Devices (HADES)  (**GPLv2** License).
 
 To enable optional framework modules, simply add the relevant pre-processor definition:
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
+SAF_ENABLE_HADES_MODULE        # to enable saf_hades
 ```
-Note that the **saf_sofa_reader** module also requires [netCDF](https://www.unidata.ucar.edu/software/netcdf/) to be linked to your project. [Instructions on how to install/link this dependency can be found here](docs/SOFA_READER_MODULE_DEPENDENCIES.md). 
 
 ### Additional options
 
@@ -89,13 +89,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE saf)
 
 The available SAF-related CMake options (and their default values) are:
 ```
--DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL    # performance library to employ
--DSAF_ENABLE_SOFA_READER_MODULE=0          # enable/disable the saf_sofa_reader module 
--DSAF_ENABLE_TRACKER_MODULE=0              # enable/disable the saf_tracker module 
--DSAF_BUILD_EXAMPLES=1                     # build saf examples
--DSAF_BUILD_EXTRAS=0                       # build safmex etc.
--DSAF_BUILD_TESTS=1                        # build unit testing program
--DSAF_USE_INTEL_IPP=0                      # To link and use Intel IPP for the FFT etc.
+-DSAF_PERFORMANCE_LIB=SAF_USE_INTEL_MKL_LP64 # performance library to employ
+-DSAF_ENABLE_SOFA_READER_MODULE=0            # enable/disable the saf_sofa_reader module 
+-DSAF_ENABLE_TRACKER_MODULE=0                # enable/disable the saf_tracker module 
+-DSAF_ENABLE_HADES_MODULE=0                  # enable/disable the saf_hades module 
+-DSAF_BUILD_EXAMPLES=1                       # build saf examples
+-DSAF_BUILD_EXTRAS=0                         # build safmex etc.
+-DSAF_BUILD_TESTS=1                          # build unit testing program
+-DSAF_USE_INTEL_IPP=0                        # link and use Intel IPP for the FFT, resampler, etc.
+-DSAF_ENABLE_SIMD=0                          # enable/disable SSE, AVX, and/or AVX-512 support
 ```
 
 If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
@@ -105,25 +107,22 @@ If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that t
 -DINTEL_MKL_LIB="path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)"
 ```
 
-If the **saf_sofa_reader** module is enabled, CMake will use the statically built dependencies found in the **dependencies** folder for MacOSX and MSVC users by default. Linux and MSYS2 users may instead install a shared [netcdf library](docs/SOFA_READER_MODULE_DEPENDENCIES.md) and inform CMake of its location via:
-```
-# e.g. Linux users:
--DNETCDF_LIBRARY="/usr/lib/x86_64-linux-gnu/libnetcdf.so"
-# e.g. MSYS2 users
--DNETCDF_LIBRARY="/c/msys64/mingw64/lib/libnetcdf.dll.a"
-```
-
 For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows:
 ```
 cmake -S . -B build 
+# Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code)
+cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_CXX_FLAGS="-msse3 -mavx2" -DCMAKE_C_FLAGS="-msse3 -mavx2"
 cd build
 make
 test/saf_test # To run the unit testing program
 ```
 
-Or for Visual Studio (e.g. 2017) users (using e.g. x64 Native Tools Command Prompt):
+Or for Visual Studio users (using x64 Native Tools Command Prompt for VS):
 ```
-cmake -S . -B build -G "Visual Studio 15 Win64"   
+# e.g. for VS2019:
+cmake -S . -B build -G "Visual Studio 16" -A x64  
+# e.g. for VS2017:
+cmake -S . -B build -G "Visual Studio 15 Win64"
 cd build
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m
 cd test/Release
@@ -195,6 +194,7 @@ then please feel free to do so and submit a pull request. We may also be able to
 * **Ville Pulkki** - algorithm design
 * **Juhani Paasonen** - C programming
 * **Chris Hold** - C programming and algorithm design 
+* **Janani Fernandez** - C programming and algorithm design 
 
 # License
 
@@ -202,4 +202,4 @@ This software is dual-licensed. By default, this software is provided permissive
 
 For full licensing terms see [LICENSE.md](LICENSE.md).
 
-Furthermore, while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we would still appreciate it if any improvements and/or bug fixes are also merged into this public repository where possible :- )
+Note that while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we still appreciate it when improvements and/or bug fixes are also merged into this public repository where possible :-)

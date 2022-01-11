@@ -61,6 +61,8 @@
 # define SAF_VECLIB_USE_CLAPACK_INTERFACE        /**< LAPACK interface */
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
 # define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
+#elif defined(SAF_USE_GSL)
+# define SAF_VECLIB_USE_GSL_LINALG /**< No LAPACK interface, use alternatives */
 #else
 # error No LAPACK interface was specified!
 #endif
@@ -1202,6 +1204,10 @@ void utility_cvvmul
     }
     for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
         c[i] = a[i] * b[i];
+#elif __STDC_VERSION__ >= 199901L 
+    int i;
+    for (i = 0; i < len; i++)
+        c[i] = a[i] * b[i];
 #else
     int i;
     for (i = 0; i < len; i++)
@@ -1361,7 +1367,7 @@ void utility_svsdiv
     vDSP_vsdiv(a, 1, s, c, 1, (vDSP_Length)len);
 #else
     cblas_scopy(len, a, 1, c, 1);
-    cblas_sscal(len, 1.0/s[0], c, 1);
+    cblas_sscal(len, 1.0f/s[0], c, 1);
 #endif
 }
 

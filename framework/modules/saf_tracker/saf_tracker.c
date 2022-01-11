@@ -19,20 +19,22 @@
 /**
  * @file saf_tracker.c
  * @ingroup Tracker
- * @brief Particle filtering based tracker (#SAF_TRACKER_MODULE)
+ * @brief Particle filtering based 3D multi-target tracker (#SAF_TRACKER_MODULE)
  *
- * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Sa"rkka" and
+ * Based on the RBMCDA [1] MATLAB toolbox (GPLv2 license) by Simo Sa"rkka" and
  * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
- * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
- * Nikunen, and Tuomas Virtanen (GPLv2 license):
- *     https://github.com/sharathadavanne/multiple-target-tracking
+ * More information regarding this specific implementation can be found in [2]
  *
  * @see [1] Sa"rkka", S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
  *          Blackwellized Monte Carlo data association for multiple target
  *          tracking. In Proceedings of the seventh international conference on
  *          information fusion (Vol. 1, pp. 583-590). I.
+ * @see [2] McCormack, L., Politis, A. Sa"rkka", S., and Pulkki, V., 2021.
+ *          Real-Time Tracking of Multiple Acoustical Sources Utilising
+ *          Rao-Blackwellised Particle Filtering. In 29th European Signal
+ *          Processing Conference (EUSIPCO), (pp. 206-210).
  *
  * @author Leo McCormack
  * @date 12.08.2020
@@ -173,10 +175,15 @@ void tracker3d_step
 )
 {
     tracker3d_data *pData = (tracker3d_data*)(hT3d);
-    int i, kt, ob, maxIdx, nt, nt2;
-    float Neff, w_sum;
+    int i, kt, ob, maxIdx, nt;
+    float Neff;
     int s[TRACKER3D_MAX_NUM_PARTICLES];
-    MCS_data* S_max, *S_tmp;
+    MCS_data* S_max;
+#if 0
+    int nt2;
+    float w_sum;
+    MCS_data* S_tmp;
+#endif
 #ifdef TRACKER_VERBOSE
     char c_str[256], tmp[256];
     memset(c_str, 0, 256*sizeof(char));
@@ -261,6 +268,7 @@ void tracker3d_step
             (*target_var_xyz)[nt*3+1] = S_max->P[nt].p11;
             (*target_var_xyz)[nt*3+2] = S_max->P[nt].p22;
 
+# if 0
             /* Apply the corresponding importance weight */
             w_sum = S_max->W;
             (*target_pos_xyz)[nt*3]   *= S_max->W;
@@ -295,6 +303,7 @@ void tracker3d_step
             (*target_var_xyz)[nt*3]   /= w_sum;
             (*target_var_xyz)[nt*3+1] /= w_sum;
             (*target_var_xyz)[nt*3+2] /= w_sum;
+#endif
         }
 #ifdef TRACKER_VERBOSE
         printf("%s\n", c_str);

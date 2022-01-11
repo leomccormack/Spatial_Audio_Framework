@@ -1,5 +1,5 @@
 
-# Source
+# Source for core SAF modules
 target_sources(${PROJECT_NAME}
 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_cdf4sap/saf_cdf4sap.c
@@ -14,7 +14,6 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_sh/saf_sh.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/saf_sofa_reader/saf_sofa_reader.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.c
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker.c
@@ -37,3 +36,25 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap_internal.h
     ${CMAKE_CURRENT_SOURCE_DIR}/saf_vbap/saf_vbap.c
 )
+
+# Source for optional SAF modules
+if(SAF_ENABLE_SOFA_READER_MODULE)
+    add_subdirectory(saf_sofa_reader)
+endif()
+if(SAF_ENABLE_TRACKER_MODULE)
+    target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_tracker/saf_tracker.c
+    )
+endif()
+if(SAF_ENABLE_HADES_MODULE)
+    target_sources(${PROJECT_NAME}
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_analysis.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_internal.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_internal.c
+        ${CMAKE_CURRENT_SOURCE_DIR}/saf_hades/saf_hades_synthesis.c
+    )
+endif()

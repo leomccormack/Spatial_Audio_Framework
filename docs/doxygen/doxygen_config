@@ -897,11 +897,13 @@ EXCLUDE_PATTERNS      += */build/*
 EXCLUDE_PATTERNS      += */cmake-build-debug/*
 EXCLUDE_PATTERNS      += */cmake-build-release/*
 EXCLUDE_PATTERNS      += *LICENSE.md* 
-EXCLUDE_PATTERNS      += */test/timer/*
-EXCLUDE_PATTERNS      += */test/unity/*
+EXCLUDE_PATTERNS      += */test/include/resources*
+EXCLUDE_PATTERNS      += */test/src/resources*
 EXCLUDE_PATTERNS      += */test/saf_test_VS/*
 EXCLUDE_PATTERNS      += */test/test.xcodeproj/*
 EXCLUDE_PATTERNS      += */dependencies/third-party-licenses/*
+EXCLUDE_PATTERNS      += */framework/modules/saf_sofa_reader/libmysofa*
+EXCLUDE_PATTERNS      += */framework/resources/zlib*
 
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
@@ -2144,7 +2146,9 @@ INCLUDE_FILE_PATTERNS  =
 
 PREDEFINED             = SAF_USE_INTEL_MKL_LP64 \
                          SAF_ENABLE_TRACKER_MODULE \
-                         SAF_ENABLE_SOFA_READER_MODULE
+                         SAF_ENABLE_SOFA_READER_MODULE \
+                         SAF_ENABLE_HADES_MODULE \
+                         SAF_ENABLE_EXAMPLES_TESTS
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

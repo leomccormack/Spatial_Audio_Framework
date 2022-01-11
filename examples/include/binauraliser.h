@@ -216,6 +216,20 @@ void binauraliser_setRPYflag(void* const hBin, int newState);
 /** NOT IMPLEMENTED YET */
 void binauraliser_setInterpMode(void* const hBin, int newMode);
 
+/**
+ * Sets gain factor for an input source.
+ */
+void binauraliser_setSourceGain(void* const hBin, int srcIdx, float newGain);
+
+/**
+ * Set a source to solo.
+ */
+void binauraliser_setSourceSolo(void* const hBin, int srcIdx);
+
+/**
+ * Unsolo / unmute all sources.
+ */
+void binauraliser_setUnSolo(void* const hBin);
 
 
 /* ========================================================================== */

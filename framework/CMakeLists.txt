@@ -74,9 +74,9 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" OR ${SAF_PERFORMANCE
     # Default header path and libs, (which are platform dependent):
     if(NOT DEFINED INTEL_MKL_HEADER_PATH)
         if(MSVC)
-            set(INTEL_MKL_HEADER_PATH "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include") 
+            set(INTEL_MKL_HEADER_PATH "C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include") 
         elseif(MSYS OR MINGW) 
-            set(INTEL_MKL_HEADER_PATH "/c/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/mkl/include") 
+            set(INTEL_MKL_HEADER_PATH "/c/Program Files (x86)/Intel/oneAPI/mkl/latest/include") 
         elseif(APPLE)
             set(INTEL_MKL_HEADER_PATH "/opt/intel/oneapi/mkl/latest/include")
         elseif(UNIX AND NOT APPLE)
@@ -128,15 +128,14 @@ if( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_INTEL_MKL_LP64" OR ${SAF_PERFORMANCE
     target_link_libraries(${PROJECT_NAME} PUBLIC ${INTEL_MKL_LIB} )
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
-    message(STATUS "Using openBLAS...")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_OPEN_BLAS_AND_LAPACKE=1)
 
     # find and link libraries
     if (NOT DEFINED OPENBLAS_LIBRARY)
-        find_library(OPENBLAS_LIBRARY openblas)
+        find_library(OPENBLAS_LIBRARY openblas HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
     endif()
     if (NOT DEFINED LAPACKE_LIBRARY)
-        find_library(LAPACKE_LIBRARY lapacke)
+        find_library(LAPACKE_LIBRARY lapacke HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
     endif()
     target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENBLAS_LIBRARY} ${LAPACKE_LIBRARY})
 
@@ -152,6 +151,8 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     if(UNIX)
         target_compile_options(${PROJECT_NAME} PRIVATE -Wno-incompatible-pointer-types)
     endif()
+    
+    message(STATUS "Using OpenBLAS. Linking against: ${OPENBLAS_LIBRARY}; ${LAPACKE_LIBRARY}")
 
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
     message(STATUS "Using ATLAS...")
@@ -174,9 +175,9 @@ if(SAF_USE_INTEL_IPP)
     # Default header path and libs, (which are platform dependent):
     if(NOT DEFINED INTEL_IPP_HEADER_PATH)
         if(MSVC)
-            set(INTEL_IPP_HEADER_PATH "C:/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/ipp/include") 
+            set(INTEL_IPP_HEADER_PATH "C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include") 
         elseif(MSYS OR MINGW) 
-            set(INTEL_IPP_HEADER_PATH "/c/Program Files (x86)/IntelSWTools/compilers_and_libraries/windows/ipp/include") 
+            set(INTEL_IPP_HEADER_PATH "/c/Program Files (x86)/Intel/oneAPI/ipp/latest/include") 
         elseif(APPLE)
             set(INTEL_IPP_HEADER_PATH "/opt/intel/oneapi/ipp/latest/include")
         elseif(UNIX AND NOT APPLE)
@@ -190,9 +191,9 @@ if(SAF_USE_INTEL_IPP)
 
     if (NOT DEFINED INTEL_IPP_LIB)
         if(MSVC)
-            set(INTEL_IPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_ipp_custom_lp64.lib")
+            set(INTEL_IPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_ipp_custom.lib")
         elseif(MSYS OR MINGW)
-            set(INTEL_IPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_ipp_custom_lp64.lib")
+            set(INTEL_IPP_LIB "${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/saf_ipp_custom.lib")
         elseif(APPLE)
             set(INTEL_IPP_LIB "/usr/local/lib/libsaf_ipp_custom.dylib")
         elseif(UNIX AND NOT APPLE)
@@ -212,82 +213,119 @@ if(SAF_USE_INTEL_IPP)
     target_link_libraries(${PROJECT_NAME} PUBLIC ${INTEL_IPP_LIB} )
 endif()
 
+############################################################################
+# Enable/Disable FFTW
+if(SAF_USE_FFTW)
+    # Indicate to saf that the saf_sofa_reader module should be enabled
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_FFTW=${SAF_USE_FFTW})
+        
+    # Header path and libs are platform dependent
+    if(MSVC)
+        message(FATAL_ERROR "Incomplete list")
+    elseif(MSYS OR MINGW)
+        message(FATAL_ERROR "Incomplete list")
+    elseif(APPLE) 
+        message(FATAL_ERROR "Incomplete list")
+    elseif(UNIX AND NOT APPLE) 
+        find_library(FFTW_LIBRARY fftw3f HINTS /usr/local/lib)
+        if (NOT FFTW_LIBRARY)
+            message(FATAL_ERROR "FFTW_LIBRARY not found")
+        endif()
+        target_link_libraries(${PROJECT_NAME} PUBLIC ${FFTW_LIBRARY})
+        message(STATUS "Linking FFTW: ${FFTW_LIBRARY}")
+    endif() 
+endif()
+
+############################################################################
+# Enable SIMD intrinsics
+if(SAF_ENABLE_SIMD)
+    # Note that you need to pass the appropriate compiler flags to actually
+    # enable certain intrinsics, for example:
+    # $ cmake -S . -B build -DCMAKE_CXX_FLAGS="-msse3 -mavx2" -DCMAKE_C_FLAGS="-msse3 -mavx2"
+    message(STATUS "SIMD intrinsics support is enabled.")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_SIMD=1)
+endif()
 
 ############################################################################
 # Sofa reader module dependencies
 if(SAF_ENABLE_SOFA_READER_MODULE)
-    message(STATUS "saf_sofa_reader module enabled. Linking against netcdf...")
+    message(STATUS "saf_sofa_reader module enabled.")
 
     # Indicate to saf that the saf_sofa_reader module should be enabled
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_SOFA_READER_MODULE=${SAF_ENABLE_SOFA_READER_MODULE})
+
+    if(SAF_ENABLE_NETCDF)
+        message(STATUS "netcdf enabled for saf_sofa_reader module. Linking against netcdf...")
+        target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_NETCDF=${SAF_ENABLE_NETCDF})
         
-    # Header path and libs are platform dependent
-    if(MSVC)
-        # Link NetCDF dependencies (HDF5 and its dependencies: zlib,szip):
-        if(SAF_HDF5_INCLUDE_DIR AND SAF_HDF5_LIB_DIR)
-            target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_HDF5_INCLUDE_DIR})
-            set(SAF_HDF5_LIBS
-                ${SAF_HDF5_LIB_DIR}/libhdf5.lib
-                ${SAF_HDF5_LIB_DIR}/libzlib.lib
-                ${SAF_HDF5_LIB_DIR}/libszip.lib
-                ${SAF_HDF5_LIB_DIR}/libhdf5_hl.lib
-            )
-        else()
-            target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
-            set(SAF_HDF5_LIBS
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
-                ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
-            )
-        endif()
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_HDF5_LIBS})
-        message(STATUS "Linking HDF5: ${SAF_HDF5_LIBS}")
+        # Header path and libs are platform dependent
+        if(MSVC)
+            # Link NetCDF dependencies (HDF5 and its dependencies: zlib,szip):
+            if(SAF_HDF5_INCLUDE_DIR AND SAF_HDF5_LIB_DIR)
+                target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_HDF5_INCLUDE_DIR})
+                set(SAF_HDF5_LIBS
+                    ${SAF_HDF5_LIB_DIR}/libhdf5.lib
+                    ${SAF_HDF5_LIB_DIR}/libzlib.lib
+                    ${SAF_HDF5_LIB_DIR}/libszip.lib
+                    ${SAF_HDF5_LIB_DIR}/libhdf5_hl.lib
+                )
+            else()
+                target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
+                set(SAF_HDF5_LIBS
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libzlib.lib
+                ) 
+                set(SAF_HDF5_LIBS ${SAF_HDF5_LIBS}
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5.lib
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libszip.lib
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/libhdf5_hl.lib
+                )
+            endif()
+            target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_HDF5_LIBS})
+            message(STATUS "Linking HDF5: ${SAF_HDF5_LIBS}")
 
-        # Link NetCDF
-        if(SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIB_DIR)
-            target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_NETCDF_INCLUDE_DIR})
-            set(SAF_NETCDF_LIBS ${SAF_NETCDF_LIB_DIR}/netcdf.lib)
-        else()
-            target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
-            set(SAF_NETCDF_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib)
-        endif()
-        target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBS})
-        message(STATUS "Linking NETCDF: ${SAF_NETCDF_LIBS}")
-    elseif(MSYS OR MINGW)
-        message(SEND_ERROR "Unsupported on MSYS because I can't get the damn thing to link no matter what I do..") 
-        target_include_directories(${PROJECT_NAME} PUBLIC 
-             /c/msys64/mingw64/include)
-        #set (CMAKE_SHARED_LINKER_FLAGS "-lnetcdf")
-        find_library(NETCDF_LIBRARY netcdf HINTS "/c/msys64/mingw64/lib/libnetcdf.dll.a")
-        if (NOT NETCDF_LIBRARY)
-            message(FATAL_ERROR "NETCDF_LIBRARY not found")
-        endif()
-        target_link_libraries(${PROJECT_NAME} INTERFACE ${NETCDF_LIBRARY})
-         
-    elseif(APPLE) 
-        if (SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIBRARIES)
-             message(STATUS "Using NetCDF include dir ${SAF_NETCDF_INCLUDE_DIR} and libraries ${SAF_NETCDF_LIBRARIES}")
-             target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_NETCDF_INCLUDE_DIR})
-             target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBRARIES})
-         else()
-             target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
-             target_link_libraries(${PROJECT_NAME}
-             PRIVATE
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a
-                 ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
-             )
-         endif()
-    elseif(UNIX AND NOT APPLE) 
-        find_library(NETCDF_LIBRARY netcdf HINTS /usr/lib/x86_64-linux-gnu)
-        if (NOT NETCDF_LIBRARY)
-            message(FATAL_ERROR "NETCDF_LIBRARY not found")
-        endif()
-        target_link_libraries(${PROJECT_NAME} PUBLIC ${NETCDF_LIBRARY})
+            # Link NetCDF
+            if(SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIB_DIR)
+                target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_NETCDF_INCLUDE_DIR})
+                set(SAF_NETCDF_LIBS ${SAF_NETCDF_LIB_DIR}/netcdf.lib)
+            else()
+                target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/include)
+                set(SAF_NETCDF_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/Win64/lib/netcdf.lib)
+            endif()
+            target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBS})
+            message(STATUS "Linking NETCDF: ${SAF_NETCDF_LIBS}")
+            
+        elseif(MSYS OR MINGW)
+            message(SEND_ERROR "Currently unsupported on MSYS")
+
+        elseif(APPLE) 
+            if (SAF_NETCDF_INCLUDE_DIR AND SAF_NETCDF_LIBRARIES)
+                 message(STATUS "Using NetCDF include dir ${SAF_NETCDF_INCLUDE_DIR} and libraries ${SAF_NETCDF_LIBRARIES}")
+                 target_include_directories(${PROJECT_NAME} PUBLIC ${SAF_NETCDF_INCLUDE_DIR})
+                 target_link_libraries(${PROJECT_NAME} PRIVATE ${SAF_NETCDF_LIBRARIES})
+             else()
+                 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/include)
+                 target_link_libraries(${PROJECT_NAME}
+                 PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libz.a
+                 )
+                 target_link_libraries(${PROJECT_NAME}
+                 PRIVATE
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libnetcdf.a
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5.a
+                     ${CMAKE_CURRENT_SOURCE_DIR}/../dependencies/MacOSX/lib/libhdf5_hl.a
+                 )
+             endif()
+
+        elseif(UNIX AND NOT APPLE)
+            find_library(NETCDF_LIBRARY netcdf HINTS HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
+            if (NOT NETCDF_LIBRARY)
+                message(FATAL_ERROR "NETCDF_LIBRARY not found")
+            endif()
+            target_link_libraries(${PROJECT_NAME} PUBLIC ${NETCDF_LIBRARY})
+            message(STATUS "Linking NETCDF: ${NETCDF_LIBRARY}")
+
+        endif() 
     endif() 
-
 else()
     message(STATUS "saf_sofa_reader module disabled.")
 endif()
@@ -298,11 +336,23 @@ endif()
 if(SAF_ENABLE_TRACKER_MODULE)
     message(STATUS "saf_tracker module enabled. ")
 
-    # Indicate to saf that the saf_sofa_reader module should be enabled
+    # Indicate to saf that the saf_tracker module should be enabled
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_TRACKER_MODULE=${SAF_ENABLE_TRACKER_MODULE})
 
 else()
     message(STATUS "saf_tracker module disabled.")
+endif()
+
+############################################################################
+# Enable/Disable HADES module
+if(SAF_ENABLE_HADES_MODULE)
+    message(STATUS "saf_hades module enabled. ")
+
+    # Indicate to saf that the saf_hades module should be enabled
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_HADES_MODULE=${SAF_ENABLE_HADES_MODULE})
+
+else()
+    message(STATUS "saf_hades module disabled.")
 endif()
 
 

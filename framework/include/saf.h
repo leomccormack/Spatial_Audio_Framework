@@ -67,7 +67,9 @@
 /** @defgroup SOFA_Reader  saf_sofa_reader
  *  @brief    SOFA file reading module */
 /** @defgroup Tracker      saf_tracker
- *  @brief    Particle-filtering-based tracker */
+ *  @brief    Particle-filtering based 3D multi-target tracker */
+/** @defgroup HADES        saf_hades
+ *  @brief    HADES framework */
 
 
 /* ========================================================================== */
@@ -75,7 +77,7 @@
 /* ========================================================================== */
 
 /* The license governing SAF is configuration dependent */
-#if defined(SAF_ENABLE_TRACKER_MODULE) 
+#if defined(SAF_ENABLE_TRACKER_MODULE) || defined(SAF_ENABLE_HADES_MODULE)
 /** The Spatial_Audio_Framework is governed by the GNU GPLv2 License */
 # define SAF_LICENSE_STRING "GNU GPLv2"
 #else
@@ -91,7 +93,7 @@
 
 #define SAF_VERSION_MAJOR 1        /**< Major version */
 #define SAF_VERSION_MINOR 2        /**< Minor version */
-#define SAF_VERSION_PATCH 1        /**< Patch version */
+#define SAF_VERSION_PATCH 4        /**< Patch version */
 #define SAF_VERSION_SPECIAL ""     /**< Append text ("alpha", "beta", "") */
 #define MKSTRING_(s) #s            /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)   /**< Stringify */
@@ -117,7 +119,7 @@
   "   (_____  ) |  ___  | |  __)                                          \n" \
   "   /|____) | | |   | | | |                                             \n" \
   "   (_______) |_|   |_| |_|   (Version: " SAF_VERSION_STRING ", License:"   \
-  " " SAF_LICENSE_STRING ")                                              \n\n"
+  " " SAF_LICENSE_STRING ")                                               \n"
 
 
 /* ========================================================================== */
@@ -136,7 +138,7 @@
  *
  * ## Dependencies
  *   The following resources: afSTFTlib.h, convhull_3d.h, kiss_fft.h,
- *   md_malloc.h
+ *   md_malloc.h, zlib.h
  *
  * @license ISC
  */
@@ -248,17 +250,19 @@
 /**
  * SAF Module: SOFA_Reader
  *
- * A simple SOFA file reader that returns only the bare minimum needed to
- * load HRIR data.
+ * A simple SOFA file reader, which either wraps around the libmysofa library
+ * [1], or instead directly employs the netcdf library (if SAF_ENABLE_NETCDF is
+ * defined).
  *
  * ## Enable instructions
- *   Add this pre-processor definition to your project:
+ *   Add this pre-processor definition to your project to enable this module:
  *       SAF_ENABLE_SOFA_READER_MODULE
- *   and ensure that the netcdf library is also linked to your project. More
- *   information can be found in:
- *       docs/SOFA_READER_MODULE_DEPENDENCIES.md
+ *   Optionally, if SAF_ENABLE_NETCDF is defined, then the netcdf library must
+ *   also be linked to your project.
  * ## Dependencies
- *   saf_utilities.h, saf_hrir.h, netcdf
+ *   saf_utilities.h, saf_hrir.h, zlib, netcdf (optional)
+ *
+ * @see [1] https://github.com/hoene/libmysofa
  *
  * @license ISC
  */
@@ -273,7 +277,7 @@
  * Particle filtering based tracker.
  *
  * ## Enable instructions
- *   Add this pre-processor definition to your project:
+ *   Add this pre-processor definition to your project to enable this module:
  *       SAF_ENABLE_TRACKER_MODULE
  * ## Dependencies
  *   saf_utilities.h
@@ -283,6 +287,27 @@
 # define SAF_TRACKER_MODULE
 # include "../modules/saf_tracker/saf_tracker.h"
 #endif /* SAF_ENABLE_TRACKER_MODULE */
+
+#ifdef SAF_ENABLE_HADES_MODULE
+/**
+ * SAF Module: HADES
+ *
+ * HADES is a framework for parametric binaural rendering of sound scenes
+ * captured by microphone arrays. The emphasis is on the use of head-worn
+ * microphone arrays, for example, those that may be integrated into augmented
+ * reality devices or future binaural hearing aids.
+ *
+ * ## Enable instructions
+ *   Add this pre-processor definition to your project to enable this module:
+ *       SAF_ENABLE_HADES_MODULE
+ * ## Dependencies
+ *   saf_utilities.h, saf_vbap.h, saf_hrir.h, saf_cdf4sap.h
+ *
+ * @license GNU GPLv2
+ */
+# define SAF_HADES_MODULE
+# include "../modules/saf_hades/saf_hades.h"
+#endif /* SAF_ENABLE_HADES_MODULE */
 
 
 #endif /* SAF_H_INCLUDED */

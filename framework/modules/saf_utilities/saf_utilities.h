@@ -83,7 +83,7 @@
 # define SAF_PId ( 3.14159265358979323846264338327950288 )
 
 /** Returns 0 if "x" is not a power of 2 */
-#define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0);
+#define SAF_ISPOW2(x) (((x & ~(x-1))==x) ? x : 0)
 
 #ifndef ISEVEN
 /** Returns 1 if "n" is even valued, and 0 if it is not */
@@ -123,6 +123,9 @@
 /** Used to make strings inside of Macros */
 # define MKSTRING(s) MKSTRING_(s)
 #endif
+
+/** Indicates that a particular variable is unused (& squelches any warnings) */
+#define SAF_UNUSED(x) (void)(x)
 
 #ifndef NDEBUG /* If debug mode: */
 /** Macro to print a warning message along with the filename and line number */
@@ -178,6 +181,12 @@
  *   https://github.com/xiph/speexdsp/
  */
 #include "../../resources/speex_resampler/speex_resampler.h"
+
+/* For data compression/decompression (Lempel–Ziv 1977 and Huffman coding based)
+ * The original source code can be found here (BSD-3-Clause license):
+ *   https://github.com/madler/zlib
+ */
+#include "../../resources/zlib/zlib.h"
 
 /* For cross-platform complex number support */
 #include "saf_utility_complex.h"

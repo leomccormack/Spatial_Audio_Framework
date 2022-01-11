@@ -237,8 +237,8 @@ void ambi_dec_initCodec
     else
         pData->loudpkrs_nDims = 3;
     
-    /* add virtual loudspeakers for 2D case */
-    if (pData->loudpkrs_nDims == 2){
+    /* add virtual loudspeakers for 2D case if using AllRAD, so that the triangulation cannot fail. */
+    if (pData->loudpkrs_nDims == 2 && (pData->dec_method[0]==DECODING_METHOD_ALLRAD || pData->dec_method[1]==DECODING_METHOD_ALLRAD)){
         assert(nLoudspeakers<=MAX_NUM_LOUDSPEAKERS-2);
         pData->loudpkrs_dirs_deg[nLoudspeakers][0] = 0.0f;
         pData->loudpkrs_dirs_deg[nLoudspeakers][1] = -90.0f;
@@ -331,8 +331,8 @@ void ambi_dec_initCodec
             free(a_n);
             free(Y);
             
-            /* remove virtual loudspeakers from the decoder */
-            if (pData->loudpkrs_nDims == 2){
+            /* remove virtual loudspeakers from the decoder (if needed) */
+            if (pData->loudpkrs_nDims == 2 && (pData->dec_method[0]==DECODING_METHOD_ALLRAD || pData->dec_method[1]==DECODING_METHOD_ALLRAD)){
                 pars->M_dec[d][n-1] = realloc1d(pars->M_dec[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float));
                 pars->M_dec_cmplx[d][n-1] = realloc1d(pars->M_dec_cmplx[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float_complex));
                 pars->M_dec_maxrE[d][n-1] = realloc1d(pars->M_dec_maxrE[d][n-1], pData->nLoudpkrs * nSH_order * sizeof(float));

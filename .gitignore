@@ -1,8 +1,10 @@
+deprecated/
 docs/doxygen/html
 docs/doxygen/latex
 xcuserdata/
 build/
 x64/
+UpgradeLog.htm
 .vs/
 *.DS_Store
 *idea/
@@ -26,3 +28,11 @@ build_saf_ipp_custom_intel64.sh
 libfftw3.a
 libfftw3f.a
 fftw3.h
+build_saf_ipp_custom_intel64.bat
+export.def
+main.c
+main.obj
+saf_ipp_custom.dll
+saf_ipp_custom.exp
+saf_ipp_custom.lib
+VTune Profiler Results/

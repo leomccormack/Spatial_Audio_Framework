@@ -21,12 +21,14 @@
  *        Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
- * License).
+ * derived from the MATLAB libraries found in [1-3].
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
+ *          Copyright (c) 2015, Archontis Politis, BSD-3-Clause License
  * @see [2] https://github.com/polarch/Array-Response-Simulator
+ *          Copyright (c) 2015, Archontis Politis, BSD-3-Clause License
  * @see [3] https://github.com/polarch/Spherical-Array-Processing
+ *          Copyright (c) 2016, Archontis Politis, BSD-3-Clause License
  *
  * @author Leo McCormack
  * @date 22.05.2016
@@ -483,29 +485,38 @@ void getSHrotMtxReal
 {
     int i, j, M, l, m, n, d, bandIdx, denom;
     float u, v, w;
-    float** R_1,  **R_lm1, **R_l;
-    
+    float R_1[3][3], _R_lm1[64*64], _R_l[64*64];
+    float* R_lm1, *R_l;
+
+    /* Prep */
     M = (L+1) * (L+1);
-    R_1 = (float**)calloc2d(3, 3, sizeof(float));
-    R_lm1 = (float**)calloc2d(M, M, sizeof(float));
-    R_l = (float**)calloc2d(M, M, sizeof(float));
+    if(L<=7){
+        R_lm1 = _R_lm1;
+        R_l = _R_l;
+    }
+    else{
+        R_lm1 = malloc1d(M*M*sizeof(float));
+        R_l = malloc1d(M*M*sizeof(float));
+    }
     memset(RotMtx, 0, M*M*sizeof(float));
     
     /* zeroth-band (l=0) is invariant to rotation */
     RotMtx[0] = 1;
     
     /* the first band (l=1) is directly related to the rotation matrix */
-    R_1[-1+1][-1+1] = Rxyz[1][1];
-    R_1[-1+1][0+1] = Rxyz[1][2];
-    R_1[-1+1][1+1] = Rxyz[1][0];
-    R_1[ 0+1][-1+1] = Rxyz[2][1];
-    R_1[ 0+1][0+1] = Rxyz[2][2];
-    R_1[ 0+1][1+1] = Rxyz[2][0];
-    R_1[ 1+1][-1+1] = Rxyz[0][1];
-    R_1[ 1+1][0+1] = Rxyz[0][2];
-    R_1[ 1+1][1+1] = Rxyz[0][0];
+    R_1[0][0] = Rxyz[1][1];
+    R_1[0][1] = Rxyz[1][2];
+    R_1[0][2] = Rxyz[1][0];
+    R_1[1][0] = Rxyz[2][1];
+    R_1[1][1] = Rxyz[2][2];
+    R_1[1][2] = Rxyz[2][0];
+    R_1[2][0] = Rxyz[0][1];
+    R_1[2][1] = Rxyz[0][2];
+    R_1[2][2] = Rxyz[0][0];
     for (i=1; i<4; i++){
-        memcpy(R_lm1[i-1], R_1[i-1], 3*sizeof(float));
+        R_lm1[(i-1)*M+0] = R_1[i-1][0];
+        R_lm1[(i-1)*M+1] = R_1[i-1][1];
+        R_lm1[(i-1)*M+2] = R_1[i-1][2];
         for (j=1; j<4; j++)
             RotMtx[i*M+j] = R_1[i-1][j-1];
     }
@@ -514,7 +525,7 @@ void getSHrotMtxReal
     bandIdx = 4;
     for(l = 2; l<=L; l++){
         for(i=0; i<2*l+1; i++)
-            memset(R_l[i], 0, (2*l+1) * sizeof(float));
+            memset(R_l + i*M, 0, (2*l+1) * sizeof(float));
         for(m=-l; m<=l; m++){
             for(n=-l; n<=l; n++){
                 /* compute u,v,w terms of Eq.8.1 (Table I) */
@@ -526,28 +537,29 @@ void getSHrotMtxReal
                 
                 /* computes Eq.8.1 */
                 if (u!=0)
-                    u = u* getU(l,m,n,R_1,R_lm1);
+                    u = u* getU(M,l,m,n,R_1,R_lm1);
                 if (v!=0)
-                    v = v* getV(l,m,n,R_1,R_lm1);
+                    v = v* getV(M,l,m,n,R_1,R_lm1);
                 if (w!=0)
-                    w = w* getW(l,m,n,R_1,R_lm1);
+                    w = w* getW(M,l,m,n,R_1,R_lm1);
                 
-                R_l[m+l][n+l] = u+v+w;
+                R_l[(m+l)*M+(n+l)] = u+v+w;
             }
         }
         
         for(i=0; i<2*l+1; i++)
             for(j=0; j<2*l+1; j++)
-                RotMtx[(bandIdx + i)*M + (bandIdx + j)] = R_l[i][j];
-                //RotMtx[(bandIdx+i)*(2*l+1) +(bandIdx+j)] = R_l[i][j];
+                RotMtx[(bandIdx + i)*M + (bandIdx + j)] = R_l[i*M+j];
         for(i=0; i<2*l+1; i++)
-            memcpy(R_lm1[i], R_l[i], (2*l+1) * sizeof(float));
+            memcpy(R_lm1+i*M, R_l + i*M, (2*l+1) * sizeof(float));
         bandIdx += 2*l+1;
     }
-    
-    free(R_1);
-    free(R_lm1);
-    free(R_l);
+
+    /* clean-up */
+    if(L>7){
+        free(R_lm1);
+        free(R_l);
+    }
 }
 
 void computeVelCoeffsMtx
@@ -943,6 +955,84 @@ void checkCondNumberSHTReal
     free(s);
 }
 
+
+int calculateGridWeights
+(
+    float* dirs_rad,
+    int nDirs,
+    int order,
+    float* w
+)
+{
+    int i, j, nSH;
+    float sumW;
+    float** Y_N, **Y_N_T, **Y_leftinv;
+
+
+    if(order<0){
+        int nSH, ind;
+        float minVal, maxVal, cond_N;
+
+        float *YY_N, *s;
+
+        /* get SH */
+        s = NULL;
+        Y_N = NULL;
+        YY_N = NULL;
+
+        for(int n=1; n<100; n++){
+            /* compute the condition number for order N */
+            nSH = ORDER2NSH(n);
+            Y_N = (float**)realloc2d((void**)Y_N, nSH, nDirs, sizeof(float));
+            YY_N = (float*)realloc1d(YY_N, nSH*nSH*sizeof(float));
+            s = (float*) realloc1d(s, nSH*sizeof(float));
+            getSHreal(n, dirs_rad, nDirs, FLATTEN2D(Y_N));
+
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, nDirs, 1.0f,
+                        FLATTEN2D(Y_N), nDirs,
+                        FLATTEN2D(Y_N), nDirs, 0.0f,
+                        YY_N, nSH);
+
+            /* condition number = max(singularValues)/min(singularValues) */
+            utility_ssvd(NULL, YY_N, nSH, nSH, NULL, NULL, NULL, s);
+            utility_simaxv(s, nSH, &ind);
+            maxVal = s[ind];
+            utility_siminv(s, nSH, &ind);
+            minVal = s[ind];
+            cond_N = maxVal/(minVal+2.23e-7f);
+
+            if(cond_N > 1.5f * n){
+                order = n-1;
+                break;
+            }
+        }
+    }
+    assert(order>0);
+        
+    nSH = ORDER2NSH(order);
+    Y_N = (float**)malloc2d(nSH, nDirs, sizeof(float));
+    Y_N_T = (float**)malloc2d(nDirs, nSH, sizeof(float));
+    Y_leftinv = (float**)malloc2d(nSH, nDirs, sizeof(float));
+
+    getSHreal(order, dirs_rad, nDirs, FLATTEN2D(Y_N));
+
+    for(i=0; i<nDirs; i++)
+        for(j=0; j<nSH; j++)
+            Y_N_T[i][j] = Y_N[j][i]; /* truncate to current order and transpose */
+
+    utility_spinv(NULL, FLATTEN2D(Y_N_T), nDirs, nSH, FLATTEN2D(Y_leftinv));
+
+    sumW=0.f;
+    for(int idx=0; idx<nDirs; idx++){
+        w[idx] = sqrtf(FOURPI)*Y_leftinv[0][idx];
+        sumW += w[idx];
+    }
+
+    if(fabs(sumW - FOURPI) > 0.001){
+        saf_print_warning("Grid weights no bueno!");
+    }
+    return order;
+}
 
 /* ========================================================================== */
 /*                     Localisation Functions in the  SHD                     */

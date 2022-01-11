@@ -19,20 +19,22 @@
 /**
  * @file saf_tracker_internal.c
  * @ingroup Tracker
- * @brief Particle filtering based tracker (#SAF_TRACKER_MODULE)
+ * @brief Particle filtering based 3D multi-target tracker (#SAF_TRACKER_MODULE)
  *
- * Based on the RBMCDA [1] Matlab toolbox (GPLv2 license) by Simo Sa"rkka" and
+ * Based on the RBMCDA [1] MATLAB toolbox (GPLv2 license) by Simo Sa"rkka" and
  * Jouni Hartikainen (Copyright (C) 2003-2008):
  *     https://users.aalto.fi/~ssarkka/#softaudio
  *
- * And also inspired by the work of Sharath Adavanne, Archontis Politis, Joonas
- * Nikunen, and Tuomas Virtanen (GPLv2 license):
- *     https://github.com/sharathadavanne/multiple-target-tracking
+ * More information regarding this specific implementation can be found in [2]
  *
  * @see [1] Sa"rkka", S., Vehtari, A. and Lampinen, J., 2004, June. Rao-
  *          Blackwellized Monte Carlo data association for multiple target
  *          tracking. In Proceedings of the seventh international conference on
  *          information fusion (Vol. 1, pp. 583-590). I.
+ * @see [2] McCormack, L., Politis, A. Sa"rkka", S., and Pulkki, V., 2021.
+ *          Real-Time Tracking of Multiple Acoustical Sources Utilising
+ *          Rao-Blackwellised Particle Filtering. In 29th European Signal
+ *          Processing Conference (EUSIPCO), (pp. 206-210).
  *
  * @author Leo McCormack
  * @date 12.08.2020
@@ -176,8 +178,8 @@ void tracker3d_particleCopy
     p2->dt = p1->dt;
     cblas_scopy(p1->nTargets*6,   (float*)p1->M->M, 1, (float*)p2->M->M, 1);
     cblas_scopy(p1->nTargets*6*6, (float*)p1->P->P, 1, (float*)p2->P->P, 1);
-    memcpy(p2->targetIDs, p1->targetIDs, p1->nTargets*sizeof(int));
-    memcpy(p2->Tcount, p1->Tcount, p1->nTargets*sizeof(int));
+    cblas_scopy(p1->nTargets, (float*)p1->targetIDs, 1, (float*)p2->targetIDs, 1);
+    cblas_scopy(p1->nTargets, (float*)p1->Tcount, 1, (float*)p2->Tcount, 1);
 }
 
 void tracker3d_particleDestroy
@@ -849,6 +851,21 @@ void lti_disc
     free(Q_T);
 }
 
+/* Approximate expf and logf (BSD-3-clause License), Copyright 2011 Edward Kmett, https://github.com/ekmett/approximate */
+#if defined(LITTLE_ENDIAN) && 0
+static float expf_fast(float a) {
+    union { float f; int x; } u;
+    a=SAF_MAX(a, -80.0f);
+    u.x = (int) (12102203 * a + 1064866805);
+    return u.f;
+}
+
+static float logf_fast(float a) {
+    union { float f; int x; } u = { a };
+    return (u.x - 1064866805) * 8.262958405176314e-8f; /* 1 / 12102203.0; */
+}
+#endif
+
 /* hard-coded for length(M)=3 ... */
 float gauss_pdf3
 (
@@ -877,9 +894,15 @@ float gauss_pdf3
     E += DX[1] * S_DX[1];
     E += DX[2] * S_DX[2];
     E *= 0.5f;
-    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(utility_sdet(NULL, (float*)S, 3));
 
+#if defined(LITTLE_ENDIAN) && 0
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f *
+        logf_fast(S[0][0] * (S[1][1] * S[2][2] - S[2][1] * S[1][2])-S[1][0] * (S[0][1] * S[2][2] - S[2][1] * S[0][2])+S[2][0] * (S[0][1] * S[1][2] - S[1][1] * S[0][2]));
+    return expf_fast(-E);
+#else
+    E = E + 1.5f * SAF_LOG_2PI + 0.5f * logf(S[0][0] * (S[1][1] * S[2][2] - S[2][1] * S[1][2])-S[1][0] * (S[0][1] * S[2][2] - S[2][1] * S[0][2])+S[2][0] * (S[0][1] * S[1][2] - S[1][1] * S[0][2]));
     return expf(-E);
+#endif
 }
 
 int categ_rnd

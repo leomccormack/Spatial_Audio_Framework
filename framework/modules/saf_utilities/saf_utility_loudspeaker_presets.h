@@ -108,7 +108,7 @@ extern const float __DTU_AVIL_dirs_deg[64][2];
  * at Zylia Labs */
 extern const float __Zylia_Lab_dirs_deg[22][2];
 /**
- * Default Loudspeaker directions [azimuth, Elevation] in degrees */
+ * Default Loudspeaker directions [azimuth, Elevation] in RADIANS! */
 extern const float __default_LScoords64_rad[64][2];
     
     

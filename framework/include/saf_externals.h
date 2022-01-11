@@ -20,6 +20,8 @@
  *
  * @note Including this header is optional and only needed if you wish to have
  *       access to these external libraries in your own project.
+ * @note More information can be found in the docs folder regarding where to
+ *       find and how to link dependencies
  * @warning Using ATLAS (SAF_USE_ATLAS) as the performance library is not
  *          recommended, since some LAPACK routines are not implemented by the
  *          library! However, if you don't mind losing some SAF functionality
@@ -43,20 +45,18 @@
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
  *
  * ## Optional dependencies
- *   netcdf is required by the optional saf_sofa_reader module, which is enabled
- *   with the following pre-processor flag: SAF_ENABLE_SOFA_READER_MODULE
+ *   If the optional saf_sofa_reader module is enabled and SAF_ENABLE_NETCDF is
+ *   defined, then the netcdf library must also be linked along with saf.
  *
- *   Intel IPP may be optionally used with the flag: SAF_USE_INTEL_IPP
+ *   Intel IPP may be optionally employed with the flag: SAF_USE_INTEL_IPP
  *
- *   FFTW may be optionally used with the flag: SAF_USE_FFTW
+ *   FFTW may be optionally employed with the flag: SAF_USE_FFTW
  *
- *   SIMD intrinsics support may be enabled with: SAF_ENABLE_SIMD
+ *   SIMD intrinsics utilisation may be enabled with: SAF_ENABLE_SIMD
  *    - SSE/SSE2/SSE3 intrinsics are used by default
  *    - AVX/AVX2 intrinsics are enabled with compiler flag: -mavx2
  *    - AVX-512  intrinsics are enabled with compiler flag: -mavx512f
  *   (Note that intrinsics require a CPU that supports them)
- *
- * @see More information can be found in the docs folder regarding dependencies
  *
  * @author Leo McCormack
  * @date 06.08.2020
@@ -93,7 +93,8 @@
  *
  * Note that Intel MKL not only supports CBLAS and LAPACK, but also offers:
  *  - a highly optimised discrete/fast Fourier transform (DFT/FFT), which is
- *    used by the saf_utility_fft wrapper.
+ *    used by the saf_utility_fft wrapper [unless this is overriden by the Intel
+ *    IPP implementation (SAF_USE_INTEL_IPP), or FFTW (SAF_USE_FFTW)].
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as: hadamard products,
  *    element-wise additions/subtractions, and the modulus or reciprical of
@@ -161,7 +162,8 @@
  * Note that Apple Accelerate not only supports CBLAS and LAPACK, but also
  * offers:
  *  - an optimised discrete/fast Fourier transform (DFT/FFT), which is used by
- *    the saf_utility_fft wrapper.
+ *    the saf_utility_fft wrapper  [unless this is overriden by the Intel IPP
+ *    implementation (SAF_USE_INTEL_IPP), or FFTW (SAF_USE_FFTW)].
  *  - a number of additional vector, vector-vector, vector-scalar operations
  *    that are not covered by the CBLAS standard; such as hadamard products,
  *    element-wise additions/subtractions, etc.
@@ -171,6 +173,17 @@
  * framework/resources) is still used as a fall-back option in such cases.
  */
 # include "Accelerate/Accelerate.h"
+
+#elif defined(SAF_USE_GSL)
+/*
+ * Using the GNU Scientific Library (GSL)
+ *
+ * Please feel free to try it out and report back. Note also that certain LAPACK
+ * functions used in saf_utility_veclib will need to be swapped out for
+ * equivalent functions in GSL
+ */
+# warning Using GNU Scientific Library (GSL) is currently experimental
+# include "gsl_cblas.h"
 
 #else
 /*
@@ -209,7 +222,7 @@
  * implementations found in Intel IPP, Intel MKL and Apple Accelerate are
  * usually faster options.
  *
- * Note, SAF uses the single-precision version (fftw3f.a), which is built with:
+ * Note, SAF uses the single-precision version (fftw3f), which is built with:
  *   $ ./configure --enable-float
  *   $ make
  *
@@ -261,13 +274,92 @@
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 /*
- * If your compiler stopped at this point, then please add the path for the
- * netcdf include file to your project's include header paths.
- * Instructions for linking the required "netcdf" library may also be found
- * here: docs/SOFA_READER_MODULE_DEPENDENCIES.md
+ * The built-in saf_sofa_open() SOFA file reader has two implementations:
+ *    - By default, the function wraps around the "libmysofa" library
+ *      (BSD-3-Clause license), which depends only on zlib (which is included
+ *      in framework/resources/zlib)
+ *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 3 times
+ *      faster implementation is used instead. Therefore, if you intend to load
+ *      many large SOFA files (especially microphone arrays or Ambisonic IRs),
+ *      then this latter option may be preferable. Otherwise, the default
+ *      libmysofa SOFA reader is likely sufficient for most purposes.
+ *
+ * The "mysofa" interface, e.g. mysofa_load(), may also be used directly in
+ * either case.
  */
-# include <netcdf.h>
+# ifdef SAF_ENABLE_NETCDF
+#  include <netcdf.h>
+# endif
 #endif
+
+
+/* ========================================================================== */
+/*                   Configuration and Status Flags/Strings                   */
+/* ========================================================================== */
+
+/* Currently employed performance library: */
+#if defined(SAF_USE_INTEL_MKL_LP64)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Intel MKL (LP64)"
+#elif defined(SAF_USE_INTEL_MKL_ILP64)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Intel MKL (ILP64)"
+#elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "OpenBLAS with LAPACKE"
+#elif defined(SAF_USE_ATLAS)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "ATLAS"
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Apple Accelerate"
+#else
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "NONE"
+#endif
+
+/* Status of Intel IPP */
+#if defined(SAF_USE_INTEL_IPP)
+# define SAF_INTEL_IPP_STATUS_STRING "Enabled"
+#else
+# define SAF_INTEL_IPP_STATUS_STRING "Disabled"
+#endif
+
+/* Status of FFTW */
+#if defined(SAF_USE_FFTW)
+# define SAF_FFTW_STATUS_STRING "Enabled"
+#else
+# define SAF_FFTW_STATUS_STRING "Disabled"
+#endif
+
+/* Status of SIMD intrinsics */
+#if defined(SAF_ENABLE_SIMD)
+# define SAF_SIMD_STATUS_STRING "Enabled"
+/* Which SIMD intrinsics are currently enabled? */
+# if defined(__AVX512F__)
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "SSE, SSE2, SSE3, AVX, AVX2, AVX512F"
+# elif defined(__AVX__) && defined(__AVX2__)
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "SSE, SSE2, SSE3, AVX, AVX2"
+# elif defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__)
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "SSE, SSE2, SSE3"
+# else
+#  define SAF_ENABLED_SIMD_INTRINSICS_STRING "None"
+# endif
+#else
+# define SAF_SIMD_STATUS_STRING "Disabled"
+# define SAF_ENABLED_SIMD_INTRINSICS_STRING "None"
+#endif
+
+/* Status of netCDF */
+#if defined(SAF_ENABLE_NETCDF)
+# define SAF_NETCDF_STATUS_STRING "Enabled"
+#else
+# define SAF_NETCDF_STATUS_STRING "Disabled"
+#endif
+
+/** Current configuration information */
+#define SAF_EXTERNALS_CONFIGURATION_STRING  \
+    "Current SAF externals configuration: "                               "\n" \
+    " - Performance library: " SAF_CURRENT_PERFORMANCE_LIBRARY_STRING     "\n" \
+    " - Intel IPP status:    " SAF_INTEL_IPP_STATUS_STRING                "\n" \
+    " - FFTW status:         " SAF_FFTW_STATUS_STRING                     "\n" \
+    " - SIMD status:         " SAF_SIMD_STATUS_STRING                     "\n" \
+    " - Enabled intrinsics:  " SAF_ENABLED_SIMD_INTRINSICS_STRING         "\n" \
+    " - netCDF status:       " SAF_NETCDF_STATUS_STRING                   "\n"
 
 
 #endif /* __SAF_EXTERNALS_H_INCLUDED__ */

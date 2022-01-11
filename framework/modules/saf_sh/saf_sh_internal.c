@@ -21,12 +21,14 @@
  *        Array Processing module (#SAF_SH_MODULE)
  *
  * A collection of spherical harmonic related functions. Many of which have been
- * derived from MATLAB libraries by Archontis Politis [1-3] (BSD-3-Clause
- * License).
+ * derived from the MATLAB libraries found in [1-3].
  *
  * @see [1] https://github.com/polarch/Spherical-Harmonic-Transform
+ *          Copyright (c) 2015, Archontis Politis, BSD-3-Clause License
  * @see [2] https://github.com/polarch/Array-Response-Simulator
+ *          Copyright (c) 2015, Archontis Politis, BSD-3-Clause License
  * @see [3] https://github.com/polarch/Spherical-Array-Processing
+ *          Copyright (c) 2016, Archontis Politis, BSD-3-Clause License
  *
  * @author Leo McCormack
  * @date 22.05.2016
@@ -148,27 +150,28 @@ void gaunt_mtx
  * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
 float getP
 (
+    int M,
     int i,
     int l,
     int a,
     int b,
-    float** R_1,
-    float** R_lm1
+    float R_1[3][3],
+    float* R_lm1
 )
 {
     float ret, ri1, rim1, ri0;
     
-    ri1 = R_1[i + 1][1 + 1];
-    rim1 = R_1[i + 1][-1 + 1];
-    ri0 = R_1[i + 1][0 + 1];
+    ri1 = R_1[i+1][2];
+    rim1 = R_1[i+1][0];
+    ri0 = R_1[i+1][1];
     
     if (b == -l)
-        ret = ri1 * R_lm1[a + l - 1][0] + rim1 * R_lm1[a + l - 1][2 * l - 2];
+        ret = ri1 * R_lm1[(a+l-1)*M+0] + rim1 * R_lm1[(a+l-1)*M+(2*l-2)];
     else {
         if (b == l)
-            ret = ri1*R_lm1[a + l - 1][2 * l - 2] - rim1 * R_lm1[a + l - 1][0];
+            ret = ri1*R_lm1[(a+l-1)*M+(2*l-2)] - rim1 * R_lm1[(a+l-1)*M];
         else
-            ret = ri0 * R_lm1[a + l - 1][b + l - 1];
+            ret = ri0 * R_lm1[(a+l-1)*M+(b+l-1)];
     }
     
     return ret;
@@ -178,46 +181,48 @@ float getP
  * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
 float getU
 (
+    int M,
     int l,
     int m,
     int n,
-    float** R_1,
-    float** R_lm1
+    float R_1[3][3],
+    float* R_lm1
 )
 {
-    return getP(0, l, m, n, R_1, R_lm1);
+    return getP(M, 0, l, m, n, R_1, R_lm1);
 }
 
 /* Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination
  * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
 float getV
 (
+    int M,
     int l,
     int m,
     int n,
-    float** R_1,
-    float** R_lm1
+    float R_1[3][3],
+    float* R_lm1
 )
 {
     int d;
     float ret, p0, p1;
     
     if (m == 0) {
-        p0 = getP(1, l, 1, n, R_1, R_lm1);
-        p1 = getP(-1, l, -1, n, R_1, R_lm1);
+        p0 = getP(M, 1, l, 1, n, R_1, R_lm1);
+        p1 = getP(M, -1, l, -1, n, R_1, R_lm1);
         ret = p0 + p1;
     }
     else {
         if (m>0) {
             d = m == 1 ? 1 : 0;
-            p0 = getP(1, l, m - 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m + 1, n, R_1, R_lm1);
+            p0 = getP(M, 1, l, m - 1, n, R_1, R_lm1);
+            p1 = getP(M, -1, l, -m + 1, n, R_1, R_lm1);
             ret = p0*sqrtf(1.0f + d) - p1*(1.0f - d);
         }
         else {
             d = m == -1 ? 1 : 0;
-            p0 = getP(1, l, m + 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m - 1, n, R_1, R_lm1);
+            p0 = getP(M, 1, l, m + 1, n, R_1, R_lm1);
+            p1 = getP(M, -1, l, -m - 1, n, R_1, R_lm1);
             ret = p0*(1.0f - (float)d) + p1*sqrtf(1.0f + (float)d);
         }
     }
@@ -229,11 +234,12 @@ float getV
  * by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099?9100. */
 float getW
 (
+    int M,
     int l,
     int m,
     int n,
-    float** R_1,
-    float** R_lm1
+    float R_1[3][3],
+    float* R_lm1
 )
 {
     float ret, p0, p1;
@@ -241,13 +247,13 @@ float getW
     
     if (m != 0) {
         if (m>0) {
-            p0 = getP(1, l, m + 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m - 1, n, R_1, R_lm1);
+            p0 = getP(M, 1, l, m + 1, n, R_1, R_lm1);
+            p1 = getP(M, -1, l, -m - 1, n, R_1, R_lm1);
             ret = p0 + p1;
         }
         else {
-            p0 = getP(1, l, m - 1, n, R_1, R_lm1);
-            p1 = getP(-1, l, -m + 1, n, R_1, R_lm1);
+            p0 = getP(M, 1, l, m - 1, n, R_1, R_lm1);
+            p1 = getP(M, -1, l, -m + 1, n, R_1, R_lm1);
             ret = p0 - p1;
         }
     }

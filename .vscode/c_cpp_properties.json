@@ -45,6 +45,23 @@
                 "${commonDefs}"
             ],
             "configurationProvider": "ms-vscode.cmake-tools"
+        },
+        {
+            "name": "Linux-arm",
+            "includePath": [
+                "${commonIncludePaths}"
+            ],
+            "defines": [
+                "SAF_USE_OPEN_BLAS_AND_LAPACKE",
+                "SAF_ENABLE_SOFA_READER_MODULE",
+                "SAF_ENABLE_TRACKER_MODULE"
+            ],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "${default}",
+            "configurationProvider": "ms-vscode.cmake-tools"
         }
     ],
     "version": 4

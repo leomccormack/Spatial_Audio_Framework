@@ -125,12 +125,11 @@ typedef struct _afSTFT_data {
     int nCHin;                        /**< Number of input channels */
     int nCHout;                       /**< Number of output channels*/
     int nBands;                       /**< Number of frequency bands */
-    int procDelay;                    /**< Processing delay in samples */
     AFSTFT_FDDATA_FORMAT format;      /**< see #AFSTFT_FDDATA_FORMAT */
     void* hInt;                       /**< Internal handle for afSTFT */
     complexVector* STFTInputFrameTF;  /**< Internal input complex buffer */
     complexVector* STFTOutputFrameTF; /**< Internal output complex buffer */
-    int afSTFTdelay;                  /**< for host delay compensation */
+    int afSTFTdelay;                  /**< Processing delay in samples */
     float** tempHopFrameTD;           /**< temporary multi-channel time-domain buffer of size "HOP_SIZE". */
 
 }afSTFT_data;

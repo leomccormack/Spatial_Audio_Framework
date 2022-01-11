@@ -20,9 +20,10 @@
  * @brief Public source for the higher-order Ambisonics module (#SAF_HOA_MODULE)
  *
  * A collection of Ambisonics related functions. Many of which are derived from
- * the MATLAB library by Archontis Politis in [1] (BSD-3-Clause License).
+ * the MATLAB library found in [1].
  *
  * @see [1] https://github.com/polarch/Higher-Order-Ambisonics
+ *          Copyright (c) 2015, Archontis Politis, BSD-3-Clause License
  *
  * @author Leo McCormack
  * @date 19.03.2018

@@ -84,6 +84,7 @@ void smb_pitchShift_destroy(/* Input Arguments */
  * @param[out] outFrame   Output frame; FLAT: nCH x frameSize
  *
  * @see [1] http://blogs.zynaptiq.com/bernsee/pitch-shifting-using-the-ft/
+ *          Copyright 1999-2015 Stephan M. Bernsee, The Wide Open License (WOL)
  */
 void smb_pitchShift_apply(/* Input Arguments */
                           void* hSmb,

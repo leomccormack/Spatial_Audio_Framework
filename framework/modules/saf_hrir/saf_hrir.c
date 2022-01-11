@@ -376,7 +376,7 @@ void resampleHRIRs
 {
     int ch, hrirs_out_ld;
     float resample_factor;
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_INTEL_IPP) && 0 /* works fine on macOS, but not on MSVC. Not tried Linux. Use SPEEX for now... */
     Ipp64f pTime;
     const int history = 128;
     float *inBuffer, *outBuffer;
@@ -394,7 +394,7 @@ void resampleHRIRs
     (*hrirs_out_len) = (int)ceilf((float)hrirs_in_len * resample_factor);
     hrirs_out_ld = padToNextPow2 ? (int)pow(2.0, ceil(log((double)(*hrirs_out_len))/log(2.0))) : (*hrirs_out_len);
 
-#if defined(SAF_USE_INTEL_IPP)
+#if defined(SAF_USE_INTEL_IPP) && 0 /* works fine on macOS, but not on MSVC. Not tried Linux. Use SPEEX for now... */
     /* Initialise IPP resampler */
     error = ippsResamplePolyphaseFixedGetSize_32f(hrirs_in_fs, hrirs_out_fs, 2*(history-1), &pSize, &filterLength, &numFilters, ippAlgHintFast);
     saf_assert(!error, "IPP error");

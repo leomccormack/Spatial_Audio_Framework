@@ -20,9 +20,10 @@
  * @file saf_sofa_reader.h 
  * @brief Main header for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
- * @warning This (optional) SOFA reader, requires netcdf to be linked to your
- *          project! Refer to docs/SOFA_READER_MODULE_DEPENDENCIES.md for
- *          more information.
+ * @note This SOFA reader may optionally use netcdf if "SAF_ENABLE_NETCDF" is
+ *       defined. Otherwise, the reader will use zlib, which is included in
+ *       framework/resources/zlib; in which case, no external libraries need to
+ *       be linked.
  *
  * @author Leo McCormack
  * @date 21.11.2017
@@ -37,6 +38,10 @@ extern "C" {
 #endif /* __cplusplus */
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
+
+/* Include also the interface for the libmysofa reader (BSD-3-Clause license),
+ * which only depends on zlib.h */
+#include "libmysofa/mysofa.h"
 
 /* ========================================================================== */
 /*                          Public Structures/Enums                           */
@@ -57,7 +62,7 @@ typedef struct _saf_sofa_container{
     float* DataIR;                /**< The impulse response (IR) Data;
                                    * FLAT:nSources x nReceivers x DataLengthIR*/
     float DataSamplingRate;       /**< Sampling rate used to measure the IRs */
-    int* DataDelay;               /**< Delay in samples; nReceivers x 1 */
+    float* DataDelay;             /**< Delay in samples; nReceivers x 1 */
     float* SourcePosition;        /**< Source positions (refer to
                                    *   SourcePositionType & SourcePositionUnits
                                    *   for the convention and units);
@@ -121,6 +126,9 @@ typedef struct _saf_sofa_container{
     char* Title;                  /**< Title of file */
     char* DatabaseName;           /**< Name of database this file belongs to */
     char* ListenerShortName;      /**< Name of the listener/dummyhead/mic etc.*/
+
+    /* libmysofa handle, which is used if SAF_ENABLE_NETCDF is not defined */
+    void* hLMSOFA;                /**< libmysofa handle */
 
 }saf_sofa_container;
 

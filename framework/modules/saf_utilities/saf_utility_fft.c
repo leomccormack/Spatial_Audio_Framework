@@ -550,7 +550,7 @@ void saf_rfft_create
     h->p_bwd = fftwf_plan_dft_c2r_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_ESTIMATE);
 #elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
-    if(ceilf(log2f(N)) == floorf(log2f(N))){
+    if((int)(log2f((float)N)+1.0f) == (int)(log2f((float)N))){
         h->useIPPfft_FLAG = 1;
         h->log2n = (int)(log2f((float)N)+0.1f);
         ippsFFTGetSize_R_32f(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
@@ -769,6 +769,7 @@ void saf_fft_create
     h->N = N;
     h->Scale = 1.0f/(float)N; /* output scaling after ifft */
     saf_assert(N>=2, "Only even (non zero) FFT sizes are supported");
+    h->useKissFFT_FLAG = 0;
 #if defined(SAF_USE_FFTW)
     h->fwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
     h->bwd_bufferTD = malloc1d(h->N*sizeof(fftwf_complex));
@@ -778,22 +779,22 @@ void saf_fft_create
     h->p_bwd = fftwf_plan_dft_1d(h->N, h->bwd_bufferFD, h->bwd_bufferTD, FFTW_BACKWARD, FFTW_ESTIMATE);
 #elif defined(SAF_USE_INTEL_IPP)
     /* Use ippsFFT if N is 2^x, otherwise, use ippsDFT */
-    if(ceilf(log2f(N)) == floorf(log2f(N))){
+    if((int)(log2f((float)N) + 1.0f) == (int)(log2f((float)N))){
         h->useIPPfft_FLAG = 1;
         h->log2n = (int)(log2f((float)N)+0.1f);
-        ippsFFTGetSize_C_32f(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        ippsFFTGetSize_C_32fc(h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
         h->hFFTspec = NULL;
-        h->memSpec = (Ipp8u*) ippsMalloc_8u(h->specSize);
-        h->buffer  = (Ipp8u*) ippsMalloc_8u(h->bufferSize);
-        h->memInit = (Ipp8u*) ippsMalloc_8u(h->specBufferSize);
+        h->memSpec = (Ipp8u*)ippMalloc(h->specSize);
+        h->buffer  = (Ipp8u*)ippMalloc(h->bufferSize);
+        h->memInit = (Ipp8u*)ippMalloc(h->specBufferSize);
         ippsFFTInit_C_32fc(&(h->hFFTspec), h->log2n, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->memSpec, h->memInit);
     }
     else{
         h->useIPPfft_FLAG = 0;
-        ippsDFTGetSize_C_32f(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
-        h->hDFTspec = (IppsDFTSpec_C_32fc*) ippsMalloc_8u(h->specSize);
-        h->buffer  = (Ipp8u*) ippsMalloc_8u(h->bufferSize);
-        h->memInit = (Ipp8u*) ippsMalloc_8u(h->specBufferSize);
+        ippsDFTGetSize_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, &(h->specSize), &(h->specBufferSize), &(h->bufferSize));
+        h->hDFTspec = (IppsDFTSpec_C_32fc*)ippMalloc(h->specSize);
+        h->buffer  = (Ipp8u*)ippMalloc(h->bufferSize);
+        h->memInit = (Ipp8u*)ippMalloc(h->specBufferSize);
         ippsDFTInit_C_32fc(N, IPP_FFT_DIV_INV_BY_N, ippAlgHintNone, h->hDFTspec, h->memInit);
     }
     if (h->memInit)
@@ -862,7 +863,7 @@ void saf_fft_destroy
             if(h->hDFTspec)
                 ippFree(h->hDFTspec);
         }
-        if(h->buffer)
+        if (h->buffer)
             ippFree(h->buffer);
 #elif defined(SAF_USE_APPLE_ACCELERATE)
         if(!h->useKissFFT_FLAG){
