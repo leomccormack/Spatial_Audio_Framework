@@ -1709,9 +1709,14 @@ void utility_csvd
 )
 {
     utility_csvd_data *h;
-    veclib_int i, j, m, n, lda, ldu, ldvt, info;
+    veclib_int m, n, lda, ldu, ldvt, info;
     veclib_int lwork;
     float_complex wkopt;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    const MKL_Complex8 calpha = {1.0f, 0.0f};
+#else
+    int i, j;
+#endif
 
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
 
@@ -1726,10 +1731,14 @@ void utility_csvd
 #endif
     }
 
-    /* store in column major order */
+    /* store in column major order (i.e. transpose) */
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    MKL_Comatcopy('R', 'T', dim1, dim2, calpha, (veclib_float_complex*)A, dim2, (veclib_float_complex*)h->a, dim1);
+#else
     for(i=0; i<dim1; i++)
         for(j=0; j<dim2; j++)
-            h->a[j*dim1+i] = A[i*dim2 +j];
+            h->a[j*dim1+i] = A[i*dim2+j];
+#endif
 
     /* Query how much "work" memory is required */
     lwork = -1;
@@ -1779,26 +1788,30 @@ void utility_csvd
     /* svd successful */
     else {
         if (S != NULL){
-            memset(S, 0, dim1*dim2*sizeof(float_complex));
             /* singular values on the diagonal MIN(dim1, dim2). The remaining elements are 0.  */
-            for(i=0; i<SAF_MIN(dim1, dim2); i++)
-                S[i*dim2+i] = cmplxf(h->s[i], 0.0f);
+            memset(S, 0, dim1*dim2*sizeof(float_complex));
+            cblas_scopy(SAF_MIN(dim1, dim2), h->s, 1, (float*)S, 2*(dim2+1));
         }
+
         /*return as row-major*/
-        if (U != NULL)
+        if (U!=NULL){
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+            MKL_Comatcopy('R', 'T', dim1, dim1, calpha, (veclib_float_complex*)h->u, dim1, (veclib_float_complex*)U, dim1);
+#else
             for(i=0; i<dim1; i++)
                 for(j=0; j<dim1; j++)
                     U[i*dim1+j] = h->u[j*dim1+i];
-        
-        /* lapack returns VT, i.e. row-major V already */
-        if (V != NULL)
-            for(i=0; i<dim2; i++)
-                for(j=0; j<dim2; j++)
-                    V[i*dim2+j] = conjf(h->vt[i*dim2+j]); /* v^H */
+#endif
+        }
+
+        /* lapack returns V^T, i.e. row-major V already, but we need V^H! */
+        if (V != NULL){
+            cblas_ccopy(dim2*dim2, h->vt, 1, V, 1);
+            cblas_sscal(dim2*dim2, -1.0f, ((float*)V)+1, 2); /* conj */
+        }
         
         if (sing != NULL)
-            for(i=0; i<SAF_MIN(dim1, dim2); i++)
-                sing[i] = h->s[i];
+            cblas_scopy(SAF_MIN(dim1, dim2), h->s, 1, sing, 1);
     }
 
     if(hWork == NULL)
@@ -2080,10 +2093,9 @@ void utility_cseig
 #if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
             MKL_Comatcopy('R', 'T', dim, dim, calpha, (veclib_float_complex*)h->a, dim, (veclib_float_complex*)V, dim);
 #else
-            if(V!=NULL)
-                for(i=0; i<dim; i++)
-                    for(j=0; j<dim; j++)
-                        V[i*dim+j] = h->a[j*dim+i];
+            for(i=0; i<dim; i++)
+                for(j=0; j<dim; j++)
+                    V[i*dim+j] = h->a[j*dim+i];
 #endif
         }
 
