@@ -498,7 +498,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             h->DataLengthIR = hrtf->N;
             h->DataSamplingRate = hrtf->DataSamplingRate.values[0];
             h->nEmitters = hrtf->E;
-            h->nListeners = hrtf->_I;
+            h->nListeners = hrtf->M; // changed to M for multiple listeners
             h->DataIR = hrtf->DataIR.values;
             h->DataDelay = hrtf->DataDelay.values;
             h->SourcePosition = hrtf->SourcePosition.values;
