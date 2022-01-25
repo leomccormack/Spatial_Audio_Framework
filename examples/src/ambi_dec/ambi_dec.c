@@ -304,8 +304,8 @@ void ambi_dec_initCodec
             Y = malloc1d(nSH_order*sizeof(float));
             grid_dirs_deg = (float*)(&__Tdesign_degree_30_dirs_deg[0][0]);
             for(ng=0; ng<nGrid_dirs; ng++){
-                azi_incl[0] = grid_dirs_deg[ng*2]*M_PI/180.0f;
-                azi_incl[1] = M_PI/2.0f-grid_dirs_deg[ng*2+1]*M_PI/180.0f;
+                azi_incl[0] = grid_dirs_deg[ng*2]*SAF_PI/180.0f;
+                azi_incl[1] = SAF_PI/2.0f-grid_dirs_deg[ng*2+1]*SAF_PI/180.0f;
                 getSHreal(n, (float*)azi_incl, 1,  Y);
                 cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nLoudspeakers, 1, nSH_order, 1.0f,
                             pars->M_dec[d][n-1], nSH_order,

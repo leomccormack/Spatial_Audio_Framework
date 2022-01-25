@@ -463,7 +463,7 @@ void test__smb_pitchShifter(void){
     outputData = calloc1d(nSamples,sizeof(float));
     frequency = (float)sampleRate/8.0f;
     for(i=0; i<nSamples; i++) /* sine tone at quarter Nyquist: */
-        inputData[i] = sinf(2.0f * M_PI * (float)i * frequency/(float)sampleRate);
+        inputData[i] = sinf(2.0f * SAF_PI * (float)i * frequency/(float)sampleRate);
     smbLatency = FFTsize - (FFTsize/osfactor);
 
     /* Pitch shift down one octave */

@@ -130,7 +130,7 @@ void gaunt_mtx
                                 wigner3jm = wigner_3j(n1, n2, n, m1, m2, -m);
                                 wigner3j0 = wigner_3j(n1, n2, n, 0, 0, 0);
                                 A[q1*D2*D3 + q2*D3 + q] = powf(-1.0f,(float)m) *
-                                                          sqrtf((2.0f*(float)n1+1.0f)*(2.0f*(float)n2+1.0f)*(2.0f*(float)n+1.0f)/(4.0f*M_PI)) *
+                                                          sqrtf((2.0f*(float)n1+1.0f)*(2.0f*(float)n2+1.0f)*(2.0f*(float)n+1.0f)/(4.0f*SAF_PI)) *
                                                           wigner3jm * wigner3j0;
                             }
                         }

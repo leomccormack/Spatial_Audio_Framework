@@ -227,7 +227,7 @@ void getSHreal
         
         /* normalisation */
         for(m=-n, j=0; m<=n; m++, j++)
-            norm_real[j] = sqrt( (2.0*(double)n+1.0) * (double)factorial(n-abs(m)) / (4.0*M_PI*(double)factorial(n+abs(m))) );
+            norm_real[j] = sqrt( (2.0*(double)n+1.0) * (double)factorial(n-abs(m)) / (4.0*SAF_PId*(double)factorial(n+abs(m))) );
         
         /* norm_real * Lnm_real .* CosSin; */
         for(dir=0; dir<nDirs; dir++){
@@ -356,7 +356,7 @@ void getSHcomplex
         
         /* normalisation */
         for(m=0; m<=n; m++)
-            norm_real[m] = sqrt( (2.0*(double)n+1.0)*(double)factorial(n-m) / (4.0*M_PI*(double)factorial(n+m)) );
+            norm_real[m] = sqrt( (2.0*(double)n+1.0)*(double)factorial(n-m) / (4.0*SAF_PId*(double)factorial(n+m)) );
         
         /* norm_real .* Lnm_real .* CosSin; */
         for(dir=0; dir<nDirs; dir++){
@@ -629,7 +629,7 @@ float computeSectorCoeffsEP
                             b_n, 1,
                             b_n, 1, 0.0f,
                             &Q, 1);
-                Q = 4.0f*M_PI/(Q);
+                Q = 4.0f*SAF_PI/(Q);
                 break;
             case SECTOR_PATTERN_CARDIOID:
                 beamWeightsCardioid2Spherical(orderSec, b_n);
@@ -640,9 +640,9 @@ float computeSectorCoeffsEP
         
         for(ns=0; ns<nSecDirs; ns++){
             /* rotate the pattern by rotating the coefficients */
-            azi_sec = sec_dirs_deg[ns*2] * M_PI/180.0f;
-            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0f; /* from elevation to inclination */
-            rotateAxisCoeffsReal(orderSec, b_n, M_PI/2.0f-elev_sec, azi_sec, c_nm);
+            azi_sec = sec_dirs_deg[ns*2] * SAF_PI/180.0f;
+            elev_sec = sec_dirs_deg[ns*2+1] * SAF_PI/180.0f; /* from elevation to inclination */
+            rotateAxisCoeffsReal(orderSec, b_n, SAF_PI/2.0f-elev_sec, azi_sec, c_nm);
             beamWeightsVelocityPatternsReal(orderSec, b_n, azi_sec, elev_sec, A_xyz, xyz_nm);
      
             /* store coefficients */
@@ -693,9 +693,9 @@ float computeSectorCoeffsAP
         
         for(ns=0; ns<nSecDirs; ns++){
             /* rotate the pattern by rotating the coefficients */
-            azi_sec = sec_dirs_deg[ns*2] * M_PI/180.0f;
-            elev_sec = sec_dirs_deg[ns*2+1] * M_PI/180.0f;
-            rotateAxisCoeffsReal(orderSec, b_n, M_PI/2.0f-elev_sec, azi_sec, c_nm);
+            azi_sec = sec_dirs_deg[ns*2] * SAF_PI/180.0f;
+            elev_sec = sec_dirs_deg[ns*2+1] * SAF_PI/180.0f;
+            rotateAxisCoeffsReal(orderSec, b_n, SAF_PI/2.0f-elev_sec, azi_sec, c_nm);
             beamWeightsVelocityPatternsReal(orderSec, b_n, azi_sec, elev_sec, A_xyz, xyz_nm);
             
             /* store coefficients */
@@ -723,7 +723,7 @@ void beamWeightsCardioid2Spherical
     
     /* The coefficients can be derived by the binomial expansion of the cardioid function */
     for(n=0; n<N+1; n++) {
-        b_n[n] = sqrtf(4.0f*M_PI*(2.0f*(float)n+1.0f)) *
+        b_n[n] = sqrtf(4.0f*SAF_PI*(2.0f*(float)n+1.0f)) *
                  (float)factorial(N)* (float)factorial(N+1)/
                  ((float)factorial(N+n+1)*(float)factorial(N-n))/
                  ((float)N+1.0f);
@@ -743,7 +743,7 @@ void beamWeightsHypercardioid2Spherical
     c_n = malloc1d((N+1)*(N+1)*sizeof(float));
     getSHreal(N, dirs_rad, 1, c_n);
     for(n=0; n<N+1; n++)
-        b_n[n] = c_n[(n+1)*(n+1)-n-1] * 4.0f * M_PI/(powf((float)N+1.0f, 2.0f));
+        b_n[n] = c_n[(n+1)*(n+1)-n-1] * 4.0f * SAF_PI/(powf((float)N+1.0f, 2.0f));
     
     free(c_n);
 }
@@ -764,8 +764,8 @@ void beamWeightsMaxEV
     for (n=0; n<=N; n++) {
         temp_i = cos(2.4068f/((double)N+1.51));
         unnorm_legendreP(n, &temp_i, 1, temp_o);
-        b_n[n] = sqrtf((2.0f*(float)n+1.0f)/(4.0f*M_PI))*(float)temp_o[0];
-        norm +=  sqrtf((2.0f*(float)n+1.0f)/(4.0f*M_PI))*b_n[n];
+        b_n[n] = sqrtf((2.0f*(float)n+1.0f)/(4.0f*SAF_PI))*(float)temp_o[0];
+        norm +=  sqrtf((2.0f*(float)n+1.0f)/(4.0f*SAF_PI))*b_n[n];
     }
     
     /* normalise to unity response on look-direction */
@@ -815,7 +815,7 @@ void beamWeightsVelocityPatternsComplex
     c_nm = malloc1d(nSH_l*sizeof(float_complex));
     A_1 = malloc1d(nSH*nSH_l*sizeof(float_complex));
     velCoeffs_T = malloc1d(3*nSH*sizeof(float_complex));
-    rotateAxisCoeffsComplex(order, b_n, M_PI/2.0f-elev_rad, azi_rad, c_nm);
+    rotateAxisCoeffsComplex(order, b_n, SAF_PI/2.0f-elev_rad, azi_rad, c_nm);
     
     /* x_nm, y_nm, z_nm */
     for(d3 = 0; d3<3; d3++){
@@ -876,7 +876,7 @@ void rotateAxisCoeffsComplex
     getSHcomplex(order, (float*)phi_theta, 1, Y_N);
     for(n=0, q = 0; n<=order; n++)
         for(m=-n; m<=n; m++, q++)
-            c_nm[q] = crmulf(conjf(Y_N[q]), sqrtf(4.0f*M_PI/(2.0f*(float)n+1.0f)) * c_n[n]);
+            c_nm[q] = crmulf(conjf(Y_N[q]), sqrtf(4.0f*SAF_PI/(2.0f*(float)n+1.0f)) * c_n[n]);
     
     free(Y_N);
 }
@@ -1933,7 +1933,7 @@ float sphArrayAliasLim
     int maxN
 )
 {
-   return c*(float)maxN/(2.0f*M_PI*r);
+   return c*(float)maxN/(2.0f*SAF_PI*r);
 }
 
 void sphArrayNoiseThreshold
@@ -1958,8 +1958,8 @@ void sphArrayNoiseThreshold
     for (n=1; n<maxN+1; n++){
         b_N = malloc1d((n+1) * sizeof(double_complex));
         sphModalCoeffs(n, &kr, 1, arrayType, dirCoeff, b_N);
-        kR_lim = powf(maxG*(float)Nsensors* powf((float)cabs(b_N[n])/(4.0f*M_PI), 2.0f), (-10.0f*log10f(2.0f)/(6.0f*n)));
-        f_lim[n-1] = kR_lim*c/(2.0f*M_PI*r);
+        kR_lim = powf(maxG*(float)Nsensors* powf((float)cabs(b_N[n])/(4.0f*SAF_PI), 2.0f), (-10.0f*log10f(2.0f)/(6.0f*n)));
+        f_lim[n-1] = kR_lim*c/(2.0f*SAF_PI*r);
         free(b_N);
     }
 }
@@ -1989,7 +1989,7 @@ void sphModalCoeffs
             /* modal coefficients for open spherical array (omni sensors): 4*pi*1i^n * jn; */
             for(n=0; n<maxN+1; n++)
                 for(i=0; i<nBands; i++)
-                    b_N[i*(order+1)+n] = crmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), jn[i*(order+1)+n]);
+                    b_N[i*(order+1)+n] = crmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*SAF_PId), jn[i*(order+1)+n]);
             
             free(jn);
             break;
@@ -2003,7 +2003,7 @@ void sphModalCoeffs
             /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
             for(n=0; n<maxN+1; n++)
                 for(i=0; i<nBands; i++)
-                    b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ccsub(cmplx(dirCoeff*jn[i*(order+1)+n], 0.0),
+                    b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*SAF_PId), ccsub(cmplx(dirCoeff*jn[i*(order+1)+n], 0.0),
                                          cmplx(0.0, (1.0-dirCoeff)*jnprime[i*(order+1)+n]))  );
             
             free(jn);
@@ -2030,11 +2030,11 @@ void sphModalCoeffs
             for(i=0; i<nBands; i++){
                 for(n=0; n<maxN+1; n++){
                     if(n==0 && kr[i]<=1e-20)
-                        b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
+                        b_N[i*(order+1)+n] = cmplx(4.0*SAF_PId, 0.0);
                     else if(kr[i] <= 1e-20)
                         b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
                     else{
-                        b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ( ccsub(cmplx(jn[i*(order+1)+n], 0.0),
+                        b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*SAF_PId), ( ccsub(cmplx(jn[i*(order+1)+n], 0.0),
                                              ccmul(ccdiv(cmplx(jnprime[i*(order+1)+n],0.0), hn2prime[i*(order+1)+n]), hn2[i*(order+1)+n]))));
                     }
                 }
@@ -2081,11 +2081,11 @@ void sphScattererModalCoeffs
     for(i=0; i<nBands; i++){
         for(n=0; n<maxN+1; n++){
             if(n==0 && kr[i]<=1e-20)
-                b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
+                b_N[i*(order+1)+n] = cmplx(4.0*SAF_PId, 0.0);
             else if(kr[i] <= 1e-20)
                 b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
             else{
-                b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*M_PI), ( ccsub(cmplx(jn[i*(order+1)+n], 0.0),
+                b_N[i*(order+1)+n] = ccmul(crmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), 4.0*SAF_PId), ( ccsub(cmplx(jn[i*(order+1)+n], 0.0),
                                      ccmul(ccdiv(cmplx(jnprime[i*(order+1)+n],0.0), hn2prime[i*(order+1)+n]), hn2[i*(order+1)+n]))));
             }
         }
@@ -2135,7 +2135,7 @@ void sphScattererDirModalCoeffs
     for(i=0; i<nBands; i++){
         for(n=0; n<maxN+1; n++){
             if(n==0 && kr[i]<=1e-20)
-                b_N[i*(order+1)+n] = cmplx(4.0*M_PI, 0.0);
+                b_N[i*(order+1)+n] = cmplx(4.0*SAF_PId, 0.0);
             else if(kr[i] <= 1e-20)
                 b_N[i*(order+1)+n] = cmplx(0.0, 0.0);
             else{ // Dear god, what happened here?!...
@@ -2147,10 +2147,10 @@ void sphScattererDirModalCoeffs
                 b_N[i*(order+1)+n] = cmplx(dirCoeff * jn_kr[i*(order+1)+n], -(1.0-dirCoeff)* jnprime_kr[i*(order+1)+n]);
                 b_N[i*(order+1)+n] = ccsub(b_N[i*(order+1)+n], ccmul(ccdiv(cmplx(jnprime_kR[i*(order+1)+n], 0.0), hn2prime_kR[i*(order+1)+n]),
                                     (ccsub(crmul(hn2_kr[i*(order+1)+n], dirCoeff), ccmul(cmplx(0.0f,1.0-dirCoeff), hn2prime_kr[i*(order+1)+n])))));
-                b_N[i*(order+1)+n] = crmul(ccmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), b_N[i*(order+1)+n]), 4.0*M_PI/dirCoeff); /* had to scale by directivity to preserve amplitude? */ 
+                b_N[i*(order+1)+n] = crmul(ccmul(cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)), b_N[i*(order+1)+n]), 4.0*SAF_PId/dirCoeff); /* had to scale by directivity to preserve amplitude? */ 
 //                b_N[i*(order+1)+n] = dirCoeff * jn_kr[i*(order+1)+n] - I*(1.0-dirCoeff)* jnprime_kr[i*(order+1)+n];
 //                b_N[i*(order+1)+n] = b_N[i*(order+1)+n] - (jnprime_kR[i*(order+1)+n]/hn2prime_kR[i*(order+1)+n])*(dirCoeff*hn2_kr[i*(order+1)+n] - I*(1.0-dirCoeff)*hn2prime_kr[i*(order+1)+n]);
-//                b_N[i*(order+1)+n] = cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)) * b_N[i*(order+1)+n] * 4.0*M_PI/dirCoeff; /* had to scale by directivity to preserve amplitude? */
+//                b_N[i*(order+1)+n] = cpow(cmplx(0.0,1.0), cmplx((double)n,0.0)) * b_N[i*(order+1)+n] * 4.0*SAF_PId/dirCoeff; /* had to scale by directivity to preserve amplitude? */
 //#endif
             }
         }
@@ -2204,7 +2204,7 @@ void sphDiffCohMtxTheory
             break;
     }
     for(i=0; i<nBands * (order+1); i++)
-        b_N2[i] = pow(cabs(ccdiv(b_N[i], cmplx(4.0*M_PI, 0.0))), 2.0);
+        b_N2[i] = pow(cabs(ccdiv(b_N[i], cmplx(4.0*SAF_PId, 0.0))), 2.0);
     
     /* determine theoretical diffuse-coherence matrix for sensor array */
     ppm = malloc1d((order+1)*sizeof(float));
@@ -2219,7 +2219,7 @@ void sphDiffCohMtxTheory
             cosangle = cosangle>1.0f ? 1.0f : (cosangle<-1.0f ? -1.0f : cosangle);
             for(n=0; n<order+1; n++){
                 unnorm_legendreP_recur(n, &cosangle, 1, ppm_z1, ppm_z2, ppm);  
-                Pn[n] =  (2.0*(double)n+1.0) * 4.0f*M_PI * (double)ppm[0];
+                Pn[n] =  (2.0*(double)n+1.0) * 4.0f*SAF_PI * (double)ppm[0];
                 memcpy(ppm_z2, ppm_z1, (order+1)*sizeof(float));
                 memcpy(ppm_z1, ppm, (order+1)*sizeof(float));
             }
@@ -2268,7 +2268,7 @@ void simulateCylArray /*untested*/
     b_NC = malloc1d(nBands*N_sensors*sizeof(double_complex));
     for(i=0; i<N_srcs; i++){
         for(j=0; j<N_sensors; j++){
-            angle = sensor_dirs_rad[i*2] - src_dirs_deg[i*2]*M_PI/180.0;
+            angle = sensor_dirs_rad[i*2] - src_dirs_deg[i*2]*SAF_PId/180.0;
             for(n=0; n<order+1; n++){
                 /* Jacobi-Anger expansion */
                 if(n==0)
@@ -2349,7 +2349,7 @@ void simulateSphArray
                 /* Legendre polynomials correspond to the angular dependency */
                 dcosangle = (double)cosangle;
                 unnorm_legendreP(n, &dcosangle, 1, ppm);
-                P[n*N_sensors+j] = cmplx((2.0*(double)n+1.0)/(4.0*M_PI) * ppm[0], 0.0);
+                P[n*N_sensors+j] = cmplx((2.0*(double)n+1.0)/(4.0*SAF_PId) * ppm[0], 0.0);
             }
         }
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nBands, N_sensors, order+1, &calpha,

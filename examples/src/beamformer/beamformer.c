@@ -38,10 +38,10 @@ void beamformer_create
     /* default user parameters */
     pData->beamOrder = 1;
     for(i=0; i<MAX_NUM_BEAMS; i++){
-        pData->beam_dirs_deg[i][0] = __default_LScoords64_rad[i][0]*180.0f/M_PI;
-        pData->beam_dirs_deg[i][1] = (__default_LScoords64_rad[i][1] - M_PI/2.0f) < -M_PI/2.0f ?
-        (M_PI/2.0f + __default_LScoords64_rad[i][1]) :  (__default_LScoords64_rad[i][1] - M_PI/2.0f);
-        pData->beam_dirs_deg[i][1] *= 180.0f/M_PI;
+        pData->beam_dirs_deg[i][0] = __default_LScoords64_rad[i][0]*180.0f/SAF_PI;
+        pData->beam_dirs_deg[i][1] = (__default_LScoords64_rad[i][1] - SAF_PI/2.0f) < -SAF_PI/2.0f ?
+        (SAF_PI/2.0f + __default_LScoords64_rad[i][1]) :  (__default_LScoords64_rad[i][1] - SAF_PI/2.0f);
+        pData->beam_dirs_deg[i][1] *= 180.0f/SAF_PI;
     }
     pData->nBeams = 1;
     pData->beamType = STATIC_BEAM_TYPE_HYPERCARDIOID;

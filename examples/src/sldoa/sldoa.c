@@ -83,7 +83,7 @@ void sldoa_create
         pData->secCoeffs[i] = NULL;
     for(i=0; i<64; i++)
         for(j=0; j<NUM_GRID_DIRS; j++)
-            pData->grid_Y[i][j] = (float)__grid_Y[i][j] * sqrtf(4.0*M_PI);
+            pData->grid_Y[i][j] = (float)__grid_Y[i][j] * sqrtf(4.0f*SAF_PI);
     for(i=0; i<3; i++)
         for(j=0; j<NUM_GRID_DIRS; j++)
             pData->grid_Y_dipoles_norm[i][j] = pData->grid_Y[i+1][j]/sqrtf(3); /* scale to [0..1] */
@@ -312,8 +312,8 @@ void sldoa_analysis
                     nSectors = nSectorsPerBand[band];
                     /* store averaged values */
                     for(i=0; i<nSectors; i++){
-                        pData->azi_deg [current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][0]*180.0f/M_PI;
-                        pData->elev_deg[current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][1]*180.0f/M_PI;
+                        pData->azi_deg [current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][0]*180.0f/SAF_PI;
+                        pData->elev_deg[current_disp_idx][band*MAX_NUM_SECTORS + i] = pData->doa_rad[band][i][1]*180.0f/SAF_PI;
 
                         /* colour should indicate the different frequencies */
                         pData->colourScale[current_disp_idx][band*MAX_NUM_SECTORS + i] = (float)(band-min_band)/(float)(numAnalysisBands+1);
