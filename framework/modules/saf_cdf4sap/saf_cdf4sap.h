@@ -127,7 +127,7 @@ void cdf4sap_cmplx_destroy(/* Input Arguments */
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
  *                           FLAT: nXcols x nXcols
- * @param[in]  Cy            Target covariance matrix; FLAT: nXcols x nXcols
+ * @param[in]  Cy            Target covariance matrix; FLAT: nYcols x nYcols
  * @param[in]  Q             Prototype matrix; FLAT: nYcols x nXcols
  * @param[in]  useEnergyFLAG Set to '0' to apply energy compensation to 'M'
  *                           instead of outputing 'Cr'. Set to '1' to output 'Cr'
@@ -183,7 +183,7 @@ void formulate_M_and_Cr(/* Input Arguments */
  * @param[in]  hCdf          Covariance Domain Framework handle
  * @param[in]  Cx            Covariance matrix of input 'x';
  *                           FLAT: nXcols x nXcols
- * @param[in]  Cy            Target covariance matrix; FLAT: nXcols x nXcols
+ * @param[in]  Cy            Target covariance matrix; FLAT: nYcols x nYcols
  * @param[in]  Q             Prototype matrix; FLAT: nYcols x nXcols
  * @param[in]  useEnergyFLAG Set to '0' to apply energy compensation to 'M'
  *                           instead of outputing 'Cr'. Set to '1' to output

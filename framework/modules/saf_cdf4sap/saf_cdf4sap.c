@@ -72,7 +72,7 @@ typedef struct _cdf4sap_cmplx_data {
     void* hSVD;
     float_complex* Cr_cmplx;
     float_complex* lambda, *U_Cy, *S_Cy, *S_Cx, *Ky, *U_Cx, *Kx, *Kx_reg_inverse, *U, *V, *P;
-    float* s_Cx;
+    float* s_Cx, *G_hat_diag;
     float_complex* G_hat, *Cx_QH;
     float_complex* GhatH_Ky, *QH_GhatH_Ky, *KxH_QH_GhatH_Ky, *lambda_UH;
     float_complex *P_Kxreginverse;
@@ -169,6 +169,7 @@ void cdf4sap_cmplx_create
     h->Kx_reg_inverse = malloc1d(nXcols*nXcols*sizeof(float_complex));
     
     /* For the formulation of normalisation matrix G_hat */
+    h->G_hat_diag = malloc1d(nYcols*sizeof(float));
     h->G_hat = malloc1d(nYcols*nYcols*sizeof(float_complex));
     h->Cx_QH = malloc1d(nXcols*nYcols*sizeof(float_complex));
     
@@ -247,6 +248,7 @@ void cdf4sap_cmplx_destroy
         free(h->s_Cx);
         free(h->Kx);
         free(h->Kx_reg_inverse);
+        free(h->G_hat_diag);
         free(h->G_hat);
         free(h->Cx_QH);
         free(h->GhatH_Ky);
@@ -472,10 +474,18 @@ void formulate_M_and_Cr_cmplx
     for(i=0; i< nYcols; i++)
         maxVal = cabsf(h->G_hat[i*nYcols+i]) > maxVal ? cabsf(h->G_hat[i*nYcols+i]) : maxVal; // crealf->cabsf
     limit = maxVal * 0.001f + 2.23e-13f;
+#if 1
+    cblas_scopy(nYcols, (float*)h->G_hat, 2*(nYcols+1), h->G_hat_diag, 1); /* take diagonal (real) */
+    memset(h->G_hat, 0, nYcols*nYcols*sizeof(float_complex));
+    for(i=0; i<nYcols; i++)
+        h->G_hat_diag[i] = sqrtf(((float*)Cy)[2*(i*nYcols+i)]/SAF_MAX(h->G_hat_diag[i], limit));
+    cblas_scopy(nYcols, (float*)h->G_hat_diag, 1, (float*)h->G_hat, /*re+im*/2*(nYcols+1)); /* load the diagonal */
+#else
     for(i=0; i < nYcols; i++)
         for(j=0; j < nYcols; j++)
             h->G_hat[i*nYcols+j] = i==j ? cmplxf(crealf(csqrtf( ccdivf(Cy[i*nYcols+j], cmplxf(SAF_MAX(cabsf(h->G_hat[i*nYcols+j]), limit), 0.0f)))), 0.0f) : cmplxf(0.0f, 0.0f);  // changed crealf->cabsf
-    
+#endif
+
     /* Formulate optimal P */
     cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, nYcols, nYcols, nYcols, &calpha,
                 h->G_hat, nYcols,
@@ -518,12 +528,18 @@ void formulate_M_and_Cr_cmplx
                 M, nXcols,
                 h->Cx_MH, nYcols, &cbeta,
                 h->Cy_tilde, nYcols);
-    if(Cr != NULL){
+    if(Cr != NULL) {
+#if 1
+        cblas_sscal(nYcols*nYcols, 0.0f, ((float*)Cr)+1, 2);      /* set imag part to zero */
+        cblas_scopy(nYcols*nYcols, (float*)Cy, 2, (float*)Cr, 2); /* copy real part */
+        cblas_saxpy(nYcols*nYcols, -1.0f, (float*)h->Cy_tilde, 2, (float*)Cr, 2); /* subtract tilde to get residual (real only) */
+#else
         for(i=0; i < nYcols*nYcols; i++){
             h->Cr_cmplx[i] = ccsubf(Cy[i], h->Cy_tilde[i]);
             Cr[i] = cmplxf(crealf(h->Cr_cmplx[i]), 0.0f);
             //Cr[i] = h->Cr_cmplx[i];
         }
+#endif
     }
 
     /* Use energy compensation instead of residuals */
