@@ -386,7 +386,7 @@ $(document).ready(function(){initNavTree('resample_8c_source.html',''); initResi
 <div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>   <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fabs(x) &gt; .5f*N)</div>
 <div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>      <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>   <span class="comment">/*FIXME: Can it really be any slower than this? */</span></div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>   <span class="keywordflow">return</span> WORD2INT(32768.*cutoff*sin(<a class="code hl_define" href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a>*xx)/(<a class="code hl_define" href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a>*xx) * compute_func(fabs(2.*x/N), window_func));</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>   <span class="keywordflow">return</span> WORD2INT(32768.*cutoff*sin(M_PI*xx)/(M_PI*xx) * compute_func(fabs(2.*x/N), window_func));</div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>}</div>
 <div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span><span class="preprocessor">#else</span></div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span><span class="comment">/* The slow way of computing a sinc for the table. Should improve that some day */</span></div>
@@ -399,7 +399,7 @@ $(document).ready(function(){initNavTree('resample_8c_source.html',''); initResi
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>   <span class="keywordflow">else</span> <span class="keywordflow">if</span> (fabs(x) &gt; .5*N)</div>
 <div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>      <span class="keywordflow">return</span> 0;</div>
 <div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>   <span class="comment">/*FIXME: Can it really be any slower than this? */</span></div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>   <span class="keywordflow">return</span> cutoff*sinf((<span class="keywordtype">float</span>)<a class="code hl_define" href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a>*xx)/((float)<a class="code hl_define" href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a>*xx) * (float)compute_func(fabsf(2.0f*x/(<span class="keywordtype">float</span>)N), window_func);</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>   <span class="keywordflow">return</span> cutoff*sinf((<span class="keywordtype">float</span>)M_PI*xx)/((float)M_PI*xx) * (float)compute_func(fabsf(2.0f*x/(<span class="keywordtype">float</span>)N), window_func);</div>
 <div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>}</div>
 <div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span><span class="preprocessor">#endif</span></div>
 <div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span> </div>
@@ -1352,7 +1352,6 @@ $(document).ready(function(){initNavTree('resample_8c_source.html',''); initResi
 <div class="line"><a id="l01258" name="l01258"></a><span class="lineno"> 1258</span>   }</div>
 <div class="line"><a id="l01259" name="l01259"></a><span class="lineno"> 1259</span>}</div>
 <div class="ttc" id="aarch_8h_html"><div class="ttname"><a href="arch_8h.html">arch.h</a></div><div class="ttdoc">Various architecture definitions Speex.</div></div>
-<div class="ttc" id="agroup___utilities_html_gae71449b1cc6e6250b91f539153a7a0d3"><div class="ttname"><a href="group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3">M_PI</a></div><div class="ttdeci">#define M_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00071">saf_utilities.h:71</a></div></div>
 <div class="ttc" id="aos__support_8h_html"><div class="ttname"><a href="os__support_8h.html">os_support.h</a></div><div class="ttdoc">Supported OSs for Speex resampler.</div></div>
 <div class="ttc" id="aos__support_8h_html_a3b8d71870ca75bbcfd50ec8fb0103aea"><div class="ttname"><a href="os__support_8h.html#a3b8d71870ca75bbcfd50ec8fb0103aea">speex_alloc</a></div><div class="ttdeci">static void * speex_alloc(int size)</div><div class="ttdoc">Speex wrapper for calloc.</div><div class="ttdef"><b>Definition:</b> <a href="os__support_8h_source.html#l00056">os_support.h:56</a></div></div>
 <div class="ttc" id="aos__support_8h_html_a5553459f5dea845a143f28c61caba110"><div class="ttname"><a href="os__support_8h.html#a5553459f5dea845a143f28c61caba110">speex_realloc</a></div><div class="ttdeci">static void * speex_realloc(void *ptr, int size)</div><div class="ttdoc">Speex wrapper for realloc.</div><div class="ttdef"><b>Definition:</b> <a href="os__support_8h_source.html#l00076">os_support.h:76</a></div></div>
@@ -1393,7 +1392,7 @@ $(document).ready(function(){initNavTree('resample_8c_source.html',''); initResi
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_e14e50a7237de0f4a7b9a6a212f89e45.html">speex_resampler</a></li><li class="navelem"><a class="el" href="resample_8c.html">resample.c</a></li>
-    <li class="footer">Generated on Thu Dec 9 2021 09:17:36 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
+    <li class="footer">Generated on Tue Jan 25 2022 11:39:33 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

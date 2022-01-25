@@ -1,7 +1,5 @@
 var NAVTREEINDEX11 =
 {
-"rotator_8c.html#a7b64afed6de180b3fbc820707d980029":[2,0,0,1,15,0,6],
-"rotator_8c.html#a7e1fa4f6f7497aff0ae4714f1b7e6a6d":[2,0,0,1,15,0,34],
 "rotator_8c.html#a8b482010dec1610477720dabbb6d95f8":[2,0,0,1,15,0,17],
 "rotator_8c.html#a95ae74f98f690792c4c804fbe4656ddf":[2,0,0,1,15,0,4],
 "rotator_8c.html#aa07bb8a0fa3e0b026891d3dd6aaf0ebc":[2,0,0,1,15,0,31],
@@ -249,5 +247,7 @@ var NAVTREEINDEX11 =
 "saf__reverb__internal_8h.html#a904e25af9a8cc9e95d458083ebe0dfcc":[2,0,2,1,4,3,20],
 "saf__reverb__internal_8h.html#a96f4cbfc7aa2295abe4aed1846cc4420":[2,0,2,1,4,3,12],
 "saf__reverb__internal_8h.html#a99a61a7674a188e67dc9064fbe56abf6":[2,0,2,1,4,3,30],
-"saf__reverb__internal_8h.html#a9c7ccfebfbe1c992aba5d0e25264d176":[2,0,2,1,4,3,16]
+"saf__reverb__internal_8h.html#a9c7ccfebfbe1c992aba5d0e25264d176":[2,0,2,1,4,3,16],
+"saf__reverb__internal_8h.html#a9e3b3e32ba5ea1064252607f1774a5fd":[2,0,2,1,4,3,27],
+"saf__reverb__internal_8h.html#aa1a0946510b8877932fd184f121677b1":[2,0,2,1,4,3,26]
 };

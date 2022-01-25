@@ -5,8 +5,6 @@ var saf__utilities_8h =
     [ "FOURPI", "group___utilities.html#ga51691be277b6d2a5d45e83224a53bf5e", null ],
     [ "ISEVEN", "group___utilities.html#gabb05654602cfc66de387630c21351635", null ],
     [ "ISODD", "group___utilities.html#gad3d360716cce3c0c6ba47eb97c2eec52", null ],
-    [ "M_PI", "group___utilities.html#gae71449b1cc6e6250b91f539153a7a0d3", null ],
-    [ "M_PId", "group___utilities.html#gaf4b31725088c456227d3c20164230495", null ],
     [ "MKSTRING", "group___utilities.html#gaba0fb640ea3653b1ece6501d3b0cd7f0", null ],
     [ "MKSTRING_", "group___utilities.html#gaf0cbde7c74c0dd6349ae1adc978b9424", null ],
     [ "NUM_EARS", "group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84", null ],

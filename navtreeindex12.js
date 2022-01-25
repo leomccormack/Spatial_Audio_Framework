@@ -1,7 +1,5 @@
 var NAVTREEINDEX12 =
 {
-"saf__reverb__internal_8h.html#a9e3b3e32ba5ea1064252607f1774a5fd":[2,0,2,1,4,3,27],
-"saf__reverb__internal_8h.html#aa1a0946510b8877932fd184f121677b1":[2,0,2,1,4,3,26],
 "saf__reverb__internal_8h.html#aae8d6a66bac70fde40972406e1cc9059":[2,0,2,1,4,3,21],
 "saf__reverb__internal_8h.html#ab180c8caab9283dbe7a3600f2e42ca13":[2,0,2,1,4,3,28],
 "saf__reverb__internal_8h.html#abc44bf1e45d99bf90f40e416bb3cd937":[2,0,2,1,4,3,18],
@@ -249,5 +247,7 @@ var NAVTREEINDEX12 =
 "saf__utility__sort_8c_source.html":[2,0,2,1,8,26],
 "saf__utility__sort_8h.html":[2,0,2,1,8,27],
 "saf__utility__sort_8h_source.html":[2,0,2,1,8,27],
-"saf__utility__veclib_8c.html":[2,0,2,1,8,28]
+"saf__utility__veclib_8c.html":[2,0,2,1,8,28],
+"saf__utility__veclib_8c.html#a276629847a41b280b9d23b05b0a161e9":[2,0,2,1,8,28,28],
+"saf__utility__veclib_8c.html#a62af0907d66bd565ec7a82efc8217ce5":[2,0,2,1,8,28,27]
 };

@@ -1,7 +1,5 @@
 var NAVTREEINDEX18 =
 {
-"structutility__zpinv__data.html":[1,0,103],
-"structvoronoi__data.html":[0,0,31],
 "structvoronoi__data.html#a6acdff094a83e042ecdaeac5910e0beb":[0,0,31,4],
 "structvoronoi__data.html#a895d5272485efe4854f3ca1908494af4":[0,0,31,0],
 "structvoronoi__data.html#abbb3175863e5ab01707b047bb373f626":[0,0,31,1],
