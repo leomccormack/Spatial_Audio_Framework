@@ -111,8 +111,8 @@ void array2sh_calculate_sht_matrix
     nSH = (order+1)*(order+1);
     arraySpecs->R = SAF_MIN(arraySpecs->R, arraySpecs->r);
     for(band=0; band<HYBRID_BANDS; band++){
-        kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
-        kR[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
+        kr[band] = 2.0*SAF_PId*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
+        kR[band] = 2.0*SAF_PId*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
     }
     
     /* Spherical harmponic weights for each sensor direction */
@@ -170,7 +170,7 @@ void array2sh_calculate_sht_matrix
         
         for(band=0; band<HYBRID_BANDS; band++)
             for(n=0; n < order+1; n++)
-                pData->bN[band*(order+1)+n] = ccdiv(pData->bN[band*(order+1)+n], cmplx(4.0*M_PI, 0.0f)); /* 4pi term */
+                pData->bN[band*(order+1)+n] = ccdiv(pData->bN[band*(order+1)+n], cmplx(4.0*SAF_PId, 0.0)); /* 4pi term */
 
         /* direct inverse */
         regPar = pData->regPar;
@@ -186,8 +186,8 @@ void array2sh_calculate_sht_matrix
             g_lim = sqrt(arraySpecs->Q)*pow(10.0,(regPar/20.0));
             for(band=0; band<HYBRID_BANDS; band++)
                 for(n=0; n < order+1; n++)
-                    pData->bN_inv[band][n] = crmul(pData->bN_modal[band][n], (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]) / M_PI)
-                                                     * atan(M_PI / (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]))) );
+                    pData->bN_inv[band][n] = crmul(pData->bN_modal[band][n], (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]) / SAF_PId)
+                                                     * atan(SAF_PId / (2.0*g_lim*cabs(pData->bN[band*(order+1)+n]))) );
         }
         else if(pData->filterType == FILTER_TIKHONOV){
             /* Moreau, S., Daniel, J., Bertet, S., 2006, 3D sound field recording with higher order ambisonics-objective
@@ -301,12 +301,12 @@ void array2sh_calculate_sht_matrix
         /* direct inverse (only required for GUI) */
         for(band=0; band<HYBRID_BANDS; band++)
             for(n=0; n < order+1; n++)
-                pData->bN_modal[band][n] = ccdiv(cmplx(4.0*M_PI, 0.0f), pData->bN[band*(order+1)+n]);
+                pData->bN_modal[band][n] = ccdiv(cmplx(4.0*SAF_PId, 0.0), pData->bN[band*(order+1)+n]);
 
         /* phase shift */
         for(band=0; band<HYBRID_BANDS; band++)
             for (n=0; n<order+1; n++)
-                Hs[band][n] = ccmul(cexp(cmplx(0.0, kr[band])), ccdiv(cmplx(4.0*M_PI, 0.0), pData->bN[band*(order+1)+n]));
+                Hs[band][n] = ccmul(cexp(cmplx(0.0, kr[band])), ccdiv(cmplx(4.0*SAF_PId, 0.0), pData->bN[band*(order+1)+n]));
         
         /* apply max-re order weighting and diffuse equalisation (not the same as "array2sh_apply_diff_EQ") */
         float* wn;
@@ -402,10 +402,10 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     dM_diffcoh = malloc1d((arraySpecs->Q)*(arraySpecs->Q)* (HYBRID_BANDS) * sizeof(double_complex));
     dM_diffcoh_s = malloc1d((arraySpecs->Q)*(arraySpecs->Q) * sizeof(double_complex));
     f_max = 20e3f;
-    kR_max = 2.0f*M_PI*f_max*(arraySpecs->r)/pData->c;
+    kR_max = 2.0f*SAF_PI*f_max*(arraySpecs->r)/pData->c;
     array_order = SAF_MIN((int)(ceilf(2.0f*kR_max)+0.01f), 28); /* Cap at around 28, as Bessels at 30+ can be numerically unstable */
     for(band=0; band<HYBRID_BANDS; band++)
-        kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
+        kr[band] = 2.0*SAF_PId*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
     
     /* Get theoretical diffuse coherence matrix */
     switch(arraySpecs->arrayType){
@@ -463,7 +463,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
                 W_tmp, MAX_NUM_SENSORS, &cbeta,
                 L_diff_fal, MAX_NUM_SH_SIGNALS);
     for(i=0; i<nSH; i++)
-        L_diff_fal[i][i] = crmul(L_diff_fal[i][i], 1.0/(4.0*M_PI)); /* only care about the diagonal entries */
+        L_diff_fal[i][i] = crmul(L_diff_fal[i][i], 1.0/(4.0*SAF_PId)); /* only care about the diagonal entries */
     
     /* diffuse-field equalise bands above aliasing. */
     for(band = SAF_MAX(idxf_alias,0)+1; band<HYBRID_BANDS; band++){
@@ -483,7 +483,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
                     L_diff, MAX_NUM_SH_SIGNALS);
         for(i=0; i<nSH; i++)
             for(j=0; j<nSH; j++)
-                L_diff[i][j] = i==j? csqrt(cradd(ccdiv(L_diff_fal[i][j], crmul(L_diff[i][j], 1.0/(4.0*M_PI))), 2.23e-10)): cmplx(0.0,0.0);
+                L_diff[i][j] = i==j? csqrt(cradd(ccdiv(L_diff_fal[i][j], crmul(L_diff[i][j], 1.0/(4.0*SAF_PId))), 2.23e-10)): cmplx(0.0,0.0);
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), nSH, &calpha,
                     L_diff, MAX_NUM_SH_SIGNALS,
                     W_tmp, MAX_NUM_SENSORS, &cbeta,
@@ -529,10 +529,10 @@ void array2sh_evaluateSHTfilters(void* hA2sh)
     
     /* simulate the current array by firing 812 plane-waves around the surface of a theoretical version of the array
      * and ascertaining the transfer function for each */
-    simOrder = (int)(2.0f*M_PI*MAX_EVAL_FREQ_HZ*(arraySpecs->r)/pData->c)+1;
+    simOrder = (int)(2.0f*SAF_PI*MAX_EVAL_FREQ_HZ*(arraySpecs->r)/pData->c)+1;
     for(band=0; band<HYBRID_BANDS; band++){
-        kr[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
-        kR[band] = 2.0*M_PI*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
+        kr[band] = 2.0*SAF_PId*(pData->freqVector[band])*(arraySpecs->r)/pData->c;
+        kR[band] = 2.0*SAF_PId*(pData->freqVector[band])*(arraySpecs->R)/pData->c;
     }
     H_array = malloc1d((HYBRID_BANDS) * (arraySpecs->Q) * 812*sizeof(float_complex));
     switch(arraySpecs->arrayType){
@@ -647,7 +647,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __default_SENSORcoords64_rad[ch][i]; /* spherical coordinates of the sensors, in radians */
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -661,7 +661,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Aalto_Hydrophone_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -675,7 +675,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Sennheiser_Ambeo_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -689,7 +689,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Core_Sound_TetraMic_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -703,7 +703,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Zoom_H3VR_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -717,7 +717,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Sound_field_SPS200_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -731,7 +731,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Zylia1D_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -745,7 +745,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __Eigenmike32_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -759,7 +759,7 @@ void array2sh_initArray
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
                     pars->sensorCoords_rad[ch][i] = __DTU_mic_coords_rad[ch][i];
-                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
             break;
@@ -769,7 +769,7 @@ void array2sh_initArray
     for(; ch<MAX_NUM_SENSORS_IN_PRESET; ch++){
         for(i=0; i<2; i++){
             pars->sensorCoords_rad[ch][i] = __default_SENSORcoords64_rad[ch][i];
-            pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/M_PI);
+            pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
         }
     }
     

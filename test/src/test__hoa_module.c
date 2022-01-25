@@ -44,8 +44,8 @@ void test__getLoudspeakerDecoderMtx(void){
         nLS = __Tdesign_nPoints_per_degree[2 * order-1];
         ls_dirs_rad = (float**)malloc2d(nLS, 2, sizeof(float));
         for(j=0; j<nLS; j++){
-            ls_dirs_rad[j][0] = ls_dirs_deg[j*2] * M_PI/180.0f;
-            ls_dirs_rad[j][1] = M_PI/2.0f - ls_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+            ls_dirs_rad[j][0] = ls_dirs_deg[j*2] * SAF_PI/180.0f;
+            ls_dirs_rad[j][1] = SAF_PI/2.0f - ls_dirs_deg[j*2+1] * SAF_PI/180.0f; /* elevation->inclination */
         }
 
         /* Compute decoders */

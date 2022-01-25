@@ -148,7 +148,7 @@ void getAllRAD
                 G_td, nLS,
                 Y_td, nDirs_td, 0.0f,
                 decMtx, nSH);
-    cblas_sscal(nLS*nSH, (4.0f*M_PI)/(float)nDirs_td, decMtx, 1);
+    cblas_sscal(nLS*nSH, (4.0f*SAF_PI)/(float)nDirs_td, decMtx, 1);
 
     free(Y_td);
     free(G_td);

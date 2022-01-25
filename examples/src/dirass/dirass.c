@@ -302,7 +302,7 @@ void dirass_analysis
                         pars->est_dirs[i*2] = atan2f(intensity[1], intensity[0]);
                         pars->est_dirs[i*2+1] = atan2f(intensity[2], sqrtf(powf(intensity[0], 2.0f) + powf(intensity[1], 2.0f)));
                         if(DirAssMode==REASS_UPSCALE)
-                            pars->est_dirs[i*2+1] = M_PI/2.0f - pars->est_dirs[i*2+1]; /* convert to inclination */
+                            pars->est_dirs[i*2+1] = SAF_PI/2.0f - pars->est_dirs[i*2+1]; /* convert to inclination */
                     }
                 }
 

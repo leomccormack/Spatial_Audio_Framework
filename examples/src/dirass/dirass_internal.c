@@ -157,8 +157,8 @@ void dirass_initAna(void* const hDir)
         for(j=0; j<N_azi; j++){
             pars->interp_dirs_deg[(i*N_azi + j)*2]   = grid_x_axis[j];
             pars->interp_dirs_deg[(i*N_azi + j)*2+1] = grid_y_axis[i];
-            pars->interp_dirs_rad[(i*N_azi + j)*2] = grid_x_axis[j] * M_PI/180.0f;
-            pars->interp_dirs_rad[(i*N_azi + j)*2+1] = grid_y_axis[i] * M_PI/180.0f;
+            pars->interp_dirs_rad[(i*N_azi + j)*2] = grid_x_axis[j] * SAF_PI/180.0f;
+            pars->interp_dirs_rad[(i*N_azi + j)*2+1] = grid_y_axis[i] * SAF_PI/180.0f;
         }
     }
     free(pars->interp_table);
@@ -182,10 +182,10 @@ void dirass_initAna(void* const hDir)
     pars->Cxyz = realloc1d(pars->Cxyz, pars->grid_nDirs * nSH_order * 3 * sizeof(float));
     pars->Cw = realloc1d(pars->Cw, pars->grid_nDirs * nSH_sec * sizeof(float));
     for(i=0; i<pars->grid_nDirs; i++){
-        beamWeightsVelocityPatternsReal(order_sec, c_n, pars->grid_dirs_deg[i*2]*M_PI/180.0f,
-                                        pars->grid_dirs_deg[i*2+1]*M_PI/180.0f, A_xyz, &(pars->Cxyz[i*nSH_order*3]));
-        rotateAxisCoeffsReal(order_sec, c_n, M_PI/2.0f - pars->grid_dirs_deg[i*2+1]*M_PI/180.0f,
-                             pars->grid_dirs_deg[i*2]*M_PI/180.0f, &(pars->Cw[i*nSH_sec]));
+        beamWeightsVelocityPatternsReal(order_sec, c_n, pars->grid_dirs_deg[i*2]*SAF_PI/180.0f,
+                                        pars->grid_dirs_deg[i*2+1]*SAF_PI/180.0f, A_xyz, &(pars->Cxyz[i*nSH_order*3]));
+        rotateAxisCoeffsReal(order_sec, c_n, SAF_PI/2.0f - pars->grid_dirs_deg[i*2+1]*SAF_PI/180.0f,
+                             pars->grid_dirs_deg[i*2]*SAF_PI/180.0f, &(pars->Cw[i*nSH_sec]));
     }
     free(A_xyz);
     free(c_n);
@@ -199,8 +199,8 @@ void dirass_initAna(void* const hDir)
     }
     pars->w = realloc1d(pars->w, pars->grid_nDirs * nSH_order * sizeof(float));
     for(i=0; i<pars->grid_nDirs; i++){
-        rotateAxisCoeffsReal(order, c_n, M_PI/2.0f - pars->grid_dirs_deg[i*2+1]*M_PI/180.0f,
-                             pars->grid_dirs_deg[i*2]*M_PI/180.0f, &(pars->w[i*nSH_order]));
+        rotateAxisCoeffsReal(order, c_n, SAF_PI/2.0f - pars->grid_dirs_deg[i*2+1]*SAF_PI/180.0f,
+                             pars->grid_dirs_deg[i*2]*SAF_PI/180.0f, &(pars->w[i*nSH_order]));
     }
     free(c_n);
  
@@ -213,8 +213,8 @@ void dirass_initAna(void* const hDir)
     } 
     pars->Uw = realloc1d(pars->Uw, pars->grid_nDirs * nSH_up * sizeof(float));
     for(i=0; i<pars->grid_nDirs; i++){
-        rotateAxisCoeffsReal(order_up, c_n, M_PI/2.0f - pars->grid_dirs_deg[i*2+1]*M_PI/180.0f,
-                             pars->grid_dirs_deg[i*2]*M_PI/180.0f, &(pars->Uw[i*nSH_up]));
+        rotateAxisCoeffsReal(order_up, c_n, SAF_PI/2.0f - pars->grid_dirs_deg[i*2+1]*SAF_PI/180.0f,
+                             pars->grid_dirs_deg[i*2]*SAF_PI/180.0f, &(pars->Uw[i*nSH_up]));
     }
     free(c_n);
  

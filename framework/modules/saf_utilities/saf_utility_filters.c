@@ -56,7 +56,7 @@ static void applyWindowingFunction
             for(i=0; i<winlength; i++)
                 x[i] *= 0.54f - 0.46f * (cosf(2.0f*SAF_PI*(float)i/(float)N)); /* more wide-spread coefficient values */
             /* optimal equiripple coefficient values: */
-            /*x[i] *= 0.53836f - 0.46164f * (cosf(2.0f*M_PI*(float)i/(float)N));*/
+            /*x[i] *= 0.53836f - 0.46164f * (cosf(2.0f*SAF_PI*(float)i/(float)N));*/
             break;
             
         case WINDOWING_FUNCTION_HANN:

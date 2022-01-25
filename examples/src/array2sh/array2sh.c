@@ -326,7 +326,7 @@ void array2sh_setSensorAzi_rad(void* const hA2sh, int index, float newAzi_rad)
     
     if(arraySpecs->sensorCoords_rad[index][0] != newAzi_rad){
         arraySpecs->sensorCoords_rad[index][0] = newAzi_rad;
-        arraySpecs->sensorCoords_deg[index][0] = newAzi_rad * (180.0f/M_PI);
+        arraySpecs->sensorCoords_deg[index][0] = newAzi_rad * (180.0f/SAF_PI);
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
     }
@@ -339,7 +339,7 @@ void array2sh_setSensorElev_rad(void* const hA2sh, int index, float newElev_rad)
     
     if(arraySpecs->sensorCoords_rad[index][1] != newElev_rad){
         arraySpecs->sensorCoords_rad[index][1] = newElev_rad;
-        arraySpecs->sensorCoords_deg[index][1] = newElev_rad * (180.0f/M_PI);
+        arraySpecs->sensorCoords_deg[index][1] = newElev_rad * (180.0f/SAF_PI);
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
     }
@@ -352,7 +352,7 @@ void array2sh_setSensorAzi_deg(void* const hA2sh, int index, float newAzi_deg)
     array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     if(arraySpecs->sensorCoords_deg[index][0] != newAzi_deg){
-        arraySpecs->sensorCoords_rad[index][0] = newAzi_deg * (M_PI/180.0f);
+        arraySpecs->sensorCoords_rad[index][0] = newAzi_deg * (SAF_PI/180.0f);
         arraySpecs->sensorCoords_deg[index][0] = newAzi_deg;
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
@@ -365,7 +365,7 @@ void array2sh_setSensorElev_deg(void* const hA2sh, int index, float newElev_deg)
     array2sh_arrayPars* arraySpecs = (array2sh_arrayPars*)(pData->arraySpecs);
     
     if(arraySpecs->sensorCoords_deg[index][1] != newElev_deg){
-        arraySpecs->sensorCoords_rad[index][1] = newElev_deg * (M_PI/180.0f);
+        arraySpecs->sensorCoords_rad[index][1] = newElev_deg * (SAF_PI/180.0f);
         arraySpecs->sensorCoords_deg[index][1] = newElev_deg;
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);

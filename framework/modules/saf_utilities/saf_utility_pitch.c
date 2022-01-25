@@ -70,7 +70,7 @@ static void smbFft(float *fftBuffer, int fftFrameSize, long sign)
         le2 = le>>1;
         ur = 1.0;
         ui = 0.0;
-        arg = M_PI / (le2>>1);
+        arg = SAF_PI / (le2>>1);
         wr = cos(arg);
         wi = sign*sin(arg);
         for (j = 0; j < le2; j += 2) {

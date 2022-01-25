@@ -468,7 +468,7 @@ void binauraliser_loadPreset
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_INPUTS; ch++){
         for(i=0; i<2; i++){
-            dirs_deg[ch][i] = __default_LScoords64_rad[ch][i]* (180.0f/M_PI);
+            dirs_deg[ch][i] = __default_LScoords64_rad[ch][i]* (180.0f/SAF_PI);
         }
     }
     

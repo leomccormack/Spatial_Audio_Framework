@@ -871,15 +871,15 @@ MYSOFA_EXPORT void mysofa_c2s(float values[3]) {
   theta = atan2f(z, sqrtf(x * x + y * y));
   phi = atan2f(y, x);
 
-  values[0] = fmodf(phi * (180 / M_PI) + 360, 360);
-  values[1] = theta * (180 / M_PI);
+  values[0] = fmodf(phi * (180.0 / SAF_PId) + 360, 360);
+  values[1] = theta * (180.0 / SAF_PId);
   values[2] = r;
 }
 
 MYSOFA_EXPORT void mysofa_s2c(float values[3]) {
   float x, r, theta, phi;
-  phi = values[0] * (M_PI / 180);
-  theta = values[1] * (M_PI / 180);
+  phi = values[0] * (SAF_PId / 180.0);
+  theta = values[1] * (SAF_PId / 180.0);
   r = values[2];
   x = cosf(theta) * r;
   values[2] = sinf(theta) * r;

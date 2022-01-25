@@ -45,8 +45,8 @@ void test__getSHreal(void){
         nDirs = __Tdesign_nPoints_per_degree[2*order];
         t_dirs_rad = (float**)malloc2d(nDirs, 2, sizeof(float));
         for(j=0; j<nDirs; j++){
-            t_dirs_rad[j][0] = t_dirs_deg[j*2] * M_PI/180.0f;
-            t_dirs_rad[j][1] = M_PI/2.0f - t_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+            t_dirs_rad[j][0] = t_dirs_deg[j*2] * SAF_PI/180.0f;
+            t_dirs_rad[j][1] = SAF_PI/2.0f - t_dirs_deg[j*2+1] * SAF_PI/180.0f; /* elevation->inclination */
         }
 
         /* Compute spherical harmonic coefficients */
@@ -99,8 +99,8 @@ void test__getSHreal_recur(void){
     for(i=0; i<1e3; i++){
         rand_m1_1(&dir[0] , 1);
         rand_m1_1(&dir[1] , 1);
-        dir[0] *= M_PI;
-        dir[1] *= M_PI/2.0f;
+        dir[0] *= SAF_PI;
+        dir[1] *= SAF_PI/2.0f;
         getSHreal_recur(order, (float*)dir, 1, (float*)Yr);
         getSHreal(order, (float*)dir, 1, (float*)Y);
         for(j=0; j<nSH; j++)
@@ -131,8 +131,8 @@ void test__getSHcomplex(void){
         nDirs = __Tdesign_nPoints_per_degree[2*order];
         t_dirs_rad = (float**)malloc2d(nDirs, 2, sizeof(float));
         for(j=0; j<nDirs; j++){
-            t_dirs_rad[j][0] = t_dirs_deg[j*2] * M_PI/180.0f;
-            t_dirs_rad[j][1] = M_PI/2.0f - t_dirs_deg[j*2+1] * M_PI/180.0f; /* elevation->inclination */
+            t_dirs_rad[j][0] = t_dirs_deg[j*2] * SAF_PI/180.0f;
+            t_dirs_rad[j][1] = SAF_PI/2.0f - t_dirs_deg[j*2+1] * SAF_PI/180.0f; /* elevation->inclination */
         }
 
         /* Compute spherical harmonic coefficients */
@@ -257,8 +257,8 @@ void test__real2complexSHMtx(void){
             /* Random direction */
             rand_m1_1(&dir[0] , 1);
             rand_m1_1(&dir[1] , 1);
-            dir[0] *= M_PI;
-            dir[1] *= M_PI/2.0f;
+            dir[0] *= SAF_PI;
+            dir[1] *= SAF_PI/2.0f;
 
             /* Compute reference spherical harmonic weights */
             getSHcomplex(order, (float*)dir, 1, Y_complex_ref);
@@ -317,8 +317,8 @@ void test__complex2realSHMtx(void){
             /* Random direction */
             rand_m1_1(&dir[0] , 1);
             rand_m1_1(&dir[1] , 1);
-            dir[0] *= M_PI;
-            dir[1] *= M_PI/2.0f;
+            dir[0] *= SAF_PI;
+            dir[1] *= SAF_PI/2.0f;
 
             /* Compute reference spherical harmonic weights */
             getSHcomplex(order, (float*)dir, 1, Y_complex_ref);
@@ -406,8 +406,8 @@ void test__checkCondNumberSHTReal(void){
         nDirs = __Tdesign_nPoints_per_degree[2 * order];
         t_dirs_rad = (float **) malloc2d(nDirs, 2, sizeof(float));
         for (j = 0; j < nDirs; j++) {
-            t_dirs_rad[j][0] = t_dirs_deg[j * 2] * M_PI / 180.0f;
-            t_dirs_rad[j][1] = M_PI / 2.0f - t_dirs_deg[j * 2 + 1] * M_PI /
+            t_dirs_rad[j][0] = t_dirs_deg[j * 2] * SAF_PI / 180.0f;
+            t_dirs_rad[j][1] = SAF_PI / 2.0f - t_dirs_deg[j * 2 + 1] * SAF_PI /
                                              180.0f; /* elevation->inclination */
         }
 
@@ -656,8 +656,8 @@ void test__sphESPRIT(void){
     sphESPRIT_create(&hESPRIT, order);
     sphESPRIT_estimateDirs(hESPRIT, FLATTEN2D(Us), nSrcs, (float*)estdirs_deg);
     for(i=0; i<nSrcs; i++){
-        estdirs_deg[i][0]*=180.0f/M_PI; /* rad->deg */
-        estdirs_deg[i][1]*=180.0f/M_PI;
+        estdirs_deg[i][0]*=180.0f/SAF_PI; /* rad->deg */
+        estdirs_deg[i][1]*=180.0f/SAF_PI;
     }
 
     /* Assert that the true source directions were found (note that the order can flip) */

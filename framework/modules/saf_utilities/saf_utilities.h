@@ -66,16 +66,6 @@
 /** Boolean false */
 #define SAF_FALSE ( 0 )
 
-#ifndef M_PI
-/** pi constant (single precision) */
-# define M_PI ( 3.14159265358979323846264338327950288f )
-#endif
-
-#ifndef M_PId
-/** pi constant (double precision) */
-# define M_PId ( 3.14159265358979323846264338327950288 )
-#endif
-
 /** pi constant (single precision) */
 # define SAF_PI ( 3.14159265358979323846264338327950288f )
 

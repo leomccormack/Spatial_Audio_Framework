@@ -380,9 +380,9 @@ void test__saf_example_rotator(void){
     /* Configure rotator codec */
     rotator_setOrder(hRot, (SH_ORDERS)order);
     rotator_setNormType(hRot, NORM_N3D);
-    rotator_setYaw(hRot, ypr[0]*180.0f/M_PI); /* rad->degrees */
-    rotator_setPitch(hRot, ypr[1]*180.0f/M_PI);
-    rotator_setRoll(hRot, ypr[2]*180.0f/M_PI);
+    rotator_setYaw(hRot, ypr[0]*180.0f/SAF_PI); /* rad->degrees */
+    rotator_setPitch(hRot, ypr[1]*180.0f/SAF_PI);
+    rotator_setRoll(hRot, ypr[2]*180.0f/SAF_PI);
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);
