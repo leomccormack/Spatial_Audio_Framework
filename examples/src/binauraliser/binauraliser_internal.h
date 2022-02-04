@@ -33,11 +33,11 @@
 #ifndef __BINAURALISER_INTERNAL_H_INCLUDED__
 #define __BINAURALISER_INTERNAL_H_INCLUDED__
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <math.h>
-#include <string.h>        // TODO: this include and above... sort out why/if they're needed
+//#include <stdio.h>
+//#include <stdlib.h>
+//#include <stdbool.h>
+//#include <math.h>
+//#include <string.h>        // TODO: this include and above... sort out why/if they're needed
 #include "binauraliser.h"  /* Include header for this example */
 #include "saf.h"           /* Main include header for SAF */
 #include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
@@ -125,7 +125,9 @@ typedef struct _binauraliser
     float src_dirs_xyz[MAX_NUM_INPUTS][3];     /**< Intermediate source directions, as unit-length Cartesian coordinates  */
     int nTriangles;                            /**< Number of triangles in the convex hull of the spherical arrangement of HRIR directions/points */
     int new_nSources;                          /**< New number of input/source signals (current value will be replaced by this after next re-init) */
-
+    int input_nDims;
+    int output_nDims;
+    
     /* user parameters */
     int nSources;
     float src_dirs_deg[MAX_NUM_INPUTS][2];

@@ -39,14 +39,9 @@ void binauraliser_create
 {
     binauraliser_data* pData = (binauraliser_data*)malloc1d(sizeof(binauraliser_data));
     *phBin = (void*)pData;
-    int ch, dummy;
+    int ch;
 
     /* user parameters */
-    // TODO: to be addressed post rebase
-    // binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
-    // TODO: why isn't the pointer to pData->src_dirs_deg sent in here... it doens't appear to be initialized?
-    // The issue comes up because src_dists should prob be set the same way... mtm
-    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
     pData->enableHRIRsDiffuseEQ = 1;
     pData->nSources = pData->new_nSources;
@@ -72,6 +67,8 @@ void binauraliser_create
 
     /* Set default source directions and distances */
     // must be called after pData->farfield_thresh_m is set
+    // TODO: why isn't the pointer to pData->src_dirs_deg sent in here... it doens't appear to be initialized?
+    // The issue comes up because src_dists should prob be set the same way... mtm
     binauraliser_loadPreset(pData, SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
 
     /* time-frequency transform + buffers */
@@ -84,8 +81,8 @@ void binauraliser_create
     pData->N_hrir_dirs = pData->hrir_loaded_len = pData->hrir_runtime_len = 0;
     pData->hrir_loaded_fs = pData->hrir_runtime_fs = -1; /* unknown */
     // time domain buffers
-    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, FRAME_SIZE, sizeof(float));
-    pData->binsrcsTD    = (float**)malloc2d(MAX_NUM_INPUTS*NUM_EARS, FRAME_SIZE, sizeof(float));
+    pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, BINAURALISER_FRAME_SIZE, sizeof(float));
+    pData->binsrcsTD    = (float**)malloc2d(MAX_NUM_INPUTS*NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
     // frequency domain buffers
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->binauralTF   = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS*NUM_EARS, TIME_SLOTS, sizeof(float_complex));
@@ -239,22 +236,6 @@ void binauraliser_process
     if ((nSamples == BINAURALISER_FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
         pData->procStatus = PROC_STATUS_ONGOING;
 
-        // TODO: post-rebase, this looks to be the new approach to loading the data
-        // /* Load time-domain data */
-        // for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-        //     utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
-        // for(; i<nSources; i++)
-        //     memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
-        //
-        // /* Apply source gains */
-        // for (ch = 0; ch < nSources; ch++) {
-        //     if(fabsf(pData->src_gains[ch] - 1.f) > 1e-6f)
-        //         utility_svsmul(pData->inputFrameTD[ch], &(pData->src_gains[ch]), BINAURALISER_FRAME_SIZE, NULL);
-        // }
-        //
-        // /* Apply time-frequency transform (TFT) */
-        // afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
-
         /* Rotate source directions */
         if(enableRotation && pData->recalc_M_rotFLAG){
             yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
@@ -276,21 +257,39 @@ void binauraliser_process
             pData->recalc_M_rotFLAG = 0;
         }
 
+        //                  /* Load time-domain data */
+        // TODO: post-rebase, this is the new approach to loading the data
+        // for(i=0; i < SAF_MIN(nSources,nInputs); i++)
+        //     utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
+        // for(; i<nSources; i++)
+        //     memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
+        //
+        //                  /* Apply source gains */
+        // for (ch = 0; ch < nSources; ch++) {
+        //     if(fabsf(pData->src_gains[ch] - 1.f) > 1e-6f)
+        //         utility_svsmul(pData->inputFrameTD[ch], &(pData->src_gains[ch]), BINAURALISER_FRAME_SIZE, NULL);
+        // }
+        //
+        //                  /* Apply time-frequency transform (TFT) */
+        // afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
+        
         /* Load time-domain data */
-        for(i=0; i < MIN(nSources,nInputs); i++)
-            utility_svvcopy(inputs[i], FRAME_SIZE, pData->inputFrameTD[i]);
+        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
+            utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
         for(; i<nSources; i++)
-            memset(pData->inputFrameTD[i], 0, FRAME_SIZE * sizeof(float));
+            memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
 
         /* Zero out busses */
         // TODO: are the following 2 memsets needed? They're overwritten each frame anyway (also inputFrameTD)
-        memset(FLATTEN2D(pData->binsrcsTD), 0, NUM_EARS*NUM_EARS*FRAME_SIZE * sizeof(float));
+        memset(FLATTEN2D(pData->binsrcsTD), 0, NUM_EARS*BINAURALISER_FRAME_SIZE * sizeof(float));
         memset(FLATTEN3D(pData->binauralTF), 0, HYBRID_BANDS*nSources*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
 
         /* Apply time-frequency transform (TFT) */
-        afSTFT_forward(pData->hSTFT, pData->inputFrameTD, FRAME_SIZE, pData->inputframeTF);
+        /* OG: afSTFT_forward(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, pData->inputframeTF); */
+        /* Apply time-frequency transform (TFT) */
+        afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
-        /* Apply HRTF */
+        /* Interpolate HRTF in src(s) direction, apply that HRTF, maintaining individual binaural source streams */
         for (ch = 0; ch < nSources; ch++) {
             /* Interpolate hrtfs */
             if(pData->recalc_hrtf_interpFLAG[ch]){
@@ -301,8 +300,21 @@ void binauraliser_process
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
 
+            // PRE-SAF rebase
+//            for (band = 0; band < HYBRID_BANDS; band++) {
+//                for (ear = 0; ear < NUM_EARS; ear++) {
+//                    for (t = 0; t < TIME_SLOTS; t++) {
+//                        /* Apply HRTF filter and add to output buffer */
+//                        pData->binauralTF[band][NUM_EARS*ch+ear][t] =
+//                               ccmulf(pData->inputframeTF[band][ch][t],
+//                                      pData->hrtf_interp[ch][band][ear]);
+//                    }
+//                }
+//            }
+            
             for (band = 0; band < HYBRID_BANDS; band++) {
                 for (ear = 0; ear < NUM_EARS; ear++) {
+//                    cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->inputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
                     for (t = 0; t < TIME_SLOTS; t++) {
                         /* Apply HRTF filter and add to output buffer */
                         pData->binauralTF[band][NUM_EARS*ch+ear][t] =
@@ -311,17 +323,18 @@ void binauraliser_process
                     }
                 }
             }
+            
         }
 
         /* Bring sources back to TD */
-        afSTFT_backward(pData->hSTFT, pData->binauralTF, FRAME_SIZE, pData->binsrcsTD);
+        afSTFT_backward(pData->hSTFT, pData->binauralTF, BINAURALISER_FRAME_SIZE, pData->binsrcsTD);
 
 //        /* ********** TEST ********** */
 //        /* testing, expand input into 'binaural' without HRTF (comment out above code, up to applying the TFT) to inspect DVF filter alone */
 //        /* Copy to output buffer */
 //        for (ch = 0; ch < nSources; ch++) {
 //            for (ear = 0; ear < NUM_EARS; ear++) {
-//                utility_svvcopy(pData->inputFrameTD[ch], FRAME_SIZE, pData->binsrcsTD[NUM_EARS*ch+ear]);
+//                utility_svvcopy(pData->inputFrameTD[ch], BINAURALISER_FRAME_SIZE, pData->binsrcsTD[NUM_EARS*ch+ear]);
 //            }
 //        }
 //        /* ********** END TEST ********** */
@@ -332,20 +345,20 @@ void binauraliser_process
             int r = l+1;
             if (src_dists[ch] < ffThresh) {
                 /* Get previous frame's last sample for DVF IIR filter */
-                wzL = pData->binsrcsTD[l][FRAME_SIZE-1];
-                wzR = pData->binsrcsTD[r][FRAME_SIZE-1];
+                wzL = pData->binsrcsTD[l][BINAURALISER_FRAME_SIZE-1];
+                wzR = pData->binsrcsTD[r][BINAURALISER_FRAME_SIZE-1];
 
                 rho = src_dists[ch] * headRadiusRecip;
                 convertFrontalDoAToIpsilateral(src_dirs[ch][0], &thetaLR[0]);
-                applyDVF(thetaLR[0], rho, pData->binsrcsTD[l], FRAME_SIZE, fs, &wzL, pData->binsrcsTD[l]);
-                applyDVF(thetaLR[1], rho, pData->binsrcsTD[r], FRAME_SIZE, fs, &wzR, pData->binsrcsTD[r]);
+                applyDVF(thetaLR[0], rho, pData->binsrcsTD[l], BINAURALISER_FRAME_SIZE, fs, &wzL, pData->binsrcsTD[l]);
+                applyDVF(thetaLR[1], rho, pData->binsrcsTD[r], BINAURALISER_FRAME_SIZE, fs, &wzR, pData->binsrcsTD[r]);
             }
         }
-        /* Iterate over sources, scaling by nSources, summing to output */
+        /* Iterate over sources, scaling by nSources, summing to binaural output */
         for (ch = 0; ch < nSources; ch++) {
             for (ear = 0; ear < NUM_EARS; ear++) {
-                // constant * vector + vector
-                cblas_saxpy(FRAME_SIZE, 1.0f/sqrtf((float)nSources),
+                // (constant * vector) + vector: (alpha * X[i]) + Y[i]
+                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
                             pData->binsrcsTD[NUM_EARS*ch+ear], 1, outputs[ear], 1);
             }
         }
@@ -356,9 +369,9 @@ void binauraliser_process
 //        for (srci = 0; srci < nSources; srci++) {
 //            for (ch = 0; ch < NUM_EARS; ch++) {
 //                // constant * vector + vector
-//                cblas_saxpy(FRAME_SIZE, 1.0f/sqrtf((float)nSources),
+//                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
 //                            pData->binsrcsTD[NUM_EARS*srci+ch], 1, outputs[ch], 1);
-////                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], FRAME_SIZE, outputs[ch]);
+////                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
 //            }
 //        }
 //        // option 1 ******************************************
@@ -366,18 +379,18 @@ void binauraliser_process
 
         // option 2 - works but not the most elegant
 //      // ****************************************************
-        cblas_sscal(FRAME_SIZE*NUM_EARS, 1.0f/sqrtf((float)nSources), pData->binsrcsTD[0], 1);
+        cblas_sscal(BINAURALISER_FRAME_SIZE*NUM_EARS, 1.0f/sqrtf((float)nSources), pData->binsrcsTD[0], 1);
         /* Iterate over remaining sources, scaling by nSources, summing to first 2 channels */
         for (srci = 1; srci < nSources; srci++) {
             for (ch = 0; ch < NUM_EARS; ch++) {
                 // constant * vector + vector
-                cblas_saxpy(FRAME_SIZE, 1.0f/sqrtf((float)nSources),
+                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
                             pData->binsrcsTD[NUM_EARS*srci+ch], 1, pData->binsrcsTD[ch], 1);
             }
         }
         /* Copy to output buffer */
-        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-            utility_svvcopy(pData->binsrcsTD[ch], FRAME_SIZE, outputs[ch]);
+        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
+            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
         // option 2 **********************************************
 
 
@@ -386,14 +399,14 @@ void binauraliser_process
 //        // Sum all binaural signals to the first 2 channels of binsrcsTD
 //        for (ch = 1; ch < nSources; ch++) {
 //            for (ear = 0; ear < NUM_EARS; ear++) {
-//                for (int n=0; n<FRAME_SIZE; n++) {
+//                for (int n=0; n<BINAURALISER_FRAME_SIZE; n++) {
 //                    pData->binsrcsTD[ear][n] += pData->binsrcsTD[NUM_EARS*ch+ear][n];
 //                }
 //            }
 //        }
 //        /* Copy to output buffer */
 //        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-//            utility_svvcopy(pData->binsrcsTD[ch], FRAME_SIZE, outputs[ch]);
+//            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
 //        // end option 3 ****************************************
 
 
@@ -428,8 +441,8 @@ void binauraliser_setSourceAzi_deg(void* const hBin, int index, float newAzi_deg
         newAzi_deg = -360.0f + newAzi_deg;
     else if(newAzi_deg<-180.0f)
         newAzi_deg = 360.0f + newAzi_deg;
-    newAzi_deg = MAX(newAzi_deg, -180.0f);
-    newAzi_deg = MIN(newAzi_deg, 180.0f);
+    newAzi_deg = SAF_MAX(newAzi_deg, -180.0f);
+    newAzi_deg = SAF_MIN(newAzi_deg, 180.0f);
     if(pData->src_dirs_deg[index][0]!=newAzi_deg){
         pData->src_dirs_deg[index][0] = newAzi_deg;
         pData->recalc_hrtf_interpFLAG[index] = 1;
@@ -452,7 +465,7 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
 void binauraliser_setSourceDist_m(void* const hBin, int index, float newDist_m)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    newDist_m = MAX(newDist_m, 0.15f);                      // TODO: is this clamped elsewhere?
+    newDist_m = SAF_MAX(newDist_m, 0.15f);                      // TODO: is this clamped elsewhere?
     if(pData->src_dists_m[index] != newDist_m){
         pData->src_dists_m[index] = newDist_m;
 //        pData->recalc_hrtf_interpFLAG[index] = 1;         // TODO: need similar recalc flag for distance?
