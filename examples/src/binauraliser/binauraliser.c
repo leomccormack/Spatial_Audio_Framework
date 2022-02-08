@@ -216,7 +216,7 @@ void binauraliser_process
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int ch, ear, i, band, nSources, srci;
     float src_dirs[MAX_NUM_INPUTS][2], src_dists[MAX_NUM_INPUTS], Rxyz[3][3];
-    float hypotxy, headRadiusRecip, sourceScale, fs, ffThresh, nfThresh;
+    float hypotxy, headRadiusRecip, fs, ffThresh;
     int enableRotation;
     float thetaLR[2] = { 0.0, 0.0 };
     float rho, wzL, wzR;
@@ -229,16 +229,14 @@ void binauraliser_process
     enableRotation  = pData->enableRotation;
     headRadiusRecip = pData->head_radius_recip;
     ffThresh        = pData->farfield_thresh_m;
-    nfThresh        = pData->nearfield_limit_m
-    sourceScale     = 1.0f / sqrtf((float)nSources);
     fs              = (float)pData->fs;
 
     /* apply binaural panner */
-    if ((nSamples == BINAURALISER_FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
+    if ((nSamples == BINAURALISER_FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ) {
         pData->procStatus = PROC_STATUS_ONGOING;
 
         /* Rotate source directions */
-        if(enableRotation && pData->recalc_M_rotFLAG){
+        if (enableRotation && pData->recalc_M_rotFLAG) {
             yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
             for(i=0; i<nSources; i++){
                 pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) *  cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
@@ -250,7 +248,7 @@ void binauraliser_process
                         (float*)(pData->src_dirs_xyz), 3,
                         (float*)Rxyz, 3, 0.0f,
                         (float*)(pData->src_dirs_rot_xyz), 3);
-            for(i=0; i<nSources; i++){
+            for (i = 0; i < nSources; i++) {
                 hypotxy = sqrtf(powf(pData->src_dirs_rot_xyz[i][0], 2.0f) + powf(pData->src_dirs_rot_xyz[i][1], 2.0f));
                 pData->src_dirs_rot_deg[i][0] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][1], pData->src_dirs_rot_xyz[i][0]));
                 pData->src_dirs_rot_deg[i][1] = RAD2DEG(atan2f(pData->src_dirs_rot_xyz[i][2], hypotxy));
@@ -259,31 +257,30 @@ void binauraliser_process
         }
         
         /* Load time-domain data */
-        for(i=0; i < SAF_MIN(nSources,nInputs); i++)
+        for (i = 0; i < SAF_MIN(nSources, nInputs); i++)
             utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
-        for(; i<nSources; i++)
+        for (; i < nSources; i++)
             memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
 
         /* Zero out busses */
         // TODO: are the following 2 memsets needed? They're overwritten each frame anyway (also inputFrameTD)
-        memset(FLATTEN2D(pData->binsrcsTD),  0, NUM_EARS*BINAURALISER_FRAME_SIZE * sizeof(float));
-        memset(FLATTEN3D(pData->binauralTF), 0, HYBRID_BANDS*nSources*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
+        memset(FLATTEN2D(pData->binsrcsTD), 0, NUM_EARS * BINAURALISER_FRAME_SIZE * sizeof(float));
+        memset(FLATTEN3D(pData->binauralTF), 0, HYBRID_BANDS * nSources * NUM_EARS * TIME_SLOTS * sizeof(float_complex));
 
         /* Apply time-frequency transform (TFT) */
         afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
-        /* Interpolate and apply HRTFs, maintaining individual binaural source streams */
+        /* Interpolate and apply HRTFs, maintain individual binaural source streams */
         for (ch = 0; ch < nSources; ch++) {
-            
             /* Interpolate hrtfs */
-            if(pData->recalc_hrtf_interpFLAG[ch]){
-                if(enableRotation)
+            if (pData->recalc_hrtf_interpFLAG[ch]) {
+                if (enableRotation)
                     binauraliser_interpHRTFs(hBin, pData->interpMode, pData->src_dirs_rot_deg[ch][0], pData->src_dirs_rot_deg[ch][1], pData->hrtf_interp[ch]);
                 else
                     binauraliser_interpHRTFs(hBin, pData->interpMode, pData->src_dirs_deg[ch][0], pData->src_dirs_deg[ch][1], pData->hrtf_interp[ch]);
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
-
+            
             /* Expand this source channel to binaural by applying HRTF filter (FD) */
             for (band = 0; band < HYBRID_BANDS; band++) {
                 for (ear = 0; ear < NUM_EARS; ear++) {
@@ -292,7 +289,6 @@ void binauraliser_process
                                    &pData->binauralTF[band][NUM_EARS*ch+ear][0]);
                 }
             }
-            
         }
 
         /* Bring sources back to TD */
@@ -300,12 +296,12 @@ void binauraliser_process
 
         /* Iterate over sources, applying DVF to those in the near field */
         for (ch = 0; ch < nSources; ch++) {
-            int l = NUM_EARS*ch;
-            int r = l+1;
+            int l = NUM_EARS * ch;
+            int r = l + 1;
             if (src_dists[ch] < ffThresh) {
                 /* Get previous frame's last sample for DVF IIR filter */
-                wzL = pData->binsrcsTD[l][BINAURALISER_FRAME_SIZE-1];
-                wzR = pData->binsrcsTD[r][BINAURALISER_FRAME_SIZE-1];
+                wzL = pData->binsrcsTD[l][BINAURALISER_FRAME_SIZE - 1];
+                wzR = pData->binsrcsTD[r][BINAURALISER_FRAME_SIZE - 1];
 
                 rho = src_dists[ch] * headRadiusRecip;
                 convertFrontalDoAToIpsilateral(src_dirs[ch][0], &thetaLR[0]);
@@ -317,22 +313,25 @@ void binauraliser_process
         /* Zero out all plugin output channels */
         // TODO: If we know all output channels are contiguous, could memset all at once
         for (ch = 0; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
-        
-        /* Iterate over sources, scaling by nSources, summing to binaural output */
-        // TODO: scaling can happen just once if no overflow summing up to 64 sources
+            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
+                
+        /* Sum binaural sources */
+        // Note, it appears SAF doesn't support in-place vector addition, e.g. ippsAdd_32f_I
         for (srci = 0; srci < nSources; srci++) {
             for (ear = 0; ear < NUM_EARS; ear++) {
-                // (constant * vector) + vector: Y[i] = (alpha * X[i]) + Y[i]
-                cblas_saxpy(BINAURALISER_FRAME_SIZE, sourceScale,
-                            pData->binsrcsTD[srci*NUM_EARS + ear], 1, outputs[ear], 1);
-//                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
+                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.f, // is scaling by 1 optimized?
+                            pData->binsrcsTD[srci * NUM_EARS + ear], 1, outputs[ear], 1);
             }
         }
+        /* Scale binaural output by number of sources */
+        // TODO: If we know all output channels are contiguous, could scale both at once
+        for (ear = 0; ear < NUM_EARS; ear++) {
+            cblas_sscal(BINAURALISER_FRAME_SIZE, 1.0f / sqrtf((float)nSources), outputs[ear], 1);
+        }
     }
-    else{
-        for (ch=0; ch < nOutputs; ch++)
-            memset(outputs[ch],0, BINAURALISER_FRAME_SIZE*sizeof(float));
+    else {
+        for (ch = 0; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
     }
 
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -381,7 +380,7 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
 void binauraliser_setSourceDist_m(void* const hBin, int index, float newDist_m)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    newDist_m = SAF_MAX(newDist_m, nfThresh);       // TODO: is this clamped elsewhere?
+    newDist_m = SAF_MAX(newDist_m, pData->nearfield_limit_m);    // TODO: is this clamped elsewhere?
     if(pData->src_dists_m[index] != newDist_m){
         pData->src_dists_m[index] = newDist_m;
     }
