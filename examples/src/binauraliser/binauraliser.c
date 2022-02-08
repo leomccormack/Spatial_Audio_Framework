@@ -77,7 +77,7 @@ void binauraliser_create
     pData->hrirs         = NULL;
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;
-    pData->weights = NULL;
+    pData->weights       = NULL;
     pData->N_hrir_dirs = pData->hrir_loaded_len = pData->hrir_runtime_len = 0;
     pData->hrir_loaded_fs = pData->hrir_runtime_fs = -1; /* unknown */
     // time domain buffers
@@ -85,7 +85,7 @@ void binauraliser_create
     pData->binsrcsTD    = (float**)malloc2d(MAX_NUM_INPUTS*NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
     // frequency domain buffers
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
-    pData->binauralTF   = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS*NUM_EARS, TIME_SLOTS, sizeof(float_complex));
+    pData->binauralTF   = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS*NUM_EARS, TIME_SLOTS, sizeof(float_complex)); // MAX_NUM_INPUTS*NUM_EARS dimensions combined because afSTFT requires float_complex***
 
     /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx  = NULL;
@@ -214,7 +214,7 @@ void binauraliser_process
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int t, ch, ear, i, band, nSources, srci;
+    int ch, ear, i, band, nSources, srci;
     float src_dirs[MAX_NUM_INPUTS][2], src_dists[MAX_NUM_INPUTS], Rxyz[3][3];
     float hypotxy, headRadiusRecip, sourceScale, fs, ffThresh;
     int enableRotation;
@@ -222,8 +222,8 @@ void binauraliser_process
     float rho, wzL, wzR;
 
     /* copy user parameters to local variables */
-    memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
-    memcpy(src_dists, pData->src_dists_m, MAX_NUM_INPUTS*sizeof(float));
+    memcpy(src_dirs,  pData->src_dirs_deg, MAX_NUM_INPUTS*sizeof(float)*2);
+    memcpy(src_dists, pData->src_dists_m,  MAX_NUM_INPUTS*sizeof(float));
 
     nSources        = pData->nSources;
     enableRotation  = pData->enableRotation;
@@ -240,7 +240,7 @@ void binauraliser_process
         if(enableRotation && pData->recalc_M_rotFLAG){
             yawPitchRoll2Rzyx (pData->yaw, pData->pitch, pData->roll, pData->useRollPitchYawFlag, Rxyz);
             for(i=0; i<nSources; i++){
-                pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
+                pData->src_dirs_xyz[i][0] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) *  cosf(DEG2RAD(pData->src_dirs_deg[i][0]));
                 pData->src_dirs_xyz[i][1] = cosf(DEG2RAD(pData->src_dirs_deg[i][1])) * sinf(DEG2RAD(pData->src_dirs_deg[i][0]));
                 pData->src_dirs_xyz[i][2] = sinf(DEG2RAD(pData->src_dirs_deg[i][1]));
                 pData->recalc_hrtf_interpFLAG[i] = 1;
@@ -300,27 +300,12 @@ void binauraliser_process
                 pData->recalc_hrtf_interpFLAG[ch] = 0;
             }
 
-            // PRE-SAF rebase
-//            for (band = 0; band < HYBRID_BANDS; band++) {
-//                for (ear = 0; ear < NUM_EARS; ear++) {
-//                    for (t = 0; t < TIME_SLOTS; t++) {
-//                        /* Apply HRTF filter and add to output buffer */
-//                        pData->binauralTF[band][NUM_EARS*ch+ear][t] =
-//                               ccmulf(pData->inputframeTF[band][ch][t],
-//                                      pData->hrtf_interp[ch][band][ear]);
-//                    }
-//                }
-//            }
-            
+            /* Expand this source channel to binaural by applying HRTF filter (FD) */
             for (band = 0; band < HYBRID_BANDS; band++) {
                 for (ear = 0; ear < NUM_EARS; ear++) {
-//                    cblas_caxpy(TIME_SLOTS, &pData->hrtf_interp[ch][band][ear], pData->inputframeTF[band][ch], 1, pData->outputframeTF[band][ear], 1);
-                    for (t = 0; t < TIME_SLOTS; t++) {
-                        /* Apply HRTF filter and add to output buffer */
-                        pData->binauralTF[band][NUM_EARS*ch+ear][t] =
-                               ccmulf(pData->inputframeTF[band][ch][t],
-                                      pData->hrtf_interp[ch][band][ear]);
-                    }
+                    utility_cvsmul(pData->inputframeTF[band][ch],
+                                   &pData->hrtf_interp[ch][band][ear], TIME_SLOTS,
+                                   &pData->binauralTF[band][NUM_EARS*ch+ear][0]);
                 }
             }
             
@@ -354,47 +339,45 @@ void binauraliser_process
                 applyDVF(thetaLR[1], rho, pData->binsrcsTD[r], BINAURALISER_FRAME_SIZE, fs, &wzR, pData->binsrcsTD[r]);
             }
         }
+
+//        // Option 1
+//        // ****************************************************
+        /* Zero out all plugin output channels */
+        // TODO: If we know all output channels are contiguous, could memset all at once
+        for (ch = 0; ch < nOutputs; ch++)
+            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
+        
         /* Iterate over sources, scaling by nSources, summing to binaural output */
-        for (ch = 0; ch < nSources; ch++) {
+        // TODO: scaling can happen just once if no overflow summing up to 64 sources
+        for (srci = 0; srci < nSources; srci++) {
             for (ear = 0; ear < NUM_EARS; ear++) {
-                // (constant * vector) + vector: (alpha * X[i]) + Y[i]
+                // (constant * vector) + vector: Y[i] = (alpha * X[i]) + Y[i]
                 cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
-                            pData->binsrcsTD[NUM_EARS*ch+ear], 1, outputs[ear], 1);
+                            pData->binsrcsTD[srci*NUM_EARS + ear], 1, outputs[ear], 1);
+//                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
             }
         }
+        // END Option 1 ******************************************
 
-//        // option 1 - doesn't work... why? cblas_saxpy should be in-place
+
+//        // Option 2 - works but not the most elegant
 //        // ****************************************************
-//        /* Iterate over sources, scaling by nSources, summing to output */
-//        for (srci = 0; srci < nSources; srci++) {
+//        cblas_sscal(BINAURALISER_FRAME_SIZE*NUM_EARS, 1.0f/sqrtf((float)nSources), pData->binsrcsTD[0], 1);
+//        /* Iterate over remaining sources, scaling by nSources, summing to first 2 channels */
+//        for (srci = 1; srci < nSources; srci++) {
 //            for (ch = 0; ch < NUM_EARS; ch++) {
 //                // constant * vector + vector
 //                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
-//                            pData->binsrcsTD[NUM_EARS*srci+ch], 1, outputs[ch], 1);
-////                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
+//                            pData->binsrcsTD[NUM_EARS*srci+ch], 1, pData->binsrcsTD[ch], 1);
 //            }
 //        }
-//        // option 1 ******************************************
+//        /* Copy to output buffer */
+//        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
+//            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
+//        // END Option 2 **********************************************
 
 
-        // option 2 - works but not the most elegant
-//      // ****************************************************
-        cblas_sscal(BINAURALISER_FRAME_SIZE*NUM_EARS, 1.0f/sqrtf((float)nSources), pData->binsrcsTD[0], 1);
-        /* Iterate over remaining sources, scaling by nSources, summing to first 2 channels */
-        for (srci = 1; srci < nSources; srci++) {
-            for (ch = 0; ch < NUM_EARS; ch++) {
-                // constant * vector + vector
-                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
-                            pData->binsrcsTD[NUM_EARS*srci+ch], 1, pData->binsrcsTD[ch], 1);
-            }
-        }
-        /* Copy to output buffer */
-        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
-            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
-        // option 2 **********************************************
-
-
-//        // option 3 works but naive approach
+//        // Option 3 works but naive approach
 //        // ****************************************************
 //        // Sum all binaural signals to the first 2 channels of binsrcsTD
 //        for (ch = 1; ch < nSources; ch++) {
@@ -407,12 +390,12 @@ void binauraliser_process
 //        /* Copy to output buffer */
 //        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
 //            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
-//        // end option 3 ****************************************
+//        // END Option 3 ****************************************
 
 
-        /* Zero remaining plugin channels */
-        for (; ch < nOutputs; ch++)
-            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
+//        /* Zero remaining plugin channels */
+//        for (; ch < nOutputs; ch++)
+//            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
