@@ -216,7 +216,7 @@ void binauraliser_process
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int ch, ear, i, band, nSources, srci;
     float src_dirs[MAX_NUM_INPUTS][2], src_dists[MAX_NUM_INPUTS], Rxyz[3][3];
-    float hypotxy, headRadiusRecip, sourceScale, fs, ffThresh;
+    float hypotxy, headRadiusRecip, sourceScale, fs, ffThresh, nfThresh;
     int enableRotation;
     float thetaLR[2] = { 0.0, 0.0 };
     float rho, wzL, wzR;
@@ -229,6 +229,7 @@ void binauraliser_process
     enableRotation  = pData->enableRotation;
     headRadiusRecip = pData->head_radius_recip;
     ffThresh        = pData->farfield_thresh_m;
+    nfThresh        = pData->nearfield_limit_m
     sourceScale     = 1.0f / sqrtf((float)nSources);
     fs              = (float)pData->fs;
 
@@ -323,7 +324,7 @@ void binauraliser_process
         for (srci = 0; srci < nSources; srci++) {
             for (ear = 0; ear < NUM_EARS; ear++) {
                 // (constant * vector) + vector: Y[i] = (alpha * X[i]) + Y[i]
-                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
+                cblas_saxpy(BINAURALISER_FRAME_SIZE, sourceScale,
                             pData->binsrcsTD[srci*NUM_EARS + ear], 1, outputs[ear], 1);
 //                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
             }
@@ -380,10 +381,9 @@ void binauraliser_setSourceElev_deg(void* const hBin, int index, float newElev_d
 void binauraliser_setSourceDist_m(void* const hBin, int index, float newDist_m)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    newDist_m = SAF_MAX(newDist_m, 0.15f);                      // TODO: is this clamped elsewhere?
+    newDist_m = SAF_MAX(newDist_m, nfThresh);       // TODO: is this clamped elsewhere?
     if(pData->src_dists_m[index] != newDist_m){
         pData->src_dists_m[index] = newDist_m;
-//        pData->recalc_hrtf_interpFLAG[index] = 1;         // TODO: need similar recalc flag for distance?
     }
 }
 
