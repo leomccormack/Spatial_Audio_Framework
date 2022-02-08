@@ -256,22 +256,6 @@ void binauraliser_process
             }
             pData->recalc_M_rotFLAG = 0;
         }
-
-        //                  /* Load time-domain data */
-        // TODO: post-rebase, this is the new approach to loading the data
-        // for(i=0; i < SAF_MIN(nSources,nInputs); i++)
-        //     utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
-        // for(; i<nSources; i++)
-        //     memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
-        //
-        //                  /* Apply source gains */
-        // for (ch = 0; ch < nSources; ch++) {
-        //     if(fabsf(pData->src_gains[ch] - 1.f) > 1e-6f)
-        //         utility_svsmul(pData->inputFrameTD[ch], &(pData->src_gains[ch]), BINAURALISER_FRAME_SIZE, NULL);
-        // }
-        //
-        //                  /* Apply time-frequency transform (TFT) */
-        // afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
         
         /* Load time-domain data */
         for(i=0; i < SAF_MIN(nSources,nInputs); i++)
@@ -281,16 +265,15 @@ void binauraliser_process
 
         /* Zero out busses */
         // TODO: are the following 2 memsets needed? They're overwritten each frame anyway (also inputFrameTD)
-        memset(FLATTEN2D(pData->binsrcsTD), 0, NUM_EARS*BINAURALISER_FRAME_SIZE * sizeof(float));
+        memset(FLATTEN2D(pData->binsrcsTD),  0, NUM_EARS*BINAURALISER_FRAME_SIZE * sizeof(float));
         memset(FLATTEN3D(pData->binauralTF), 0, HYBRID_BANDS*nSources*NUM_EARS*TIME_SLOTS * sizeof(float_complex));
 
         /* Apply time-frequency transform (TFT) */
-        /* OG: afSTFT_forward(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, pData->inputframeTF); */
-        /* Apply time-frequency transform (TFT) */
         afSTFT_forward_knownDimensions(pData->hSTFT, pData->inputFrameTD, BINAURALISER_FRAME_SIZE, MAX_NUM_INPUTS, TIME_SLOTS, pData->inputframeTF);
 
-        /* Interpolate HRTF in src(s) direction, apply that HRTF, maintaining individual binaural source streams */
+        /* Interpolate and apply HRTFs, maintaining individual binaural source streams */
         for (ch = 0; ch < nSources; ch++) {
+            
             /* Interpolate hrtfs */
             if(pData->recalc_hrtf_interpFLAG[ch]){
                 if(enableRotation)
@@ -314,16 +297,6 @@ void binauraliser_process
         /* Bring sources back to TD */
         afSTFT_backward(pData->hSTFT, pData->binauralTF, BINAURALISER_FRAME_SIZE, pData->binsrcsTD);
 
-//        /* ********** TEST ********** */
-//        /* testing, expand input into 'binaural' without HRTF (comment out above code, up to applying the TFT) to inspect DVF filter alone */
-//        /* Copy to output buffer */
-//        for (ch = 0; ch < nSources; ch++) {
-//            for (ear = 0; ear < NUM_EARS; ear++) {
-//                utility_svvcopy(pData->inputFrameTD[ch], BINAURALISER_FRAME_SIZE, pData->binsrcsTD[NUM_EARS*ch+ear]);
-//            }
-//        }
-//        /* ********** END TEST ********** */
-
         /* Iterate over sources, applying DVF to those in the near field */
         for (ch = 0; ch < nSources; ch++) {
             int l = NUM_EARS*ch;
@@ -340,8 +313,6 @@ void binauraliser_process
             }
         }
 
-//        // Option 1
-//        // ****************************************************
         /* Zero out all plugin output channels */
         // TODO: If we know all output channels are contiguous, could memset all at once
         for (ch = 0; ch < nOutputs; ch++)
@@ -357,45 +328,6 @@ void binauraliser_process
 //                utility_svvadd(pData->ffsumTD[ch], pData->nfsumTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
             }
         }
-        // END Option 1 ******************************************
-
-
-//        // Option 2 - works but not the most elegant
-//        // ****************************************************
-//        cblas_sscal(BINAURALISER_FRAME_SIZE*NUM_EARS, 1.0f/sqrtf((float)nSources), pData->binsrcsTD[0], 1);
-//        /* Iterate over remaining sources, scaling by nSources, summing to first 2 channels */
-//        for (srci = 1; srci < nSources; srci++) {
-//            for (ch = 0; ch < NUM_EARS; ch++) {
-//                // constant * vector + vector
-//                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.0f/sqrtf((float)nSources),
-//                            pData->binsrcsTD[NUM_EARS*srci+ch], 1, pData->binsrcsTD[ch], 1);
-//            }
-//        }
-//        /* Copy to output buffer */
-//        for (ch = 0; ch < SAF_MIN(NUM_EARS, nOutputs); ch++)
-//            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
-//        // END Option 2 **********************************************
-
-
-//        // Option 3 works but naive approach
-//        // ****************************************************
-//        // Sum all binaural signals to the first 2 channels of binsrcsTD
-//        for (ch = 1; ch < nSources; ch++) {
-//            for (ear = 0; ear < NUM_EARS; ear++) {
-//                for (int n=0; n<BINAURALISER_FRAME_SIZE; n++) {
-//                    pData->binsrcsTD[ear][n] += pData->binsrcsTD[NUM_EARS*ch+ear][n];
-//                }
-//            }
-//        }
-//        /* Copy to output buffer */
-//        for (ch = 0; ch < MIN(NUM_EARS, nOutputs); ch++)
-//            utility_svvcopy(pData->binsrcsTD[ch], BINAURALISER_FRAME_SIZE, outputs[ch]);
-//        // END Option 3 ****************************************
-
-
-//        /* Zero remaining plugin channels */
-//        for (; ch < nOutputs; ch++)
-//            memset(outputs[ch], 0, BINAURALISER_FRAME_SIZE*sizeof(float));
     }
     else{
         for (ch=0; ch < nOutputs; ch++)
