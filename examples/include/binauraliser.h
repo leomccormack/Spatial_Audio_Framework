@@ -134,7 +134,7 @@ void binauraliser_process(void* const hBin,
  * as binauraliser is currently configured, at next available opportunity.
  */
 void binauraliser_refreshSettings(void* const hBin);
-
+    
 /** Sets the panning azimuth for a specific channel index, in DEGREES */
 void binauraliser_setSourceAzi_deg(void* const hBin,
                                    int index,
@@ -145,16 +145,7 @@ void binauraliser_setSourceElev_deg(void* const hBin,
                                     int index,
                                     float newElev_deg);
 
-/**
- * Sets the panning distance for a specific channel index, in METERS
- */
-void binauraliser_setSourceDist_m(void* const hBin,
-                                    int index,
-                                    float newDist_m);
-
-/**
- * Sets the number of input channels/sources to binauralise.
- */
+/** Sets the number of input channels/sources to binauralise */
 void binauraliser_setNumSources(void* const hBin, int new_nSources);
 
 /**
@@ -275,29 +266,7 @@ float binauraliser_getSourceAzi_deg(void* const hBin, int index);
 /** Returns the source elevation for a given index, in DEGREES */
 float binauraliser_getSourceElev_deg(void* const hBin, int index);
 
-/**
- * Returns the source elevation for a given index, in METERS
- */
-float binauraliser_getSourceDist_m(void* const hBin, int index);
-
-/**
-* Returns the distance considered to be the far field (beyond which no near field filtering is applied), in METERS
-*/
-float binauraliser_getFarfieldThresh_m(void* const hBin);
-
-/**
-* Returns the scaling factor to give the far field threshold headroom (useful for UI range limits)
-*/
-float binauraliser_getFarfieldHeadroom(void* const hBin);
-
-/**
-* Returns the minimum distance possible for near field filter, in METERS
-*/
-float binauraliser_getNearfieldLimit_m(void* const hBin);
-
-/**
- * Returns the number of inputs/sources in the current layout
- */
+/** Returns the number of inputs/sources in the current layout */
 int binauraliser_getNumSources(void* const hBin);
 
 /** Returns the maximum number of input sources supported by binauraliser */

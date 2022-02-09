@@ -21,7 +21,9 @@
  *        filtering.
  *
  * ### Files
- * binauraliser.h (include), binauraliser_internal.h, binauraliser_nf.h (include), binauraliser_nf_internal.h, binauraliser.c, binauraliser_internal.c, binauraliser_nf_internal.c, binauraliser_nf.c
+ * binauraliser.h (include), binauraliser_internal.h, binauraliser_nf.h (include),
+ * binauraliser_nf_internal.h, binauraliser.c, binauraliser_internal.c,
+ * binauraliser_nf_internal.c, binauraliser_nf.c
  * ### Include Header
  */
 
@@ -46,6 +48,7 @@
 #define __BINAURALISER_H_INCLUDED__
 
 #include "_common.h"
+#include "binauraliser.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -55,11 +58,6 @@ extern "C" {
 /*                             Presets + Constants                            */
 /* ========================================================================== */
 
-/** Available interpolation modes */
-typedef enum {
-    INTERP_TRI = 1, /**< Triangular interpolation */
-    INTERP_TRI_PS   /**< Triangular interpolation (with phase-simplification) */
-}INTERP_MODES;
 
 
 /* ========================================================================== */
@@ -120,40 +118,13 @@ void binauraliserNF_setSourceDist_m(void* const hBin,
                                     int index,
                                     float newDist_m);
 
+void binauraliserNF_setInputConfigPreset(void* const hBin,
+                                         int newPresetID);
 
+void binauraliserNF_resetSourceDistances(void* const hBin);
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
-
-/**
- * Returns the processing framesize (i.e., number of samples processed with
- * every _process() call )
- */
-int binauraliser_getFrameSize(void);
-
-/** Returns current codec status codec status (see #CODEC_STATUS enum) */
-CODEC_STATUS binauraliser_getCodecStatus(void* const hBin);
-
-/**
- * (Optional) Returns current intialisation/processing progress, between 0..1
- * - 0: intialisation/processing has started
- * - 1: intialisation/processing has ended
- */
-float binauraliser_getProgressBar0_1(void* const hBin);
-
-/**
- * (Optional) Returns current intialisation/processing progress text
- *
- * @note "text" string should be (at least) of length:
- *       #PROGRESSBARTEXT_CHAR_LENGTH
- */
-void binauraliser_getProgressBarText(void* const hBin, char* text);
-
-/** Returns the source azimuth for a given index, in DEGREES */
-float binauraliser_getSourceAzi_deg(void* const hBin, int index);
-
-/** Returns the source elevation for a given index, in DEGREES */
-float binauraliser_getSourceElev_deg(void* const hBin, int index);
 
 /**
  * Returns the source elevation for a given index, in METERS
@@ -174,118 +145,6 @@ float binauraliser_getFarfieldHeadroom(void* const hBin);
 * Returns the minimum distance possible for near field filter, in METERS
 */
 float binauraliser_getNearfieldLimit_m(void* const hBin);
-
-/**
- * Returns the number of inputs/sources in the current layout
- */
-int binauraliser_getNumSources(void* const hBin);
-
-/** Returns the maximum number of input sources supported by binauraliser */
-int binauraliser_getMaxNumSources(void);
-
-/** Returns the number of ears possessed by the average homo sapien */
-int binauraliser_getNumEars(void);
-
-/** Returns the number of directions in the currently used HRIR set */
-int binauraliser_getNDirs(void* const hBin);
-
-/**
- * Returns the number of triangular groupings (faces) returned by the Convex
- * Hull
- */
-int binauraliser_getNTriangles(void* const hBin);
-
-/** Returns the HRIR/HRTF azimuth for a given index, in DEGREES */
-float binauraliser_getHRIRAzi_deg(void* const hBin, int index);
-
-/** Returns the HRIR/HRTF elevation for a given index, in DEGREES */
-float binauraliser_getHRIRElev_deg(void* const hBin, int index);
-
-/** Returns the length of HRIRs in time-domain samples */
-int binauraliser_getHRIRlength(void* const hBin);
-
-/** Returns the HRIR sample rate */
-int binauraliser_getHRIRsamplerate(void* const hBin);
-
-/**
- * Returns the value of a flag used to dictate whether the default HRIRs in the
- * Spatial_Audio_Framework should be used (1), or a custom HRIR set loaded via a
- * SOFA file (0).
- *
- * @note If the custom set fails to load correctly, binauraliser will revert to
- *       the defualt set, so this will be '1'
- */
-int binauraliser_getUseDefaultHRIRsflag(void* const hBin);
-
-/**
- * Returns the file path for a .sofa file.
- *
- * @note If the custom set fails to load correctly, binauraliser will revert to
- *       the defualt set. Use 'binauraliser_getUseDefaultHRIRsflag()' to check
- *       if loading was successful.
- *
- * @param[in] hBin binauraliser handle
- * @returns        File path to .sofa file (WITH file extension)
- */
-char* binauraliser_getSofaFilePath(void* const hBin);
-
-/**
- * Returns the flag indicating whether the diffuse-field EQ applied to the HRTFs
- * is enabled (1) or disabled (0).
- */
-int binauraliser_getEnableHRIRsDiffuseEQ(void* const hBin);
-
-/** Returns the DAW/Host sample rate */
-int binauraliser_getDAWsamplerate(void* const hBin);
-
-/**
- * Returns the flag value which dictates whether to enable/disable sound-field
- * rotation (0: disabled, 1: enabled)
- */
-int binauraliser_getEnableRotation(void* const hBin);
-
-/** Returns the 'yaw' rotation angle, in DEGREES */
-float binauraliser_getYaw(void* const hBin);
-
-/** Returns the 'pitch' rotation angle, in DEGREES */
-float binauraliser_getPitch(void* const hBin);
-
-/** Returns the 'roll' rotation angle, in DEGREES */
-float binauraliser_getRoll(void* const hBin);
-
-/**
- * Returns a flag as to whether to "flip" the sign of the current 'yaw' angle
- * (0: do not flip sign, 1: flip the sign)
- */
-int binauraliser_getFlipYaw(void* const hBin);
-
-/**
- * Returns a flag as to whether to "flip" the sign of the current 'pitch' angle
- * (0: do not flip sign, 1: flip the sign)
- */
-int binauraliser_getFlipPitch(void* const hBin);
-
-/**
- * Returns a flag as to whether to "flip" the sign of the current 'roll' angle
- * (0: do not flip sign, 1: flip the sign)
- */
-int binauraliser_getFlipRoll(void* const hBin);
-
-/**
- * Returns a flag as to whether to use "yaw-pitch-roll" (0) or "roll-pitch-yaw"
- * (1) rotation order.
- */
-int binauraliser_getRPYflag(void* const hBin);
-
-/** NOT IMPLEMENTED YET */
-int binauraliser_getInterpMode(void* const hBin);
-
-/**
- * Returns the processing delay in samples (may be used for delay compensation
- * purposes)
- */
-int binauraliser_getProcessingDelay(void);
-
 
 #ifdef __cplusplus
 } /* extern "C" { */

@@ -17,7 +17,8 @@
 /**
  * @file: binauraliser_nf.c
  * @brief Convolves input audio (up to 64 channels) with interpolated HRTFs in
- *        the time-frequency domain.
+ *        the time-frequency domain, and applies optional near-field binaural
+ *        filtering.
  *
  * The HRTFs are interpolated by applying amplitude-preserving VBAP gains to the
  * HRTF magnitude responses and inter-aural time differences (ITDs)
@@ -30,7 +31,38 @@
  * @license ISC
  */
 
+#include "../binauraliser/binauraliser_internal.h"
 #include "binauraliser_nf_internal.h"
+#include "binauraliser_nf.h"
+
+// https://stackoverflow.com/questions/7370533/can-i-extend-a-struct-in-c
+typedef struct _binauraliserNF {
+    struct _binauraliser;           /**< inherit member vars of binauraliser struct, and extend with the following */
+    
+    /* audio buffers */
+    float** binsrcsTD;                  /**< near field DVF-filtered sources frame */
+    float_complex*** binauralTF;        /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
+    
+    /* misc. */
+    float src_dists_m[MAX_NUM_INPUTS];  /**< source distance,  meters */
+    bool inNearfield[MAX_NUM_INPUTS];
+    float farfield_thresh_m;
+    float farfield_headroom;
+    float nearfield_limit_m;
+    float head_radius;
+    float head_radius_recip;
+
+} binauraliserNF_data;
+
+void binauraliserNF_resetSourceDistances(void* const hBin)
+{
+    binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+    
+    for(int i=0; i<MAX_NUM_INPUTS; i++){
+        pData->src_dists_m[i] = pData->farfield_thresh_m * pData->farfield_headroom;
+        pData->inNearfield[i] = false;
+    }
+}
 
 void binauraliserNF_create
 (
@@ -39,7 +71,7 @@ void binauraliserNF_create
 {
     binauraliserNF_data* pData = (binauraliserNF_data*)malloc1d(sizeof(binauraliserNF_data));
     *phBin = (void*)pData;
-    int ch;
+    int ch, nDim; // nDim not actually used
 
     /* user parameters */
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
@@ -69,9 +101,9 @@ void binauraliserNF_create
     // must be called after pData->farfield_thresh_m is set
     // TODO: why isn't the pointer to pData->src_dirs_deg sent in here... it doens't appear to be initialized?
     // The issue comes up because src_dists should prob be set the same way... mtm
-    binauraliser_loadPreset(pData, SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims)); /*check setStateInformation if you change default preset*/
+    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &nDim); /*check setStateInformation if you change default preset*/
     // For now, any preset selected will reset sources to the far field
-    binauraliserNF_resetSourceDistances(pdata);
+    binauraliserNF_resetSourceDistances(pData);
 
     /* time-frequency transform + buffers */
     pData->hSTFT            = NULL;
@@ -85,10 +117,12 @@ void binauraliserNF_create
     // time domain buffers
     pData->inputFrameTD     = (float**)malloc2d(MAX_NUM_INPUTS, BINAURALISER_FRAME_SIZE, sizeof(float));
     pData->binsrcsTD        = (float**)malloc2d(MAX_NUM_INPUTS*NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
+    pData->outframeTD       = NULL; // outframeTD inherited but not used by binauraliserNF
     // frequency domain buffers
     pData->inputframeTF     = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
     pData->binauralTF       = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS*NUM_EARS, TIME_SLOTS, sizeof(float_complex)); // MAX_NUM_INPUTS*NUM_EARS dimensions combined because afSTFT requires float_complex***
-
+    pData->outputframeTF    = NULL; // outputframeTF inherited but not used by binauraliserNF
+    
     /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx  = NULL;
     pData->hrtf_vbap_gtableComp = NULL;
@@ -102,7 +136,7 @@ void binauraliserNF_create
     /* flags/status */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
-    strcpy(pData->progressBarText,"");
+    strcpy(pData->progressBarText, "");
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
     pData->reInitHRTFsAndGainTables = 1;
@@ -127,12 +161,13 @@ void binauraliserNF_destroy
             SAF_SLEEP(10);
         }
 
-        /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
             afSTFT_destroy(&(pData->hSTFT));
         free(pData->inputFrameTD);
-        free(pData->binsrcsTD);
+        free(pData->outframeTD);
         free(pData->inputframeTF);
+        free(pData->outputframeTF);
+        free(pData->binsrcsTD);
         free(pData->binauralTF);
         free(pData->hrtf_vbap_gtableComp);
         free(pData->hrtf_vbap_gtableIdx);
@@ -143,7 +178,7 @@ void binauraliserNF_destroy
         free(pData->hrir_dirs_deg);
         free(pData->weights);
         free(pData->progressBarText);
-
+        
         free(pData);
         pData = NULL;
     }
@@ -154,7 +189,7 @@ void binauraliserNF_init
       void * const hBin, int sampleRate
 )
 {
-    binauraliser_init(hBin, sampleRate)
+    binauraliser_init(hBin, sampleRate);
 }
 
 void binauraliserNF_process
@@ -293,10 +328,11 @@ void binauraliserNF_process
 
 /* Set Functions */
 
-void binauraliser_setSourceDist_m(void* const hBin, int index, float newDist_m)
+void binauraliserNF_setSourceDist_m(void* const hBin, int index, float newDist_m)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
-    newDist_m = SAF_MAX(newDist_m, pData->nearfield_limit_m);    // TODO: is this clamped elsewhere?
+    // TODO: is this clamped elsewhere? Need to accoutn for headroom?
+    newDist_m = SAF_MAX(newDist_m, pData->nearfield_limit_m);
     if(pData->src_dists_m[index] != newDist_m){
         pData->src_dists_m[index] = newDist_m;
     }
@@ -305,11 +341,11 @@ void binauraliser_setSourceDist_m(void* const hBin, int index, float newDist_m)
 void binauraliserNF_setInputConfigPreset(void* const hBin, int newPresetID)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
-    int ch;
+    int ch, nDim;
 
-    binauraliser_loadPreset(pData, newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &(pData->input_nDims));
+    binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &nDim);
     // For now, any preset selected will reset sources to the far field
-    binauraliserNF_resetSourceDistances(pdata);
+    binauraliserNF_resetSourceDistances(&pData);
 
     if(pData->nSources != pData->new_nSources)
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
@@ -317,30 +353,34 @@ void binauraliserNF_setInputConfigPreset(void* const hBin, int newPresetID)
         pData->recalc_hrtf_interpFLAG[ch] = 1;
 }
 
-void binauraliserNF_resetSourceDistances(void* const hBin);
-{
-    binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
-    for(int i=0; i<MAX_NUM_INPUTS; i++){
-        pData->src_dists_m[i] = pData->farfield_thresh_m * pData->farfield_headroom;
-        pData->inNearfield[i] = false;
-    }
-}
+//void binauraliserNF_resetSourceDistances(void* const hBin)
+//{
+//    binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+//
+//    for(int i=0; i<MAX_NUM_INPUTS; i++){
+//        pData->src_dists_m[i] = pData->farfield_thresh_m * pData->farfield_headroom;
+//        pData->inNearfield[i] = false;
+//    }
+//}
 
-float binauraliser_getSourceDist_m(void* const hBin, int index)
+float binauraliserNF_getSourceDist_m(void* const hBin, int index)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+    
     return pData->src_dists_m[index];
 }
 
-float binauraliser_getFarfieldThresh_m(void* const hBin)
+float binauraliserNF_getFarfieldThresh_m(void* const hBin)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+    
     return pData->farfield_thresh_m;
 }
 
-float binauraliser_getFarfieldHeadroom(void* const hBin)
+float binauraliserNF_getFarfieldHeadroom(void* const hBin)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+    
     return pData->farfield_headroom;
 }
 
@@ -348,5 +388,6 @@ float binauraliser_getFarfieldHeadroom(void* const hBin)
 float binauraliserNF_getNearfieldLimit_m(void* const hBin)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+    
     return pData->nearfield_limit_m;
 }

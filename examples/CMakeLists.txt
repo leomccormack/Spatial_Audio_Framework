@@ -66,6 +66,7 @@ foreach(current_example RANGE ${num_examples})
         PRIVATE
             ${CMAKE_CURRENT_SOURCE_DIR}/src/binauraliser/binauraliser_internal.h
             ${CMAKE_CURRENT_SOURCE_DIR}/src/binauraliser/binauraliser_internal.c
+            ${CMAKE_CURRENT_SOURCE_DIR}/include/binauraliser.h
             ${CMAKE_CURRENT_SOURCE_DIR}/src/binauraliser/binauraliser.c
         )
     endif()

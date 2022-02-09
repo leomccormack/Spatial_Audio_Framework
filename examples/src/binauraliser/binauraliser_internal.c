@@ -53,6 +53,7 @@ void binauraliser_interpHRTFs
 )
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
+    
     int i, band;
     int aziIndex, elevIndex, N_azi, idx3d;
     float_complex ipd;
@@ -262,9 +263,9 @@ void binauraliser_initTFT
     binauraliser_data *pData = (binauraliser_data*)(hBin);
  
     if(pData->hSTFT==NULL)
-        afSTFT_create(&(pData->hSTFT), pData->new_nSources, NUM_EARS * pData->new_nSources, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
+        afSTFT_create(&(pData->hSTFT), pData->new_nSources, NUM_EARS, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
     else if(pData->new_nSources!=pData->nSources){
-        afSTFT_channelChange(pData->hSTFT, pData->new_nSources, NUM_EARS * pData->new_nSources);
+        afSTFT_channelChange(pData->hSTFT, pData->new_nSources, NUM_EARS);
         afSTFT_clearBuffers(pData->hSTFT);
     }
     pData->nSources = pData->new_nSources;
@@ -272,14 +273,12 @@ void binauraliser_initTFT
 
 void binauraliser_loadPreset
 (
-    void* const hBin,
     SOURCE_CONFIG_PRESETS preset,
     float dirs_deg[MAX_NUM_INPUTS][2],
     int* newNCH,
     int* nDims
 )
 {
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
     float sum_elev;
     int ch, i, nCH;
     
@@ -474,17 +473,10 @@ void binauraliser_loadPreset
         }
     }
     
-    /* Set default distance to far field (no near field filtering) */
-    float ffDist = pData->farfield_thresh_m * pData->farfield_headroom;
-    for(int i=0; i<MAX_NUM_INPUTS; i++){
-        pData->src_dists_m[i] = ffDist;
-        pData->inNearfield[i] = false;
-    }
-    
     /* For dynamically changing the number of TFT channels */
     (*newNCH) = nCH;
     
-    /* estimate number of dimensions. (Obviously fails if using 2D setups that are on an angle.
+    /* estimate number of dimensions. (Obviously fails if using 2D setups thare are on an angle.
        However, in these cases, triangulation should fail and revert to 2D anyway) */
     sum_elev = 0.0f;
     for(i=0; i<nCH; i++){
