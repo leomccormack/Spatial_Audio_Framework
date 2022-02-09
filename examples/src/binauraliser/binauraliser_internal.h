@@ -126,7 +126,6 @@ typedef struct _binauraliser
     int nTriangles;                            /**< Number of triangles in the convex hull of the spherical arrangement of HRIR directions/points */
     int new_nSources;                          /**< New number of input/source signals (current value will be replaced by this after next re-init) */
     int input_nDims;
-    int output_nDims;
     
     /* user parameters */
     int nSources;
