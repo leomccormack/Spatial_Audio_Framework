@@ -319,7 +319,7 @@ void binauraliser_process
         // Note, it appears SAF doesn't support in-place vector addition, e.g. ippsAdd_32f_I
         for (srci = 0; srci < nSources; srci++) {
             for (ear = 0; ear < NUM_EARS; ear++) {
-                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.f, // is scaling by 1 optimized?
+                cblas_saxpy(BINAURALISER_FRAME_SIZE, 1.f,
                             pData->binsrcsTD[srci * NUM_EARS + ear], 1, outputs[ear], 1);
             }
         }
