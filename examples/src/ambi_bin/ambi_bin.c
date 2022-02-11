@@ -504,7 +504,7 @@ void ambi_bin_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
     
-    pars->sofa_filepath = malloc1d(strlen(path) + 1);
+    pars->sofa_filepath = realloc1d(pars->sofa_filepath, strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     ambi_bin_refreshParams(hAmbi);  // re-init and re-calc

@@ -121,6 +121,7 @@ void binauraliser_destroy
         free(pData->hrtf_fb);
         free(pData->hrtf_fb_mag);
         free(pData->itds_s);
+        free(pData->sofa_filepath);
         free(pData->hrirs);
         free(pData->hrir_dirs_deg);
         free(pData->weights);
@@ -343,7 +344,7 @@ void binauraliser_setSofaFilePath(void* const hBin, const char* path)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     
-    pData->sofa_filepath = malloc1d(strlen(path) + 1);
+    pData->sofa_filepath = realloc1d(pData->sofa_filepath, strlen(path) + 1);
     strcpy(pData->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     binauraliser_refreshSettings(hBin);  // re-init and re-calc
