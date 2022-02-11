@@ -825,6 +825,7 @@ void sphVoronoi
     }
 
     /* clean-up */
+    free(duplicates);
     free(faceIdx);
     free(sorted);
     free(tempfacelist);
@@ -893,6 +894,8 @@ void sphVoronoiAreas
             tmp += theta[i];
         areas[m] = tmp - ((float)N_poly-2.0f)*SAF_PI; 
     }
+    free(face);
+    free(theta);
 }
 
 void getVoronoiWeights
@@ -936,6 +939,7 @@ void getVoronoiWeights
     free(areas);
     for(i=0; i<voronoi.nFaces; i++)
         free(voronoi.faces[i]);
+    free(voronoi.faces);
     free(voronoi.vert);
     free(voronoi.nPointsPerFace);
 }
