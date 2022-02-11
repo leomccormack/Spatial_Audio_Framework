@@ -118,6 +118,7 @@ void binauraliserNF_setSourceDist_m(void* const hBin,
                                     int index,
                                     float newDist_m);
 
+/** Loads an input preset (see #SOURCE_CONFIG_PRESETS enum) */
 void binauraliserNF_setInputConfigPreset(void* const hBin,
                                          int newPresetID);
 
