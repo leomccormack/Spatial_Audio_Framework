@@ -31,15 +31,24 @@
  * @license ISC
  */
 
+//#include "../binauraliser/binauraliser_internal.h"
 #include "binauraliser_nf_internal.h"
+
 
  /* This header is included to conform to the pattern in the SAF/examples
   although no extensions beyond the included binauraliser_internal.h are
   needed at this time.
   */
 
-
-
+void binauraliserNF_resetSourceDistances(void* const hBin)
+{
+    binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
+    
+    for(int i=0; i<MAX_NUM_INPUTS; i++){
+        pData->src_dists_m[i] = pData->farfield_thresh_m * pData->farfield_headroom;
+        pData->inNearfield[i] = false;
+    }
+}
 
 
 

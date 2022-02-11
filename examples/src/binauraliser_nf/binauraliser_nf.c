@@ -33,36 +33,6 @@
 
 #include "../binauraliser/binauraliser_internal.h"
 #include "binauraliser_nf_internal.h"
-#include "binauraliser_nf.h"
-
-// https://stackoverflow.com/questions/7370533/can-i-extend-a-struct-in-c
-typedef struct _binauraliserNF {
-    struct _binauraliser;           /**< inherit member vars of binauraliser struct, and extend with the following */
-    
-    /* audio buffers */
-    float** binsrcsTD;                  /**< near field DVF-filtered sources frame */
-    float_complex*** binauralTF;        /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
-    
-    /* misc. */
-    float src_dists_m[MAX_NUM_INPUTS];  /**< source distance,  meters */
-    bool inNearfield[MAX_NUM_INPUTS];
-    float farfield_thresh_m;
-    float farfield_headroom;
-    float nearfield_limit_m;
-    float head_radius;
-    float head_radius_recip;
-
-} binauraliserNF_data;
-
-void binauraliserNF_resetSourceDistances(void* const hBin)
-{
-    binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
-    
-    for(int i=0; i<MAX_NUM_INPUTS; i++){
-        pData->src_dists_m[i] = pData->farfield_thresh_m * pData->farfield_headroom;
-        pData->inNearfield[i] = false;
-    }
-}
 
 void binauraliserNF_create
 (

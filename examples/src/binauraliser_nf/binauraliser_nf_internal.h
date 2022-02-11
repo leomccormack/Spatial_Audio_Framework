@@ -31,19 +31,14 @@
  * @license ISC
  */
 
-#ifndef __BINAURALISER_INTERNAL_H_INCLUDED__
-#define __BINAURALISER_INTERNAL_H_INCLUDED__
+#ifndef __BINAURALISER_INTERNAL_NF_H_INCLUDED__
+#define __BINAURALISER_INTERNAL_NF_H_INCLUDED__
 
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include <stdbool.h>
-//#include <math.h>
-//#include <string.h>        // TODO: this include and above... sort out why/if they're needed
-#include "binauraliser_nf.h"  /* Include header for this example */
 #include "../binauraliser/binauraliser_internal.h"
+#include <binauraliser_nf.h>    /* Include header for this example */
 
-#include "saf.h"           /* Main include header for SAF */
-#include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
+#include "saf.h"                /* Main include header for SAF */
+#include "saf_externals.h"      /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,21 +48,26 @@ extern "C" {
 /*                            Internal Parameters                             */
 /* ========================================================================== */
 
-#if !defined(BINAURALISER_FRAME_SIZE)
-# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
-#  define BINAURALISER_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
-# else /* Otherwise, the default framesize for this example is: */
-#  define BINAURALISER_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
-# endif
-#endif
-#define HOP_SIZE ( 128 )                                  /**< STFT hop size */
-#define HYBRID_BANDS ( HOP_SIZE + 5 )                     /**< Number of frequency bands */
-#define TIME_SLOTS ( BINAURALISER_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+//#if !defined(BINAURALISER_FRAME_SIZE)
+//# if defined(FRAME_SIZE) /* Use the global framesize if it is specified: */
+//#  define BINAURALISER_FRAME_SIZE ( FRAME_SIZE )          /**< Framesize, in time-domain samples */
+//# else /* Otherwise, the default framesize for this example is: */
+//#  define BINAURALISER_FRAME_SIZE ( 128 )                 /**< Framesize, in time-domain samples */
+//# endif
+//#endif
+//#define HOP_SIZE ( 128 )                                  /**< STFT hop size */
+//#define HYBRID_BANDS ( HOP_SIZE + 5 )                     /**< Number of frequency bands */
+//#define TIME_SLOTS ( BINAURALISER_FRAME_SIZE / HOP_SIZE ) /**< Number of STFT timeslots */
+//
+///* Checks: */
+//#if (BINAURALISER_FRAME_SIZE % HOP_SIZE != 0)
+//# error "BINAURALISER_FRAME_SIZE must be an integer multiple of HOP_SIZE"
+//#endif
 
-/* Checks: */
-#if (BINAURALISER_FRAME_SIZE % HOP_SIZE != 0)
-# error "BINAURALISER_FRAME_SIZE must be an integer multiple of HOP_SIZE"
-#endif
+/* ========================================================================== */
+/*                             Presets + Constants                            */
+/* ========================================================================== */
+
 
 /* ========================================================================== */
 /*                                 Structures                                 */
@@ -79,7 +79,7 @@ extern "C" {
  * those specific to the near field variant.
  */
 
-//typedef struct _binauraliser_proto
+//typedef struct _binauraliser
 //{
 //    /* audio buffers */
 //    float** inputFrameTD;            /**< time-domain input frame; #MAX_NUM_INPUTS x #BINAURALISER_FRAME_SIZE */
@@ -87,9 +87,9 @@ extern "C" {
 //    float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
 //    float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
 //    int fs;                          /**< Host sampling rate, in Hz */
-//    float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
+////    float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
 //    void* hSTFT;                     /**< afSTFT handle */
-//    
+//
 //    /* sofa file info */
 //    char* sofa_filepath;             /**< absolute/relevative file path for a sofa file */
 //    float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
@@ -100,19 +100,19 @@ extern "C" {
 //    int hrir_loaded_fs;              /**< sampling rate of the loaded HRIRs  */
 //    int hrir_runtime_fs;             /**< sampling rate of the HRIRs being used for processing (after any resampling) */
 //    float* weights;                  /**< Integration weights for the HRIR measurement grid */
-//    
+//
 //    /* vbap gain table */
 //    int hrtf_vbapTableRes[2];        /**< [0] azimuth, and [1] elevation grid resolution, in degrees */
 //    int N_hrtf_vbap_gtable;          /**< Number of interpolation weights/directions */
 //    int* hrtf_vbap_gtableIdx;        /**< N_hrtf_vbap_gtable x 3 */
 //    float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
-//    
+//
 //    /* hrir filterbank coefficients */
 //    float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
 //    float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
 //    float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
 //    float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS]; /**< Interpolated HRTFs */
-//    
+//
 //    /* flags/status */
 //    CODEC_STATUS codecStatus;        /**< see #CODEC_STATUS */
 //    float progressBar0_1;            /**< Current (re)initialisation progress, between [0..1] */
@@ -121,7 +121,7 @@ extern "C" {
 //    int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS]; /**< 1: re-calculate/interpolate the HRTF, 0: do not */
 //    int reInitHRTFsAndGainTables;    /**< 1: reinitialise the HRTFs and interpolation tables, 0: do not */
 //    int recalc_M_rotFLAG;            /**< 1: re-calculate the rotation matrix, 0: do not */
-//    
+//
 //    /* misc. */
 //    float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
 //    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
@@ -145,36 +145,36 @@ extern "C" {
 //    int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
 //    float src_gains[MAX_NUM_INPUTS];         /**< Gains applied per source */
 //
-//} binauraliser_data_proto;
+//} binauraliser_data;
 
-//// https://stackoverflow.com/questions/7370533/can-i-extend-a-struct-in-c
-//typedef struct _binauraliserNF {
-//    struct _binauraliser_proto;           /**< inherit member vars of binauraliser struct, and extend with the following */
-//
-//    /* audio buffers */
-//    float** binsrcsTD;                  /**< near field DVF-filtered sources frame */
-//    float_complex*** binauralTF;        /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
-//
-//    /* misc. */
-//    float src_dists_m[MAX_NUM_INPUTS];  /**< source distance,  meters */
-//    bool inNearfield[MAX_NUM_INPUTS];
-//    float farfield_thresh_m;
-//    float farfield_headroom;
-//    float nearfield_limit_m;
-//    float head_radius;
-//    float head_radius_recip;
-//
-//} binauraliserNF_data;
+// https://stackoverflow.com/questions/7370533/can-i-extend-a-struct-in-c
+typedef struct _binauraliserNF {
+    struct _binauraliser;           /**< inherit member vars of binauraliser struct, and extend with the following */
+
+    /* audio buffers */
+    float** binsrcsTD;                  /**< near field DVF-filtered sources frame */
+    float_complex*** binauralTF;        /**< time-frequency domain output frame; TODO: ??? #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS ??? */
+
+    /* misc. */
+    float src_dists_m[MAX_NUM_INPUTS];  /**< source distance,  meters */
+    bool inNearfield[MAX_NUM_INPUTS];
+    float farfield_thresh_m;
+    float farfield_headroom;
+    float nearfield_limit_m;
+    float head_radius;
+    float head_radius_recip;
+
+} binauraliserNF_data;
 
 /* ========================================================================== */
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/* Internal functions go here */
+void binauraliserNF_resetSourceDistances(void* const hBin);
 
 
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */
 
-#endif /* __BINAURALISER_INTERNAL_H_INCLUDED__ */
+#endif /* __BINAURALISER_INTERNAL_NF_H_INCLUDED__ */

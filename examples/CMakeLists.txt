@@ -44,7 +44,7 @@ foreach(current_example RANGE ${num_examples})
 
     # Source files
     target_sources(${PROJECT_NAME} 
-    PRIVATE 
+    PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}_internal.c
         ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}_internal.h
         ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}.c

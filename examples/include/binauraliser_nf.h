@@ -44,11 +44,11 @@
  * @license ISC
  */
 
-#ifndef __BINAURALISER_H_INCLUDED__
-#define __BINAURALISER_H_INCLUDED__
+#ifndef __BINAURALISER_NF_H_INCLUDED__
+#define __BINAURALISER_NF_H_INCLUDED__
 
 #include "_common.h"
-#include "binauraliser.h"
+#include <binauraliser.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -121,7 +121,7 @@ void binauraliserNF_setSourceDist_m(void* const hBin,
 void binauraliserNF_setInputConfigPreset(void* const hBin,
                                          int newPresetID);
 
-void binauraliserNF_resetSourceDistances(void* const hBin);
+
 /* ========================================================================== */
 /*                                Get Functions                               */
 /* ========================================================================== */
@@ -129,25 +129,25 @@ void binauraliserNF_resetSourceDistances(void* const hBin);
 /**
  * Returns the source elevation for a given index, in METERS
  */
-float binauraliser_getSourceDist_m(void* const hBin, int index);
+float binauraliserNF_getSourceDist_m(void* const hBin, int index);
 
 /**
 * Returns the distance considered to be the far field (beyond which no near field filtering is applied), in METERS
 */
-float binauraliser_getFarfieldThresh_m(void* const hBin);
+float binauraliserNF_getFarfieldThresh_m(void* const hBin);
 
 /**
 * Returns the scaling factor to give the far field threshold headroom (useful for UI range limits)
 */
-float binauraliser_getFarfieldHeadroom(void* const hBin);
+float binauraliserNF_getFarfieldHeadroom(void* const hBin);
 
 /**
 * Returns the minimum distance possible for near field filter, in METERS
 */
-float binauraliser_getNearfieldLimit_m(void* const hBin);
+float binauraliserNF_getNearfieldLimit_m(void* const hBin);
 
 #ifdef __cplusplus
 } /* extern "C" { */
 #endif /* __cplusplus */
 
-#endif /* __BINAURALISER_H_INCLUDED__ */
+#endif /* __BINAURALISER_NF_H_INCLUDED__ */
