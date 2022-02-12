@@ -572,7 +572,7 @@ $(document).ready(function(){initNavTree('ambi__bin_8c_source.html',''); initRes
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>    <a class="code hl_struct" href="structambi__bin__data.html">ambi_bin_data</a> *pData = (<a class="code hl_struct" href="structambi__bin__data.html">ambi_bin_data</a>*)(hAmbi);</div>
 <div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>    <a class="code hl_struct" href="structambi__bin__codec_pars.html">ambi_bin_codecPars</a>* pars = pData-&gt;<a class="code hl_variable" href="structambi__bin__data.html#adb57dacc2d5b91dcb569165523cad61e">pars</a>;</div>
 <div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    </div>
-<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>    pars-&gt;<a class="code hl_variable" href="structambi__bin__codec_pars.html#a9f62f5ac61480d9cffb789b0a4f55d9f">sofa_filepath</a> = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(strlen(path) + 1);</div>
+<div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>    pars-&gt;<a class="code hl_variable" href="structambi__bin__codec_pars.html#a9f62f5ac61480d9cffb789b0a4f55d9f">sofa_filepath</a> = <a class="code hl_function" href="md__malloc_8c.html#a38d58679de4ea6f8951c918c3f880d67">realloc1d</a>(pars-&gt;<a class="code hl_variable" href="structambi__bin__codec_pars.html#a9f62f5ac61480d9cffb789b0a4f55d9f">sofa_filepath</a>, strlen(path) + 1);</div>
 <div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span>    strcpy(pars-&gt;<a class="code hl_variable" href="structambi__bin__codec_pars.html#a9f62f5ac61480d9cffb789b0a4f55d9f">sofa_filepath</a>, path);</div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span>    pData-&gt;<a class="code hl_variable" href="structambi__bin__data.html#a64526d0c7238f2af2512006581a0a41d">useDefaultHRIRsFLAG</a> = 0;</div>
 <div class="line"><a id="l00510" name="l00510"></a><span class="lineno">  510</span>    <a class="code hl_function" href="ambi__bin_8c.html#affbef03043aab1e4e03584651bc13ded">ambi_bin_refreshParams</a>(hAmbi);  <span class="comment">// re-init and re-calc</span></div>
@@ -1090,7 +1090,7 @@ $(document).ready(function(){initNavTree('ambi__bin_8c_source.html',''); initRes
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_1c34f7b0620f06dc2e483a9b8f7b051e.html">ambi_bin</a></li><li class="navelem"><a class="el" href="ambi__bin_8c.html">ambi_bin.c</a></li>
-    <li class="footer">Generated on Fri Feb 11 2022 14:47:50 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Sat Feb 12 2022 10:21:59 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">
