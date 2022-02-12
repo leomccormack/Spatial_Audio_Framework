@@ -147,6 +147,7 @@ void ambi_dec_destroy
         free(pars->hrtf_fb);
         free(pars->hrtf_fb_mag);
         free(pars->itds_s);
+	free(pars->sofa_filepath);
         free(pars->hrirs);
         free(pars->hrir_dirs_deg);
         free(pars->weights);
@@ -681,7 +682,7 @@ void ambi_dec_setSofaFilePath(void* const hAmbi, const char* path)
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
     
-    pars->sofa_filepath = malloc1d(strlen(path) + 1);
+    pars->sofa_filepath = realloc1d(pars->sofa_filepath, strlen(path) + 1);
     strcpy(pars->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     ambi_dec_refreshSettings(hAmbi);  // re-init and re-calc

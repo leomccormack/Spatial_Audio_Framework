@@ -304,6 +304,7 @@ void generateVBAPgainTable3D
     free(out_vertices);
     free(out_faces);
     free(layoutInvMtx);
+    free(src_dirs);
     free(azi);
     free(ele);
 }

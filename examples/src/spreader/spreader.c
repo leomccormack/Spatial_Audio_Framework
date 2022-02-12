@@ -120,6 +120,8 @@ void spreader_destroy
                pData->procStatus == PROC_STATUS_ONGOING){
             SAF_SLEEP(10);
         }
+
+	free(pData->sofa_filepath);
         
         /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
@@ -740,7 +742,7 @@ void spreader_setSofaFilePath(void* const hSpr, const char* path)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
     
-    pData->sofa_filepath = malloc1d(strlen(path) + 1);
+    pData->sofa_filepath = realloc1d(pData->sofa_filepath, strlen(path) + 1);
     strcpy(pData->sofa_filepath, path);
     pData->useDefaultHRIRsFLAG = 0;
     spreader_refreshSettings(hSpr);  // re-init and re-calc
