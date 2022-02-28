@@ -49,13 +49,10 @@ const float q13[] = { -1.75f, -0.01f, 7354.f, -2.18f, -1.2f, -1.59f, -1.23f, -0.
 const float q23[] = { 0.699f, -0.35f, -5350.f, 1.188f, 0.256f, 0.816f, 1.166f, 0.76f, 59.51f, 1707.f, -1.12f, -6.18f, -3.39f, -12.7f, -0.19f, 1.295f, -0.02f, -0.08f, -0.4f };
 
 const int numAz_table = sizeof(q23);
-
-/* 8.75 centimeters, reference head size used to generate coeff lookup table */
-const float a_0 = 0.0875;
-/* this head size, TODO: make this a parameter */
-const float a_head = 0.0875;
-const float headDim = M_PI * (a_0 / a_head); // TODO: use saf_PI
-const float sosDiv2PiA = 343 / (2 * M_PI * a_head);   // TODO: use saf_PI
+const float a_0 = 0.0875;       /* Reference head size, 8.75 centimeters, used in the generation of the coeff lookup table. */
+const float a_head = 0.09096;   /* This head size, See note for head_radius in binauraliser_nf. */
+const float headDim = SAF_PI * (a_0 / a_head);
+const float sosDiv2PiA = 343 / (2 * SAF_PI * a_head);
 
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -130,7 +127,6 @@ void interpHighShelfParams
     int theta_idx_lower, theta_idx_upper;
     float ifac;
     float thetaDiv10;
-    // TODO: check pointer instantiation logic
     float g0_1, g0_2;       /* high shelf gain at DC */
     float gInf_1, gInf_2;   /* high shelf gain at inf */
     float fc_1, fc_2;       /* high shelf cutoff frequency */
@@ -139,7 +135,7 @@ void interpHighShelfParams
     /* linearly interpolate DC gain, HF gain, center freq at theta */
     // TODO: rethink this indexing logic...
     thetaDiv10 = theta / 10.f;
-    theta_idx_lower = (int)thetaDiv10;      /* because table is in 10 degree steps, floor(x/10) gets lower index */
+    theta_idx_lower = (int)thetaDiv10;      /* Table is in 10 degree steps, floor(x/10) gets lower index */
     theta_idx_upper = theta_idx_lower + 1;
     if(theta_idx_upper == numAz_table) {    // TODO: if instead check theta_idx_upper => numAz_table, could clip the value > 180 here
         theta_idx_upper = theta_idx_lower;
@@ -180,7 +176,7 @@ void calcIIRCoeffs
     float va_c;
     
     v0     = db2mag(gInf);              /* Eq. (12), (10), and (11) */
-    g0_mag = db2mag(g0);                // TODO: revisit - does g0, gInf need to be in dB?
+    g0_mag = db2mag(g0);                // TODO: revisit; does g0, gInf need to be in dB?
     tanF   = tanf((headDim / fs) * fc); // TODO: this /fs calc can be optimized out with precomputed head dimension
     v0tanF = v0 * tanF;
     a_c    = (v0tanF - 1.f) / (v0tanF + 1.f);

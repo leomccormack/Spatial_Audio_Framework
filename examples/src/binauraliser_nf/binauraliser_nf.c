@@ -62,13 +62,15 @@ void binauraliserNF_create
     pData->enableRotation = 0;
 
     /* Near field DVF settings
-     * Head radius is set according to the linear combination of head width, height and depth from:
-     *      Algazi VR, Avendano C, Duda RO. Estimation of a spherical-head model from anthropometry.
-     *          J Audio Eng Soc 2001; 49(6):472-9.
-     * The far field threshold is set by rho (normalized distance) = 34, resulting in a ~3 m far field, where the max DVF filter response is about +/-0.5 dB.
+     * Head radius is set according to the linear combination of head width,
+     * height and depth from:
+     *      Algazi VR, Avendano C, Duda RO. Estimation of a spherical-head model
+     *      from anthropometry. J Audio Eng Soc 2001; 49(6):472-9.
+     * The far field threshold is set by rho (normalized distance) = 34, resulting
+     * in a ~3 m far field, where the max DVF filter response is about +/-0.5 dB.
      * Near field limit set where filters are stable, in meters from head _center_.
      */
-    pData->head_radius       = 0.09096;
+    pData->head_radius       = 0.09096; /* Should match a_head in in saf_utility_dvf.c */
     pData->head_radius_recip = 1.f / pData->head_radius;
     pData->farfield_thresh_m = pData->head_radius * 34.f;
     pData->farfield_headroom = 1.05f; /* 5% headroom above the far field threshold, for resetting to far field and UI range */
