@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		36D23E9827C6556400046EBC /* test__dvf_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23E9727C6556400046EBC /* test__dvf_module.c */; };
+		36D23E9F27C65E2B00046EBC /* binauraliser_nf.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23E9D27C65E2A00046EBC /* binauraliser_nf.c */; };
+		36D23EA027C65E2B00046EBC /* binauraliser_nf_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23E9E27C65E2A00046EBC /* binauraliser_nf_internal.c */; };
+		36D23EA327C6614800046EBC /* saf_utility_dvf.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23EA227C6614700046EBC /* saf_utility_dvf.c */; };
 		5032CDDA2744FDE2001855CD /* inflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 5032CDC72744FDE2001855CD /* inflate.c */; };
 		5032CDDB2744FDE2001855CD /* compress.c in Sources */ = {isa = PBXBuildFile; fileRef = 5032CDC82744FDE2001855CD /* compress.c */; };
 		5032CDDC2744FDE2001855CD /* deflate.c in Sources */ = {isa = PBXBuildFile; fileRef = 5032CDC92744FDE2001855CD /* deflate.c */; };
@@ -127,6 +131,13 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		36D23E9727C6556400046EBC /* test__dvf_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__dvf_module.c; sourceTree = "<group>"; };
+		36D23E9A27C65D7000046EBC /* binauraliser_nf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binauraliser_nf.h; sourceTree = "<group>"; };
+		36D23E9C27C65E2A00046EBC /* binauraliser_nf_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binauraliser_nf_internal.h; sourceTree = "<group>"; };
+		36D23E9D27C65E2A00046EBC /* binauraliser_nf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser_nf.c; sourceTree = "<group>"; };
+		36D23E9E27C65E2A00046EBC /* binauraliser_nf_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser_nf_internal.c; sourceTree = "<group>"; };
+		36D23EA127C6614700046EBC /* saf_utility_dvf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_dvf.h; sourceTree = "<group>"; };
+		36D23EA227C6614700046EBC /* saf_utility_dvf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_dvf.c; sourceTree = "<group>"; };
 		5032CDC52744FDE2001855CD /* zutil.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = zutil.h; sourceTree = "<group>"; };
 		5032CDC62744FDE2001855CD /* inftrees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = inftrees.h; sourceTree = "<group>"; };
 		5032CDC72744FDE2001855CD /* inflate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = inflate.c; sourceTree = "<group>"; };
@@ -350,6 +361,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		36D23E9B27C65E2A00046EBC /* binauraliser_nf */ = {
+			isa = PBXGroup;
+			children = (
+				36D23E9C27C65E2A00046EBC /* binauraliser_nf_internal.h */,
+				36D23E9D27C65E2A00046EBC /* binauraliser_nf.c */,
+				36D23E9E27C65E2A00046EBC /* binauraliser_nf_internal.c */,
+			);
+			path = binauraliser_nf;
+			sourceTree = "<group>";
+		};
 		5032CDC42744FDE2001855CD /* zlib */ = {
 			isa = PBXGroup;
 			children = (
@@ -429,6 +450,7 @@
 				50933FDF27181A450064F222 /* saf_test_wrapper.cpp */,
 				50933FE127181A450064F222 /* saf_test.c */,
 				5093400927181D460064F222 /* test__cdf4sap_module.c */,
+				36D23E9727C6556400046EBC /* test__dvf_module.c */,
 				5093401527181F8B0064F222 /* test__examples.c */,
 				5093400127181D450064F222 /* test__hoa_module.c */,
 				5093400227181D450064F222 /* test__hrir_module.c */,
@@ -598,6 +620,8 @@
 		50E36026249BDDCB00B74C25 /* saf_utilities */ = {
 			isa = PBXGroup;
 			children = (
+				36D23EA227C6614700046EBC /* saf_utility_dvf.c */,
+				36D23EA127C6614700046EBC /* saf_utility_dvf.h */,
 				50E36033249BDDCC00B74C25 /* saf_utilities.h */,
 				50E36029249BDDCB00B74C25 /* saf_utility_bessel.c */,
 				50E3603C249BDDCC00B74C25 /* saf_utility_bessel.h */,
@@ -708,6 +732,7 @@
 				50E3DE3F24C1B81200589B17 /* array2sh.h */,
 				50E3DE3924C1B81200589B17 /* beamformer.h */,
 				50E3DE4024C1B81200589B17 /* binauraliser.h */,
+				36D23E9A27C65D7000046EBC /* binauraliser_nf.h */,
 				50E3DE3B24C1B81200589B17 /* decorrelator.h */,
 				50E3DE3C24C1B81200589B17 /* dirass.h */,
 				50E3DE3D24C1B81200589B17 /* matrixconv.h */,
@@ -733,6 +758,7 @@
 				50E3DEBF24C1C5AB00589B17 /* array2sh */,
 				50E3DED124C1C80B00589B17 /* beamformer */,
 				50E3DEE924C1D16400589B17 /* binauraliser */,
+				36D23E9B27C65E2A00046EBC /* binauraliser_nf */,
 				50E3DEEF24C1D3A900589B17 /* decorrelator */,
 				50E3DEC524C1C80B00589B17 /* dirass */,
 				50E3DED924C1C80C00589B17 /* matrixconv */,
@@ -1033,7 +1059,10 @@
 				5032CDE32744FDE2001855CD /* inffast.c in Sources */,
 				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
 				50FA6ABD26D433B000369945 /* kdtree.c in Sources */,
+				36D23E9827C6556400046EBC /* test__dvf_module.c in Sources */,
 				506DE0D1268311B700BFD406 /* resample.c in Sources */,
+				36D23EA327C6614800046EBC /* saf_utility_dvf.c in Sources */,
+				36D23E9F27C65E2B00046EBC /* binauraliser_nf.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
 				50933FEF27181A450064F222 /* saf_test.c in Sources */,
@@ -1062,6 +1091,7 @@
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
+				36D23EA027C65E2B00046EBC /* binauraliser_nf_internal.c in Sources */,
 				50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */,
 				5093401227181D460064F222 /* test__cdf4sap_module.c in Sources */,
 				508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */,
@@ -1274,6 +1304,8 @@
 					"-Wall",
 					"-Wextra",
 					"-mavx2",
+					"-fms-extensions",
+					"-Wno-microsoft",
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
@@ -1318,6 +1350,8 @@
 					"-Wall",
 					"-Wextra",
 					"-mavx2",
+					"-fms-extensions",
+					"-Wno-microsoft",
 				);
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",

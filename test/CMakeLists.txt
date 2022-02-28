@@ -8,8 +8,19 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/saf_test.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/resources/timer.c 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/resources/unity.c 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__vbap_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__cdf4sap_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__examples.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hades_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hoa_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hrir_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__resources.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__reverb_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__sh_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__sofa_reader_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__tracker_module.c    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__utilities_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__vbap_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__cdf4sap_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__examples.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hades_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hoa_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hrir_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__dvf_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__resources.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__reverb_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__sh_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__sofa_reader_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__tracker_module.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__utilities_module.c
 )
 
 target_include_directories(${PROJECT_NAME} 
@@ -33,6 +44,7 @@ if(SAF_BUILD_EXAMPLES)
         "${example_prefix}array2sh"
         "${example_prefix}beamformer"
         "${example_prefix}binauraliser"
+        "${example_prefix}binauraliser_nf"
         "${example_prefix}decorrelator"
         "${example_prefix}dirass"
         "${example_prefix}matrixconv"
