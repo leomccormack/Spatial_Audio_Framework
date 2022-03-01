@@ -544,10 +544,8 @@ int hades_synthesis_getProcDelay
     hades_synthesis_handle const hSyn
 )
 {
-    hades_synthesis_data *s;
     if(hSyn==NULL)
         return 0;
-    s = (hades_synthesis_data*)(hSyn);
     return 0; /* Accounted for in hades_analysis_getProcDelay() */
 }
 

@@ -298,6 +298,7 @@ void hades_analysis_apply
         utility_cseig(a->hEig, T_Cx_TH.Cx, a->nMics, 1, a->V, NULL, a->lambda);
 
         /* Estimate diffuseness */
+        diffuseness = 0.0f;
         switch(a->diffOpt){
             case HADES_USE_COMEDIE: diffuseness = hades_comedie(a->lambda, a->nMics); break;
         }

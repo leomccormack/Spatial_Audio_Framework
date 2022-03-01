@@ -1256,6 +1256,8 @@ int flush;
             }
 #ifdef GUNZIP
             state->mode = LENGTH;
+            /* fall through */
+
         case LENGTH:
             if (state->wrap && state->flags) {
                 NEEDBITS(32);
