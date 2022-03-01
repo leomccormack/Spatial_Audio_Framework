@@ -50,10 +50,10 @@ static const double q13[19] = { -1.75, -0.01, 7354., -2.18, -1.2, -1.59, -1.23, 
 static const double q23[19] = { 0.699, -0.35, -5350., 1.188, 0.256, 0.816, 1.166, 0.76, 59.51, 1707., -1.12, -6.18, -3.39, -12.7, -0.19, 1.295, -0.02, -0.08, -0.4 };
 
 static const int numAz_table = sizeof(q23);
-static const float a_0 = 0.0875f;       /**< Reference head size, 8.75 centimeters, used in the generation of the coeff lookup table. */
-static const float a_head = 0.09096f;   /**< This head size, See note for head_radius in binauraliser_nf. */
-static const float headDim = SAF_PI * (0.0875f / 0.09096f);
-static const float sosDiv2PiA = 343.0f / (2.0f * SAF_PI * 0.09096f);
+//static const float a_0 = 0.0875f;       /**< Reference head size, 8.75 centimeters, used in the generation of the coeff lookup table. */
+//static const float a_head = 0.09096f;   /**< This head size, See note for head_radius in binauraliser_nf. */
+static const float headDim = SAF_PI * (0.0875f/*a_0*/ / 0.09096f /*a_head*/);
+static const float sosDiv2PiA = 343.0f / (2.0f * SAF_PI * 0.09096f /*a_head*/);
 
 /** Linear interpolation between two values */
 static float interpolate_lin
