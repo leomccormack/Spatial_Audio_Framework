@@ -8,6 +8,7 @@ var dir_95b57effb8038f90624a8a5b60361b2e =
     [ "array2sh", "dir_d312e3ce76956974ca362d482c5b1f90.html", "dir_d312e3ce76956974ca362d482c5b1f90" ],
     [ "beamformer", "dir_3616bc758fcf69b4d3b524b5be4f66a5.html", "dir_3616bc758fcf69b4d3b524b5be4f66a5" ],
     [ "binauraliser", "dir_6c7646edab85eb27cefda7b4e9fd2cc5.html", "dir_6c7646edab85eb27cefda7b4e9fd2cc5" ],
+    [ "binauraliser_nf", "dir_85a47ef1b9486b92a95639ec4af2a7d1.html", "dir_85a47ef1b9486b92a95639ec4af2a7d1" ],
     [ "decorrelator", "dir_d198aa70a264a45968578a9ba2b10ffb.html", "dir_d198aa70a264a45968578a9ba2b10ffb" ],
     [ "dirass", "dir_3b7083c64f68e34d3202dfccefc126e5.html", "dir_3b7083c64f68e34d3202dfccefc126e5" ],
     [ "matrixconv", "dir_cbb578ff8d74d78e488d3d0422024c68.html", "dir_cbb578ff8d74d78e488d3d0422024c68" ],

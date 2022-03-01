@@ -542,7 +542,7 @@ $(document).ready(function(){initNavTree('saf__cdf4sap_8c_source.html',''); init
 <div class="line"><a id="l00474" name="l00474"></a><span class="lineno">  474</span>    <span class="keywordflow">for</span>(i=0; i&lt; nYcols; i++)</div>
 <div class="line"><a id="l00475" name="l00475"></a><span class="lineno">  475</span>        maxVal = cabsf(h-&gt;G_hat[i*nYcols+i]) &gt; maxVal ? cabsf(h-&gt;G_hat[i*nYcols+i]) : maxVal; <span class="comment">// crealf-&gt;cabsf</span></div>
 <div class="line"><a id="l00476" name="l00476"></a><span class="lineno">  476</span>    limit = maxVal * 0.001f + 2.23e-13f;</div>
-<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span><span class="preprocessor">#if 1</span></div>
+<div class="line"><a id="l00477" name="l00477"></a><span class="lineno">  477</span><span class="preprocessor">#if 0 </span><span class="comment">/* DOES NOT PASS UNIT TEST: */</span><span class="preprocessor"></span></div>
 <div class="line"><a id="l00478" name="l00478"></a><span class="lineno">  478</span>    cblas_scopy(nYcols, (<span class="keywordtype">float</span>*)h-&gt;G_hat, 2*(nYcols+1), h-&gt;G_hat_diag, 1); <span class="comment">/* take diagonal (real) */</span></div>
 <div class="line"><a id="l00479" name="l00479"></a><span class="lineno">  479</span>    memset(h-&gt;G_hat, 0, nYcols*nYcols*<span class="keyword">sizeof</span>(float_complex));</div>
 <div class="line"><a id="l00480" name="l00480"></a><span class="lineno">  480</span>    <span class="keywordflow">for</span>(i=0; i&lt;nYcols; i++)</div>
@@ -656,7 +656,7 @@ $(document).ready(function(){initNavTree('saf__cdf4sap_8c_source.html',''); init
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_388e18ffbcd0925a55d063fa09daf58c.html">saf_cdf4sap</a></li><li class="navelem"><a class="el" href="saf__cdf4sap_8c.html">saf_cdf4sap.c</a></li>
-    <li class="footer">Generated on Sat Feb 12 2022 10:22:00 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Tue Mar 1 2022 10:13:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

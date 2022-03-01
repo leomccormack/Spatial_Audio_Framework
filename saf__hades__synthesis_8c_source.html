@@ -628,14 +628,12 @@ $(document).ready(function(){initNavTree('saf__hades__synthesis_8c_source.html',
 <div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    <a class="code hl_typedef" href="saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d">hades_synthesis_handle</a> <span class="keyword">const</span> hSyn</div>
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>)</div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>{</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>    <a class="code hl_struct" href="structhades__synthesis__data.html">hades_synthesis_data</a> *s;</div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>    <span class="keywordflow">if</span>(hSyn==NULL)</div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>        <span class="keywordflow">return</span> 0;</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>    s = (<a class="code hl_struct" href="structhades__synthesis__data.html">hades_synthesis_data</a>*)(hSyn);</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>    <span class="keywordflow">return</span> 0; <span class="comment">/* Accounted for in hades_analysis_getProcDelay() */</span></div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>}</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span> </div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span><span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_HADES_MODULE */</span><span class="preprocessor"></span></div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>    <span class="keywordflow">if</span>(hSyn==NULL)</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>        <span class="keywordflow">return</span> 0;</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>    <span class="keywordflow">return</span> 0; <span class="comment">/* Accounted for in hades_analysis_getProcDelay() */</span></div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>}</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span> </div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span><span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_HADES_MODULE */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="aaf_s_t_f_tlib_8c_html_a7235a5d8de85b71263fb30a358abbbb9"><div class="ttname"><a href="af_s_t_f_tlib_8c.html#a7235a5d8de85b71263fb30a358abbbb9">afSTFT_clearBuffers</a></div><div class="ttdeci">void afSTFT_clearBuffers(void *const hSTFT)</div><div class="ttdoc">Flushes time-domain buffers with zeros.</div><div class="ttdef"><b>Definition:</b> <a href="af_s_t_f_tlib_8c_source.html#l00518">afSTFTlib.c:519</a></div></div>
 <div class="ttc" id="aaf_s_t_f_tlib_8c_html_a7558bd35af17d396da920a6305d58af9"><div class="ttname"><a href="af_s_t_f_tlib_8c.html#a7558bd35af17d396da920a6305d58af9">afSTFT_create</a></div><div class="ttdeci">void afSTFT_create(void **const phSTFT, int nCHin, int nCHout, int hopsize, int lowDelayMode, int hybridmode, AFSTFT_FDDATA_FORMAT format)</div><div class="ttdoc">Creates an instance of afSTFT.</div><div class="ttdef"><b>Definition:</b> <a href="af_s_t_f_tlib_8c_source.html#l00142">afSTFTlib.c:143</a></div></div>
 <div class="ttc" id="aaf_s_t_f_tlib_8c_html_a9c5933d8726117d5b516574f04122468"><div class="ttname"><a href="af_s_t_f_tlib_8c.html#a9c5933d8726117d5b516574f04122468">afSTFT_backward_knownDimensions</a></div><div class="ttdeci">void afSTFT_backward_knownDimensions(void *const hSTFT, float_complex ***dataFD, int framesize, int dataFD_nCH, int dataFD_nHops, float **dataTD)</div><div class="ttdoc">Performs backward afSTFT transform (dataFD dimensions are known)</div><div class="ttdef"><b>Definition:</b> <a href="af_s_t_f_tlib_8c_source.html#l00390">afSTFTlib.c:391</a></div></div>
@@ -771,7 +769,7 @@ $(document).ready(function(){initNavTree('saf__hades__synthesis_8c_source.html',
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_6e57a165dbd28ce52ae59706161fa9df.html">saf_hades</a></li><li class="navelem"><a class="el" href="saf__hades__synthesis_8c.html">saf_hades_synthesis.c</a></li>
-    <li class="footer">Generated on Sat Feb 12 2022 10:22:00 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Tue Mar 1 2022 10:13:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

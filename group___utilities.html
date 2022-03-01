@@ -131,6 +131,12 @@ Files</h2></td></tr>
 <tr class="memitem:saf__utility__decor_8h"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__decor_8h.html">saf_utility_decor.h</a></td></tr>
 <tr class="memdesc:saf__utility__decor_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">A collection of signal decorrelators. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:saf__utility__dvf_8c"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html">saf_utility_dvf.c</a></td></tr>
+<tr class="memdesc:saf__utility__dvf_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance variation function filter coefficient data [1]. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:saf__utility__dvf_8h"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8h.html">saf_utility_dvf.h</a></td></tr>
+<tr class="memdesc:saf__utility__dvf_8h"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance variation function filter coefficient data [1]. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:saf__utility__fft_8c"><td class="memItemLeft" align="right" valign="top">file &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__fft_8c.html">saf_utility_fft.c</a></td></tr>
 <tr class="memdesc:saf__utility__fft_8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wrappers for optimised discrete/fast Fourier transform (FFT) routines. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -418,6 +424,21 @@ Functions</h2></td></tr>
 <tr class="memitem:ga388555df985fe1346133456218584fc7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga388555df985fe1346133456218584fc7">transientDucker_apply</a> (void *hDucker, float_complex ***inFrame, int nTimeSlots, float alpha, float beta, float_complex ***residualFrame, float_complex ***transientFrame)</td></tr>
 <tr class="memdesc:ga388555df985fe1346133456218584fc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the transient ducker, returning either the "ducked" input frame, or the transient part of the input frame, or both.  <a href="group___utilities.html#ga388555df985fe1346133456218584fc7">More...</a><br /></td></tr>
 <tr class="separator:ga388555df985fe1346133456218584fc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae523ce5715457d81ff42fbbf4e93d535"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae523ce5715457d81ff42fbbf4e93d535">applyDVF</a> (float theta, float rho, float *in_signal, int nSamples, float fs, float *wz, float *out_signal)</td></tr>
+<tr class="memdesc:gae523ce5715457d81ff42fbbf4e93d535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the Distance Variation function to the input signal, as described in [1].  <a href="group___utilities.html#gae523ce5715457d81ff42fbbf4e93d535">More...</a><br /></td></tr>
+<tr class="separator:gae523ce5715457d81ff42fbbf4e93d535"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7cf22c49aa839422d40e5f970be2b196"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7cf22c49aa839422d40e5f970be2b196">interpHighShelfParams</a> (float theta, float rho, float *iG0, float *iGInf, float *iFc)</td></tr>
+<tr class="memdesc:ga7cf22c49aa839422d40e5f970be2b196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the Distance Variation function to the input signal.  <a href="group___utilities.html#ga7cf22c49aa839422d40e5f970be2b196">More...</a><br /></td></tr>
+<tr class="separator:ga7cf22c49aa839422d40e5f970be2b196"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab05240992fe990804e54ec063a3c9757"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab05240992fe990804e54ec063a3c9757">calcIIRCoeffs</a> (float g0, float gInf, float fc, float fs, float *b0, float *b1, float *a1)</td></tr>
+<tr class="memdesc:gab05240992fe990804e54ec063a3c9757"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the Distance Variation function to the input signal.  <a href="group___utilities.html#gab05240992fe990804e54ec063a3c9757">More...</a><br /></td></tr>
+<tr class="separator:gab05240992fe990804e54ec063a3c9757"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5f770f4b4144e5bcd3869527cb53be58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga5f770f4b4144e5bcd3869527cb53be58">calcHighShelfParams</a> (int i, float rho, float *g0, float *gInf, float *fc)</td></tr>
+<tr class="memdesc:ga5f770f4b4144e5bcd3869527cb53be58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the High shelf gains and cutoff parameters, given a azimuth index 'i' and distance 'rho'.  <a href="group___utilities.html#ga5f770f4b4144e5bcd3869527cb53be58">More...</a><br /></td></tr>
+<tr class="separator:ga5f770f4b4144e5bcd3869527cb53be58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga668ec97e2feccb2a9a592d8792a061f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga668ec97e2feccb2a9a592d8792a061f1">convertFrontalDoAToIpsilateral</a> (float thetaFront, float *ipsiDoaLR)</td></tr>
+<tr class="memdesc:ga668ec97e2feccb2a9a592d8792a061f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert user-supplied DoA theta (0˚ forward) to a theta value understood by the filter designer (DoA on the interaural axis, 0˚ is ipsilateral).  <a href="group___utilities.html#ga668ec97e2feccb2a9a592d8792a061f1">More...</a><br /></td></tr>
+<tr class="separator:ga668ec97e2feccb2a9a592d8792a061f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9a0085bad83e7f4c66d2dd8c05e081b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga9a0085bad83e7f4c66d2dd8c05e081b4">getUniformFreqVector</a> (int fftSize, float fs, float *freqVector)</td></tr>
 <tr class="memdesc:ga9a0085bad83e7f4c66d2dd8c05e081b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the frequencies (in Hz) of uniformly spaced bins, for a given FFT size and sampling rate.  <a href="group___utilities.html#ga9a0085bad83e7f4c66d2dd8c05e081b4">More...</a><br /></td></tr>
 <tr class="separator:ga9a0085bad83e7f4c66d2dd8c05e081b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2498,7 +2519,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00049">49</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00051">51</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
 
 </div>
 </div>
@@ -2526,7 +2547,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00064">64</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00066">66</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
 
 </div>
 </div>
@@ -2607,7 +2628,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00073">73</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00075">75</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
 
 </div>
 </div>
@@ -2692,7 +2713,7 @@ Variables</h2></td></tr>
 </td></tr>
 </table>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00088">88</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__filters_8h_source.html#l00090">90</a> of file <a class="el" href="saf__utility__filters_8h_source.html">saf_utility_filters.h</a>.</p>
 
 </div>
 </div>
@@ -2794,6 +2815,84 @@ Variables</h2></td></tr>
 </dl>
 
 <p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00553">553</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+
+</div>
+</div>
+<a id="gae523ce5715457d81ff42fbbf4e93d535" name="gae523ce5715457d81ff42fbbf4e93d535"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae523ce5715457d81ff42fbbf4e93d535">&#9670;&nbsp;</a></span>applyDVF()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void applyDVF </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>rho</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>in_signal</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nSamples</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>wz</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>out_signal</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply the Distance Variation function to the input signal, as described in [1]. </p>
+<dl class="section see"><dt>See also</dt><dd>[1] S. Spagnol, E. Tavazzi, and F. Avanzini, “Distance rendering and perception of nearby virtual sound sources with a near-field filter model,” Applied Acoustics, vol. 115, pp. 61–73, Jan. 2017, doi: 10.1016/j.apacoust.2016.08.015.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">theta</td><td>Ipsilateral azimuth, on the inter-aural axis [0..180]<ul>
+<li>(degrees) </li>
+</ul>
+</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rho</td><td>Source distance, normalized to head radius, &gt;= 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">in_signal</td><td>(&amp;) Input signal pointer. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nSamples</td><td>Number of samples to process </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fs</td><td>Sample rate </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">wz</td><td>(&amp;) Filter coefficients to be passed to the next block </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">out_signal</td><td>(&amp;) Output signal pointer </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00181">181</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
 
 </div>
 </div>
@@ -3424,6 +3523,141 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ga5f770f4b4144e5bcd3869527cb53be58" name="ga5f770f4b4144e5bcd3869527cb53be58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5f770f4b4144e5bcd3869527cb53be58">&#9670;&nbsp;</a></span>calcHighShelfParams()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void calcHighShelfParams </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>rho</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>g0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>gInf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>fc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculate the High shelf gains and cutoff parameters, given a azimuth index 'i' and distance 'rho'. </p>
+<p >This will be called twice per parameter change and the shelf filter parameters will be linearly interpolated according to the precise azimuth.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">i</td><td>Coefficient table row index () </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rho</td><td>Normalized source distance (1 = head radius) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">g0</td><td>High shelf gain at DC [dB] </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">gInf</td><td>High shelf gain at Nyquist frequency [dB] </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">fc</td><td>Shelf cutoff frequency [Hz] </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00081">81</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
+
+</div>
+</div>
+<a id="gab05240992fe990804e54ec063a3c9757" name="gab05240992fe990804e54ec063a3c9757"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gab05240992fe990804e54ec063a3c9757">&#9670;&nbsp;</a></span>calcIIRCoeffs()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void calcIIRCoeffs </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>g0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>gInf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>fs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>b0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>b1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>a1</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply the Distance Variation function to the input signal. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">g0</td><td>High shelf gain at DC [dB] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">gInf</td><td>High shelf gain at Nyquist frequency [dB] </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">fc</td><td>Shelf cutoff frequency [Hz] </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">fs</td><td>Sample rate </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">b0</td><td>(&amp;) IIR numerator coefficient 1 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">b1</td><td>(&amp;) IIR numerator coefficient 2 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">a1</td><td>(&amp;) IIR denominator coefficient 2 </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00147">147</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
+
+</div>
+</div>
 <a id="gacf7b2c5a9357e4e4b6c2d079c6593db8" name="gacf7b2c5a9357e4e4b6c2d079c6593db8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gacf7b2c5a9357e4e4b6c2d079c6593db8">&#9670;&nbsp;</a></span>cart2sph()</h2>
 
@@ -3636,6 +3870,46 @@ Variables</h2></td></tr>
 <p>Converts filter octave band-width to Q-factor. </p>
 
 <p class="definition">Definition at line <a class="el" href="saf__utility__filters_8c_source.html#l00318">318</a> of file <a class="el" href="saf__utility__filters_8c_source.html">saf_utility_filters.c</a>.</p>
+
+</div>
+</div>
+<a id="ga668ec97e2feccb2a9a592d8792a061f1" name="ga668ec97e2feccb2a9a592d8792a061f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga668ec97e2feccb2a9a592d8792a061f1">&#9670;&nbsp;</a></span>convertFrontalDoAToIpsilateral()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void convertFrontalDoAToIpsilateral </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>thetaFront</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>ipsiDoaLR</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert user-supplied DoA theta (0˚ forward) to a theta value understood by the filter designer (DoA on the interaural axis, 0˚ is ipsilateral). </p>
+<p >Note because it's based on a spherical head, the sign is always positive. Note input is expected to be [-180, 180]</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">thetaFront</td><td>Source DoA, 0˚ is forward-facing, positive angles move counter-clockwise [deg, (-180, 180)] </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">ipsiDoaLR</td><td>High shelf gain at DC [dB] </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00201">201</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
 
 </div>
 </div>
@@ -5745,6 +6019,66 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="ga7cf22c49aa839422d40e5f970be2b196" name="ga7cf22c49aa839422d40e5f970be2b196"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7cf22c49aa839422d40e5f970be2b196">&#9670;&nbsp;</a></span>interpHighShelfParams()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void interpHighShelfParams </td>
+          <td>(</td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>theta</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>rho</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>iG0</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>iGInf</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>iFc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Apply the Distance Variation function to the input signal. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">theta</td><td>Ipsilateral azimuth, on the inter-aural axis [0..180] (deg) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">rho</td><td>Source distance, normalized to head radius, &gt;= 1 </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">iG0</td><td>(&amp;) interpolated DC gain </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">iGInf</td><td>(&amp;) interpolated high shelf gain </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">iFc</td><td>(&amp;) interpolated high shelf cutoff frequency </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00107">107</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
+
+</div>
+</div>
 <a id="gad8825631f7625f36893f03903f4cbb56" name="gad8825631f7625f36893f03903f4cbb56"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gad8825631f7625f36893f03903f4cbb56">&#9670;&nbsp;</a></span>interpolateFiltersH()</h2>
 
@@ -7578,7 +7912,7 @@ Variables</h2></td></tr>
 
 <p>Creates an instance of saf_rfft; real&lt;-&gt;half-complex (conjugate-symmetric) FFT. </p>
 <dl class="section note"><dt>Note</dt><dd>Only Even FFT sizes are supported.</dd></dl>
-<h2><a class="anchor" id="autotoc_md89"></a>
+<h2><a class="anchor" id="autotoc_md91"></a>
 Example Usage</h2>
 <div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> N = 256;                    <span class="comment">// FFT size</span></div>
 <div class="line"><span class="keywordtype">float</span> x_in[N];                        <span class="comment">// input buffer (time-domain)</span></div>
@@ -20871,7 +21205,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sat Feb 12 2022 10:22:03 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Tue Mar 1 2022 10:13:24 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

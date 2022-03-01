@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['v_0',['V',['../structhades__analysis__data.html#a615ef10b2347eacbe158d25d75e2d697',1,'hades_analysis_data']]],
-  ['v_1',['v',['../structims__pos__xyz.html#ac533c7e3ac7128f429e5fad2975e3ba2',1,'ims_pos_xyz']]],
+  ['v_0',['v',['../structims__pos__xyz.html#ac533c7e3ac7128f429e5fad2975e3ba2',1,'ims_pos_xyz']]],
+  ['v_1',['V',['../structhades__analysis__data.html#a615ef10b2347eacbe158d25d75e2d697',1,'hades_analysis_data']]],
   ['val_2',['val',['../structsaf__sort__int.html#a0d15e435bfcd6e120358b4ef9a40d7b1',1,'saf_sort_int::val()'],['../structsaf__sort__float.html#a6f37a04f77695f3d2d3ed6a52d2d9d7e',1,'saf_sort_float::val()'],['../structsaf__sort__double.html#a7a69f366932f55d7f980552796941d8a',1,'saf_sort_double::val()']]],
   ['value_3',['value',['../structechogram__data.html#a15cfd524feabe06c59f96915989d1ff5',1,'echogram_data']]],
   ['vbap2d_4',['vbap2D',['../group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c',1,'vbap2D(float *src_dirs, int src_num, int ls_num, int *ls_pairs, int N_pairs, float *layoutInvMtx, float **GainMtx):&#160;saf_vbap.c'],['../group___v_b_a_p.html#ga3e5ad1027139a959f74261cce8dfd67c',1,'vbap2D(float *src_dirs, int src_num, int ls_num, int *ls_pairs, int N_pairs, float *layoutInvMtx, float **GainMtx):&#160;saf_vbap.c']]],

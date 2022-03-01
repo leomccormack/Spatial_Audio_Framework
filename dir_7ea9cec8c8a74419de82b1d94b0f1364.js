@@ -9,6 +9,7 @@ var dir_7ea9cec8c8a74419de82b1d94b0f1364 =
     [ "array2sh.h", "array2sh_8h.html", "array2sh_8h" ],
     [ "beamformer.h", "beamformer_8h.html", "beamformer_8h" ],
     [ "binauraliser.h", "binauraliser_8h.html", "binauraliser_8h" ],
+    [ "binauraliser_nf.h", "binauraliser__nf_8h.html", "binauraliser__nf_8h" ],
     [ "decorrelator.h", "decorrelator_8h.html", "decorrelator_8h" ],
     [ "dirass.h", "dirass_8h.html", "dirass_8h" ],
     [ "matrixconv.h", "matrixconv_8h.html", "matrixconv_8h" ],

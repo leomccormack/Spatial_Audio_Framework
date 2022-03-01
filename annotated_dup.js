@@ -14,6 +14,7 @@ var annotated_dup =
     [ "array2sh_data", "structarray2sh__data.html", "structarray2sh__data" ],
     [ "beamformer_data", "structbeamformer__data.html", "structbeamformer__data" ],
     [ "binauraliser_data", "structbinauraliser__data.html", "structbinauraliser__data" ],
+    [ "binauraliserNF_data", "structbinauraliser_n_f__data.html", "structbinauraliser_n_f__data" ],
     [ "cdf4sap_cmplx_data", "structcdf4sap__cmplx__data.html", null ],
     [ "cdf4sap_data", "structcdf4sap__data.html", null ],
     [ "ch_vertex", "structch__vertex.html", null ],

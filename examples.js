@@ -8,6 +8,7 @@ var examples =
     [ "array2sh.h", "array2sh_8h-example.html", null ],
     [ "beamformer.h", "beamformer_8h-example.html", null ],
     [ "binauraliser.h", "binauraliser_8h-example.html", null ],
+    [ "binauraliser_nf.h", "binauraliser_nf_8h-example.html", null ],
     [ "decorrelator.h", "decorrelator_8h-example.html", null ],
     [ "dirass.h", "dirass_8h-example.html", null ],
     [ "matrixconv.h", "matrixconv_8h-example.html", null ],
