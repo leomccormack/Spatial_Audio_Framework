@@ -968,7 +968,6 @@ int calculateGridWeights
     float sumW;
     float** Y_N, **Y_N_T, **Y_leftinv;
 
-
     if(order<0){
         int nSH, ind;
         float minVal, maxVal, cond_N;

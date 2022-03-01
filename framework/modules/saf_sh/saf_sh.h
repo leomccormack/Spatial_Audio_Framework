@@ -321,7 +321,7 @@ void complex2realCoeffs(/* Input Arguments */
  * @see [1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real
  *          Spherical Harmonics. Direct Determination by Recursion Page:
  *          Additions and Corrections. Journal of Physical Chemistry A, 102(45),
- *          9099?9100. 
+ *          9099--9100.
  */
 void getSHrotMtxReal(float R[3][3],
                      float* RotMtx,
@@ -654,14 +654,23 @@ void checkCondNumberSHTReal(/* Input arguments */
                             /* Output arguments */
                             float* cond_N);
 
-
-int calculateGridWeights
-(/* Input arguments */
-    float* dirs_rad,
-    int nDirs,
-    int order,
-    /* Output arguments */
-    float* w);
+/**
+ * Computes the integration weights for a given grid
+ *
+ * @test test__calculateGridWeights
+ *
+ * @param[in]  dirs_rad Grid directions [azi, INCLINATION] convention, in
+ *                      RADIANS; FLAT: nDirs x 2
+ * @param[in]  nDirs    Number of directions in the grid
+ * @param[in]  order    Spherical harmonic order
+ * @param[out] w        Integration weights; nDirs x 1
+ */
+int calculateGridWeights(/* Input arguments */
+                         float* dirs_rad,
+                         int nDirs,
+                         int order,
+                         /* Output arguments */
+                         float* w);
 
 
 /* ========================================================================== */

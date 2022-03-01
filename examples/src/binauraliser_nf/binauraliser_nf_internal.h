@@ -40,21 +40,13 @@
 #define __BINAURALISER_NF_INTERNAL_H_INCLUDED__
 
 #include "../binauraliser/binauraliser_internal.h"
-#include <binauraliser_nf.h>    /* Include header for this example */
+#include "binauraliser_nf.h"    /* Include header for this example */
 #include "saf.h"                /* Main include header for SAF */
 #include "saf_externals.h"      /* To also include SAF dependencies (cblas etc.) */
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-/* ========================================================================== */
-/*                            Internal Parameters                             */
-/* ========================================================================== */
-
-/* ========================================================================== */
-/*                             Presets + Constants                            */
-/* ========================================================================== */
 
 /* ========================================================================== */
 /*                                 Structures                                 */
