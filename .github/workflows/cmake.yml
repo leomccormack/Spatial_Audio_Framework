@@ -43,14 +43,14 @@ jobs:
       # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       if: ${{ contains( runner.os, 'Linux' ) }}
       run: |
-        cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_OPEN_BLAS_AND_LAPACKE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1
+        cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_OPEN_BLAS_AND_LAPACKE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1 -DSAF_ENABLE_HADES_MODULE=1
 
     - name: Configure CMake (macOS)
       shell: bash
       working-directory: ${{runner.workspace}}/build
       if: ${{ contains( runner.os, 'macOS' ) }}
       run: |
-        cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1
+        cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1 -DSAF_ENABLE_HADES_MODULE=1
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
