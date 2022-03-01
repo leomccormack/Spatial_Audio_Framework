@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		36D23E9827C6556400046EBC /* test__dvf_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23E9727C6556400046EBC /* test__dvf_module.c */; };
 		36D23E9F27C65E2B00046EBC /* binauraliser_nf.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23E9D27C65E2A00046EBC /* binauraliser_nf.c */; };
 		36D23EA027C65E2B00046EBC /* binauraliser_nf_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23E9E27C65E2A00046EBC /* binauraliser_nf_internal.c */; };
 		36D23EA327C6614800046EBC /* saf_utility_dvf.c in Sources */ = {isa = PBXBuildFile; fileRef = 36D23EA227C6614700046EBC /* saf_utility_dvf.c */; };
@@ -42,6 +41,10 @@
 		5093401827181F8B0064F222 /* test__resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093401627181F8B0064F222 /* test__resources.c */; };
 		50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED3261E3FCC008A17B1 /* spreader.c */; };
 		50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED5261E3FCC008A17B1 /* spreader_internal.c */; };
+		50CB1DFF27CE18B200E080E3 /* test__hades_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1DFE27CE18B200E080E3 /* test__hades_module.c */; };
+		50CB1E0927CE18D300E080E3 /* saf_hades_analysis.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E0227CE18D300E080E3 /* saf_hades_analysis.c */; };
+		50CB1E0A27CE18D300E080E3 /* saf_hades_synthesis.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E0627CE18D300E080E3 /* saf_hades_synthesis.c */; };
+		50CB1E0B27CE18D300E080E3 /* saf_hades_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E0727CE18D300E080E3 /* saf_hades_internal.c */; };
 		50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3600D249BDDCB00B74C25 /* md_malloc.c */; };
 		50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36010249BDDCB00B74C25 /* kiss_fft.c */; };
 		50E3605E249BDDCC00B74C25 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36011249BDDCB00B74C25 /* kiss_fftr.c */; };
@@ -131,7 +134,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		36D23E9727C6556400046EBC /* test__dvf_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__dvf_module.c; sourceTree = "<group>"; };
 		36D23E9A27C65D7000046EBC /* binauraliser_nf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binauraliser_nf.h; sourceTree = "<group>"; };
 		36D23E9C27C65E2A00046EBC /* binauraliser_nf_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binauraliser_nf_internal.h; sourceTree = "<group>"; };
 		36D23E9D27C65E2A00046EBC /* binauraliser_nf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser_nf.c; sourceTree = "<group>"; };
@@ -194,6 +196,14 @@
 		50C18ED3261E3FCC008A17B1 /* spreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader.c; sourceTree = "<group>"; };
 		50C18ED4261E3FCC008A17B1 /* spreader_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader_internal.h; sourceTree = "<group>"; };
 		50C18ED5261E3FCC008A17B1 /* spreader_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader_internal.c; sourceTree = "<group>"; };
+		50CB1DFE27CE18B200E080E3 /* test__hades_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__hades_module.c; sourceTree = "<group>"; };
+		50CB1E0227CE18D300E080E3 /* saf_hades_analysis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hades_analysis.c; sourceTree = "<group>"; };
+		50CB1E0327CE18D300E080E3 /* saf_hades_synthesis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hades_synthesis.h; sourceTree = "<group>"; };
+		50CB1E0427CE18D300E080E3 /* saf_hades_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hades_internal.h; sourceTree = "<group>"; };
+		50CB1E0527CE18D300E080E3 /* saf_hades_analysis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hades_analysis.h; sourceTree = "<group>"; };
+		50CB1E0627CE18D300E080E3 /* saf_hades_synthesis.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hades_synthesis.c; sourceTree = "<group>"; };
+		50CB1E0727CE18D300E080E3 /* saf_hades_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_hades_internal.c; sourceTree = "<group>"; };
+		50CB1E0827CE18D300E080E3 /* saf_hades.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_hades.h; sourceTree = "<group>"; };
 		50E36007249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		50E36009249BDDCB00B74C25 /* saf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf.h; sourceTree = "<group>"; };
 		50E3600B249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -450,8 +460,8 @@
 				50933FDF27181A450064F222 /* saf_test_wrapper.cpp */,
 				50933FE127181A450064F222 /* saf_test.c */,
 				5093400927181D460064F222 /* test__cdf4sap_module.c */,
-				36D23E9727C6556400046EBC /* test__dvf_module.c */,
 				5093401527181F8B0064F222 /* test__examples.c */,
+				50CB1DFE27CE18B200E080E3 /* test__hades_module.c */,
 				5093400127181D450064F222 /* test__hoa_module.c */,
 				5093400227181D450064F222 /* test__hrir_module.c */,
 				5093401627181F8B0064F222 /* test__resources.c */,
@@ -501,6 +511,20 @@
 				50C18ED5261E3FCC008A17B1 /* spreader_internal.c */,
 			);
 			path = spreader;
+			sourceTree = "<group>";
+		};
+		50CB1E0127CE18D300E080E3 /* saf_hades */ = {
+			isa = PBXGroup;
+			children = (
+				50CB1E0227CE18D300E080E3 /* saf_hades_analysis.c */,
+				50CB1E0327CE18D300E080E3 /* saf_hades_synthesis.h */,
+				50CB1E0427CE18D300E080E3 /* saf_hades_internal.h */,
+				50CB1E0527CE18D300E080E3 /* saf_hades_analysis.h */,
+				50CB1E0627CE18D300E080E3 /* saf_hades_synthesis.c */,
+				50CB1E0727CE18D300E080E3 /* saf_hades_internal.c */,
+				50CB1E0827CE18D300E080E3 /* saf_hades.h */,
+			);
+			path = saf_hades;
 			sourceTree = "<group>";
 		};
 		50E36006249BDDCB00B74C25 /* framework */ = {
@@ -585,6 +609,7 @@
 			children = (
 				50E36025249BDDCB00B74C25 /* CMakeLists.txt */,
 				50E3601D249BDDCB00B74C25 /* saf_cdf4sap */,
+				50CB1E0127CE18D300E080E3 /* saf_hades */,
 				50E36020249BDDCB00B74C25 /* saf_hoa */,
 				50E36056249BDDCC00B74C25 /* saf_hrir */,
 				50E36044249BDDCC00B74C25 /* saf_reverb */,
@@ -620,8 +645,6 @@
 		50E36026249BDDCB00B74C25 /* saf_utilities */ = {
 			isa = PBXGroup;
 			children = (
-				36D23EA227C6614700046EBC /* saf_utility_dvf.c */,
-				36D23EA127C6614700046EBC /* saf_utility_dvf.h */,
 				50E36033249BDDCC00B74C25 /* saf_utilities.h */,
 				50E36029249BDDCB00B74C25 /* saf_utility_bessel.c */,
 				50E3603C249BDDCC00B74C25 /* saf_utility_bessel.h */,
@@ -629,6 +652,8 @@
 				50E3602A249BDDCB00B74C25 /* saf_utility_complex.h */,
 				50E36042249BDDCC00B74C25 /* saf_utility_decor.c */,
 				50E36034249BDDCC00B74C25 /* saf_utility_decor.h */,
+				36D23EA227C6614700046EBC /* saf_utility_dvf.c */,
+				36D23EA127C6614700046EBC /* saf_utility_dvf.h */,
 				50E3602D249BDDCB00B74C25 /* saf_utility_fft.c */,
 				50E36038249BDDCC00B74C25 /* saf_utility_fft.h */,
 				50E36039249BDDCC00B74C25 /* saf_utility_filters.c */,
@@ -1031,6 +1056,7 @@
 				50E36076249BDDCC00B74C25 /* saf_sofa_reader.c in Sources */,
 				50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */,
 				50E3DEB224C1BC1B00589B17 /* ambi_dec.c in Sources */,
+				50CB1DFF27CE18B200E080E3 /* test__hades_module.c in Sources */,
 				50E36063249BDDCC00B74C25 /* saf_hoa.c in Sources */,
 				5032CDDD2744FDE2001855CD /* crc32.c in Sources */,
 				50E3DE3124BE00F400589B17 /* saf_utility_qmf.c in Sources */,
@@ -1059,7 +1085,6 @@
 				5032CDE32744FDE2001855CD /* inffast.c in Sources */,
 				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
 				50FA6ABD26D433B000369945 /* kdtree.c in Sources */,
-				36D23E9827C6556400046EBC /* test__dvf_module.c in Sources */,
 				506DE0D1268311B700BFD406 /* resample.c in Sources */,
 				36D23EA327C6614800046EBC /* saf_utility_dvf.c in Sources */,
 				36D23E9F27C65E2B00046EBC /* binauraliser_nf.c in Sources */,
@@ -1091,6 +1116,7 @@
 				50E3DEB824C1C36E00589B17 /* ambi_drc_internal.c in Sources */,
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
+				50CB1E0927CE18D300E080E3 /* saf_hades_analysis.c in Sources */,
 				36D23EA027C65E2B00046EBC /* binauraliser_nf_internal.c in Sources */,
 				50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */,
 				5093401227181D460064F222 /* test__cdf4sap_module.c in Sources */,
@@ -1105,6 +1131,7 @@
 				50E3DEE824C1C80C00589B17 /* matrixconv.c in Sources */,
 				5093401727181F8B0064F222 /* test__examples.c in Sources */,
 				50E3DE3424C087B300589B17 /* afSTFT_internal.c in Sources */,
+				50CB1E0B27CE18D300E080E3 /* saf_hades_internal.c in Sources */,
 				5032CDE42744FDE2001855CD /* adler32.c in Sources */,
 				50E3DEE224C1C80C00589B17 /* rotator.c in Sources */,
 				5093400B27181D460064F222 /* test__hrir_module.c in Sources */,
@@ -1113,6 +1140,7 @@
 				50E3DF0324C1D4EA00589B17 /* panner_internal.c in Sources */,
 				50E3DE9624C1B81300589B17 /* ambi_bin.c in Sources */,
 				5032CDE12744FDE2001855CD /* uncompr.c in Sources */,
+				50CB1E0A27CE18D300E080E3 /* saf_hades_synthesis.c in Sources */,
 				50E3606F249BDDCC00B74C25 /* saf_utility_sort.c in Sources */,
 				50E3DEBE24C1C56800589B17 /* ambi_enc_internal.c in Sources */,
 				50E3DF0624C1D4EA00589B17 /* sldoa.c in Sources */,
@@ -1289,6 +1317,7 @@
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
 					SAF_USE_INTEL_IPP,
+					SAF_ENABLE_HADES_MODULE,
 				);
 				HEADER_SEARCH_PATHS = (
 					./include/,
@@ -1335,6 +1364,7 @@
 					SAF_ENABLE_TRACKER_MODULE,
 					SAF_ENABLE_SIMD,
 					SAF_USE_INTEL_IPP,
+					SAF_ENABLE_HADES_MODULE,
 				);
 				HEADER_SEARCH_PATHS = (
 					./include/,

@@ -159,6 +159,18 @@ void test__faf_IIRFilterbank(void);
  * Testing computing the matrix exponential - comparing the output to that of
  * the "expm" function in Matlab */
 void test__gexpm(void);
+/**
+ * Calculate high shelf parameters, g0, gInf, fc, from the lookup table
+ * coefficients (10 degree steps) */
+void test__dvf_calcHighShelfParams(void);
+/**
+ * Test the interpolation of high shelf parameters based on distance and
+ * incidence angle parameters */
+void test__dvf_interpHighShelfParams(void);
+/**
+ * Test thegeneration of high shelf coeffs based on shelf gains and fc
+ * parameters */
+void test__dvf_calcIIRCoeffs(void);
 
 
 /* ========================================================================== */
@@ -371,15 +383,6 @@ void test__saf_example_spreader(void);
 /*                           SAF DVF module unit tests                          */
 /* ========================================================================== */
 
-/**
- * Calculate high shelf parameters, g0, gInf, fc, from the lookup table coefficients (10 degree steps). */
-void test__dvf_calcHighShelfParams(void);
-/**
- * Test the interpolation of high shelf parameters based on distance and incidence angle parameters */
-void test__dvf_interpHighShelfParams(void);
-/**
- * Test thegeneration of high shelf coeffs based on shelf gains and fc parameters */
-void test__dvf_calcIIRCoeffs(void);
 
 
 #ifdef __cplusplus

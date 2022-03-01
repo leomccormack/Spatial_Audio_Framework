@@ -14,7 +14,6 @@ PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hades_module.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hoa_module.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test__hrir_module.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/test__dvf_module.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test__resources.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test__reverb_module.c
     ${CMAKE_CURRENT_SOURCE_DIR}/src/test__sh_module.c
