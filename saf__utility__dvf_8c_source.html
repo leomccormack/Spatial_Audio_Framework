@@ -200,13 +200,13 @@ $(document).ready(function(){initNavTree('saf__utility__dvf_8c_source.html','');
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    <span class="keywordtype">float</span> gInf_1, gInf_2;   <span class="comment">/* high shelf gain at inf */</span></div>
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>    <span class="keywordtype">float</span> fc_1, fc_2;       <span class="comment">/* high shelf cutoff frequency */</span></div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    </div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    <span class="comment">// TODO: range checking - clip theta and rho to valid range</span></div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    <span class="comment">/* linearly interpolate DC gain, HF gain, center freq at theta */</span></div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    <span class="comment">// TODO: rethink this indexing logic...</span></div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    <span class="comment">// TBD: add range checking? - clip theta and rho to valid range</span></div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>    </div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    <span class="comment">/* linearly interpolate DC gain, HF gain, center freq at theta */</span></div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    thetaDiv10 = theta / 10.f;</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>    theta_idx_lower = (int)thetaDiv10;      <span class="comment">/* Table is in 10 degree steps, floor(x/10) gets lower index */</span></div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    theta_idx_upper = theta_idx_lower + 1;</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordflow">if</span>(theta_idx_upper == numAz_table) {    <span class="comment">// TODO: if instead check theta_idx_upper =&gt; numAz_table, could clip the value &gt; 180 here</span></div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>    <span class="keywordflow">if</span>(theta_idx_upper == numAz_table) {    <span class="comment">// alternatively, instead check theta_idx_upper =&gt; numAz_table, could clip the value &gt; 180 here</span></div>
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>        theta_idx_upper = theta_idx_lower;</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        theta_idx_lower = theta_idx_lower - 1;</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>    }</div>
@@ -245,8 +245,8 @@ $(document).ready(function(){initNavTree('saf__utility__dvf_8c_source.html','');
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>    <span class="keywordtype">float</span> va_c;</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>    </div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    v0     = <a class="code hl_function" href="saf__utility__dvf_8c.html#ac67e183007b7e34c1ae8243e44c567db">db2mag</a>(gInf);              <span class="comment">/* Eq. (12), (10), and (11) */</span></div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    g0_mag = <a class="code hl_function" href="saf__utility__dvf_8c.html#ac67e183007b7e34c1ae8243e44c567db">db2mag</a>(g0);                <span class="comment">// TODO: revisit; does g0, gInf need to be in dB?</span></div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    tanF   = tanf((headDim / fs) * fc); <span class="comment">// TODO: this /fs calc can be optimized out with precomputed head dimension</span></div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    g0_mag = <a class="code hl_function" href="saf__utility__dvf_8c.html#ac67e183007b7e34c1ae8243e44c567db">db2mag</a>(g0);                <span class="comment">// optim TBD: revisit; does g0, gInf need to be in dB?</span></div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    tanF   = tanf((headDim / fs) * fc); <span class="comment">// optim TBD: this /fs calc can be optimized out with precomputed head dimension</span></div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    v0tanF = v0 * tanF;</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>    a_c    = (v0tanF - 1.f) / (v0tanF + 1.f);</div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    </div>
@@ -285,7 +285,7 @@ $(document).ready(function(){initNavTree('saf__utility__dvf_8c_source.html','');
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>{</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keywordtype">float</span> thetaL;</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    </div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="comment">// TODO: clamp thetaFront (-180, 180)</span></div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    thetaFront = <a class="code hl_define" href="group___utilities.html#ga0f5f412901ab1f82745d6fb2a23ec4cc">SAF_CLAMP</a>(thetaFront, -180.f, 180.f);</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    thetaL = fabsf(90.f - thetaFront);</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    <span class="keywordflow">if</span> (thetaL &gt; 180.f) {</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        thetaL = 360.f - thetaL;</div>
@@ -294,6 +294,7 @@ $(document).ready(function(){initNavTree('saf__utility__dvf_8c_source.html','');
 <div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    ipsiDoaLR[0] = thetaL;</div>
 <div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    ipsiDoaLR[1] = 180.f - thetaL; <span class="comment">// thetaR</span></div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>}</div>
+<div class="ttc" id="agroup___utilities_html_ga0f5f412901ab1f82745d6fb2a23ec4cc"><div class="ttname"><a href="group___utilities.html#ga0f5f412901ab1f82745d6fb2a23ec4cc">SAF_CLAMP</a></div><div class="ttdeci">#define SAF_CLAMP(a, min, max)</div><div class="ttdoc">Ensures value &quot;a&quot; is clamped between the &quot;min&quot; and &quot;max&quot; values.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00061">saf_utilities.h:61</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga0fb1cec5cac527df5a9956ee3d137c5c"><div class="ttname"><a href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a></div><div class="ttdeci">#define SAF_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utilities_8h_source.html#l00070">saf_utilities.h:70</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga5c96001ab50d85797358b3d17a8bd05c"><div class="ttname"><a href="group___utilities.html#ga5c96001ab50d85797358b3d17a8bd05c">applyIIR</a></div><div class="ttdeci">void applyIIR(float *in_signal, int nSamples, int nCoeffs, float *b, float *a, float *wz, float *out_signal)</div><div class="ttdoc">Applies an IIR filter to a time-domain signal (using the direct form II difference equation)</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__filters_8c_source.html#l00609">saf_utility_filters.c:610</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga5f770f4b4144e5bcd3869527cb53be58"><div class="ttname"><a href="group___utilities.html#ga5f770f4b4144e5bcd3869527cb53be58">calcHighShelfParams</a></div><div class="ttdeci">void calcHighShelfParams(int i, float rhoIn, float *g0, float *gInf, float *fc)</div><div class="ttdoc">Calculate the High shelf gains and cutoff parameters, given a azimuth index 'i' and distance 'rho'.</div><div class="ttdef"><b>Definition:</b> <a href="saf__utility__dvf_8c_source.html#l00081">saf_utility_dvf.c:82</a></div></div>
@@ -313,7 +314,7 @@ $(document).ready(function(){initNavTree('saf__utility__dvf_8c_source.html','');
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__dvf_8c.html">saf_utility_dvf.c</a></li>
-    <li class="footer">Generated on Tue Mar 1 2022 12:08:54 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Tue Mar 1 2022 16:30:06 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">
