@@ -474,7 +474,7 @@ void formulate_M_and_Cr_cmplx
     for(i=0; i< nYcols; i++)
         maxVal = cabsf(h->G_hat[i*nYcols+i]) > maxVal ? cabsf(h->G_hat[i*nYcols+i]) : maxVal; // crealf->cabsf
     limit = maxVal * 0.001f + 2.23e-13f;
-#if 1
+#if 0 /* DOES NOT PASS UNIT TEST: */
     cblas_scopy(nYcols, (float*)h->G_hat, 2*(nYcols+1), h->G_hat_diag, 1); /* take diagonal (real) */
     memset(h->G_hat, 0, nYcols*nYcols*sizeof(float_complex));
     for(i=0; i<nYcols; i++)

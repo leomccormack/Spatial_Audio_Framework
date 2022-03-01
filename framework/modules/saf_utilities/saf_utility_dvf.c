@@ -15,18 +15,19 @@
 */
 
 /**
-* @file saf_utility_dvf.c
-* @ingroup Utilities
-* @brief Distance variation function filter coefficient data [1].
-*
-* @see [1] S. Spagnol, E. Tavazzi, and F. Avanzini, “Distance rendering and
-*          perception of nearby virtual sound sources with a near-field filter
-*          model,” Applied Acoustics, vol. 115, pp. 61–73, Jan. 2017,
-*          doi: 10.1016/j.apacoust.2016.08.015.
-*
-* @author Michael McCrea
-* @date 20.02.2021
-*/
+ * @file saf_utility_dvf.c
+ * @ingroup Utilities
+ * @brief Distance variation function filter coefficient data [1].
+ *
+ * @see [1] S. Spagnol, E. Tavazzi, and F. Avanzini, “Distance rendering and
+ *          perception of nearby virtual sound sources with a near-field filter
+ *          model,” Applied Acoustics, vol. 115, pp. 61–73, Jan. 2017,
+ *          doi: 10.1016/j.apacoust.2016.08.015.
+ *
+ * @author Michael McCrea
+ * @date 20.02.2021
+ * @license ISC
+ */
 
 #include "saf_utility_dvf.h"
 #include "saf_utility_filters.h"
@@ -34,60 +35,49 @@
 /**
  * Table 1: Coefficients for Eqs. (8), (13), and (14) for generating high-shelf coefficients
  */
-const float p11[] = { 12.97f, 13.19f, 12.13f, 11.19f, 9.91f, 8.328f, 6.493f, 4.455f, 2.274f, 0.018f, -2.24f, -4.43f, -6.49f, -8.34f, -9.93f, -11.3f, -12.2f, -12.8f, -13.f };
-const float p21[] = { -9.69f, 234.2f, -11.2f, -9.03f, -7.87f, -7.42f, -7.31f, -7.28f, -7.29f, -7.48f, -8.04f, -9.23f, -11.6f, -17.4f, -48.4f, 9.149f, 1.905f, -0.75f, -1.32f };
-const float q11[] = { -1.14f, 18.48f, -1.25f, -1.02f, -0.83f, -0.67f, -0.5f, -0.32f, -0.11f, -0.13f, 0.395f, 0.699f, 1.084f, 1.757f, 4.764f, -0.64f, 0.109f, 0.386f, 0.45f };
-const float q21[] = { 0.219f, -8.5f, 0.346f, 0.336f, 0.379f, 0.421f, 0.423f, 0.382f, 0.314f, 0.24f, 0.177f, 0.132f, 0.113f, 0.142f, 0.462f, -0.14f, -0.08f, -0.06f, -0.05f };
-const float p12[] = { -4.39f, -4.31f, -4.18f, -4.01f, -3.87f, -4.1f, -3.87f, -5.02f, -6.72f, -8.69f, -11.2f, -12.1f, -11.1f, -11.1f, -9.72f, -8.42f, -7.44f, -6.78f, -6.58f };
-const float p22[] = { 2.123f, -2.78f, 4.224f, 3.039f, -0.57f, -34.7f, 3.271f, 0.023f, -8.96f, -58.4f, 11.47f, 8.716f, 21.8f, 1.91f, -0.04f, -0.66f, 0.395f, 2.662f, 3.387f };
-const float q12[] = { -0.55f, 0.59f, -1.01f, -0.56f, 0.665f, 11.39f, -1.57f, -0.87f, 0.37f, 5.446f, -1.13f, -0.63f, -2.01f, 0.15f, 0.243f, 0.147f, -0.18f, -0.67f, -0.84f };
-const float q22[] = { -0.06f, -0.17f, -0.02f, -0.32f, -1.13f, -8.3f, 0.637f, 0.325f, -0.08f, -1.19f, 0.103f, -0.12f, 0.098f, -0.4f, -0.41f, -0.34f, -0.18f, 0.05f, 0.131f };
-const float p13[] = { 0.457f, 0.455f, -0.87f, 0.465f, 0.494f, 0.549f, 0.663f, 0.691f, 3.507f, -27.4f, 6.371f, 7.032f, 7.092f, 7.463f, 7.453f, 8.101f, 8.702f, 8.925f, 9.317f };
-const float p23[] = { -0.67f, 0.142f, 3404.f, -0.91f, -0.67f, -1.21f, -1.76f, 4.655f, 55.09f, 10336.f, 1.735f, 40.88f, 23.86f, 102.8f, -6.14f, -18.1f, -9.05f, -9.03f, -6.89f };
-const float p33[] = { 0.174f, -0.11f, -1699.f, 0.437f, 0.658f, 2.02f, 6.815f, 0.614f, 589.3f, 16818.f, -9.39f, -44.1f, -23.6f, -92.3f, -1.81f, 10.54f, 0.532f, 0.285f, -2.08f };
-const float q13[] = { -1.75f, -0.01f, 7354.f, -2.18f, -1.2f, -1.59f, -1.23f, -0.89f, 29.23f, 1945.f, -0.06f, 5.635f, 3.308f, 13.88f, -0.88f, -2.23f, -0.96f, -0.9f, -0.57f };
-const float q23[] = { 0.699f, -0.35f, -5350.f, 1.188f, 0.256f, 0.816f, 1.166f, 0.76f, 59.51f, 1707.f, -1.12f, -6.18f, -3.39f, -12.7f, -0.19f, 1.295f, -0.02f, -0.08f, -0.4f };
+static const float p11[19] = { 12.97f, 13.19f, 12.13f, 11.19f, 9.91f, 8.328f, 6.493f, 4.455f, 2.274f, 0.018f, -2.24f, -4.43f, -6.49f, -8.34f, -9.93f, -11.3f, -12.2f, -12.8f, -13.f };
+static const float p21[19] = { -9.69f, 234.2f, -11.2f, -9.03f, -7.87f, -7.42f, -7.31f, -7.28f, -7.29f, -7.48f, -8.04f, -9.23f, -11.6f, -17.4f, -48.4f, 9.149f, 1.905f, -0.75f, -1.32f };
+static const float q11[19] = { -1.14f, 18.48f, -1.25f, -1.02f, -0.83f, -0.67f, -0.5f, -0.32f, -0.11f, -0.13f, 0.395f, 0.699f, 1.084f, 1.757f, 4.764f, -0.64f, 0.109f, 0.386f, 0.45f };
+static const float q21[19] = { 0.219f, -8.5f, 0.346f, 0.336f, 0.379f, 0.421f, 0.423f, 0.382f, 0.314f, 0.24f, 0.177f, 0.132f, 0.113f, 0.142f, 0.462f, -0.14f, -0.08f, -0.06f, -0.05f };
+static const float p12[19] = { -4.39f, -4.31f, -4.18f, -4.01f, -3.87f, -4.1f, -3.87f, -5.02f, -6.72f, -8.69f, -11.2f, -12.1f, -11.1f, -11.1f, -9.72f, -8.42f, -7.44f, -6.78f, -6.58f };
+static const float p22[19] = { 2.123f, -2.78f, 4.224f, 3.039f, -0.57f, -34.7f, 3.271f, 0.023f, -8.96f, -58.4f, 11.47f, 8.716f, 21.8f, 1.91f, -0.04f, -0.66f, 0.395f, 2.662f, 3.387f };
+static const float q12[19] = { -0.55f, 0.59f, -1.01f, -0.56f, 0.665f, 11.39f, -1.57f, -0.87f, 0.37f, 5.446f, -1.13f, -0.63f, -2.01f, 0.15f, 0.243f, 0.147f, -0.18f, -0.67f, -0.84f };
+static const float q22[19] = { -0.06f, -0.17f, -0.02f, -0.32f, -1.13f, -8.3f, 0.637f, 0.325f, -0.08f, -1.19f, 0.103f, -0.12f, 0.098f, -0.4f, -0.41f, -0.34f, -0.18f, 0.05f, 0.131f };
+static const float p13[19] = { 0.457f, 0.455f, -0.87f, 0.465f, 0.494f, 0.549f, 0.663f, 0.691f, 3.507f, -27.4f, 6.371f, 7.032f, 7.092f, 7.463f, 7.453f, 8.101f, 8.702f, 8.925f, 9.317f };
+static const float p23[19] = { -0.67f, 0.142f, 3404.f, -0.91f, -0.67f, -1.21f, -1.76f, 4.655f, 55.09f, 10336.f, 1.735f, 40.88f, 23.86f, 102.8f, -6.14f, -18.1f, -9.05f, -9.03f, -6.89f };
+static const float p33[19] = { 0.174f, -0.11f, -1699.f, 0.437f, 0.658f, 2.02f, 6.815f, 0.614f, 589.3f, 16818.f, -9.39f, -44.1f, -23.6f, -92.3f, -1.81f, 10.54f, 0.532f, 0.285f, -2.08f };
+static const float q13[19] = { -1.75f, -0.01f, 7354.f, -2.18f, -1.2f, -1.59f, -1.23f, -0.89f, 29.23f, 1945.f, -0.06f, 5.635f, 3.308f, 13.88f, -0.88f, -2.23f, -0.96f, -0.9f, -0.57f };
+static const float q23[19] = { 0.699f, -0.35f, -5350.f, 1.188f, 0.256f, 0.816f, 1.166f, 0.76f, 59.51f, 1707.f, -1.12f, -6.18f, -3.39f, -12.7f, -0.19f, 1.295f, -0.02f, -0.08f, -0.4f };
 
-const int numAz_table = sizeof(q23);
-const float a_0 = 0.0875;       /* Reference head size, 8.75 centimeters, used in the generation of the coeff lookup table. */
-const float a_head = 0.09096;   /* This head size, See note for head_radius in binauraliser_nf. */
-const float headDim = SAF_PI * (a_0 / a_head);
-const float sosDiv2PiA = 343 / (2 * SAF_PI * a_head);
+static const int numAz_table = sizeof(q23);
+static const float a_0 = 0.0875;       /**< Reference head size, 8.75 centimeters, used in the generation of the coeff lookup table. */
+static const float a_head = 0.09096;   /**< This head size, See note for head_radius in binauraliser_nf. */
+static const float headDim = SAF_PI * (a_0 / a_head);
+static const float sosDiv2PiA = 343 / (2 * SAF_PI * a_head);
 
-
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-/* Static Functions */
-/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
-
-/*
-* Linear interpolation between two values.
-* TODO: find in already-existing library?
-*/
+/** Linear interpolation between two values */
 static float interpolate_lin
 (
- float a,
- float b,
- float ifac
+    float a,
+    float b,
+    float ifac
 )
 {
     return a + (b-a) * ifac;
 }
 
-/*
- * Covert decibels to a magnitude.
- * TODO: find in already-existing library?
- */
+/** Covert decibels to a magnitude */
 static float db2mag
 (
- float dB
+    float dB
 )
 {
     return powf(10.f, dB / 20.f);
 }
 
-/**
-* Calculate high-shelf parameters, g0, gInf, fc, from the lookup table coefficients (10 degree steps).
-* Called twice per update as the returned values are subsequently interpolated to exact azimuth. */
+/*
+ * Calculate high-shelf parameters, g0, gInf, fc, from the lookup table coefficients (10 degree steps).
+ * Called twice per update as the returned values are subsequently interpolated to exact azimuth. */
 void calcHighShelfParams
 (
     int i,          /* index into the coefficient table, dictated by azimuth */
@@ -110,18 +100,18 @@ void calcHighShelfParams
     *fc = (float)fc_tmp * sosDiv2PiA;
 }
 
-/**
+/*
  * Interpolate (linear) the high shelf parameters generated by calcHighShelfParams()
  * which is called twice to generate the high shelf parameters for the nearest thetas
  * in the lookup table. */
 void interpHighShelfParams
 (
- float theta,   /* ipsilateral azimuth, on the inter-aural axis [0, 180] (deg) */
- float rho,     /* distance, normalized to head radius, >= 1 */
- /* output */
- float* iG0,
- float* iGInf,
- float* iFc
+    float theta,   /* ipsilateral azimuth, on the inter-aural axis [0, 180] (deg) */
+    float rho,     /* distance, normalized to head radius, >= 1 */
+    /* output */
+    float* iG0,
+    float* iGInf,
+    float* iFc
 )
 {
     int theta_idx_lower, theta_idx_upper;
@@ -151,20 +141,20 @@ void interpHighShelfParams
     *iFc   = interpolate_lin(fc_1,   fc_2,   ifac);
 }
 
-/**
-* Generate IIR coefficients from the shelf parameters generated by calcHighShelfParams() and
-* interpHighShelfParams(). */
+/*
+ * Generate IIR coefficients from the shelf parameters generated by calcHighShelfParams() and
+ * interpHighShelfParams(). */
 void calcIIRCoeffs
 (
- /* Input */
- float g0,      /* high shelf dc gain */
- float gInf,    /* high shelf high gain */
- float fc,      /* high shelf center freq */
- float fs,      /* sample rate */
- /* Output */
- float* b0,     /* IIR coeffs */
- float* b1,
- float* a1
+    /* Input */
+    float g0,      /* high shelf dc gain */
+    float gInf,    /* high shelf high gain */
+    float fc,      /* high shelf center freq */
+    float fs,      /* sample rate */
+    /* Output */
+    float* b0,     /* IIR coeffs */
+    float* b1,
+    float* a1
 )
 {
     float v0;
@@ -187,7 +177,6 @@ void calcIIRCoeffs
     *b1  = g0_mag * (va_c - v + a_c);   /* = V*(a_c - 1) + a_c */
     *a1  = a_c;
 }
-
 
 void applyDVF
 (
