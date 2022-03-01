@@ -206,7 +206,7 @@ void convertFrontalDoAToIpsilateral
 {
     float thetaL;
     
-    // TODO: clamp thetaFront (-180, 180)
+    thetaFront = SAF_CLAMP(thetaFront, -180.f, 180.f);
     thetaL = fabsf(90.f - thetaFront);
     if (thetaL > 180.f) {
         thetaL = 360.f - thetaL;
