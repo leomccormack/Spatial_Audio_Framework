@@ -66,13 +66,80 @@ extern "C" {
  * those specific to the near field variant.
  */
 typedef struct _binauraliserNF {
-    struct _binauraliser;               /**< "inherit" member vars of binauraliser struct */
+    //struct _binauraliser;               /**< "inherit" member vars of binauraliser struct */
 
+    /* The following variables MUST match those of the _binauraliser struct */
+    
+    /* audio buffers */
+    float** inputFrameTD;            /**< time-domain input frame; #MAX_NUM_INPUTS x #BINAURALISER_FRAME_SIZE */
+    float** outframeTD;              /**< time-domain output frame; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
+    float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
+    float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
+    int fs;                          /**< Host sampling rate, in Hz */
+    float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
+    void* hSTFT;                     /**< afSTFT handle */
+    
+    /* sofa file info */
+    char* sofa_filepath;             /**< absolute/relevative file path for a sofa file */
+    float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
+    float* hrir_dirs_deg;            /**< directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
+    int N_hrir_dirs;                 /**< number of HRIR directions in the current sofa file */
+    int hrir_loaded_len;             /**< length of the loaded HRIRs, in samples */
+    int hrir_runtime_len;            /**< length of the HRIRs being used for processing (after any resampling), in samples */
+    int hrir_loaded_fs;              /**< sampling rate of the loaded HRIRs  */
+    int hrir_runtime_fs;             /**< sampling rate of the HRIRs being used for processing (after any resampling) */
+    float* weights;                  /**< Integration weights for the HRIR measurement grid */
+    
+    /* vbap gain table */
+    int hrtf_vbapTableRes[2];        /**< [0] azimuth, and [1] elevation grid resolution, in degrees */
+    int N_hrtf_vbap_gtable;          /**< Number of interpolation weights/directions */
+    int* hrtf_vbap_gtableIdx;        /**< N_hrtf_vbap_gtable x 3 */
+    float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
+    
+    /* hrir filterbank coefficients */
+    float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
+    float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
+    float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
+    float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS]; /**< Interpolated HRTFs */
+    
+    /* flags/status */
+    CODEC_STATUS codecStatus;        /**< see #CODEC_STATUS */
+    float progressBar0_1;            /**< Current (re)initialisation progress, between [0..1] */
+    char* progressBarText;           /**< Current (re)initialisation step, string */
+    PROC_STATUS procStatus;          /**< see #PROC_STATUS */
+    int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS]; /**< 1: re-calculate/interpolate the HRTF, 0: do not */
+    int reInitHRTFsAndGainTables;    /**< 1: reinitialise the HRTFs and interpolation tables, 0: do not */
+    int recalc_M_rotFLAG;            /**< 1: re-calculate the rotation matrix, 0: do not */
+    
+    /* misc. */
+    float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
+    float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
+    float src_dirs_xyz[MAX_NUM_INPUTS][3];     /**< Intermediate source directions, as unit-length Cartesian coordinates  */
+    int nTriangles;                            /**< Number of triangles in the convex hull of the spherical arrangement of HRIR directions/points */
+    int new_nSources;                          /**< New number of input/source signals (current value will be replaced by this after next re-init) */
+
+    /* user parameters */
+    int nSources;                            /**< Current number of input/source signals */
+    float src_dirs_deg[MAX_NUM_INPUTS][2];   /**< Current source/panning directions, in degrees */
+    INTERP_MODES interpMode;                 /**< see #INTERP_MODES */
+    int useDefaultHRIRsFLAG;                 /**< 1: use default HRIRs in database, 0: use those from SOFA file */
+    int enableHRIRsDiffuseEQ;                /**< flag to diffuse-field equalisation to the currently loaded HRTFs */
+    int enableRotation;                      /**< 1: enable rotation, 0: disable */
+    float yaw;                               /**< yaw (Euler) rotation angle, in degrees */
+    float roll;                              /**< roll (Euler) rotation angle, in degrees */
+    float pitch;                             /**< pitch (Euler) rotation angle, in degrees */
+    int bFlipYaw;                            /**< flag to flip the sign of the yaw rotation angle */
+    int bFlipPitch;                          /**< flag to flip the sign of the pitch rotation angle */
+    int bFlipRoll;                           /**< flag to flip the sign of the roll rotation angle */
+    int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
+    float src_gains[MAX_NUM_INPUTS];         /**< Gains applied per source */
+    
+    /* End copied _binauraliser struct members. The following are unique to the _binauraliserNF struct */
+    
     /* audio buffers */
     float**          binsrcsTD;         /**< near field DVF-filtered sources frame; (#MAX_NUM_INPUTS * #NUM_EARS) x #BINAURALISER_FRAME_SIZE */
     float_complex*** binauralTF;        /**< time-frequency domain output frame; #HYBRID_BANDS x (#MAX_NUM_INPUTS * #NUM_EARS) x #TIME_SLOTS
-                                         *   Note: (#MAX_NUM_INPUTS * #NUM_EARS) dimensions are combined because afSTFT requires type float_complex***
-                                         */
+                                         *   Note: (#MAX_NUM_INPUTS * #NUM_EARS) dimensions are combined because afSTFT requires type float_complex*** */
     /* misc. */
     float src_dists_m[MAX_NUM_INPUTS];  /**< source distance,  meters */
     float farfield_thresh_m;            /**< distance considered to be far field (no near field filtering),  meters */
