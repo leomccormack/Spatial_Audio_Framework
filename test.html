@@ -99,7 +99,7 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <div class="contents">
 <div class="textblock"><dl class="reflist">
 <dt>Global <a class="el" href="af_s_t_f_tlib_8h.html#a7558bd35af17d396da920a6305d58af9">afSTFT_create</a>  (void **const phSTFT, int nCHin, int nCHout, int hopsize, int lowDelayMode, int hybridmode, AFSTFT_FDDATA_FORMAT format)</dt>
-<dd><a class="anchor" id="_test000047"></a><a class="el" href="saf__test_8h.html#a905bf3c380d7d04e6a0a4d9b4e056bf7" title="Testing the alias-free STFT filterbank (near)-perfect reconstruction performance.">test__afSTFT()</a> </dd>
+<dd><a class="anchor" id="_test000048"></a><a class="el" href="saf__test_8h.html#a905bf3c380d7d04e6a0a4d9b4e056bf7" title="Testing the alias-free STFT filterbank (near)-perfect reconstruction performance.">test__afSTFT()</a> </dd>
 <dt>File <a class="el" href="ambi__bin_8c.html">ambi_bin.c</a>  </dt>
 <dd><a class="anchor" id="_test000006"></a><a class="el" href="saf__test_8h.html#a94e98c02477f75870c18dde3623c51d8" title="Testing the SAF ambi_bin.h example (this may also serve as a tutorial on how to use it)">test__saf_example_ambi_bin()</a> </dd>
 <dt>File <a class="el" href="ambi__bin_8h.html">ambi_bin.h</a>  </dt>
@@ -127,11 +127,13 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <dt>File <a class="el" href="array2sh__internal_8h.html">array2sh_internal.h</a>  </dt>
 <dd><a class="anchor" id="_test000014"></a><a class="el" href="saf__test_8h.html#a6115d88bde38a657d83ce065007e93a0" title="Testing the SAF array2sh.h example (this may also serve as a tutorial on how to use it)">test__saf_example_array2sh()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#gaafbb552f618e0672c0acfc4d171da212">butterCoeffs</a>  (BUTTER_FILTER_TYPES filterType, int order, float cutoff1, float cutoff2, float sampleRate, double *b_coeffs, double *a_coeffs)</dt>
-<dd><a class="anchor" id="_test000037"></a><a class="el" href="saf__test_8h.html#a394db4aaade6966e740d8ca24a04dc7b" title="Testing that the coefficients computed with butterCoeffs() are numerically similar to the &quot;butter&quot; fu...">test__butterCoeffs()</a> </dd>
+<dd><a class="anchor" id="_test000038"></a><a class="el" href="saf__test_8h.html#a394db4aaade6966e740d8ca24a04dc7b" title="Testing that the coefficients computed with butterCoeffs() are numerically similar to the &quot;butter&quot; fu...">test__butterCoeffs()</a> </dd>
+<dt>Global <a class="el" href="group___s_h.html#ga44db5837fb1f58553a897486222ea4c7">calculateGridWeights</a>  (float *dirs_rad, int nDirs, int order, float *w)</dt>
+<dd><a class="anchor" id="_test000031"></a>test__calculateGridWeights </dd>
 <dt>Global <a class="el" href="group___s_h.html#gadd7fa820cb691a376c70ca33e1c77743">checkCondNumberSHTReal</a>  (int order, float *dirs_rad, int nDirs, float *w, float *cond_N)</dt>
 <dd><a class="anchor" id="_test000030"></a><a class="el" href="saf__test_8h.html#aa8b8eef199b8983d3b18cbf453fc2cf0" title="Testing that for T-designs, the condition numbers are all equal to 1.">test__checkCondNumberSHTReal()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga4be4a4a82a31cde4fde08490baedbed0">cmplxPairUp</a>  (double_complex *in_vec, double_complex *out_vec, int len)</dt>
-<dd><a class="anchor" id="_test000046"></a><a class="el" href="saf__test_8h.html#a48643f2e901629d2d1fea9474932ba14" title="Testing the cmplxPairUp() function (grouping up conjugate symmetric values)">test__cmplxPairUp()</a> </dd>
+<dd><a class="anchor" id="_test000047"></a><a class="el" href="saf__test_8h.html#a48643f2e901629d2d1fea9474932ba14" title="Testing the cmplxPairUp() function (grouping up conjugate symmetric values)">test__cmplxPairUp()</a> </dd>
 <dt>Global <a class="el" href="group___s_h.html#ga8bf53b93c2ccb874ee75088b769fb387">complex2realSHMtx</a>  (int order, float_complex *T_c2r)</dt>
 <dd><a class="anchor" id="_test000025"></a><a class="el" href="saf__test_8h.html#aa287f898d7c0f64e7823c09bc11824fa" title="Testing the complex to real spherical harmonic conversion, using getSHreal() as the reference.">test__complex2realSHMtx()</a> </dd>
 <dt>Global <a class="el" href="group___s_h.html#ga383baca216c2fa72fe1a7c5804133203">computeSectorCoeffsEP</a>  (int orderSec, float_complex *A_xyz, SECTOR_PATTERNS pattern, float *sec_dirs_deg, int nSecDirs, float *sectorCoeffs)</dt>
@@ -139,7 +141,7 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <dt>Global <a class="el" href="group___s_h.html#gacb1a65a8f85a1505d0a96212775b4ae0">computeVelCoeffsMtx</a>  (int sectorOrder, float_complex *A_xyz)</dt>
 <dd><a class="anchor" id="_test000028"></a><a class="el" href="saf__test_8h.html#aa313ae6eb64e8ab4db6b5482882ac348" title="Testing the computeSectorCoeffsEP() and computeVelCoeffsMtx() functions and comparing their output to...">test__computeSectorCoeffsEP()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96">faf_IIRFilterbank_create</a>  (void **phFaF, int order, float *fc, int nCutoffFreqs, float sampleRate, int maxNumSamples)</dt>
-<dd><a class="anchor" id="_test000038"></a><a class="el" href="saf__test_8h.html#aa4cef2722415c8366710c1425a917a06" title="Testing that the faf_IIRFilterbank can reconstruct the original signal power.">test__faf_IIRFilterbank()</a> </dd>
+<dd><a class="anchor" id="_test000039"></a><a class="el" href="saf__test_8h.html#aa4cef2722415c8366710c1425a917a06" title="Testing that the faf_IIRFilterbank can reconstruct the original signal power.">test__faf_IIRFilterbank()</a> </dd>
 <dt>Global <a class="el" href="group___c_d_f4_s_a_p.html#gada902126734f26fa3628592f62cfd320">formulate_M_and_Cr</a>  (void *const hCdf, float *Cx, float *Cy, float *Q, int useEnergyFLAG, float reg, float *M, float *Cr)</dt>
 <dd><a class="anchor" id="_test000018"></a><a class="el" href="saf__test_8h.html#a0d7a7f9075302291e06092caaa6f07cc" title="Testing the formulate_M_and_Cr() function, and verifying that the output mixing matrices yield signal...">test__formulate_M_and_Cr()</a> </dd>
 <dt>Global <a class="el" href="group___c_d_f4_s_a_p.html#ga5b5ee42376101dc186c0610b405b79bf">formulate_M_and_Cr_cmplx</a>  (void *const hCdf, float_complex *Cx, float_complex *Cy, float_complex *Q, int useEnergyFLAG, float reg, float_complex *M, float_complex *Cr)</dt>
@@ -155,17 +157,17 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <dt>Global <a class="el" href="group___s_h.html#gabb0681d04a190b7e1fe3d362f301f63e">getSHrotMtxReal</a>  (float R[3][3], float *RotMtx, int L)</dt>
 <dd><a class="anchor" id="_test000027"></a><a class="el" href="saf__test_8h.html#a8a5477ba3d6118be1ea4b962c573c9f9" title="Testing the spherical harmonic rotation matrix function getSHrotMtxReal()">test__getSHrotMtxReal()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga4357fa77f8fea3ee1bccacdceb984013">getVoronoiWeights</a>  (float *dirs_deg, int nDirs, int diagFLAG, float *weights)</dt>
-<dd><a class="anchor" id="_test000039"></a><a class="el" href="saf__test_8h.html#a195368bc46775c4a9370249c54b0bc35" title="Testing that the weights from the getVoronoiWeights() function sum to 4pi and that the weights are al...">test__getVoronoiWeights()</a> </dd>
+<dd><a class="anchor" id="_test000040"></a><a class="el" href="saf__test_8h.html#a195368bc46775c4a9370249c54b0bc35" title="Testing that the weights from the getVoronoiWeights() function sum to 4pi and that the weights are al...">test__getVoronoiWeights()</a> </dd>
 <dt>Global <a class="el" href="group___reverb.html#gac0c2934d49567126400205c3619597cb">ims_shoebox_create</a>  (void **phIms, float roomDimensions[3], float *abs_wall, float lowestOctaveBand, int nOctBands, float c_ms, float fs)</dt>
 <dd><a class="anchor" id="_test000021"></a><a class="el" href="saf__test_8h.html#a2221c87f296b695d87464eaa331d5cda" title="Testing the ims shoebox simulator, when generating room impulse respones (RIRs) from the computed ech...">test__ims_shoebox_RIR()</a>, <a class="el" href="saf__test_8h.html#ae49109411cfcb133adfe23ee2c655218" title="Testing the ims shoebox simulator, when applying the echograms in the time- domain.">test__ims_shoebox_TD()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#gaa4881d27f54bbe5db5fc027a9e421f08">latticeDecorrelator_create</a>  (void **phDecor, float fs, int hopsize, float *freqVector, int nBands, int nCH, int *orders, float *freqCutoffs, int nCutoffs, int maxDelay, int lookupOffset, float enComp_coeff)</dt>
-<dd><a class="anchor" id="_test000034"></a><a class="el" href="saf__test_8h.html#aeb7e6c04ac91cc3d90025bcac95e8549" title="Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlati...">test__latticeDecorrelator()</a> </dd>
+<dd><a class="anchor" id="_test000035"></a><a class="el" href="saf__test_8h.html#aeb7e6c04ac91cc3d90025bcac95e8549" title="Testing the performance of the latticeDecorrelator, verifying that the inter- channel cross-correlati...">test__latticeDecorrelator()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#gad0b4063c18046e0f89af3e9b1b0c2073">qmf_create</a>  (void **const phQMF, int nCHin, int nCHout, int hopsize, int hybridmode, QMF_FDDATA_FORMAT format)</dt>
-<dd><a class="anchor" id="_test000043"></a><a class="el" href="saf__test_8h.html#aac1d57603ebc37f0088e3fc83c804402" title="Testing the (near)-perfect reconstruction performance of the QMF filterbank.">test__qmf()</a> </dd>
+<dd><a class="anchor" id="_test000044"></a><a class="el" href="saf__test_8h.html#aac1d57603ebc37f0088e3fc83c804402" title="Testing the (near)-perfect reconstruction performance of the QMF filterbank.">test__qmf()</a> </dd>
 <dt>Global <a class="el" href="group___s_h.html#gae1bf4d927842a9c97771801f2483b32d">real2complexSHMtx</a>  (int order, float_complex *T_r2c)</dt>
 <dd><a class="anchor" id="_test000026"></a><a class="el" href="saf__test_8h.html#a073d3c584fce77cc00fd2d11237436d9" title="Testing the real to complex spherical harmonic conversion, using getSHcomplex() as the reference.">test__real2complexSHMtx()</a> </dd>
 <dt>Global <a class="el" href="md__malloc_8h.html#ac1df6d471ef3a376f5a5eccabd8e62b7">realloc2d_r</a>  (void **ptr, size_t new_dim1, size_t new_dim2, size_t prev_dim1, size_t prev_dim2, size_t data_size)</dt>
-<dd><a class="anchor" id="_test000048"></a><a class="el" href="saf__test_8h.html#a172905f574f05bb5b156ca40d617ab62" title="Testing the realloc2d_r() function (reallocating 2-D array, while retaining the previous data order; ...">test__realloc2d_r()</a>  </dd>
+<dd><a class="anchor" id="_test000049"></a><a class="el" href="saf__test_8h.html#a172905f574f05bb5b156ca40d617ab62" title="Testing the realloc2d_r() function (reallocating 2-D array, while retaining the previous data order; ...">test__realloc2d_r()</a>  </dd>
 <dt>File <a class="el" href="rotator_8c.html">rotator.c</a>  </dt>
 <dd><a class="anchor" id="_test000015"></a><a class="el" href="saf__test_8h.html#a616c7f0183703515b843a14202e629ad" title="Testing the SAF rotator.h example (this may also serve as a tutorial on how to use it)">test__saf_example_rotator()</a> </dd>
 <dt>File <a class="el" href="rotator_8h.html">rotator.h</a>  </dt>
@@ -175,25 +177,25 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <dt>File <a class="el" href="rotator__internal_8h.html">rotator_internal.h</a>  </dt>
 <dd><a class="anchor" id="_test000017"></a><a class="el" href="saf__test_8h.html#a616c7f0183703515b843a14202e629ad" title="Testing the SAF rotator.h example (this may also serve as a tutorial on how to use it)">test__saf_example_rotator()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga574f6d6fded463eeb37ed4112f70f2e5">saf_matrixConv_create</a>  (void **const phMC, int hopSize, float *H, int length_h, int nCHin, int nCHout, int usePartFLAG)</dt>
-<dd><a class="anchor" id="_test000040"></a><a class="el" href="saf__test_8h.html#ad992431654877a596b057b67120c3cac" title="Testing the saf_matrixConv.">test__saf_matrixConv()</a> </dd>
+<dd><a class="anchor" id="_test000041"></a><a class="el" href="saf__test_8h.html#ad992431654877a596b057b67120c3cac" title="Testing the saf_matrixConv.">test__saf_matrixConv()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga66b301071b98e49191c801f07af83346">saf_rfft_create</a>  (void **const phFFT, int N)</dt>
-<dd><a class="anchor" id="_test000036"></a><a class="el" href="saf__test_8h.html#a61e4197e4ad12c1669f952118a37c17b" title="Testing the forward and backward real-(half)complex FFT (saf_rfft)">test__saf_rfft()</a> </dd>
+<dd><a class="anchor" id="_test000037"></a><a class="el" href="saf__test_8h.html#a61e4197e4ad12c1669f952118a37c17b" title="Testing the forward and backward real-(half)complex FFT (saf_rfft)">test__saf_rfft()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#gaef0461d3c77d84c5108198595ff14064">saf_stft_create</a>  (void **const phSTFT, int winsize, int hopsize, int nCHin, int nCHout, SAF_STFT_FDDATA_FORMAT FDformat)</dt>
-<dd><a class="anchor" id="_test000035"></a><a class="el" href="saf__test_8h.html#a3230cfab4bc9fa9f07d578e2c0c631b9" title="Testing for perfect reconstruction of the saf_stft (when configured for 50% window overlap)">test__saf_stft_50pc_overlap()</a>, <a class="el" href="saf__test_8h.html#af677fd8422840a0356616d0b16f9a175" title="Testing for perfect reconstruction of the saf_stft (when configured for linear time-invariant (LTI) f...">test__saf_stft_LTI()</a> </dd>
+<dd><a class="anchor" id="_test000036"></a><a class="el" href="saf__test_8h.html#a3230cfab4bc9fa9f07d578e2c0c631b9" title="Testing for perfect reconstruction of the saf_stft (when configured for 50% window overlap)">test__saf_stft_50pc_overlap()</a>, <a class="el" href="saf__test_8h.html#af677fd8422840a0356616d0b16f9a175" title="Testing for perfect reconstruction of the saf_stft (when configured for linear time-invariant (LTI) f...">test__saf_stft_LTI()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga034cb7d6d3b64474c8916b07648448c6">smb_pitchShift_create</a>  (void **hSmb, int nCH, int fftFrameSize, int osamp, float sampleRate)</dt>
-<dd><a class="anchor" id="_test000042"></a><a class="el" href="saf__test_8h.html#a4dba8bcbcecd18f38a70aec40c136555" title="Testing that the smb_pitchShifter can shift the energy of input spectra by one octave down.">test__smb_pitchShifter()</a> </dd>
+<dd><a class="anchor" id="_test000043"></a><a class="el" href="saf__test_8h.html#a4dba8bcbcecd18f38a70aec40c136555" title="Testing that the smb_pitchShifter can shift the energy of input spectra by one octave down.">test__smb_pitchShifter()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga289eb2f7e45d17a787d0f193641c6b50">sortf</a>  (float *in_vec, float *out_vec, int *new_indices, int len, int descendFLAG)</dt>
-<dd><a class="anchor" id="_test000044"></a><a class="el" href="saf__test_8h.html#a43e61c5bffaddd04ae853ef6e544bbc6" title="Testing the sortf() function (sorting real floating point numbers)">test__sortf()</a> </dd>
+<dd><a class="anchor" id="_test000045"></a><a class="el" href="saf__test_8h.html#a43e61c5bffaddd04ae853ef6e544bbc6" title="Testing the sortf() function (sorting real floating point numbers)">test__sortf()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#gab0931ca50923ff84c52d328c93bd96e8">sortz</a>  (double_complex *in_vec, double_complex *out_vec, int len, int descendFLAG)</dt>
-<dd><a class="anchor" id="_test000045"></a><a class="el" href="saf__test_8h.html#abda4080d0c2b7ee0496c7725f65fbebe" title="Testing the sortz() function (sorting complex double-floating point numbers)">test__sortz()</a> </dd>
+<dd><a class="anchor" id="_test000046"></a><a class="el" href="saf__test_8h.html#abda4080d0c2b7ee0496c7725f65fbebe" title="Testing the sortz() function (sorting complex double-floating point numbers)">test__sortz()</a> </dd>
 <dt>Global <a class="el" href="group___s_h.html#ga37dbabb094421f7d62d3bdf7639994e4">sphESPRIT_create</a>  (void **const phESPRIT, int order)</dt>
-<dd><a class="anchor" id="_test000032"></a><a class="el" href="saf__test_8h.html#a70a6ae2e1c5ad450fac2422246c703b5" title="Testing the DoA estimation performance of sphESPRIT()">test__sphESPRIT()</a> </dd>
+<dd><a class="anchor" id="_test000033"></a><a class="el" href="saf__test_8h.html#a70a6ae2e1c5ad450fac2422246c703b5" title="Testing the DoA estimation performance of sphESPRIT()">test__sphESPRIT()</a> </dd>
 <dt>Global <a class="el" href="group___s_h.html#ga5795da6a1c9ddc4e8da449c3dfc5da7d">sphMUSIC_create</a>  (void **const phMUSIC, int order, float *grid_dirs_deg, int nDirs)</dt>
-<dd><a class="anchor" id="_test000031"></a><a class="el" href="saf__test_8h.html#ada1afadc3ce01509670706830fec494e" title="Testing the DoA estimation performance of sphMUSIC()">test__sphMUSIC()</a> </dd>
+<dd><a class="anchor" id="_test000032"></a><a class="el" href="saf__test_8h.html#ada1afadc3ce01509670706830fec494e" title="Testing the DoA estimation performance of sphMUSIC()">test__sphMUSIC()</a> </dd>
 <dt>Global <a class="el" href="group___tracker.html#gaf55e4f5dfcc90657444cc92059674970">tracker3d_create</a>  (void **const phT3d, <a class="el" href="structtracker3d__config.html" title="User parameters for tracker3d.">tracker3d_config</a> tpars)</dt>
-<dd><a class="anchor" id="_test000033"></a><a class="el" href="saf__test_8h.html#ac4ed53fa08ff598c41985d827df25536" title="Testing that the particle-filtering based tracker is able to correctly track two simultaneous targets...">test__tracker3d()</a> </dd>
+<dd><a class="anchor" id="_test000034"></a><a class="el" href="saf__test_8h.html#ac4ed53fa08ff598c41985d827df25536" title="Testing that the particle-filtering based tracker is able to correctly track two simultaneous targets...">test__tracker3d()</a> </dd>
 <dt>Global <a class="el" href="group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a">unique_i</a>  (int *input, int nInputs, int **uniqueVals, int **uniqueInds, int *nUnique)</dt>
-<dd><a class="anchor" id="_test000041"></a><a class="el" href="saf__test_8h.html#a596d9bd6c2a96c64f6600b1afc4c6fca" title="Testing that the unique_i() function operates correctly.">test__unique_i()</a></dd>
+<dd><a class="anchor" id="_test000042"></a><a class="el" href="saf__test_8h.html#a596d9bd6c2a96c64f6600b1afc4c6fca" title="Testing that the unique_i() function operates correctly.">test__unique_i()</a></dd>
 </dl>
 </div></div><!-- contents -->
 </div><!-- PageDoc -->
@@ -202,7 +204,7 @@ $(document).ready(function(){initNavTree('test.html',''); initResizable(); });
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Mar 1 2022 10:13:24 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Tue Mar 1 2022 12:08:56 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

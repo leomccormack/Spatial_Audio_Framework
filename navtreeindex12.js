@@ -1,5 +1,6 @@
 var NAVTREEINDEX12 =
 {
+"saf__hoa__internal_8h.html#a7b3622325d0b867730cafe405d0cc6cc":[2,0,2,1,2,3,0],
 "saf__hoa__internal_8h_source.html":[2,0,2,1,2,3],
 "saf__hrir_8c.html":[2,0,2,1,3,1],
 "saf__hrir_8c_source.html":[2,0,2,1,3,1],
@@ -51,7 +52,7 @@ var NAVTREEINDEX12 =
 "saf__reverb__internal_8h.html#af9babb5e0d0be943aa0625ea56f78c47":[2,0,2,1,4,3,9],
 "saf__reverb__internal_8h_source.html":[2,0,2,1,4,3],
 "saf__sh_8c.html":[2,0,2,1,5,0],
-"saf__sh_8c.html#af820c3e3d132463710c6a56317a6266f":[2,0,2,1,5,0,44],
+"saf__sh_8c.html#af820c3e3d132463710c6a56317a6266f":[2,0,2,1,5,0,45],
 "saf__sh_8c_source.html":[2,0,2,1,5,0],
 "saf__sh_8h.html":[2,0,2,1,5,1],
 "saf__sh_8h_source.html":[2,0,2,1,5,1],
@@ -248,6 +249,5 @@ var NAVTREEINDEX12 =
 "saf__utility__geometry_8c.html":[2,0,2,1,8,13],
 "saf__utility__geometry_8c.html#a00acb906a2c25b457ce87fb2ea2eec96":[2,0,2,1,8,13,12],
 "saf__utility__geometry_8c.html#a119467db7040e6fcb71f7abaf179a6a3":[2,0,2,1,8,13,11],
-"saf__utility__geometry_8c.html#aa95f5c4e753fcc1122bc7f9edafd51ea":[2,0,2,1,8,13,10],
-"saf__utility__geometry_8c_source.html":[2,0,2,1,8,13]
+"saf__utility__geometry_8c.html#aa95f5c4e753fcc1122bc7f9edafd51ea":[2,0,2,1,8,13,10]
 };

@@ -210,13 +210,11 @@ Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd>[1] Z. Ben-Hur, F. Brinkmann, J. Sheaffer, S. Weinzierl, and B. Rafaely, "Spectral equalization in binaural signals represented by order-
          truncated spherical harmonics" The Journal of the Acoustical Society of America, vol. 141, no. 6, pp. 4087&ndash;4096, 2017. </dd>
 <dd>
-[2] B. Bernschutz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural reproduction of plane waves with reduced modal order" Acta Acustica
-         united with Acustica, vol. 100, no. 5, pp. 972&amp;ndash;983, 2014.
-@see [3] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of
-         Ambisonic signals by head-related impulse response time alignment
-         and a diffuseness constraint. The Journal of the Acoustical Society
-         of America. 2018 Jun 19;143(6):3616-27
-@see [4] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of Ambisonic Signals via Magnitude Least Squares. InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342). </dd></dl>
+[2] Zaunschirm M, Scho"rkhuber C, Ho"ldrich R. Binaural rendering of Ambisonic signals by head-related impulse response time alignment and a diffuseness constraint. The Journal of the Acoustical Society of America. 2018 Jun 19 143(6) 3616-27 </dd>
+<dd>
+[3] Scho"rkhuber C, Zaunschirm M, Ho"ldrich R. Binaural Rendering of Ambisonic Signals via Magnitude Least Squares. InProceedings of the DAGA 2018 (Vol. 44, pp. 339-342). </dd>
+<dd>
+[4] B. Bernschutz, A. V. Giner, C. Po"rschmann, and J. Arend, "Binaural reproduction of plane waves with reduced modal order" Acta Acustica united with Acustica, vol. 100, no. 5, pp. 972&ndash;983, 2014 </dd></dl>
 <table class="fieldtable">
 <tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ab9d8239b3e918ada247720015cee827f" name="ggaeb6116ef26ca8f592af4e81f5f963116ab9d8239b3e918ada247720015cee827f"></a>BINAURAL_DECODER_DEFAULT&#160;</td><td class="fielddoc"><p >The default decoder is <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116a25059f43250b90fb659563953d6e52a4" title="Least-squares (LS) decoder.">BINAURAL_DECODER_LS</a>. </p>
 </td></tr>
@@ -226,12 +224,12 @@ Functions</h2></td></tr>
 <tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116aea7d5ff9e0fec9c3e86274cde48a6436" name="ggaeb6116ef26ca8f592af4e81f5f963116aea7d5ff9e0fec9c3e86274cde48a6436"></a>BINAURAL_DECODER_LSDIFFEQ&#160;</td><td class="fielddoc"><p >Least-squares (LS) decoder with diffuse-field spectral equalisation [1]. </p>
 <p >Note that the diffuse-field EQ is applied in the spherical harmonic domain (to account for the truncation error/loss of high frequencies), so this is not the same as applying <a class="el" href="group___h_r_i_r.html#gaced04b646c57d04a25e26b469e18588c" title="Applies pre-processing to a set of HRTFs, which can either be diffuse-field EQ of an (optionally weig...">diffuseFieldEqualiseHRTFs()</a> on the HRTFs followed by BINAURAL_DECODER_LS. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ab52d181ecdf9d10fcb9c5d761cac8a98" name="ggaeb6116ef26ca8f592af4e81f5f963116ab52d181ecdf9d10fcb9c5d761cac8a98"></a>BINAURAL_DECODER_SPR&#160;</td><td class="fielddoc"><p >Spatial resampling decoder (on the same lines as the virtual loudspeaker approach) [2]. </p>
+<tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ab52d181ecdf9d10fcb9c5d761cac8a98" name="ggaeb6116ef26ca8f592af4e81f5f963116ab52d181ecdf9d10fcb9c5d761cac8a98"></a>BINAURAL_DECODER_SPR&#160;</td><td class="fielddoc"><p >Spatial resampling decoder (on the same lines as the virtual loudspeaker approach) [4]. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" name="ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457"></a>BINAURAL_DECODER_TA&#160;</td><td class="fielddoc"><p >Time-alignment decoder [3]. </p>
+<tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" name="ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457"></a>BINAURAL_DECODER_TA&#160;</td><td class="fielddoc"><p >Time-alignment decoder [2]. </p>
 <p >Relies on discarding the phase information of the HRTFs, past the frequency at which humans are less sensitive to inter-aural time difference cues. Therefore, the least-squares fitting priorites matching the interaural level differences (ILDs), rather than the interaural time differences (ITDs). </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4" name="ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4"></a>BINAURAL_DECODER_MAGLS&#160;</td><td class="fielddoc"><p >Magnitude least-squares decoder [4]. </p>
+<tr><td class="fieldname"><a id="ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4" name="ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4"></a>BINAURAL_DECODER_MAGLS&#160;</td><td class="fielddoc"><p >Magnitude least-squares decoder [3]. </p>
 <p >On similar lines to the time- alignment decoder, but differing slightly in its execution. </p>
 </td></tr>
 </table>
@@ -631,7 +629,7 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">fs</td><td>Sampling rate </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">method</td><td>Decoder method (see <a class="el" href="group___h_o_a.html#gaeb6116ef26ca8f592af4e81f5f963116" title="Ambisonic decoding options for binaural/headphone playback.">BINAURAL_AMBI_DECODER_METHODS</a> enum) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Decoding order </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">itd_s</td><td>Only needed for <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" title="Time-alignment decoder [3].">BINAURAL_DECODER_TA</a> decoder (can set to NULL if using different method); N_dirs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">itd_s</td><td>Only needed for <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" title="Time-alignment decoder [2].">BINAURAL_DECODER_TA</a> decoder (can set to NULL if using different method); N_dirs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">weights</td><td>Integration weights (set to NULL if not available); N_dirs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">enableDiffCM</td><td>Set to '0' to disable diffuse correction, '1' to enable </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">enableMaxrE</td><td>Set to '0' to disable maxRE weighting, '1' to enable </td></tr>
@@ -739,8 +737,8 @@ Functions</h2></td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">N_bands</td><td>Number of frequency bands/bins </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">method</td><td>Decoder method (see <a class="el" href="group___h_o_a.html#gaeb6116ef26ca8f592af4e81f5f963116" title="Ambisonic decoding options for binaural/headphone playback.">BINAURAL_AMBI_DECODER_METHODS</a> enum) </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Decoding order </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>Only needed for <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" title="Time-alignment decoder [3].">BINAURAL_DECODER_TA</a> or <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4" title="Magnitude least-squares decoder [4].">BINAURAL_DECODER_MAGLS</a> decoders (set to NULL if using a different method); N_bands x 1 </td></tr>
-    <tr><td class="paramdir">[in]</td><td class="paramname">itd_s</td><td>Only needed for <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" title="Time-alignment decoder [3].">BINAURAL_DECODER_TA</a> decoder (set to NULL if using different method); N_dirs x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>Only needed for <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" title="Time-alignment decoder [2].">BINAURAL_DECODER_TA</a> or <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116a02f30e94818bd69708ce020110589ce4" title="Magnitude least-squares decoder [3].">BINAURAL_DECODER_MAGLS</a> decoders (set to NULL if using a different method); N_bands x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">itd_s</td><td>Only needed for <a class="el" href="group___h_o_a.html#ggaeb6116ef26ca8f592af4e81f5f963116ad06de101e3b304af994c611b744df457" title="Time-alignment decoder [2].">BINAURAL_DECODER_TA</a> decoder (set to NULL if using different method); N_dirs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">weights</td><td>Integration weights (set to NULL if not available); N_dirs x 1 </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">enableDiffCM</td><td>Set to '0' to disable diffuse correction, '1' to enable </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">enableMaxrE</td><td>Set to '0' to disable maxRE weighting, '1' to enable </td></tr>
@@ -1063,7 +1061,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Mar 1 2022 10:13:24 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Tue Mar 1 2022 12:08:57 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

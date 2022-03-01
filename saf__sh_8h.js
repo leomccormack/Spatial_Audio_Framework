@@ -19,6 +19,7 @@ var saf__sh_8h =
     [ "beamWeightsMaxEV", "group___s_h.html#ga7c35ba6af7f1f13e53ee473bb622398b", null ],
     [ "beamWeightsVelocityPatternsComplex", "group___s_h.html#ga6077cbef3c4d075dd47e833f9675ae37", null ],
     [ "beamWeightsVelocityPatternsReal", "group___s_h.html#ga4fcf376f908a5403bc31989ac986ab78", null ],
+    [ "calculateGridWeights", "group___s_h.html#ga44db5837fb1f58553a897486222ea4c7", null ],
     [ "checkCondNumberSHTReal", "group___s_h.html#gadd7fa820cb691a376c70ca33e1c77743", null ],
     [ "complex2realCoeffs", "group___s_h.html#gaa25c6081b6abb92ca3545a879b9996e4", null ],
     [ "complex2realSHMtx", "group___s_h.html#ga8bf53b93c2ccb874ee75088b769fb387", null ],
