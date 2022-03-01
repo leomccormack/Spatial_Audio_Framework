@@ -424,7 +424,7 @@ void test__checkCondNumberSHTReal(void){
 }
 
 void test__calculateGridWeights(void){
-    int i, nDirs, order, nSH;
+    int i, nDirs, order;
     float* t_dirs_deg, *t_dirs_rad, *w;
 
     /* Config */
@@ -442,10 +442,8 @@ void test__calculateGridWeights(void){
     order =  calculateGridWeights(t_dirs_rad,nDirs,-1,w);
 
     TEST_ASSERT_EQUAL(testOrder, order);
-    for (i=0; i<nDirs; i++){
+    for (i=0; i<nDirs; i++)
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance,FOURPI/nDirs, w[i]);
-    }
-
 }
 
 void test__sphMUSIC(void){

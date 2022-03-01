@@ -139,6 +139,9 @@
     <Filter Include="Source Files\resources">
       <UniqueIdentifier>{e6107f79-fc69-4fbd-83f8-5e72be084d87}</UniqueIdentifier>
     </Filter>
+    <Filter Include="framework\modules\saf_hades">
+      <UniqueIdentifier>{33ae3c36-4ce0-4268-b4b6-63e05cf7e2d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\saf_test.h">
@@ -425,6 +428,21 @@
     </ClInclude>
     <ClInclude Include="..\include\resources\unity_internals.h">
       <Filter>Header Files\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_dvf.h">
+      <Filter>framework\modules\saf_utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades.h">
+      <Filter>framework\modules\saf_hades</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades_analysis.h">
+      <Filter>framework\modules\saf_hades</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades_internal.h">
+      <Filter>framework\modules\saf_hades</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades_synthesis.h">
+      <Filter>framework\modules\saf_hades</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -729,6 +747,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\saf_test_wrapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_dvf.c">
+      <Filter>framework\modules\saf_utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_hades\saf_hades_analysis.c">
+      <Filter>framework\modules\saf_hades</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_hades\saf_hades_internal.c">
+      <Filter>framework\modules\saf_hades</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\framework\modules\saf_hades\saf_hades_synthesis.c">
+      <Filter>framework\modules\saf_hades</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\test__hades_module.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

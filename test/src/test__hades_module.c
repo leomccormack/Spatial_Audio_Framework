@@ -56,7 +56,7 @@ void test__hades(void){
     grid_dirs_deg = malloc1d(nDirs*2*sizeof(float));
     cblas_scopy(nDirs, sofa.SourcePosition, 3, grid_dirs_deg, 2); /* azi */
     cblas_scopy(nDirs, &sofa.SourcePosition[1], 3, &grid_dirs_deg[1], 2); /* elev */
-    hades_analysis_create(&hAna, fs, HADES_USE_AFSTFT_LD, hopsize, blocksize, hybridmode, /* for time-frequency transform */
+    hades_analysis_create(&hAna, (float)fs, HADES_USE_AFSTFT_LD, hopsize, blocksize, hybridmode, /* for time-frequency transform */
                           sofa.DataIR, grid_dirs_deg, nDirs, nMics, sofa.DataLengthIR,    /* for the array measurements */
                           HADES_USE_COMEDIE, HADES_USE_MUSIC);                            /* for parameter analysis */
     saf_sofa_close(&sofa);

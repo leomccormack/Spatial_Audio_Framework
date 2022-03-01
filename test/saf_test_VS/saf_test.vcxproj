@@ -111,7 +111,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_USE_INTEL_IPP;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_ENABLE_HADES_MODULE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../framework/include;../../examples/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../include;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -154,7 +154,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_USE_INTEL_IPP</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);SAF_USE_INTEL_MKL_LP64;SAF_USE_INTEL_IPP;SAF_ENABLE_SOFA_READER_MODULE;SAF_ENABLE_EXAMPLES_TESTS;_CRT_SECURE_NO_WARNINGS;SAF_ENABLE_TRACKER_MODULE;SAF_ENABLE_HADES_MODULE</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <AdditionalIncludeDirectories>../../framework/include;../../examples/include;C:/Program Files (x86)/Intel/oneAPI/mkl/latest/include;../include;C:/Program Files (x86)/Intel/oneAPI/ipp/latest/include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -205,6 +205,10 @@
     <ClInclude Include="..\..\examples\src\spreader\spreader_internal.h" />
     <ClInclude Include="..\..\framework\include\saf.h" />
     <ClInclude Include="..\..\framework\modules\saf_cdf4sap\saf_cdf4sap.h" />
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades.h" />
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades_analysis.h" />
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades_internal.h" />
+    <ClInclude Include="..\..\framework\modules\saf_hades\saf_hades_synthesis.h" />
     <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa.h" />
     <ClInclude Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.h" />
     <ClInclude Include="..\..\framework\modules\saf_hrir\saf_hrir.h" />
@@ -223,6 +227,7 @@
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_bessel.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_complex.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_decor.h" />
+    <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_dvf.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_fft.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_filters.h" />
     <ClInclude Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.h" />
@@ -300,6 +305,9 @@
     <ClCompile Include="..\..\examples\src\spreader\spreader.c" />
     <ClCompile Include="..\..\examples\src\spreader\spreader_internal.c" />
     <ClCompile Include="..\..\framework\modules\saf_cdf4sap\saf_cdf4sap.c" />
+    <ClCompile Include="..\..\framework\modules\saf_hades\saf_hades_analysis.c" />
+    <ClCompile Include="..\..\framework\modules\saf_hades\saf_hades_internal.c" />
+    <ClCompile Include="..\..\framework\modules\saf_hades\saf_hades_synthesis.c" />
     <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa.c" />
     <ClCompile Include="..\..\framework\modules\saf_hoa\saf_hoa_internal.c" />
     <ClCompile Include="..\..\framework\modules\saf_hrir\saf_default_hrirs.c" />
@@ -320,6 +328,7 @@
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_bessel.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_complex.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_decor.c" />
+    <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_dvf.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_fft.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_filters.c" />
     <ClCompile Include="..\..\framework\modules\saf_utilities\saf_utility_geometry.c" />
@@ -358,6 +367,7 @@
     <ClCompile Include="..\src\saf_test_wrapper.cpp" />
     <ClCompile Include="..\src\test__cdf4sap_module.c" />
     <ClCompile Include="..\src\test__examples.c" />
+    <ClCompile Include="..\src\test__hades_module.c" />
     <ClCompile Include="..\src\test__hoa_module.c" />
     <ClCompile Include="..\src\test__hrir_module.c" />
     <ClCompile Include="..\src\test__resources.c" />
