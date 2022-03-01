@@ -368,8 +368,8 @@ void binauraliserNF_setInputConfigPreset(void* const hBin, int newPresetID)
 
     binauraliser_loadPreset(newPresetID, pData->src_dirs_deg, &(pData->new_nSources), &nDim);
     // For now, any preset selected will reset sources to the far field
-    binauraliserNF_resetSourceDistances(&pData);
-
+    binauraliserNF_resetSourceDistances(pData);
+    
     if(pData->nSources != pData->new_nSources)
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     for(ch=0; ch<MAX_NUM_INPUTS; ch++)
