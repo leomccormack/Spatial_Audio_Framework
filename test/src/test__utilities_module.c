@@ -1074,7 +1074,7 @@ void test__dvf_interpHighShelfParams(void){
      first on the calcHighShelfParams(), so that should be tested first. */
 
     /* setup */
-    const float acceptedTolerance = 0.0001f;  // TODO: revisit these thresholds
+    const float acceptedTolerance = 0.0001f;
     const float acceptedTolerance_frq = 0.01f;
     const int   nTheta = 6;
     const float theta[6] = {0.000000f,2.300000f,47.614000f,98.600000f,166.200000f,180.000000f};
@@ -1117,7 +1117,7 @@ void test__dvf_interpHighShelfParams(void){
 
 void test__dvf_calcIIRCoeffs(void){
     /* setup */
-    const float acceptedTolerance = 0.00001f; // TODO: revisit these thresholds
+    const float acceptedTolerance = 0.00001f;
     const int   nTheta = 6;
     const float theta[6] = {0.000000f,2.300000f,47.614000f,98.600000f,166.200000f,180.000000f};
     const int   nRho = 5;

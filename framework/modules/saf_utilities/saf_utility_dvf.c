@@ -121,13 +121,13 @@ void interpHighShelfParams
     float gInf_1, gInf_2;   /* high shelf gain at inf */
     float fc_1, fc_2;       /* high shelf cutoff frequency */
     
-    // TODO: range checking - clip theta and rho to valid range
+    // TBD: add range checking? - clip theta and rho to valid range
+    
     /* linearly interpolate DC gain, HF gain, center freq at theta */
-    // TODO: rethink this indexing logic...
     thetaDiv10 = theta / 10.f;
     theta_idx_lower = (int)thetaDiv10;      /* Table is in 10 degree steps, floor(x/10) gets lower index */
     theta_idx_upper = theta_idx_lower + 1;
-    if(theta_idx_upper == numAz_table) {    // TODO: if instead check theta_idx_upper => numAz_table, could clip the value > 180 here
+    if(theta_idx_upper == numAz_table) {    // alternatively, instead check theta_idx_upper => numAz_table, could clip the value > 180 here
         theta_idx_upper = theta_idx_lower;
         theta_idx_lower = theta_idx_lower - 1;
     }
@@ -166,8 +166,8 @@ void calcIIRCoeffs
     float va_c;
     
     v0     = db2mag(gInf);              /* Eq. (12), (10), and (11) */
-    g0_mag = db2mag(g0);                // TODO: revisit; does g0, gInf need to be in dB?
-    tanF   = tanf((headDim / fs) * fc); // TODO: this /fs calc can be optimized out with precomputed head dimension
+    g0_mag = db2mag(g0);                // optim TBD: revisit; does g0, gInf need to be in dB?
+    tanF   = tanf((headDim / fs) * fc); // optim TBD: this /fs calc can be optimized out with precomputed head dimension
     v0tanF = v0 * tanF;
     a_c    = (v0tanF - 1.f) / (v0tanF + 1.f);
     
