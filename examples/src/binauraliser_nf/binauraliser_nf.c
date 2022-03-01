@@ -270,7 +270,13 @@ void binauraliserNF_process
             utility_svvcopy(inputs[i], BINAURALISER_FRAME_SIZE, pData->inputFrameTD[i]);
         for (; i < nSources; i++)
             memset(pData->inputFrameTD[i], 0, BINAURALISER_FRAME_SIZE * sizeof(float));
-
+        
+        /* Apply source gains */
+        for (ch = 0; ch < nSources; ch++) {
+            if(fabsf(pData->src_gains[ch] - 1.f) > 1e-6f)
+                utility_svsmul(pData->inputFrameTD[ch], &(pData->src_gains[ch]), BINAURALISER_FRAME_SIZE, NULL);
+        }
+        
         /* Zero out busses - not needed; overwritten, not summeed over */
         // memset(FLATTEN2D(pData->binsrcsTD), 0, NUM_EARS * BINAURALISER_FRAME_SIZE * sizeof(float));
         // memset(FLATTEN3D(pData->binauralTF), 0, HYBRID_BANDS * nSources * NUM_EARS * TIME_SLOTS * sizeof(float_complex));
