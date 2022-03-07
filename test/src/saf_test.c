@@ -103,6 +103,7 @@ int main_test(void) {
     RUN_TEST(test__unique_i);
     RUN_TEST(test__latticeDecorrelator);
     RUN_TEST(test__butterCoeffs);
+    RUN_TEST(test__evalIIRTransferFunction);
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
 
@@ -167,15 +168,15 @@ int main_test(void) {
     RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
     RUN_TEST(test__saf_example_ambi_enc);
-    RUN_TEST(test__saf_example_array2sh); 
+    RUN_TEST(test__saf_example_array2sh);
     RUN_TEST(test__saf_example_rotator);
     RUN_TEST(test__saf_example_spreader);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
     /* SAF DVF module unit tests */
-    RUN_TEST(test__dvf_calcHighShelfParams);
-    RUN_TEST(test__dvf_interpHighShelfParams);
-    RUN_TEST(test__dvf_calcIIRCoeffs);
+    RUN_TEST(test__dvf_calcDVFShelfParams);
+    RUN_TEST(test__dvf_interpDVFShelfParams);
+    RUN_TEST(test__dvf_dvfShelfCoeffs);
 
     /* close */
     timer_lib_shutdown();

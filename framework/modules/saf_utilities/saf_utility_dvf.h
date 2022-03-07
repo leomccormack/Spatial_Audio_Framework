@@ -41,42 +41,44 @@ extern "C" {
 #include <math.h>
 
 /**
- * Apply the Distance Variation function to the input signal, as described in [1].
+ * Calculate the Distance Variation Function (DVF) filter coefficients,
+ * as described in [1].
  * 
  * @see [1] S. Spagnol, E. Tavazzi, and F. Avanzini, “Distance rendering and
  *          perception of nearby virtual sound sources with a near-field filter
  *          model,” Applied Acoustics, vol. 115, pp. 61–73, Jan. 2017,
  *          doi: 10.1016/j.apacoust.2016.08.015.
  *
- * @param[in]  theta      Ipsilateral azimuth, on the inter-aural axis [0..180]
- * *                      (degrees)
- * @param[in]  rho        Source distance, normalized to head radius, >= 1
- * @param[in]  in_signal  (&) Input signal pointer.
- * @param[in]  nSamples   Number of samples to process
- * @param[in]  fs         Sample rate
- * @param[out] wz         (&) Filter coefficients to be passed to the next block
- * @param[out] out_signal (&) Output signal pointer
+ * @param[in]  alpha    Lateral angle, similar the interaural-polar convention,
+ *                      but specified as an offset from the interaural axis,
+ *                      [0, 180] (deg). See `doaToIpsiInteraural()`
+ *                      to convert frontal azimuth/elevation to the expected
+ *                      format.
+ * @param[in]  rho      Source distance, normalized to head radius, >= 1.
+ * @param[in]  fs       Sample rate.
+ * @param[out] b        Numerator coefficients for the DVF shelving filter.
+ * @param[out] a        Denominator coefficients for the DVF shelving filter
  */
-void applyDVF(/* Input Arguments */
-              float theta,
-              float rho,
-              float* in_signal,
-              int nSamples,
-              float fs,
-              /* Output Arguments */
-              float* wz,
-              float* out_signal);
+void calcDVFCoeffs(
+                   /* Input Arguments */
+                   float alpha,
+                   float rho,
+                   float fs,
+                   /* Output Arguments */
+                   float * b,
+                   float * a);
 
 /**
- * Apply the Distance Variation function to the input signal.
+ * Calculate the shelving filter parameters for the Distance Variation Function
+ * filter from the source (ipsilateral) azimuth and distance.
  *
- * @param[in]  theta Ipsilateral azimuth, on the inter-aural axis [0..180] (deg)
+ * @param[in]  theta Lateral angle, on the inter-aural axis [0..180] (deg)
  * @param[in]  rho   Source distance, normalized to head radius, >= 1
- * @param[out] iG0   (&) interpolated DC gain
- * @param[out] iGInf (&) interpolated high shelf gain
- * @param[out] iFc   (&) interpolated high shelf cutoff frequency
+ * @param[out] iG0   Interpolated DC gain
+ * @param[out] iGInf Interpolated high shelf gain
+ * @param[out] iFc   Interpolated high shelf cutoff frequency
  */
-void interpHighShelfParams(
+void interpDVFShelfParams(
                          /* Input Arguments */
                          float theta,
                          float rho,
@@ -86,17 +88,17 @@ void interpHighShelfParams(
                          float* iFc);
 
 /**
- * Apply the Distance Variation function to the input signal.
+ * Calculate the DVF filter coefficients from shelving filter parameters.
  *
- * @param[in]  g0   High shelf gain at DC [dB]
- * @param[in]  gInf High shelf gain at Nyquist frequency [dB]
- * @param[in]  fc   Shelf cutoff frequency [Hz]
- * @param[out] fs   Sample rate
- * @param[out] b0   (&) IIR numerator coefficient 1
- * @param[out] b1   (&) IIR numerator coefficient 2
- * @param[out] a1   (&) IIR denominator coefficient 2
+ * @param[in]  g0   High shelf gain at DC [dB].
+ * @param[in]  gInf High shelf gain at Nyquist frequency [dB].
+ * @param[in]  fc   Shelf cutoff frequency [Hz].
+ * @param[out] fs   Sample rate.
+ * @param[out] b0   Numerator coefficient 1.
+ * @param[out] b1   Numerator coefficient 2.
+ * @param[out] a1   Denominator coefficient 2.
 */
-void calcIIRCoeffs(/* Input Arguments */
+void dvfShelfCoeffs(/* Input Arguments */
                    float g0,
                    float gInf,
                    float fc,
@@ -107,36 +109,46 @@ void calcIIRCoeffs(/* Input Arguments */
                    float* a1);
 
 /**
- * Calculate the High shelf gains and cutoff parameters, given a azimuth index
- * 'i' and distance 'rho'. This will be called twice per parameter change and
+ * Calculate the high shelf gains and cutoff parameters, given a azimuth index
+ * `i` and distance `rho`. This will be called twice per parameter change and
  * the shelf filter parameters will be linearly interpolated according to the
- * precise azimuth.
+ * azimuth.
  *
- * @param[in]   i    Coefficient table row index ()
+ * @param[in]   i    Coefficient table row index
  * @param[in]   rho  Normalized source distance (1 = head radius)
  * @param[out]  g0   High shelf gain at DC [dB]
  * @param[out]  gInf High shelf gain at Nyquist frequency [dB]
  * @param[out]  fc   Shelf cutoff frequency [Hz]
  */
-void calcHighShelfParams(int i,
-                         float rho,
-                         float* g0,
-                         float* gInf,
-                         float* fc);
+void calcDVFShelfParams(int i,
+                        float rho,
+                        float* g0,
+                        float* gInf,
+                        float* fc);
 
 /**
- * Convert user-supplied DoA theta (0˚ forward) to a theta value understood by
- * the filter designer (DoA on the interaural axis, 0˚ is ipsilateral). Note
- * because it's based on a spherical head, the sign is always positive. Note
- * input is expected to be [-180, 180]
+ * Convert a frontal azimuth/elevation to a modified Interaural-Polar
+ * coordinate. Whereas Interaural-Polar coordinates are with reference to the
+ * median plane, alpha [0, 90], beta [0, 180] this modification is with
+ * reference to the transverse plane (ipsilateral ear direction), alpha
+ * [0, 180], beta [0, 90]. This is intended for the input to
+ * `interpDVFShelfParams()` for calculating DVF filter parameters, which
+ * are framed as an offset from the interaural axis, and based on a spherical
+ * head model (i.e. elevation translates to a change in lateral angle).
  *
- * @param[in]  thetaFront Source DoA, 0˚ is forward-facing, positive angles move
- *                        counter-clockwise [deg, (-180, 180)]
- * @param[out] ipsiDoaLR  High shelf gain at DC [dB]
+ * @param[in]  azimuth      Source DoA, 0˚ is forward-facing, angle increases
+ *                          counter-clockwise (deg, [-360, 360]).
+ * @param[in]  elevation    Source elevation, angles increase upward from the
+ *                          horizon (deg, [-180, 180]).
+ * @param[out] alphaLR      2-element array of lateral angle alpha for left and
+ *                          right ear (deg, [0,180]]).
+ * @param[out] betaLR       2-element array of vertal angle beta for left and
+ *                          right ear (deg, [0,90]]).
 */
-void convertFrontalDoAToIpsilateral(float thetaFront,
-                                    float* ipsiDoaLR);
-
+void doaToIpsiInteraural(float azimuth,
+                         float elevation,
+                         float* alphaLR,
+                         float* betaLR);
 
 #ifdef __cplusplus
 }/* extern "C" */

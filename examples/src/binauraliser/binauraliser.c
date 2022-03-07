@@ -200,14 +200,13 @@ void binauraliser_process
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int ch, ear, i, band, nSources;
-    float src_dirs[MAX_NUM_INPUTS][2], Rxyz[3][3], hypotxy;
+    float Rxyz[3][3], hypotxy;
     int enableRotation;
 
     /* copy user parameters to local variables */
     nSources = pData->nSources;
     enableRotation = pData->enableRotation;
-    memcpy(src_dirs, pData->src_dirs_deg, MAX_NUM_INPUTS*2*sizeof(float));
-
+    
     /* apply binaural panner */
     if ((nSamples == BINAURALISER_FRAME_SIZE) && (pData->hrtf_fb!=NULL) && (pData->codecStatus==CODEC_STATUS_INITIALISED) ){
         pData->procStatus = PROC_STATUS_ONGOING;
