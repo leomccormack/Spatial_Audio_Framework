@@ -115,6 +115,7 @@ void tvconv_init
     tvconv_checkReInit(hTVCnv);
 }
 
+
 void tvconv_process
 (
     void  *  const hTVCnv,
@@ -131,32 +132,32 @@ void tvconv_process
  
     tvconv_checkReInit(hTVCnv);
     pData->procStatus = PROC_STATUS_ONGOING;
-    /* prep */
+   
     numInputChannels = pData->nInputChannels;
     numOutputChannels = pData->nOutputChannels;
 
     for(s=0; s<nSamples; s++){
-        /* Load input signals into inFIFO buffer */
+        // Load input signals into inFIFO buffer 
         for(ch=0; ch<SAF_MIN(SAF_MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
-        for(; ch<numInputChannels; ch++) /* Zero any channels that were not given */
+        for(; ch<numInputChannels; ch++) // Zero any channels that were not given 
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
-        /* Pull output signals from outFIFO buffer */
+        // Pull output signals from outFIFO buffer 
         for(ch=0; ch<SAF_MIN(SAF_MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
             outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
-        for(; ch<nOutputs; ch++) /* Zero any extra channels */
+        for(; ch<nOutputs; ch++) // Zero any extra channels 
             outputs[ch][s] = 0.0f;
 
-        /* Increment buffer index */
+        // Increment buffer index 
         pData->FIFO_idx++;
 
-        /* Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it */
+        // Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it 
         if (pData->FIFO_idx >= pData->hostBlockSize_clamped && pData->reInitFilters == 0 &&
             pData->codecStatus == CODEC_STATUS_INITIALISED) {
             pData->FIFO_idx = 0;
 
-            /* Load time-domain data */
+            // Load time-domain data 
             for(i=0; i < numInputChannels; i++)
                 utility_svvcopy(pData->inFIFO[i], pData->hostBlockSize_clamped, pData->inputFrameTD[i]);
 
@@ -166,23 +167,26 @@ void tvconv_process
                               FLATTEN2D(pData->outputFrameTD),
                               pData->position_idx);
             }
-            /* if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then zero the output */
+            // if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then zero the output 
             else{
                 memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
             }
             
-            /* copy signals to output buffer */
+            // copy signals to output buffer 
             for (i = 0; i < SAF_MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
                 utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
         }
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
-            /* clear outFIFO if codec was not ready */
+            // clear outFIFO if codec was not ready 
             pData->FIFO_idx = 0;
             memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
         }
     }
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
+
+
+
 
 /*sets*/
 
