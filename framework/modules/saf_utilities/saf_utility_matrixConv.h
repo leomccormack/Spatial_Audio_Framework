@@ -135,6 +135,59 @@ void saf_multiConv_apply(/* Input Arguments */
                          /* Output Arguments */
                          float* outputSigs);
 
+/* ========================================================================== */
+/*                              Time-Varying Convolver                        */
+/* ========================================================================== */
+
+/**
+ * Creates an instance of TVConv
+ *
+ * This is a time-varying convolver intended for block-by-block processing. A set of IRs are pre-loaded and IR to be convolved with can be changed live. Crossfading is appled between the previous IR outputs to avoid clipping. The covnolution is partitioned (overlap-add).
+ *
+ * @test test__saf_matrixConv()
+ *
+ * @param[in] phTVC        (&) address of TVConv handle
+ * @param[in] hopSize     Hop size in samples.
+ * @param[in] H           Time-domain filters;  nIRs x (FLAT: nCHout x length_h)
+ * @param[in] length_h    Length of the filters,
+ * @param[in] nIRs           Number or IRs.
+ * @param[in] nCHout      Number of output channels.
+ * @param[in] initIdx  Initial IR index to be used.
+ */
+void saf_TVConv_create(/* Input Arguments */
+                           void ** const phTVC,
+                           int hopSize,
+                           float** H,
+                           int length_h,
+                           int nIRs,
+                           int nCHout,
+                           int initIdx);
+
+/**
+ * Destroys an instance of matrixConv
+ *
+ * @param[in] phTVC (&) address of TVConv handle
+ */
+void saf_TVConv_destroy(/* Input Arguments */
+                            void ** const phTVC);
+
+/**
+ * Performs the matrix convolution.
+ *
+ * @note If the number of input or output channels, the filters, or the hopsize
+ *       need to change: simply destroy and re-create the matrixConv instance.
+ *
+ * @param[in]  hTVC        TVConv handle
+ * @param[in]  inputSigs  Input signals;  FLAT: nCHin  x hopSize
+ * @param[out] outputSigs Output signals; FLAT: nCHout x hopSize
+ * @param[in]  irIdx  index of IR to be used in this convolution
+ */
+void saf_TVConv_apply(/* Input Arguments */
+                          void * const hTVC,
+                          float* inputSigs,
+                          /* Output Arguments */
+                          float* outputSigs,
+                          int irIdx);
 
 #ifdef __cplusplus
 }/* extern "C" */

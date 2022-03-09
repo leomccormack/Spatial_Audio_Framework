@@ -252,15 +252,16 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             /* Checks */
             if(ndimsp!=2) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if((int)dimlength[dimid[dimids[1]]] != 3 && (int)dimlength[dimid[dimids[0]]] != 3) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
-            if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
+            //if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
-            h->nListeners = 1;
-            tmp_data = realloc1d(tmp_data, 3*sizeof(double));
+            tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
+            h->nListeners = (int)dimlength[dimid[dimids[0]]];
+            tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->ListenerPosition = malloc1d(3*sizeof(float));
-            for(j=0; j<3; j++)
+            h->ListenerPosition = malloc1d(tmp_size*sizeof(float));
+            for(j=0; j<(int)tmp_size; j++)
                 h->ListenerPosition[j] = (float)tmp_data[j];
 
             /* Pull associated attributes */
@@ -284,12 +285,12 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             if((int)dimlength[dimid[dimids[1]]] != 1 && (int)dimlength[dimid[dimids[0]]] != 1) { return SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED; }
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
-            /* Pull data */
-            h->nListeners = 1;
-            tmp_data = realloc1d(tmp_data, 3*sizeof(double));
+            /*  Pull data */
+            tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
+            tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->ListenerUp = malloc1d(3*sizeof(float));
-            for(j=0; j<3; j++)
+            h->ListenerUp = malloc1d(tmp_size*sizeof(float));
+            for(j=0; j<(int)tmp_size; j++)
                 h->ListenerUp[j] = (float)tmp_data[j];
         }
         else if (!strcmp((char*)varname,"ListenerView")){
@@ -300,11 +301,11 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             if(typep!=NC_DOUBLE) { return SAF_SOFA_ERROR_FORMAT_UNEXPECTED; }
 
             /* Pull data */
-            h->nListeners = 1;
-            tmp_data = realloc1d(tmp_data, 3*sizeof(double));
+            tmp_size = dimlength[dimid[dimids[0]]] * dimlength[dimid[dimids[1]]];
+            tmp_data = realloc1d(tmp_data, tmp_size*sizeof(double));
             nc_get_var(ncid, varid, tmp_data);
-            h->ListenerView = malloc1d(3*sizeof(float));
-            for(j=0; j<3; j++)
+            h->ListenerView = malloc1d(tmp_size*sizeof(float));
+            for(j=0; j<(int)tmp_size; j++)
                 h->ListenerView[j] = (float)tmp_data[j];
 
             /* Pull associated attributes */
@@ -497,7 +498,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             h->DataLengthIR = hrtf->N;
             h->DataSamplingRate = hrtf->DataSamplingRate.values[0];
             h->nEmitters = hrtf->E;
-            h->nListeners = hrtf->_I;
+            h->nListeners = hrtf->M; // changed to M for multiple listeners
             h->DataIR = hrtf->DataIR.values;
             h->DataDelay = hrtf->DataDelay.values;
             h->SourcePosition = hrtf->SourcePosition.values;

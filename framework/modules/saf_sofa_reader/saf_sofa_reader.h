@@ -72,8 +72,7 @@ typedef struct _saf_sofa_container{
                                    *   ReceiverPositionUnits for the convention
                                    *   and units);
                                    *   FLAT: nReceivers x 3 */
-    int nListeners;               /**< Number of listener positions (cannot be
-                                   *   more than 1) */
+    int nListeners;               /**< Number of listener positions */
     int nEmitters;                /**< Number of emitter positions */
     float* ListenerPosition;      /**< Listener position (The object
                                    *   incorporating all receivers; refer to
@@ -81,7 +80,7 @@ typedef struct _saf_sofa_container{
                                    *   ListenerPositionUnits for the convention
                                    *   and units); FLAT: nListeners x 3  */
     float* ListenerUp;            /**< Vector pointing upwards from the listener
-                                   *   position (Cartesian); 3 x 1  */
+                                   *   position (Cartesian); 1 x 3 or FLAT: nListeners x 3  */
     float* ListenerView;          /**< Vector pointing forwards from the
                                    *   listener position (Cartesian); 3 x 1 */
     float* EmitterPosition;       /**< Positions of acoustic excitation used for
