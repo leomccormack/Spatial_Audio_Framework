@@ -90,6 +90,12 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing bessel_Jn(), bessel_Yn() */
+void test__cylindricalBesselFunctions(void);
+/**
+ * Testing bessel_jn(), bessel_in(), bessel_yn(), and bessel_kn() */
+void test__sphericalBesselFunctions(void);
+/**
  * Testing cart2sph() and sph2cart() are reversible */
 void test__cart2sph(void);
 /**

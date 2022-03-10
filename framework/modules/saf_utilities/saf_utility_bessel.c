@@ -377,7 +377,36 @@ static double Yn(int n, double z)
 /*                        Cylindrical Bessel Functions                        */
 /* ========================================================================== */
 
-void bessel_Jn /* untested */
+void bessel_Jn
+(
+    int N,
+    double* z,
+    int nZ,
+    double* J_n,
+    double* dJ_n
+)
+{
+    int i;
+
+    for(i=0; i<nZ; i++){
+        if(z[i] <= 1e-15){
+            if(J_n!=NULL)
+                J_n[i] = 0.0;
+            if(dJ_n!=NULL)
+                dJ_n[i] = 0.0;
+        }
+        else{
+            if(J_n!=NULL)
+                J_n[i] = Jn(N, z[i]);
+            if(N==0 && dJ_n!=NULL)
+                dJ_n[i] = -Jn(1, z[i]);
+            else if(dJ_n!=NULL)
+                dJ_n[i] = (Jn(N-1, z[i])-Jn(N+1, z[i]))/2.0;
+        }
+    }
+}
+
+void bessel_Jn_ALL
 (
     int N,
     double* z,
@@ -390,10 +419,12 @@ void bessel_Jn /* untested */
 
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
-            if(J_n!=NULL)
-                memset(&J_n[0], 0, (N+1)*sizeof(double));
-            if(dJ_n!=NULL)
-                memset(&dJ_n[0], 0, (N+1)*sizeof(double));
+            for(n=0; n<N+1; n++){
+                if(J_n!=NULL)
+                    J_n[i*(N+1)+n] = 0.0;
+                if(dJ_n!=NULL)
+                    dJ_n[i*(N+1)+n] = 0.0;
+            }
         }
         else{
             for(n=0; n<N+1; n++){
@@ -408,7 +439,36 @@ void bessel_Jn /* untested */
     }
 }
 
-void bessel_Yn /* untested */
+void bessel_Yn
+(
+    int N,
+    double* z,
+    int nZ,
+    double* Y_n,
+    double* dY_n
+)
+{
+    int i;
+
+    for(i=0; i<nZ; i++){
+        if(z[i] <= 1e-15){
+            if(Y_n!=NULL)
+                Y_n[i] = 0.0;
+            if(dY_n!=NULL)
+                dY_n[i] = 0.0;
+        }
+        else{
+            if(Y_n!=NULL)
+                Y_n[i] = Yn(N, z[i]);
+            if(N==0 && dY_n!=NULL)
+                dY_n[i] = -Yn(1, z[i]);
+            else if(dY_n!=NULL)
+                dY_n[i] = (Yn(N-1, z[i])-Yn(N+1, z[i]))/2.0;
+        }
+    }
+}
+
+void bessel_Yn_ALL
 (
     int N,
     double* z,
@@ -421,10 +481,12 @@ void bessel_Yn /* untested */
 
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
-            if(Y_n!=NULL)
-                memset(&Y_n[0], 0, (N+1)*sizeof(double));
-            if(dY_n!=NULL)
-                memset(&dY_n[0], 0, (N+1)*sizeof(double));
+            for(n=0; n<N+1; n++){
+                if(Y_n!=NULL)
+                    Y_n[i*(N+1)+n] = 0.0;
+                if(dY_n!=NULL)
+                    dY_n[i*(N+1)+n] = 0.0;
+            }
         }
         else{
             for(n=0; n<N+1; n++){
@@ -439,7 +501,34 @@ void bessel_Yn /* untested */
     }
 }
 
-void hankel_Hn1 /* untested */
+void hankel_Hn1
+(
+    int N,
+    double* z,
+    int nZ,
+    double_complex* H_n1,
+    double_complex* dH_n1
+)
+{
+    int i;
+
+    for(i=0; i<nZ; i++){
+        if(z[i] <= 1e-15){
+            if(H_n1!=NULL)
+                H_n1[i] = cmplx(0.0, 0.0);
+            if(dH_n1!=NULL)
+                dH_n1[i] = cmplx(0.0, 0.0);
+        }
+        else{
+            if(H_n1!=NULL)
+                H_n1[i] = cmplx(Jn(N, z[i]), Yn(N, z[i]));
+            if(dH_n1!=NULL)
+                dH_n1[i] = ccsub(crmul(cmplx(Jn(N, z[i]), Yn(N, z[i])), (double)N/SAF_MAX(z[i],2.23e-13f)), cmplx(Jn(N+1, z[i]), Yn(N+1, z[i])));
+        }
+    }
+}
+
+void hankel_Hn1_ALL
 (
     int N,
     double* z,
@@ -452,10 +541,12 @@ void hankel_Hn1 /* untested */
 
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
-            if(H_n1!=NULL)
-                memset(&H_n1[0], 0, (N+1)*sizeof(double_complex));
-            if(dH_n1!=NULL)
-                memset(&dH_n1[0], 0, (N+1)*sizeof(double_complex));
+            for(n=0; n<N+1; n++){
+                if(H_n1!=NULL)
+                    H_n1[i*(N+1)+n] = cmplx(0.0, 0.0);
+                if(dH_n1!=NULL)
+                    dH_n1[i*(N+1)+n] = cmplx(0.0, 0.0);
+            }
         }
         else{
             for(n=0; n<N+1; n++){
@@ -468,7 +559,36 @@ void hankel_Hn1 /* untested */
     }
 }
 
-void hankel_Hn2 /* untested */
+void hankel_Hn2
+(
+    int N,
+    double* z,
+    int nZ,
+    double_complex* H_n2,
+    double_complex* dH_n2
+)
+{
+    int i;
+
+    for(i=0; i<nZ; i++){
+        if(z[i] <= 1e-15){
+            if(H_n2!=NULL)
+                H_n2[i] = cmplx(0.0, 0.0);
+            if(dH_n2!=NULL)
+                dH_n2[i] = cmplx(0.0, 0.0);
+        }
+        else{
+            if(H_n2!=NULL)
+                H_n2[i] = cmplx(Jn(N, z[i]), -Yn(N, z[i]));
+            if(N==0 && dH_n2!=NULL)
+                dH_n2[i] = crmul(ccsub(ccmul(cmplx(Jn(1, z[i]), Yn(1, z[i])), cexp(cmplx(0.0, -SAF_PId))), cmplx(Jn(1, z[i]), -Yn(1, z[i]))), 0.5);
+            else if(dH_n2!=NULL)
+                dH_n2[i] = crmul(ccsub(cmplx(Jn(N-1, z[i]), -Yn(N-1, z[i])), cmplx(Jn(N+1, z[i]), -Yn(N+1, z[i]))), 0.5);
+        }
+    }
+}
+
+void hankel_Hn2_ALL
 (
     int N,
     double* z,
@@ -481,10 +601,12 @@ void hankel_Hn2 /* untested */
 
     for(i=0; i<nZ; i++){
         if(z[i] <= 1e-15){
-            if(H_n2!=NULL)
-                memset(&H_n2[0], 0, (N+1)*sizeof(double_complex));
-            if(dH_n2!=NULL)
-                memset(&dH_n2[0], 0, (N+1)*sizeof(double_complex));
+            for(n=0; n<N+1; n++){
+                if(H_n2!=NULL)
+                    H_n2[i*(N+1)+n] = cmplx(0.0, 0.0);
+                if(dH_n2!=NULL)
+                    dH_n2[i*(N+1)+n] = cmplx(0.0, 0.0);
+            }
         }
         else{
             for(n=0; n<N+1; n++){
@@ -504,7 +626,40 @@ void hankel_Hn2 /* untested */
 /*                         Spherical Bessel Functions                         */
 /* ========================================================================== */
 
-void bessel_jn
+int bessel_jn
+(
+    int N,
+    double* z,
+    int nZ,
+    double* j_n,
+    double* dj_n
+)
+{
+    int computedN, i;
+    double* j_0N, *dj_0N;
+
+    saf_assert(j_n!=NULL || dj_n!=NULL, "Either j_n or dj_n must be not NULL!");
+
+    /* Compute the function for all orders */
+    j_0N  = j_n==NULL  ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    dj_0N = dj_n==NULL ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    bessel_jn_ALL(N, z, nZ, &computedN, j_0N, dj_0N);
+
+    /* Output only the function values for order 'N' */
+    if(j_n!=NULL)
+        for(i=0; i<nZ; i++)
+            j_n[i] = computedN==N ? j_0N[i*(N+1)+(N)] : 0.0;
+    if(dj_n!=NULL)
+        for(i=0; i<nZ; i++)
+            dj_n[i] = computedN==N ? dj_0N[i*(N+1)+(N)] : 0.0;
+
+    /* clean-up */
+    free(j_0N);
+    free(dj_0N); 
+    return computedN==N ? 1 : 0;
+}
+
+void bessel_jn_ALL
 (
     int N,
     double* z,
@@ -565,7 +720,40 @@ void bessel_jn
     free(dj_n_tmp);
 }
 
-void bessel_in /* untested */
+int bessel_in
+(
+    int N,
+    double* z,
+    int nZ,
+    double* i_n,
+    double* di_n
+)
+{
+    int computedN, i;
+    double* i_0N, *di_0N;
+
+    saf_assert(i_n!=NULL || di_n!=NULL, "Either i_n or di_n must be not NULL!");
+
+    /* Compute the function for all orders */
+    i_0N  = i_n==NULL  ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    di_0N = di_n==NULL ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    bessel_in_ALL(N, z, nZ, &computedN, i_0N, di_0N);
+
+    /* Output only the function values for order 'N' */
+    if(i_n!=NULL)
+        for(i=0; i<nZ; i++)
+            i_n[i] = computedN==N ? i_0N[i*(N+1)+(N)] : 0.0;
+    if(di_n!=NULL)
+        for(i=0; i<nZ; i++)
+            di_n[i] = computedN==N ? di_0N[i*(N+1)+(N)] : 0.0;
+
+    /* clean-up */
+    free(i_0N);
+    free(di_0N);
+    return computedN==N ? 1 : 0;
+}
+
+void bessel_in_ALL
 (
     int N,
     double* z,
@@ -626,7 +814,40 @@ void bessel_in /* untested */
     free(di_n_tmp);
 }
 
-void bessel_yn
+int bessel_yn
+(
+    int N,
+    double* z,
+    int nZ,
+    double* y_n,
+    double* dy_n
+)
+{
+    int computedN, i;
+    double* y_0N, *dy_0N;
+
+    saf_assert(y_n!=NULL || dy_n!=NULL, "Either y_n or dy_n must be not NULL!");
+
+    /* Compute the function for all orders */
+    y_0N  = y_n==NULL  ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    dy_0N = dy_n==NULL ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    bessel_yn_ALL(N, z, nZ, &computedN, y_0N, dy_0N);
+
+    /* Output only the function values for order 'N' */
+    if(y_n!=NULL)
+        for(i=0; i<nZ; i++)
+            y_n[i] = computedN==N ? y_0N[i*(N+1)+(N)] : 0.0;
+    if(dy_n!=NULL)
+        for(i=0; i<nZ; i++)
+            dy_n[i] = computedN==N ? dy_0N[i*(N+1)+(N)] : 0.0;
+
+    /* clean-up */
+    free(y_0N);
+    free(dy_0N);
+    return computedN==N ? 1 : 0;
+}
+
+void bessel_yn_ALL
 (
     int N,
     double* z,
@@ -682,7 +903,40 @@ void bessel_yn
     free(dy_n_tmp);
 }
 
-void bessel_kn /* untested */
+int bessel_kn
+(
+    int N,
+    double* z,
+    int nZ,
+    double* k_n,
+    double* dk_n
+)
+{
+    int computedN, i;
+    double* k_0N, *dk_0N;
+
+    saf_assert(k_n!=NULL || dk_n!=NULL, "Either k_n or dk_n must be not NULL!");
+
+    /* Compute the function for all orders */
+    k_0N  = k_n==NULL  ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    dk_0N = dk_n==NULL ? NULL : malloc1d(nZ*(N+1)*sizeof(double));
+    bessel_kn_ALL(N, z, nZ, &computedN, k_0N, dk_0N);
+
+    /* Output only the function values for order 'N' */
+    if(k_n!=NULL)
+        for(i=0; i<nZ; i++)
+            k_n[i] = computedN==N ? k_0N[i*(N+1)+(N)] : 0.0;
+    if(dk_n!=NULL)
+        for(i=0; i<nZ; i++)
+            dk_n[i] = computedN==N ? dk_0N[i*(N+1)+(N)] : 0.0;
+
+    /* clean-up */
+    free(k_0N);
+    free(dk_0N);
+    return computedN==N ? 1 : 0;
+}
+
+void bessel_kn_ALL
 (
     int N,
     double* z,
@@ -738,7 +992,40 @@ void bessel_kn /* untested */
     free(dk_n_tmp);
 }
 
-void hankel_hn1
+int hankel_hn1
+(
+    int N,
+    double* z,
+    int nZ,
+    double_complex* h_n1,
+    double_complex* dh_n1
+)
+{
+    int computedN, i;
+    double_complex* h1_0N, *dh1_0N;
+
+    saf_assert(h_n1!=NULL || dh_n1!=NULL, "Either h_n1 or dh_n1 must be not NULL!");
+
+    /* Compute the function for all orders */
+    h1_0N  = h_n1==NULL  ? NULL : malloc1d(nZ*(N+1)*sizeof(double_complex));
+    dh1_0N = dh_n1==NULL ? NULL : malloc1d(nZ*(N+1)*sizeof(double_complex));
+    hankel_hn1_ALL(N, z, nZ, &computedN, h1_0N, dh1_0N);
+
+    /* Output only the function values for order 'N' */
+    if(h_n1!=NULL)
+        for(i=0; i<nZ; i++)
+            h_n1[i] = computedN==N ? h1_0N[i*(N+1)+(N)] : cmplx(0.0, 0.0);
+    if(dh_n1!=NULL)
+        for(i=0; i<nZ; i++)
+            dh_n1[i] = computedN==N ? dh1_0N[i*(N+1)+(N)] : cmplx(0.0, 0.0);
+
+    /* clean-up */
+    free(h1_0N);
+    free(dh1_0N);
+    return computedN==N ? 1 : 0;
+}
+
+void hankel_hn1_ALL
 (
     int N,
     double* z,
@@ -802,7 +1089,40 @@ void hankel_hn1
     free(dy_n_tmp);
 }
 
-void hankel_hn2
+int hankel_hn2
+(
+    int N,
+    double* z,
+    int nZ,
+    double_complex* h_n2,
+    double_complex* dh_n2
+)
+{
+    int computedN, i;
+    double_complex* h2_0N, *dh2_0N;
+
+    saf_assert(h_n2!=NULL || dh_n2!=NULL, "Either h_n2 or dh_n2 must be not NULL!");
+
+    /* Compute the function for all orders */
+    h2_0N  = h_n2==NULL  ? NULL : malloc1d(nZ*(N+1)*sizeof(double_complex));
+    dh2_0N = dh_n2==NULL ? NULL : malloc1d(nZ*(N+1)*sizeof(double_complex));
+    hankel_hn2_ALL(N, z, nZ, &computedN, h2_0N, dh2_0N);
+
+    /* Output only the function values for order 'N' */
+    if(h_n2!=NULL)
+        for(i=0; i<nZ; i++)
+            h_n2[i] = computedN==N ? h2_0N[i*(N+1)+(N)] : cmplx(0.0, 0.0);
+    if(dh_n2!=NULL)
+        for(i=0; i<nZ; i++)
+            dh_n2[i] = computedN==N ? dh2_0N[i*(N+1)+(N)] : cmplx(0.0, 0.0);
+
+    /* clean-up */
+    free(h2_0N);
+    free(dh2_0N);
+    return computedN==N ? 1 : 0;
+}
+
+void hankel_hn2_ALL
 (
     int N,
     double* z,

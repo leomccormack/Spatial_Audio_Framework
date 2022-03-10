@@ -84,8 +84,10 @@ int main_test(void) {
     timer_lib_initialize();
     start = timer_current();
     UNITY_BEGIN();
-    
+
     /* SAF utilities modules unit tests */
+    RUN_TEST(test__cylindricalBesselFunctions);
+    RUN_TEST(test__sphericalBesselFunctions);
     RUN_TEST(test__cart2sph);
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);

@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <inttypes.h>
 #include "hdf_reader.h"
 
 /* Only external library requirement is zlib: */
@@ -330,7 +331,11 @@ int treeRead(struct READER *reader, struct DATAOBJECT *data) {
 
 	mylog("elements %d size %d\n", elements, size);
 
+#ifdef LIBMYSOFA_ENABLE_FILE_SIZE_LIMITS
 	if (elements <= 0 || size <= 0 || elements >= 0x100000 || size > 0x10)
+#else
+    if (elements <= 0 || size <= 0)
+#endif
 		return MYSOFA_INVALID_FORMAT; // LCOV_EXCL_LINE
 	if (!(output = malloc(elements * size))) {
 		return MYSOFA_NO_MEMORY; // LCOV_EXCL_LINE
@@ -522,10 +527,12 @@ static int readGCOL(struct READER *reader) {
 	address = ftell(reader->fhd);
 	end = address;
 	collection_size = readValue(reader, reader->superblock.size_of_lengths);
+#ifdef LIBMYSOFA_ENABLE_FILE_SIZE_LIMITS
 	if (collection_size > 0x400000000) {
 		mylog("collection_size is too large\n");
 		return MYSOFA_INVALID_FORMAT;
 	}
+#endif
 	end += collection_size - 8;
 
 	while (ftell(reader->fhd) <= (long)(end - 8 - reader->superblock.size_of_lengths)) {

@@ -22,7 +22,8 @@ if(NOT DEFINED saf_example_list)
         powermap
         rotator
         sldoa
-        spreader)
+        spreader
+        tvconv)
 endif()
 
 # Find number of examples

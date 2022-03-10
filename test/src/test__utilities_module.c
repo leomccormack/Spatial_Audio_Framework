@@ -24,6 +24,78 @@
 
 #include "saf_test.h"
 
+void test__cylindricalBesselFunctions(void){ // TODO: may as well check the derivatives too...
+    int i;
+    double J_n[10], Y_n[10];
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int testOrder = 7; /* note, REF values hardcoded for order 7 */
+    double z[10] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}; /* note, REF values hardcoded for these values */
+
+    /* Reference values computed in MATLAB with:
+     * J_n = besselj(N, z);
+     * y_n = bessely(N, z);
+     */
+    double J_nREF[10] = {0.0, 1.50232581743681e-06, 0.000174944074868274, 0.00254729445180469, 0.0151760694220584, 0.0533764101558907, 0.129586651841481, 0.233583569505696, 0.320589077979826, 0.327460879242453};
+    double Y_nREF[10] = {0.0, -30588.9570521240, -271.548025367994, -19.8399354089864, -3.70622393164077, -1.26289883576932, -0.656590825719075, -0.405371018606768, -0.200063904600409, 0.0172445799076681};
+
+    /* test bessel_Jn */
+    bessel_Jn(testOrder, z, 10, J_n, NULL);
+    for(i=0; i<10; i++)
+        TEST_ASSERT_TRUE(fabs(J_n[i]-J_nREF[i])<acceptedTolerance);
+
+    /* test bessel_Yn */
+    bessel_Yn(testOrder, z, 10, Y_n, NULL);
+    for(i=0; i<10; i++)
+        TEST_ASSERT_TRUE(fabs(Y_n[i]-Y_nREF[i])<acceptedTolerance);
+}
+
+void test__sphericalBesselFunctions(void){ // TODO: may as well check the derivatives too...
+    int i, successFlag;
+    double j_n[10], i_n[10], y_n[10], k_n[10];
+
+    /* Config */
+    const float acceptedTolerance = 0.00001f;
+    int testOrder = 7; /* note, REF values hardcoded for order 7 */
+    double z[10] = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0}; /* note, REF values hardcoded for these values */
+
+    /* Reference values computed in MATLAB with:
+     * j_n = sqrt(pi./(2*z)).*besselj(N+0.5, z);
+     * i_n = sqrt(pi./(2*z)).*besseli(N+0.5, z);
+     * y_n = sqrt(pi./(2*z)).*bessely(N+0.5, z);
+     * k_n = sqrt(pi./(2*z)).*besselk(N+0.5, z);
+     */
+    double j_nREF[10] = {0.0, 4.79013419873948e-07, 5.60965570334894e-05, 0.000824843253217635, 0.00498650846172602, 0.0179027781779895, 0.0447223808293482, 0.0839226228445072, 0.122272711565833, 0.137946585027486};
+    double i_nREF[10] = {0.0, 5.08036087257580e-07, 7.09794452304064e-05, 0.00140087680258227, 0.0127983365433790, 0.0783315436379810, 0.377879458299915, 1.56419501808402, 5.83626393050750, 20.2384754394417};
+    double y_nREF[10] = {0.0, -140452.852366906, -617.054329642527, -29.4761692244538, -3.98778927238432, -1.02739463881260, -0.425887203702750, -0.237025274765842, -0.132622247946352, -0.0402143438632017};
+    double k_nREF[10] = {0.0, 204287.522076393, 712.406907885478, 23.1153112578315, 1.80293583642309, 0.222213613092395, 0.0360276414091966, 0.00698538879470478, 0.00153285534574965, 0.000367847412220325};
+
+    /* test bessel_jn */
+    successFlag = bessel_jn(testOrder, z, 10, j_n, NULL);
+    TEST_ASSERT_TRUE(successFlag);
+    for(i=0; i<10; i++)
+        TEST_ASSERT_TRUE(fabs(j_n[i]-j_nREF[i])<acceptedTolerance);
+
+    /* test bessel_in */
+    successFlag = bessel_in(testOrder, z, 10, i_n, NULL);
+    TEST_ASSERT_TRUE(successFlag);
+    for(i=0; i<10; i++)
+        TEST_ASSERT_TRUE(fabs(i_n[i]-i_nREF[i])<acceptedTolerance);
+
+    /* test bessel_yn */
+    successFlag = bessel_yn(testOrder, z, 10, y_n, NULL);
+    TEST_ASSERT_TRUE(successFlag);
+    for(i=0; i<10; i++)
+        TEST_ASSERT_TRUE(fabs(y_n[i]-y_nREF[i])<acceptedTolerance);
+
+    /* test bessel_kn */
+    successFlag = bessel_kn(testOrder, z, 10, k_n, NULL);
+    TEST_ASSERT_TRUE(successFlag);
+    for(i=0; i<10; i++)
+        TEST_ASSERT_TRUE(fabs(k_n[i]-k_nREF[i])<acceptedTolerance);
+}
+
 void test__cart2sph(void){
     const float acceptedTolerance = 0.00001f;
     float cordCar [100][3];
@@ -40,7 +112,7 @@ void test__cart2sph(void){
         for (int j=0; j<3; j++)
             TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, cordCar[i][j], cordCarTest[i][j]);
 
-    /*deg */
+    /* deg */
     cart2sph((float*) cordCar, 100, SAF_TRUE, (float*) cordSph);
     sph2cart((float*) cordSph, 100, SAF_TRUE, (float*) cordCarTest);
     for (int i=0; i<100; i++)
