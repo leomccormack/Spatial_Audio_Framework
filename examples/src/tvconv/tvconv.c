@@ -54,14 +54,15 @@ void tvconv_create
     memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
     
     /* positions */
-    pData->positions = NULL;
-    pData->nPositions = 0;
+    pData->listenerPositions = NULL;
+    pData->nListenerPositions = 0;
     pData->position_idx = 0;
     for (int d = 0; d < NUM_DIMENSIONS; d++){
-        pData->position[d] = 0.0f;
+        pData->targetPosition[d] = 0.0f;
         pData->minDimensions[d] = 0.0f;
         pData->maxDimensions[d] = 0.0f;
     }
+
     /* flags/status */
     pData->progressBar0_1 = 0.0f;
     pData->progressBarText = malloc1d(PROGRESSBARTEXT_CHAR_LENGTH*sizeof(char));
@@ -87,7 +88,7 @@ void tvconv_destroy
         free(pData->inputFrameTD);
         free(pData->outputFrameTD);
         free(pData->irs);
-        free(pData->positions);
+        free(pData->listenerPositions);
         saf_TVConv_destroy(&(pData->hTVConv));
         free(pData);
         pData = NULL;
@@ -111,10 +112,8 @@ void tvconv_init
         pData->reInitFilters = 1;
         tvconv_setCodecStatus(hTVCnv, CODEC_STATUS_NOT_INITIALISED);
     }
-    
     tvconv_checkReInit(hTVCnv);
 }
-
 
 void tvconv_process
 (
@@ -137,27 +136,27 @@ void tvconv_process
     numOutputChannels = pData->nOutputChannels;
 
     for(s=0; s<nSamples; s++){
-        // Load input signals into inFIFO buffer 
+        /* Load input signals into inFIFO buffer */
         for(ch=0; ch<SAF_MIN(SAF_MIN(nInputs,numInputChannels),MAX_NUM_CHANNELS); ch++)
             pData->inFIFO[ch][pData->FIFO_idx] = inputs[ch][s];
-        for(; ch<numInputChannels; ch++) // Zero any channels that were not given 
+        for(; ch<numInputChannels; ch++) /* Zero any channels that were not given */
             pData->inFIFO[ch][pData->FIFO_idx] = 0.0f;
 
-        // Pull output signals from outFIFO buffer 
+        /* Pull output signals from outFIFO buffer */
         for(ch=0; ch<SAF_MIN(SAF_MIN(nOutputs, numOutputChannels),MAX_NUM_CHANNELS); ch++)
             outputs[ch][s] = pData->outFIFO[ch][pData->FIFO_idx];
-        for(; ch<nOutputs; ch++) // Zero any extra channels 
+        for(; ch<nOutputs; ch++) /* Zero any extra channels */
             outputs[ch][s] = 0.0f;
 
-        // Increment buffer index 
+        /* Increment buffer index */
         pData->FIFO_idx++;
 
-        // Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it 
+        /* Process frame if inFIFO is full and filters are loaded and saf_matrixConv_apply is ready for it */
         if (pData->FIFO_idx >= pData->hostBlockSize_clamped && pData->reInitFilters == 0 &&
             pData->codecStatus == CODEC_STATUS_INITIALISED) {
             pData->FIFO_idx = 0;
 
-            // Load time-domain data 
+            /* Load time-domain data */
             for(i=0; i < numInputChannels; i++)
                 utility_svvcopy(pData->inFIFO[i], pData->hostBlockSize_clamped, pData->inputFrameTD[i]);
 
@@ -167,25 +166,22 @@ void tvconv_process
                               FLATTEN2D(pData->outputFrameTD),
                               pData->position_idx);
             }
-            // if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then zero the output 
-            else{
+            /* if the matrix convolver handle has not been initialised yet (i.e. no filters have been loaded) then zero the output */
+            else
                 memset(FLATTEN2D(pData->outputFrameTD), 0, MAX_NUM_CHANNELS * (pData->hostBlockSize_clamped)*sizeof(float));
-            }
             
-            // copy signals to output buffer 
+            /* copy signals to output buffer */
             for (i = 0; i < SAF_MIN(numOutputChannels, MAX_NUM_CHANNELS); i++)
                 utility_svvcopy(pData->outputFrameTD[i], pData->hostBlockSize_clamped, pData->outFIFO[i]);
         }
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
-            // clear outFIFO if codec was not ready 
+            /* clear outFIFO if codec was not ready */
             pData->FIFO_idx = 0;
             memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
         }
     }
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
 }
-
-
 
 
 /*sets*/
@@ -217,7 +213,7 @@ void tvconv_checkReInit(void* const hTVCnv)
                               pData->hostBlockSize_clamped,
                               pData->irs,
                               pData->ir_length,
-                              pData->nPositions,
+                              pData->nListenerPositions,
                               pData->nOutputChannels,
                               pData->position_idx);
         }
@@ -273,24 +269,21 @@ void tvconv_setFiltersAndPositions
             pData->ir_fs = (int)sofa.DataSamplingRate;
             pData->ir_length = sofa.DataLengthIR;
             pData->nIrChannels = sofa.nReceivers;
-            pData->nPositions = sofa.nListeners;
+            pData->nListenerPositions = sofa.nListeners;
             /* copy only the first source position, because number of source positions might be incorrect in sofa */
             memcpy(pData->sourcePosition, sofa.SourcePosition, sizeof(vectorND));
             
-            pData->irs = (float**)realloc2d((void**)pData->irs, pData->nPositions, pData->nIrChannels*pData->ir_length, sizeof(float));
+            pData->irs = (float**)realloc2d((void**)pData->irs, pData->nListenerPositions, pData->nIrChannels*pData->ir_length, sizeof(float));
             int tmp_length = pData->nIrChannels * pData->ir_length;
-            for(i=0; i<pData->nPositions; i++){
+            for(i=0; i<pData->nListenerPositions; i++){
                 memcpy(pData->irs[i], &(sofa.DataIR[i*tmp_length]), tmp_length*sizeof(float));
             }
             
             strcpy(pData->progressBarText,"Loading positions");
             pData->progressBar0_1 = 0.8f;
             
-            pData->positions = (vectorND*)realloc1d((void*)pData->positions, pData->nPositions*sizeof(vectorND));
-            memcpy(pData->positions, sofa.ListenerPosition, pData->nPositions*sizeof(vectorND));
-            
-            
-
+            pData->listenerPositions = (vectorND*)realloc1d((void*)pData->listenerPositions, pData->nListenerPositions*sizeof(vectorND));
+            memcpy(pData->listenerPositions, sofa.ListenerPosition, pData->nListenerPositions*sizeof(vectorND));
         }
     }
     
@@ -304,9 +297,7 @@ void tvconv_setFiltersAndPositions
     /* done! */
     strcpy(pData->progressBarText,"Done!");
     pData->progressBar0_1 = 1.0f;
-
 }
-
 
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path)
 {
@@ -318,10 +309,10 @@ void tvconv_setSofaFilePath(void* const hTVCnv, const char* path)
     tvconv_setFiltersAndPositions(hTVCnv);
 }
 
-void tvconv_setPosition(void* const hTVCnv, int dim, float position){
+void tvconv_setTargetPosition(void* const hTVCnv, float position, int dim){
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
-    pData->position[dim] = position;
+    pData->targetPosition[dim] = position;
     tvconv_findNearestNeigbour(hTVCnv);
 }
 
@@ -346,28 +337,35 @@ int tvconv_getHostBlockSize(void* const hTVCnv)
     return pData->hostBlockSize;
 }
 
-int tvconv_getNIRs(void* const hTVCnv)
+int tvconv_getNumIRs(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     return pData->nIrChannels;
 }
 
-int tvconv_getNPositions(void* const hTVCnv)
+int tvconv_getNumListenerPositions(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    return pData->nPositions;
+    return pData->nListenerPositions;
 }
+
+float tvconv_getListenerPosition(void* const hTVCnv, int index, int dim)
+{
+    tvconv_data *pData = (tvconv_data*)(hTVCnv);
+    return pData->listenerPositions[index][dim];
+}
+
 int tvconv_getPositionIdx(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     return pData->position_idx;
 }
 
-float tvconv_getPosition(void* const hTVCnv, int dim)
+float tvconv_getTargetPosition(void* const hTVCnv, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     saf_assert(dim >= 0 && dim < NUM_DIMENSIONS, "Dimension out of scope");
-    return (float) pData->position[dim];
+    return (float) pData->targetPosition[dim];
 }
 
 float tvconv_getSourcePosition(void* const hTVCnv, int dim)

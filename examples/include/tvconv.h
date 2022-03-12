@@ -76,6 +76,7 @@ void tvconv_process(void* const hTVCnv,
                     int nOutputs,
                     int nSamples);
 
+
 /* ========================================================================== */
 /*                                Set Functions                               */
 /* ========================================================================== */
@@ -91,23 +92,21 @@ void tvconv_refreshParams(void* const hTVCnv);
  */
 void tvconv_checkReInit(void* const hTVCnv);
 
-/**
- * Reads IRs and positions from the current sofa file path.
- */
+/** Reads IRs and positions from the current sofa file path. */
 void tvconv_setFiltersAndPositions(void* const hTVCnv);
 
-/**
- *  Sets current sofa file path.
- */
+/** Sets current sofa file path. */
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path);
 
 /**
- *  Sets listener position.
+ *  Sets the target listener position.
  *
- *  @param[in] dim                  dimension of the coordinate to be set (0 is x, 1 is y, and 2 is z).
- *  @param[in] position       new position to be set.
+ *  @param[in] dim      dimension of the coordinate to be set (0 is x, 1 is y,
+ *  *                   and 2 is z).
+ *  @param[in] position new position to be set.
  */
-void tvconv_setPosition(void* const hTVCnv, int dim, float position);
+void tvconv_setTargetPosition(void* const hTVCnv, float position, int dim);
+
 
 /* ========================================================================== */
 /*                                Get Functions                               */
@@ -120,9 +119,7 @@ void tvconv_setPosition(void* const hTVCnv, int dim, float position);
 int tvconv_getFrameSize(void);
 
     
-/**
- * Returns the number input channels
- */
+/** Returns the number input channels */
 int tvconv_getNumInputChannels(void* const hTVCnv);
 
 /**
@@ -131,59 +128,40 @@ int tvconv_getNumInputChannels(void* const hTVCnv);
  */
 int tvconv_getNumOutputChannels(void* const hTVCnv);
 
-/**
- * Returns the currect host block size
- */
+/** Returns the currect host block size */
 int tvconv_getHostBlockSize(void* const hTVCnv);
 
-/**
- * Returns the number of IR channels in the loaded sofa file
- */
-int tvconv_getNIRs(void* const hTVCnv);
+/** Returns the number of IR channels in the loaded sofa file */
+int tvconv_getNumIRs(void* const hTVCnv);
 
-/**
- * Returns the number of listener positions in the loaded sofa file
- */
-int tvconv_getNPositions(void* const hTVCnv);
+/** Returns the number of listener positions in the loaded sofa file */
+int tvconv_getNumListenerPositions(void* const hTVCnv);
 
-/**
- * Returns the index of the current IR position
- */
+/** Returns the current coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1) */
+float tvconv_getListenerPosition(void* const hTVCnv, int index, int dim);
+
+/** Returns the index of the current IR position */
 int tvconv_getPositionIdx(void* const hTVCnv);
 
-/**
- * Returns the current coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1)
- */
-float tvconv_getPosition(void* const hTVCnv, int dim);
+/** Returns the current coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1) */
+float tvconv_getTargetPosition(void* const hTVCnv, int dim);
 
-/**
- * Returns the source coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1)
- */
+/** Returns the source coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1) */
 float tvconv_getSourcePosition(void* const hTVCnv, int dim);
 
-/**
- * Returns minimum cooridinate of dimension dim (0 ... NUM_DIMENSIONS-1)
- */
+/** Returns minimum cooridinate of dimension dim (0 ... NUM_DIMENSIONS-1) */
 float tvconv_getMinDimension(void* const hTVCnv, int dim);
 
-/**
- * Returns minimum cooridinate of dimension dim  (0 ... NUM_DIMENSIONS-1)
- */
+/** Returns minimum cooridinate of dimension dim  (0 ... NUM_DIMENSIONS-1) */
 float tvconv_getMaxDimension(void* const hTVCnv, int dim);
 
-/**
- * Returns the current filter length, in samples
- */
+/** Returns the current filter length, in samples */
 int tvconv_getIRLength(void* const hTVCnv);
 
-/**
- * Returns the samplerate of the loaded filters
- */
+/** Returns the samplerate of the loaded filters  */
 int tvconv_getIRFs(void* const hTVCnv);
 
-/**
- * Returns the samperate of the host
- */
+/** Returns the samperate of the host */
 int tvconv_getHostFs(void* const hTVCnv);
 
 /**
@@ -192,16 +170,12 @@ int tvconv_getHostFs(void* const hTVCnv);
  */
 int tvconv_getProcessingDelay(void* const hTVCnv);
 
-/**
- * Returns the current Sofa file path
- */
+/** Returns the current Sofa file path */
 char* tvconv_getSofaFilePath(void* const hTVCnv);
 
-
-/**
- * Returns current codec status (see #CODEC_STATUS enum)
- */
+/** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv);
+
 
 #ifdef __cplusplus
 } /* extern "C" { */

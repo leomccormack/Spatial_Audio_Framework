@@ -39,11 +39,11 @@ void tvconv_findNearestNeigbour(void* const hTVCnv)
     float dist = 0, minDist = 0;
     int i, d, min_idx = 0;
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    if (pData->nPositions > 0 && pData->positions != NULL) {
-        for(i = 0; i < pData->nPositions; i++){
+    if (pData->nListenerPositions > 0 && pData->listenerPositions != NULL) {
+        for(i = 0; i < pData->nListenerPositions; i++){
             for(d = 0; d < NUM_DIMENSIONS; d++)
-                dist += (pData->position[d] - pData->positions[i][d]) *
-                        (pData->position[d] - pData->positions[i][d]);
+                dist += (pData->targetPosition[d] - pData->listenerPositions[i][d]) *
+                        (pData->targetPosition[d] - pData->listenerPositions[i][d]);
             
             if(dist < minDist || i == 0){
                 minDist = dist;
@@ -60,19 +60,19 @@ void tvconv_setMinMaxDimensions(void* const hTVCnv)
 {
     int i, d;
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    if(pData->positions != NULL){
+    if(pData->listenerPositions != NULL){
         for(d = 0; d < NUM_DIMENSIONS; d++){
-            pData->minDimensions[d] = pData->positions[0][d];
-            pData->maxDimensions[d] = pData->positions[0][d];
-            for(i = 1; i<pData->nPositions; i++){
-                if(pData->positions[i][d] < pData->minDimensions[d])
-                    pData->minDimensions[d] = pData->positions[i][d];
-                else if (pData->positions[i][d] > pData->maxDimensions[d])
-                    pData->maxDimensions[d] = pData->positions[i][d];
+            pData->minDimensions[d] = pData->listenerPositions[0][d];
+            pData->maxDimensions[d] = pData->listenerPositions[0][d];
+            for(i = 1; i<pData->nListenerPositions; i++){
+                if(pData->listenerPositions[i][d] < pData->minDimensions[d])
+                    pData->minDimensions[d] = pData->listenerPositions[i][d];
+                else if (pData->listenerPositions[i][d] > pData->maxDimensions[d])
+                    pData->maxDimensions[d] = pData->listenerPositions[i][d];
             }
         }
         /* resetting current position to the start */
         for(d = 0; d < NUM_DIMENSIONS; d++)
-            pData->position[d] = pData->minDimensions[d];
+            pData->targetPosition[d] = pData->minDimensions[d];
     }
 }

@@ -268,11 +268,6 @@
 # endif
 #endif
 
-
-/* ========================================================================== */
-/*       External Libraries used by the Optional saf_sofa_reader Module       */
-/* ========================================================================== */
-
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 /*
  * The built-in saf_sofa_open() SOFA file reader has two implementations:

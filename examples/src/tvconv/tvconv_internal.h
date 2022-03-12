@@ -48,14 +48,10 @@ extern "C" {
 /*                                 Structures                                 */
 /* ========================================================================== */
 
-/**
- * Structure for a vector
- */
+/** Structure for a vector */
 typedef float vectorND[NUM_DIMENSIONS];
 
-/**
- * Main structure for tvconv.
- */
+/** Main structure for tvconv  */
 typedef struct _tvconv
 {
     /* FIFO buffers */
@@ -77,13 +73,14 @@ typedef struct _tvconv
     
     int ir_fs;
     float** irs;   /**< npositionsx x (FLAT: nfilters x filter_length) */
-    int nIrChannels; /** < number of filters per position */
+    int nIrChannels; /**< number of filters per position */
     int ir_length;
+    
     /* positions */
-    vectorND* positions; /** < npositions x 3 */
-    int nPositions;
-    vectorND minDimensions;
-    vectorND maxDimensions;
+    vectorND* listenerPositions;       /**< The listener positions; nListenerPositions x 3 */
+    int nListenerPositions;
+    vectorND minDimensions;            /**< Minimum values across all dimensions */
+    vectorND maxDimensions;            /**< Maximum values across all dimensions */
     int position_idx;
     vectorND sourcePosition;
     
@@ -95,7 +92,7 @@ typedef struct _tvconv
     
     /* user parameters */
     int nInputChannels;        /**< number of input channels */
-    vectorND position;    
+    vectorND targetPosition;    
     char* sofa_filepath;
 
 } tvconv_data;
@@ -104,18 +101,15 @@ typedef struct _tvconv
 /*                             Internal Functions                             */
 /* ========================================================================== */
 
-/**
- * Sets codec status (see #CODEC_STATUS enum)
- */
+/** Sets codec status (see #CODEC_STATUS enum) */
 void tvconv_setCodecStatus(void* const hTVCnv,
                                  CODEC_STATUS newStatus);
-/**
- * FInds the index holding the nearest neigbour to the selected position
- */
+/** Finds the index holding the nearest neigbour to the selected position */
 void tvconv_findNearestNeigbour(void* const hTVCnv);
 
 /**
- * Sets the smallest and the highest position of each dimension from the list of positions
+ * Sets the smallest and the highest position of each dimension from the list of
+ * positions
  */
 void tvconv_setMinMaxDimensions(void* const hTVCnv);
 
