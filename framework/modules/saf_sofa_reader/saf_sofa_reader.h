@@ -59,10 +59,9 @@ typedef enum{
 
     /** If SAF_ENABLE_NETCDF is defined, then an alternative SOFA reader may be
      *  used. This version requires netcdf to be linked to SAF, along with its
-     *  dependencies: hdf5 and (zlib or szip). If netcdf uses szip instead of
-     *  zlib, then this option will also get around the file size limits of
-     *  zlib. Note that szip is also approximately 3 times faster than zlib for
-     *  larger files. Therefore, if you intend to load many large SOFA files
+     *  dependencies. The netcdf loader gets around the file size limits of
+     *  the libmysofa loader and is also approximately 3 times faster.
+     *  Therefore, if you intend to load many large SOFA files
      *  (especially microphone arrays or Ambisonic IRs), then this alternative
      *  SOFA reader is either required (to get around the file size limit) or
      *  may be preferred due to the shorter loading times. The downsides of

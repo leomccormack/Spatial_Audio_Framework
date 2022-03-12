@@ -89,7 +89,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
     switch(option){
         case SAF_SOFA_READER_OPTION_DEFAULT: /* fall through */
         case SAF_SOFA_READER_OPTION_LIBMYSOFA:
-            /* Load SOFA file */
+            /* Load SOFA file using the libmysofa library: */
             hrtf = mysofa_load(sofa_filepath, &err);
             h->hLMSOFA = (void*)hrtf;
             switch(err){
@@ -623,7 +623,7 @@ SAF_SOFA_ERROR_CODES saf_sofa_open
             free(dimids);
             free(tmp_data);
 #else
-            saf_print_error("SAF_ENABLE_NETCDF must be defined to use this SOFA reader!")
+            saf_print_error("SAF_ENABLE_NETCDF must be defined to use this SOFA reader!");
 #endif /* SAF_ENABLE_NETCDF */
             break;
     }

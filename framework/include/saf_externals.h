@@ -75,8 +75,9 @@
      defined(SAF_USE_INTEL_MKL_ILP64) + \
      defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
      defined(SAF_USE_ATLAS) + \
-     defined(SAF_USE_APPLE_ACCELERATE)) > 1
-# error Only one performance library flag can be defined!
+     defined(SAF_USE_GSL) + \
+     defined(SAF_USE_APPLE_ACCELERATE)) != 1
+# error One (and only one) performance library flag should be defined!
 #endif
 
 /*
@@ -182,7 +183,7 @@
  * functions used in saf_utility_veclib will need to be swapped out for
  * equivalent functions in GSL
  */
-# warning Using GNU Scientific Library (GSL) is currently experimental
+# error Using GNU Scientific Library (GSL) is currently unsupported/incomplete
 # include "gsl_cblas.h"
 
 #else
@@ -269,7 +270,7 @@
 
 
 /* ========================================================================== */
-/*     External Libraries Required by the Optional saf_sofa_reader Module     */
+/*       External Libraries used by the Optional saf_sofa_reader Module       */
 /* ========================================================================== */
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
@@ -282,10 +283,9 @@
  *      decompressing large files.
  *    - If SAF_ENABLE_NETCDF is defined, then an alternative SOFA reader may be
  *      used. This version requires netcdf to be linked to SAF, along with its
- *      dependencies: hdf5 and (zlib or szip). If netcdf uses szip instead of
- *      zlib, then this option will also get around the file size limits of
- *      zlib. Note that szip is also approximately 3 times faster than zlib for
- *      larger files. Therefore, if you intend to load many large SOFA files
+ *      dependencies. The netcdf loader gets around the file size limits of
+ *      the libmysofa loader and is also approximately 3 times faster.
+ *      Therefore, if you intend to load many large SOFA files
  *      (especially microphone arrays or Ambisonic IRs), then this alternative
  *      SOFA reader is either required (to get around the file size limit) or
  *      may be preferred due to the shorter loading times. The downsides of
