@@ -45,6 +45,8 @@
 		50CB1E0B27CE18D300E080E3 /* saf_hades_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E0727CE18D300E080E3 /* saf_hades_internal.c */; };
 		50CB1E1327CE3FD700E080E3 /* binauraliser_nf.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E1127CE3FD700E080E3 /* binauraliser_nf.c */; };
 		50CB1E1427CE3FD700E080E3 /* binauraliser_nf_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E1227CE3FD700E080E3 /* binauraliser_nf_internal.c */; };
+		50CB1E9027DC8DBB00E080E3 /* tvconv_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E8D27DC8DBA00E080E3 /* tvconv_internal.c */; };
+		50CB1E9127DC8DBB00E080E3 /* tvconv.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1E8E27DC8DBA00E080E3 /* tvconv.c */; };
 		50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3600D249BDDCB00B74C25 /* md_malloc.c */; };
 		50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36010249BDDCB00B74C25 /* kiss_fft.c */; };
 		50E3605E249BDDCC00B74C25 /* kiss_fftr.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E36011249BDDCB00B74C25 /* kiss_fftr.c */; };
@@ -204,6 +206,10 @@
 		50CB1E1027CE3FD700E080E3 /* binauraliser_nf_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = binauraliser_nf_internal.h; sourceTree = "<group>"; };
 		50CB1E1127CE3FD700E080E3 /* binauraliser_nf.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser_nf.c; sourceTree = "<group>"; };
 		50CB1E1227CE3FD700E080E3 /* binauraliser_nf_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = binauraliser_nf_internal.c; sourceTree = "<group>"; };
+		50CB1E8D27DC8DBA00E080E3 /* tvconv_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tvconv_internal.c; sourceTree = "<group>"; };
+		50CB1E8E27DC8DBA00E080E3 /* tvconv.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tvconv.c; sourceTree = "<group>"; };
+		50CB1E8F27DC8DBA00E080E3 /* tvconv_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tvconv_internal.h; sourceTree = "<group>"; };
+		50CB1E9327DC8DE200E080E3 /* tvconv.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tvconv.h; sourceTree = "<group>"; };
 		50E36007249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
 		50E36009249BDDCB00B74C25 /* saf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf.h; sourceTree = "<group>"; };
 		50E3600B249BDDCB00B74C25 /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -527,6 +533,16 @@
 			path = binauraliser_nf;
 			sourceTree = "<group>";
 		};
+		50CB1E8C27DC8DBA00E080E3 /* tvconv */ = {
+			isa = PBXGroup;
+			children = (
+				50CB1E8E27DC8DBA00E080E3 /* tvconv.c */,
+				50CB1E8F27DC8DBA00E080E3 /* tvconv_internal.h */,
+				50CB1E8D27DC8DBA00E080E3 /* tvconv_internal.c */,
+			);
+			path = tvconv;
+			sourceTree = "<group>";
+		};
 		50E36006249BDDCB00B74C25 /* framework */ = {
 			isa = PBXGroup;
 			children = (
@@ -768,6 +784,7 @@
 				50E3DE3A24C1B81200589B17 /* rotator.h */,
 				50E3DE4124C1B81200589B17 /* sldoa.h */,
 				50C18ED1261E3FBB008A17B1 /* spreader.h */,
+				50CB1E9327DC8DE200E080E3 /* tvconv.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -794,6 +811,7 @@
 				50E3DECD24C1C80B00589B17 /* rotator */,
 				50E3DEF924C1D4EA00589B17 /* sldoa */,
 				50C18ED2261E3FCC008A17B1 /* spreader */,
+				50CB1E8C27DC8DBA00E080E3 /* tvconv */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -1103,6 +1121,7 @@
 				50E3605E249BDDCC00B74C25 /* kiss_fftr.c in Sources */,
 				50CB1E1327CE3FD700E080E3 /* binauraliser_nf.c in Sources */,
 				5032CDDC2744FDE2001855CD /* deflate.c in Sources */,
+				50CB1E9127DC8DBB00E080E3 /* tvconv.c in Sources */,
 				50E3DEE524C1C80C00589B17 /* multiconv_internal.c in Sources */,
 				50E36071249BDDCC00B74C25 /* saf_utility_decor.c in Sources */,
 				50E3DF0924C1D4EA00589B17 /* powermap_internal.c in Sources */,
@@ -1157,6 +1176,7 @@
 				50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */,
 				5093400E27181D460064F222 /* test__sh_module.c in Sources */,
 				50E36060249BDDCC00B74C25 /* convhull_3d.c in Sources */,
+				50CB1E9027DC8DBB00E080E3 /* tvconv_internal.c in Sources */,
 				50E3DEED24C1D16400589B17 /* binauraliser_internal.c in Sources */,
 				5032CDDA2744FDE2001855CD /* inflate.c in Sources */,
 				50E3606D249BDDCC00B74C25 /* saf_utility_loudspeaker_presets.c in Sources */,

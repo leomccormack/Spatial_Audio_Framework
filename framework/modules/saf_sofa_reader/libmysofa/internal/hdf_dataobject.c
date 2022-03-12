@@ -96,12 +96,10 @@ static int readOHDRHeaderMessageDataspace1(struct READER *reader,
     if (i < 4) {
       ds->dimension_size[i] =
           readValue(reader, reader->superblock.size_of_lengths);
-#ifdef LIBMYSOFA_ENABLE_FILE_SIZE_LIMITS
       if (ds->dimension_size[i] > 1000000) {
         mylog("dimension_size is too large\n"); // LCOV_EXCL_LINE
         return MYSOFA_INVALID_FORMAT;           // LCOV_EXCL_LINE
       }
-#endif
       mylog("   dimension %d %" PRIu64 "\n", i, ds->dimension_size[i]);
     } else
       readValue(reader, reader->superblock.size_of_lengths);
@@ -532,10 +530,8 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
       if (fseek(reader->fhd, (long)data_address, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
       if (!data->data) {
-#ifdef LIBMYSOFA_ENABLE_FILE_SIZE_LIMITS
         if (data_size > 0x10000000)
           return MYSOFA_INVALID_FORMAT;
-#endif
         data->data_len = (int)data_size;
         data->data = calloc(1, data_size);
         if (!data->data)
@@ -576,10 +572,8 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
       if (fseek(reader->fhd, (long)data_address, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
       if (!data->data) {
-#ifdef LIBMYSOFA_ENABLE_FILE_SIZE_LIMITS
         if (size > 0x10000000)
           return MYSOFA_INVALID_FORMAT; // LCOV_EXCL_LINE
-#endif
         data->data_len = size;
         data->data = calloc(1, size);
         if (!data->data)
@@ -753,7 +747,6 @@ static int readOHDRHeaderMessageFilterPipeline(struct READER *reader) {
   if (filterversion < 0 || filters < 0)
     return MYSOFA_READ_ERROR; // LCOV_EXCL_LINE
 
-#ifdef LIBMYSOFA_ENABLE_FILE_SIZE_LIMITS
   if (filters > 32) {
     // LCOV_EXCL_START
     mylog("object OHDR filter pipeline message has too many filters: %d\n",
@@ -761,7 +754,6 @@ static int readOHDRHeaderMessageFilterPipeline(struct READER *reader) {
     return MYSOFA_INVALID_FORMAT;
     // LCOV_EXCL_STOP
   }
-#endif
 
   switch (filterversion) {
   case 1:

@@ -48,7 +48,7 @@ void test__hades(void){
     const int hybridmode = 0;
 
     /* Analysis */
-    error = saf_sofa_open(&sofa, "/Users/mccorml1/Documents/git/matlab/h_array/h_array_horiz1deg_357.sofa");
+    error = saf_sofa_open(&sofa, "/Users/mccorml1/Documents/git/matlab/h_array/h_array_horiz1deg_357.sofa", SAF_SOFA_READER_OPTION_DEFAULT);
     if(error!=SAF_SOFA_OK)
         return; /* SOFA File does not exist, so skip this unit test. */
     nDirs = sofa.nSources;

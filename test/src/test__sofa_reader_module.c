@@ -35,7 +35,7 @@ void test__saf_sofa_open(void){
     saf_sofa_container sofa;
     for(int i=0; i<1 /* increase if timing... */; i++){
         /* Note that saf_sofa_open() reverts to mysofa_load(), if SAF_ENABLE_NETCDF is not defined */
-        error = saf_sofa_open(&sofa, SAF_TEST_SOFA_FILE_PATH);
+        error = saf_sofa_open(&sofa, SAF_TEST_SOFA_FILE_PATH, SAF_SOFA_READER_OPTION_DEFAULT);
         saf_sofa_close(&sofa);
     }
 }
@@ -50,13 +50,14 @@ void test__mysofa_load(void){
 }
 
 void test__sofa_comparison(void){
+#ifdef SAF_ENABLE_NETCDF
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
     int err;
     struct MYSOFA_HRTF *hrtf;
 
     /* Load the same SOFA file */
-    error = saf_sofa_open(&sofa, SAF_TEST_SOFA_FILE_PATH);
+    error = saf_sofa_open(&sofa, SAF_TEST_SOFA_FILE_PATH, SAF_SOFA_READER_OPTION_NETCDF);
     hrtf = mysofa_load(SAF_TEST_SOFA_FILE_PATH, &err);
 
     /* If both SOFA loaders were successful */
@@ -74,6 +75,7 @@ void test__sofa_comparison(void){
 
     saf_sofa_close(&sofa);
     mysofa_free(hrtf);
+#endif /* SAF_ENABLE_NETCDF */
 }
 
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */

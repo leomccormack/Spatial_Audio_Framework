@@ -12,12 +12,15 @@ For descriptions of minor changes and bug fixes, please refer to the git log.
 v1.2.5
  - All Bessel and Hankel functions now have two variants, with one having a "_ALL" suffix that 
    returns all orders from 0 to the specified order, and another returning only the specified order
+ - Added the ability to select which SOFA reader to use (libmysofa or the built-in netcdf one)
+ - Removed the "loadSofaFile()" function which case been marked as deprecated since October 2020.
 
 Breaking changes:
 
 All Bessel and Hankel functions to have a "_ALL" suffix, since they return all orders up to the 
 specified maximum order. Therefore, if you were using these functions prior to this version, then
 you will also need to add this suffix to retain previous behaviour. 
+
 
 ====================================================================================================
 v1.2.4

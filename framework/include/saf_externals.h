@@ -276,16 +276,24 @@
 /*
  * The built-in saf_sofa_open() SOFA file reader has two implementations:
  *    - By default, the function wraps around the "libmysofa" library
- *      (BSD-3-Clause license), which depends only on zlib (which is included
- *      in framework/resources/zlib)
- *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 3 times
- *      faster implementation is used instead. Therefore, if you intend to load
- *      many large SOFA files (especially microphone arrays or Ambisonic IRs),
- *      then this latter option may be preferable. Otherwise, the default
- *      libmysofa SOFA reader is likely sufficient for most purposes.
+ *      (BSD-3-Clause license), which depends on only zlib (which is included
+ *      in framework/resources/zlib). The downsides of this option, is that zlib
+ *      has file size limits for each chunk (<4GB) and it is quite slow at
+ *      decompressing large files.
+ *    - If SAF_ENABLE_NETCDF is defined, then an alternative SOFA reader may be
+ *      used. This version requires netcdf to be linked to SAF, along with its
+ *      dependencies: hdf5 and (zlib or szip). If netcdf uses szip instead of
+ *      zlib, then this option will also get around the file size limits of
+ *      zlib. Note that szip is also approximately 3 times faster than zlib for
+ *      larger files. Therefore, if you intend to load many large SOFA files
+ *      (especially microphone arrays or Ambisonic IRs), then this alternative
+ *      SOFA reader is either required (to get around the file size limit) or
+ *      may be preferred due to the shorter loading times. The downsides of
+ *      using the netcdf option is that it is NOT thread-safe! and requires
+ *      these additional external libraries to be linked to SAF.
  *
- * The "mysofa" interface, e.g. mysofa_load(), may also be used directly in
- * either case.
+ * Note that the "mysofa" interface, e.g. mysofa_load(), may also be called
+ * directly, rather than using saf_sofa_open().
  */
 # ifdef SAF_ENABLE_NETCDF
 #  include <netcdf.h>
