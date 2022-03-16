@@ -141,7 +141,7 @@ int tvconv_getNumListenerPositions(void* const hTVCnv);
 float tvconv_getListenerPosition(void* const hTVCnv, int index, int dim);
 
 /** Returns the index of the current IR position */
-int tvconv_getPositionIdx(void* const hTVCnv);
+int tvconv_getListenerPositionIdx(void* const hTVCnv);
 
 /** Returns the current coordinate of dimension dim  (0 ... NUM_DIMENSIONS-1) */
 float tvconv_getTargetPosition(void* const hTVCnv, int dim);

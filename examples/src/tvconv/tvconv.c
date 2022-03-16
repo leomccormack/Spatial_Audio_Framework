@@ -58,6 +58,7 @@ void tvconv_create
     pData->nListenerPositions = 0;
     pData->position_idx = 0;
     for (int d = 0; d < NUM_DIMENSIONS; d++){
+        pData->sourcePosition[d] = 0.0f;
         pData->targetPosition[d] = 0.0f;
         pData->minDimensions[d] = 0.0f;
         pData->maxDimensions[d] = 0.0f;
@@ -355,7 +356,7 @@ float tvconv_getListenerPosition(void* const hTVCnv, int index, int dim)
     return pData->listenerPositions[index][dim];
 }
 
-int tvconv_getPositionIdx(void* const hTVCnv)
+int tvconv_getListenerPositionIdx(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
     return pData->position_idx;
