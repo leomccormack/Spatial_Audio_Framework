@@ -76,6 +76,7 @@
 # include "rotator.h"
 # include "sldoa.h"
 # include "spreader.h"
+# include "tvconv.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 #ifdef __cplusplus
@@ -174,7 +175,7 @@ void test__dvf_calcHighShelfParams(void);
  * incidence angle parameters */
 void test__dvf_interpHighShelfParams(void);
 /**
- * Test thegeneration of high shelf coeffs based on shelf gains and fc
+ * Test the generation of high shelf coeffs based on shelf gains and fc
  * parameters */
 void test__dvf_calcIIRCoeffs(void);
 

@@ -68,7 +68,9 @@ void applyDVF(/* Input Arguments */
               float* out_signal);
 
 /**
- * Apply the Distance Variation function to the input signal.
+ * Apply the Distance Variation function to the input signal
+ *
+ * @test test__dvf_calcHighShelfParams(), test__dvf_interpHighShelfParams()
  *
  * @param[in]  theta Ipsilateral azimuth, on the inter-aural axis [0..180] (deg)
  * @param[in]  rho   Source distance, normalized to head radius, >= 1
@@ -76,17 +78,18 @@ void applyDVF(/* Input Arguments */
  * @param[out] iGInf (&) interpolated high shelf gain
  * @param[out] iFc   (&) interpolated high shelf cutoff frequency
  */
-void interpHighShelfParams(
-                         /* Input Arguments */
-                         float theta,
-                         float rho,
-                         /* Output Arguments */
-                         float* iG0,
-                         float* iGInf,
-                         float* iFc);
+void interpHighShelfParams(/* Input Arguments */
+                           float theta,
+                           float rho,
+                           /* Output Arguments */
+                           float* iG0,
+                           float* iGInf,
+                           float* iFc);
 
 /**
- * Apply the Distance Variation function to the input signal.
+ * Apply the Distance Variation function to the input signal
+ *
+ * @test test__dvf_calcIIRCoeffs()
  *
  * @param[in]  g0   High shelf gain at DC [dB]
  * @param[in]  gInf High shelf gain at Nyquist frequency [dB]

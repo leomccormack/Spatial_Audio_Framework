@@ -43,6 +43,8 @@ extern "C" {
  * Computes the values of the (cylindrical) Bessel function of the first kind
  * (Jn) and it's derivative (dJn)
  *
+ * @test test__cylindricalBesselFunctions()
+ *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
  * @param[in]  nZ   Number of input values
@@ -81,6 +83,8 @@ void bessel_Jn_ALL(/* Input arguments */
 /**
  * Computes the values of the (cylindrical) Bessel function of the second kind
  * (Yn) and it's derivative (dYn)
+ *
+ * @test test__cylindricalBesselFunctions()
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
@@ -207,6 +211,7 @@ void hankel_Hn2_ALL(/* Input arguments */
  * @note If the function fails to compute the function at the specified order
  *       'N', then the output values are set to zero, and this function will
  *       return 0.
+ * @test test__sphericalBesselFunctions()
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
@@ -258,6 +263,7 @@ void bessel_jn_ALL(/* Input arguments */
  * @note If the function fails to compute the function at the specified order
  *       'N', then the output values are set to zero, and this function will
  *       return 0.
+ * @test test__sphericalBesselFunctions()
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
@@ -309,6 +315,7 @@ void bessel_in_ALL(/* Input arguments */
  * @note If the function fails to compute the function at the specified order
  *       'N', then the output values are set to zero, and this function will
  *       return 0.
+ * @test test__sphericalBesselFunctions()
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
@@ -360,6 +367,7 @@ void bessel_yn_ALL(/* Input arguments */
  * @note If the function fails to compute the function at the specified order
  *       'N', then the output values are set to zero, and this function will
  *       return 0.
+ * @test test__sphericalBesselFunctions()
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1

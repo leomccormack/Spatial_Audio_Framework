@@ -188,6 +188,7 @@ typedef enum{
  * @warning This loader currently does not support TF SOFA files!
  * @note If you encounter a SOFA file that this SOFA loader cannot load, (or it
  *       misses some of the data) then please send it to the developers :-)
+ * @test test__saf_sofa_open(), test__mysofa_load(), test__sofa_comparison()
  *
  * @param[in] hSOFA         The sofa_container
  * @param[in] sofa_filepath SOFA file path (including .sofa extension)
@@ -213,7 +214,6 @@ SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
  * @param[in] hSOFA The sofa_container
  */
 void saf_sofa_close(saf_sofa_container* hSOFA);
-
 
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
 

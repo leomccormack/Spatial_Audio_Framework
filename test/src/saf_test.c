@@ -107,6 +107,9 @@ int main_test(void) {
     RUN_TEST(test__butterCoeffs);
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
+    RUN_TEST(test__dvf_calcHighShelfParams);
+    RUN_TEST(test__dvf_interpHighShelfParams);
+    RUN_TEST(test__dvf_calcIIRCoeffs);
 
     /* SAF cdf4sap module unit tests */
     RUN_TEST(test__formulate_M_and_Cr);
@@ -173,11 +176,6 @@ int main_test(void) {
     RUN_TEST(test__saf_example_rotator);
     RUN_TEST(test__saf_example_spreader);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
-
-    /* SAF DVF module unit tests */
-    RUN_TEST(test__dvf_calcHighShelfParams);
-    RUN_TEST(test__dvf_interpHighShelfParams);
-    RUN_TEST(test__dvf_calcIIRCoeffs);
 
     /* close */
     timer_lib_shutdown();
