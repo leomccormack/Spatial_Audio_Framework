@@ -156,10 +156,12 @@ Several **examples** have also been included in the repository, which may serve 
 * **array2sh** - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions of the array configuration and construction.
 * **beamformer** - a beamformer/virtual microphone generator for Ambisonic signals, with several different beam pattern options.
 * **binauraliser** - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.
+* **binauraliser_nf** - same as the binaural example, except including a distance control with near-field/proximity effect support.
 * **decorrelator** - a basic multi-channel signal decorrelator.
 * **dirass** - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.
 * **matrixconv** - a basic matrix convolver with an optional partitioned convolution mode. 
 * **multiconv** - a basic multi-channel convolver with an optional partitioned convolution mode. 
+* **tvconv** - a time-varying partitioned convolution multi-channel convolver for SOFA files containing RIRs with multiple listener positions.
 * **panner** - a frequency-dependent VBAP panner, which accommodates a source loudness compensation (as a function of the room) option.
 * **pitch_shifter** - a basic multi-channel pitch shifter, based on the phase vocoder approach.
 * **powermap** - sound-field visualiser based on beamformer (PWD, MVDR) energy or subspace methods (MUSIC).

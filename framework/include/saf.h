@@ -92,8 +92,8 @@
 /* Note that this version info is also scanned and employed by CMakeLists.txt */
 
 #define SAF_VERSION_MAJOR 1        /**< Major version */
-#define SAF_VERSION_MINOR 2        /**< Minor version */
-#define SAF_VERSION_PATCH 5        /**< Patch version */
+#define SAF_VERSION_MINOR 3        /**< Minor version */
+#define SAF_VERSION_PATCH 0        /**< Patch version */
 #define SAF_VERSION_SPECIAL ""     /**< Append text ("alpha", "beta", "") */
 #define MKSTRING_(s) #s            /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)   /**< Stringify */
