@@ -11,5 +11,9 @@ var searchData=
   ['test_5f_5fsofa_5freader_5fmodule_2ec_8',['test__sofa_reader_module.c',['../test____sofa__reader__module_8c.html',1,'']]],
   ['test_5f_5ftracker_5fmodule_2ec_9',['test__tracker_module.c',['../test____tracker__module_8c.html',1,'']]],
   ['test_5f_5futilities_5fmodule_2ec_10',['test__utilities_module.c',['../test____utilities__module_8c.html',1,'']]],
-  ['test_5f_5fvbap_5fmodule_2ec_11',['test__vbap_module.c',['../test____vbap__module_8c.html',1,'']]]
+  ['test_5f_5fvbap_5fmodule_2ec_11',['test__vbap_module.c',['../test____vbap__module_8c.html',1,'']]],
+  ['tvconv_2ec_12',['tvconv.c',['../tvconv_8c.html',1,'']]],
+  ['tvconv_2eh_13',['tvconv.h',['../tvconv_8h.html',1,'']]],
+  ['tvconv_5finternal_2ec_14',['tvconv_internal.c',['../tvconv__internal_8c.html',1,'']]],
+  ['tvconv_5finternal_2eh_15',['tvconv_internal.h',['../tvconv__internal_8h.html',1,'']]]
 ];

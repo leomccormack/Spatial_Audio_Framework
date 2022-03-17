@@ -116,6 +116,9 @@ Data Structures</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaf_mul_conv__data.html">safMulConv_data</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structure for the multi-channel convolver.  <a href="structsaf_mul_conv__data.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structsaf_t_v_conv__data.html">safTVConv_data</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Data structure for the time-varying convolver.  <a href="structsaf_t_v_conv__data.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -137,6 +140,15 @@ Functions</h2></td></tr>
 <tr class="memitem:ga2ca45b00a559a054bdc5428599da1dc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga2ca45b00a559a054bdc5428599da1dc4">saf_multiConv_apply</a> (void *const hMC, float *inputSig, float *outputSig)</td></tr>
 <tr class="memdesc:ga2ca45b00a559a054bdc5428599da1dc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs the multi-channel convolution.  <a href="group___utilities.html#ga2ca45b00a559a054bdc5428599da1dc4">More...</a><br /></td></tr>
 <tr class="separator:ga2ca45b00a559a054bdc5428599da1dc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga587b40cb6858d35c36693937191f9d2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga587b40cb6858d35c36693937191f9d2b">saf_TVConv_create</a> (void **const phTVC, int hopSize, float **H, int length_h, int nIRs, int nCHout, int initIdx)</td></tr>
+<tr class="memdesc:ga587b40cb6858d35c36693937191f9d2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an instance of TVConv.  <a href="group___utilities.html#ga587b40cb6858d35c36693937191f9d2b">More...</a><br /></td></tr>
+<tr class="separator:ga587b40cb6858d35c36693937191f9d2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga74ad5ce780e1215c5945ecdacb4fa1aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga74ad5ce780e1215c5945ecdacb4fa1aa">saf_TVConv_destroy</a> (void **const phTVC)</td></tr>
+<tr class="memdesc:ga74ad5ce780e1215c5945ecdacb4fa1aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys an instance of matrixConv.  <a href="group___utilities.html#ga74ad5ce780e1215c5945ecdacb4fa1aa">More...</a><br /></td></tr>
+<tr class="separator:ga74ad5ce780e1215c5945ecdacb4fa1aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga11c1fec0495a44809aedeba3376947fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga11c1fec0495a44809aedeba3376947fd">saf_TVConv_apply</a> (void *const hTVC, float *inputSig, float *outputSig, int irIdx)</td></tr>
+<tr class="memdesc:ga11c1fec0495a44809aedeba3376947fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Performs the matrix convolution.  <a href="group___utilities.html#ga11c1fec0495a44809aedeba3376947fd">More...</a><br /></td></tr>
+<tr class="separator:ga11c1fec0495a44809aedeba3376947fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Matrix and multi-channel convolvers. </p>
@@ -152,7 +164,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__matrix_conv_8c.html">saf_utility_matrixConv.c</a></li>
-    <li class="footer">Generated on Tue Mar 1 2022 16:30:09 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Thu Mar 17 2022 07:54:31 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

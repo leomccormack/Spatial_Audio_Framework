@@ -59,7 +59,11 @@ var group___s_o_f_a___reader =
       [ "SAF_SOFA_ERROR_FORMAT_UNEXPECTED", "group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3baaaf17b97230cb34bdaa225d59fe78677", null ],
       [ "SAF_SOFA_ERROR_NETCDF_IN_USE", "group___s_o_f_a___reader.html#ggaba919e3e9e5eee49b3344eeda301fa3ba0b131bd7186b34a8a3b423039df407e9", null ]
     ] ],
-    [ "loadSofaFile", "group___s_o_f_a___reader.html#ga8783d4f04ef4b082de7aa414e294ff52", null ],
+    [ "SAF_SOFA_READER_OPTIONS", "group___s_o_f_a___reader.html#ga3f9932ad0479a4d22fc3f48345673ef4", [
+      [ "SAF_SOFA_READER_OPTION_DEFAULT", "group___s_o_f_a___reader.html#gga3f9932ad0479a4d22fc3f48345673ef4a23c5103705a0f059190f34efefdd0850", null ],
+      [ "SAF_SOFA_READER_OPTION_LIBMYSOFA", "group___s_o_f_a___reader.html#gga3f9932ad0479a4d22fc3f48345673ef4a9c144a401be794d326763ecc9a864d49", null ],
+      [ "SAF_SOFA_READER_OPTION_NETCDF", "group___s_o_f_a___reader.html#gga3f9932ad0479a4d22fc3f48345673ef4a35131d3f3b07b9374ee4b8f37805c58c", null ]
+    ] ],
     [ "saf_sofa_close", "group___s_o_f_a___reader.html#ga020cf8511ced05e971592454b2f909a0", null ],
-    [ "saf_sofa_open", "group___s_o_f_a___reader.html#ga020371f61a2d01025872c6954764dcfe", null ]
+    [ "saf_sofa_open", "group___s_o_f_a___reader.html#ga54b14d906e4b198a22924d09c6404f1d", null ]
 ];

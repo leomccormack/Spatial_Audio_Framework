@@ -57,19 +57,20 @@ var NAVTREEINDEX =
 "array2sh_8c.html#a309e81aa012f4c748b0302c2f70ecc28",
 "binauraliser_8c.html#a178ea6e4bebb440f14be25458a04eae4",
 "dir_7537ddf6938b30af6f0305d5e585e1f2.html",
-"globals_func_d.html",
-"group___utilities.html#ga1ff81a784fe4771845ff9906c0ff96c0",
-"group___utilities.html#ga98a2b72d8e3c7cebe9b8cc2691c6addd",
-"group___v_b_a_p.html",
-"panner_8h.html#a4a52ec05a580f8f3e118076631a6e77a",
-"resample_8c.html#a6ac19bad9279fa84a5e9928ca3c91a27",
-"saf__hoa__internal_8h.html#a7b3622325d0b867730cafe405d0cc6cc",
-"saf__utility__geometry_8c_source.html",
-"spreader_8c.html#a7f233322da154dd79c083bf1a487343f",
-"structambi__enc__data.html#adf86d6e6f67ef2a365f39ce3ddea187f",
-"structdirass__data.html#a39555e40aefd823c3b6fc39d98746e76",
-"structmulticonv__data.html#a7b805cfeccd5e68e8f906fc7cca5746e",
-"structspreader__data.html#a10ec8ecbff7c3a30748d3996ce1fe203"
+"globals_func_c.html",
+"group___utilities.html#ga1bffb9d694334a27d46584414fb51d0c",
+"group___utilities.html#ga90fda008ac4a802d1c3f72450af14814",
+"group___utilities.html#gga3093dd635473d82de533d0ec310c45c3a592a6ac36db87cd022a59056fc208086",
+"panner_8c.html#ae81c178cff79741f970ca71680849315",
+"powermap__internal_8h.html#a76ba99ed8e8f91a533aa19e3b1c5d606",
+"saf__hoa_8h_source.html",
+"saf__utility__dvf_8c_source.html",
+"speex__resampler_8h_source.html",
+"structambi__drc__data.html#aec57cca8a356cd24e6da137982c31431",
+"structdirass__codec_pars.html#a2cc4157de297c1cb8b99a90d6a9a2725",
+"structmatrixconv__data.html#ac1be99602f65257c713177253a037ea7",
+"structsldoa__data.html#a96ee69356003ebc73df6fbc5d90c131f",
+"tvconv_8c.html#ab2337f897b67601703dddcbc3f4663ed"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

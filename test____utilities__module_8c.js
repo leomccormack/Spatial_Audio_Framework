@@ -3,6 +3,7 @@ var test____utilities__module_8c =
     [ "test__butterCoeffs", "test____utilities__module_8c.html#a394db4aaade6966e740d8ca24a04dc7b", null ],
     [ "test__cart2sph", "test____utilities__module_8c.html#abf9662ef7915426f52af62ffa70418f6", null ],
     [ "test__cmplxPairUp", "test____utilities__module_8c.html#a48643f2e901629d2d1fea9474932ba14", null ],
+    [ "test__cylindricalBesselFunctions", "test____utilities__module_8c.html#a691c97491bc1e4e6ccfc6618ffbc66e3", null ],
     [ "test__delaunaynd", "test____utilities__module_8c.html#a74ffb0dd64f546bf87b0e6b4986cf4b0", null ],
     [ "test__dvf_calcHighShelfParams", "test____utilities__module_8c.html#a2a70cd2ae6941fa264dc0e58130b1d49", null ],
     [ "test__dvf_calcIIRCoeffs", "test____utilities__module_8c.html#a043472142b326b939f14d8d4082cd96d", null ],
@@ -21,5 +22,6 @@ var test____utilities__module_8c =
     [ "test__smb_pitchShifter", "test____utilities__module_8c.html#a4dba8bcbcecd18f38a70aec40c136555", null ],
     [ "test__sortf", "test____utilities__module_8c.html#a43e61c5bffaddd04ae853ef6e544bbc6", null ],
     [ "test__sortz", "test____utilities__module_8c.html#abda4080d0c2b7ee0496c7725f65fbebe", null ],
+    [ "test__sphericalBesselFunctions", "test____utilities__module_8c.html#a199ca20210c0e65ad11f367262fbb53c", null ],
     [ "test__unique_i", "test____utilities__module_8c.html#a596d9bd6c2a96c64f6600b1afc4c6fca", null ]
 ];

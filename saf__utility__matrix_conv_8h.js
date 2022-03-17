@@ -5,5 +5,8 @@ var saf__utility__matrix_conv_8h =
     [ "saf_matrixConv_destroy", "group___utilities.html#ga8d42d0ecba6ee38660bc51d8a28dbe2c", null ],
     [ "saf_multiConv_apply", "group___utilities.html#ga2ca45b00a559a054bdc5428599da1dc4", null ],
     [ "saf_multiConv_create", "group___utilities.html#ga67e885c1f28623d02358a4e11a232d84", null ],
-    [ "saf_multiConv_destroy", "group___utilities.html#ga023177fea5c89f6d7263ccb6bc2bd2e3", null ]
+    [ "saf_multiConv_destroy", "group___utilities.html#ga023177fea5c89f6d7263ccb6bc2bd2e3", null ],
+    [ "saf_TVConv_apply", "group___utilities.html#ga11c1fec0495a44809aedeba3376947fd", null ],
+    [ "saf_TVConv_create", "group___utilities.html#ga587b40cb6858d35c36693937191f9d2b", null ],
+    [ "saf_TVConv_destroy", "group___utilities.html#ga74ad5ce780e1215c5945ecdacb4fa1aa", null ]
 ];
