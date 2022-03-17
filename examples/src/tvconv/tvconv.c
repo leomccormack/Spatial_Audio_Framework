@@ -240,6 +240,7 @@ void tvconv_setFiltersAndPositions
 )
 {
     tvconv_data* pData = (tvconv_data*) hTVCnv;
+    vectorND tmp;
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -263,7 +264,6 @@ void tvconv_setFiltersAndPositions
         error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_NETCDF);
         
         if(error==SAF_SOFA_OK){
-            
             strcpy(pData->progressBarText,"Loading IRs");
             pData->progressBar0_1 = 0.5f;
             
@@ -271,8 +271,15 @@ void tvconv_setFiltersAndPositions
             pData->ir_length = sofa.DataLengthIR;
             pData->nIrChannels = sofa.nReceivers;
             pData->nListenerPositions = sofa.nListeners;
+
             /* copy only the first source position, because number of source positions might be incorrect in sofa */
-            memcpy(pData->sourcePosition, sofa.SourcePosition, sizeof(vectorND));
+            if(!strcmp(sofa.SourcePositionType, "spherical")){
+                memcpy(tmp, sofa.SourcePosition, sizeof(vectorND));
+                unitSph2cart((float*)tmp, 1, 1, pData->sourcePosition);
+            }
+            else
+                memcpy(pData->sourcePosition, sofa.SourcePosition, sizeof(vectorND));
+
             
             pData->irs = (float**)realloc2d((void**)pData->irs, pData->nListenerPositions, pData->nIrChannels*pData->ir_length, sizeof(float));
             int tmp_length = pData->nIrChannels * pData->ir_length;
@@ -347,13 +354,14 @@ int tvconv_getNumIRs(void* const hTVCnv)
 int tvconv_getNumListenerPositions(void* const hTVCnv)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    return pData->nListenerPositions;
+
+    return pData->codecStatus==CODEC_STATUS_INITIALISED ? pData->nListenerPositions : 0;
 }
 
 float tvconv_getListenerPosition(void* const hTVCnv, int index, int dim)
 {
     tvconv_data *pData = (tvconv_data*)(hTVCnv);
-    return pData->listenerPositions[index][dim];
+    return pData->codecStatus==CODEC_STATUS_INITIALISED ? pData->listenerPositions[index][dim] : 0.0f;
 }
 
 int tvconv_getListenerPositionIdx(void* const hTVCnv)
