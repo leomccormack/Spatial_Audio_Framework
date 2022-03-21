@@ -9,6 +9,23 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
+v1.3.0
+ - Added saf_hades module
+ - Added binauraliser_nf and tvconv examples
+ - Added saf_utility_dvf.h/.c to saf_utilities module
+ - All Bessel and Hankel functions now have two variants, with one having a "_ALL" suffix that 
+   returns all orders from 0 to the specified order, and another returning only the specified order
+ - Added the ability to select which SOFA reader to use (libmysofa or the built-in netcdf one)
+ - Removed the "loadSofaFile()" function (marked as deprecated since October 2020).
+
+Breaking changes:
+
+All Bessel and Hankel functions to have a "_ALL" suffix, since they return all orders up to the 
+specified maximum order. Therefore, if you were using these functions prior to this version, then
+you will also need to add this suffix to retain previous behaviour. 
+
+
+====================================================================================================
 v1.2.4
  - Added libmysofa to the saf_sofa_reader module. The saf_sofa_open() function now uses libmysofa by
    default, unless "SAF_ENABLE_NETCDF" is defined. The libmysofa interface may also be used directly

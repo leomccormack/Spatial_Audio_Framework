@@ -84,8 +84,10 @@ int main_test(void) {
     timer_lib_initialize();
     start = timer_current();
     UNITY_BEGIN();
-    
+
     /* SAF utilities modules unit tests */
+    RUN_TEST(test__cylindricalBesselFunctions);
+    RUN_TEST(test__sphericalBesselFunctions);
     RUN_TEST(test__cart2sph);
     RUN_TEST(test__delaunaynd);
     RUN_TEST(test__quaternion);
@@ -106,6 +108,9 @@ int main_test(void) {
     RUN_TEST(test__evalIIRTransferFunction);
     RUN_TEST(test__faf_IIRFilterbank);
     RUN_TEST(test__gexpm);
+    RUN_TEST(test__dvf_calcDVFShelfParams);
+    RUN_TEST(test__dvf_interpDVFShelfParams);
+    RUN_TEST(test__dvf_dvfShelfCoeffs);
 
     /* SAF cdf4sap module unit tests */
     RUN_TEST(test__formulate_M_and_Cr);
@@ -172,11 +177,6 @@ int main_test(void) {
     RUN_TEST(test__saf_example_rotator);
     RUN_TEST(test__saf_example_spreader);
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
-
-    /* SAF DVF module unit tests */
-    RUN_TEST(test__dvf_calcDVFShelfParams);
-    RUN_TEST(test__dvf_interpDVFShelfParams);
-    RUN_TEST(test__dvf_dvfShelfCoeffs);
 
     /* close */
     timer_lib_shutdown();

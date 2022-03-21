@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Michael McCrea, Leo McCormack
+ * Copyright 2022 Michael McCrea, Leo McCormack
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -43,7 +43,7 @@ void binauraliserNF_initTFT
     void* const hBin
 )
 {
-    binauraliser_data *pData = (binauraliser_data*)(hBin);
+    binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
  
     if(pData->hSTFT==NULL)
         afSTFT_create(&(pData->hSTFT), pData->new_nSources, pData->new_nSources * NUM_EARS, HOP_SIZE, 0, 1, AFSTFT_BANDS_CH_TIME);
@@ -58,9 +58,8 @@ void binauraliserNF_resetSourceDistances(void* const hBin)
 {
     binauraliserNF_data *pData = (binauraliserNF_data*)(hBin);
     
-    for(int i=0; i<MAX_NUM_INPUTS; i++){
+    for(int i=0; i<MAX_NUM_INPUTS; i++)
         pData->src_dists_m[i] = pData->farfield_thresh_m * pData->farfield_headroom;
-    }
 }
 
 

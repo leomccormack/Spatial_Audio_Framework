@@ -45,9 +45,7 @@ extern "C" {
 
 #include "saf_utility_complex.h"
 
-/**
- * Options for how the frequency domain data is permuted when using saf_stft
- */
+/** Options for how the frequency domain data is permuted when using saf_stft */
 typedef enum {
     SAF_STFT_BANDS_CH_TIME, /**< nBands x nChannels x nTimeHops */
     SAF_STFT_TIME_CH_BANDS  /**< nTimeHops x nChannels x nBands */

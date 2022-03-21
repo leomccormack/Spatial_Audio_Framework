@@ -76,6 +76,7 @@
 # include "rotator.h"
 # include "sldoa.h"
 # include "spreader.h"
+# include "tvconv.h"
 #endif /* SAF_ENABLE_EXAMPLES_TESTS */
 
 #ifdef __cplusplus
@@ -89,6 +90,12 @@ int main_test(void);
 /*                      SAF utilities module unit tests                       */
 /* ========================================================================== */
 
+/**
+ * Testing bessel_Jn(), bessel_Yn() */
+void test__cylindricalBesselFunctions(void);
+/**
+ * Testing bessel_jn(), bessel_in(), bessel_yn(), and bessel_kn() */
+void test__sphericalBesselFunctions(void);
 /**
  * Testing cart2sph() and sph2cart() are reversible */
 void test__cart2sph(void);
@@ -172,7 +179,7 @@ void test__dvf_calcDVFShelfParams(void);
  * incidence angle parameters */
 void test__dvf_interpDVFShelfParams(void);
 /**
- * Test thegeneration of high shelf coeffs based on shelf gain and fc
+ * Test the generation of high shelf coeffs based on shelf gain and fc
  * parameters */
 void test__dvf_dvfShelfCoeffs(void);
 

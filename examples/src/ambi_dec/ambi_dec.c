@@ -355,7 +355,7 @@ void ambi_dec_initCodec
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
         if(!pData->useDefaultHRIRsFLAG && pars->sofa_filepath!=NULL){
             /* Load SOFA file */ 
-            error = saf_sofa_open(&sofa, pars->sofa_filepath);
+            error = saf_sofa_open(&sofa, pars->sofa_filepath, SAF_SOFA_READER_OPTION_DEFAULT);
 
             /* Load defaults instead */
             if(error!=SAF_SOFA_OK || sofa.nReceivers!=NUM_EARS){

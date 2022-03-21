@@ -21,9 +21,11 @@
  * @brief Main header for the sofa reader module (#SAF_SOFA_READER_MODULE)
  *
  * @note This SOFA reader may optionally use netcdf if "SAF_ENABLE_NETCDF" is
- *       defined. Otherwise, the reader will use zlib, which is included in
- *       framework/resources/zlib; in which case, no external libraries need to
- *       be linked.
+ *       defined. Otherwise, the reader will use libmysofa [1] in conjunction
+ *       with zlib, which is included in framework/resources/zlib; i.e. no
+ *       external libraries need to be linked by default.
+ *
+ * @see [1] https://github.com/hoene/libmysofa (BSD-3-Clause license)
  *
  * @author Leo McCormack
  * @date 21.11.2017
@@ -39,9 +41,36 @@ extern "C" {
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
-/* Include also the interface for the libmysofa reader (BSD-3-Clause license),
- * which only depends on zlib.h */
 #include "libmysofa/mysofa.h"
+
+/** SOFA file reader options */
+typedef enum{
+    /** The default option is #SAF_SOFA_READER_OPTION_LIBMYSOFA */
+    SAF_SOFA_READER_OPTION_DEFAULT,
+
+    /** This option uses the libmysofa library to load SOFA files, which is
+     *  adopted from: https://github.com/hoene/libmysofa (BSD-3-Clause license)
+     *
+     *  The benefits of this option is that it only depends on zlib, which is
+     *  included in SAF. While the downsides of this option, is that zlib has
+     *  file size limits for each chunk (<4GB) and it is quite slow at
+     *  decompressing large files. */
+    SAF_SOFA_READER_OPTION_LIBMYSOFA,
+
+    /** If SAF_ENABLE_NETCDF is defined, then an alternative SOFA reader may be
+     *  used. This version requires netcdf to be linked to SAF, along with its
+     *  dependencies. The netcdf loader gets around the file size limits of
+     *  the libmysofa loader and is also approximately 3 times faster.
+     *  Therefore, if you intend to load many large SOFA files
+     *  (especially microphone arrays or Ambisonic IRs), then this alternative
+     *  SOFA reader is either required (to get around the file size limit) or
+     *  may be preferred due to the shorter loading times. The downsides of
+     *  using the netcdf option is that it is NOT thread-safe! and requires
+     *  these additional external libraries to be linked to SAF. */
+    SAF_SOFA_READER_OPTION_NETCDF
+
+} SAF_SOFA_READER_OPTIONS;
+
 
 /* ========================================================================== */
 /*                          Public Structures/Enums                           */
@@ -72,8 +101,7 @@ typedef struct _saf_sofa_container{
                                    *   ReceiverPositionUnits for the convention
                                    *   and units);
                                    *   FLAT: nReceivers x 3 */
-    int nListeners;               /**< Number of listener positions (cannot be
-                                   *   more than 1) */
+    int nListeners;               /**< Number of listener positions */
     int nEmitters;                /**< Number of emitter positions */
     float* ListenerPosition;      /**< Listener position (The object
                                    *   incorporating all receivers; refer to
@@ -81,7 +109,7 @@ typedef struct _saf_sofa_container{
                                    *   ListenerPositionUnits for the convention
                                    *   and units); FLAT: nListeners x 3  */
     float* ListenerUp;            /**< Vector pointing upwards from the listener
-                                   *   position (Cartesian); 3 x 1  */
+                                   *   position (Cartesian); 1 x 3 or FLAT: nListeners x 3  */
     float* ListenerView;          /**< Vector pointing forwards from the
                                    *   listener position (Cartesian); 3 x 1 */
     float* EmitterPosition;       /**< Positions of acoustic excitation used for
@@ -160,9 +188,11 @@ typedef enum{
  * @warning This loader currently does not support TF SOFA files!
  * @note If you encounter a SOFA file that this SOFA loader cannot load, (or it
  *       misses some of the data) then please send it to the developers :-)
+ * @test test__saf_sofa_open(), test__mysofa_load(), test__sofa_comparison()
  *
  * @param[in] hSOFA         The sofa_container
  * @param[in] sofa_filepath SOFA file path (including .sofa extension)
+ * @param[in] option        See #SAF_SOFA_READER_OPTIONS
  * @returns An error code (see #SAF_SOFA_ERROR_CODES)
  *
  * @see [1] Majdak, P., Iwaya, Y., Carpentier, T., Nicol, R., Parmentier, M.,
@@ -175,7 +205,8 @@ typedef enum{
  * @see [3] https://www.sofaconventions.org/mediawiki/index.php/SimpleFreeFieldHRIR
  */
 SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
-                                   char* sofa_filepath);
+                                   char* sofa_filepath,
+                                   SAF_SOFA_READER_OPTIONS option);
 
 /**
  * Frees all SOFA data in a sofa_container
@@ -183,41 +214,6 @@ SAF_SOFA_ERROR_CODES saf_sofa_open(saf_sofa_container* hSOFA,
  * @param[in] hSOFA The sofa_container
  */
 void saf_sofa_close(saf_sofa_container* hSOFA);
-
-
-/* ========================================================================== */
-/*                            Deprecated Functions                            */
-/* ========================================================================== */
-
-/**
- * A bare-bones SOFA file reader
- *
- * Allocates memory and copies the values of the essential data contained in a
- * SOFA file to the output arguments.
- *
- * @warning This function is deprecated, use saf_sofa_open().
- * @warning This function assumes the SOFA file comprises HRIR data! (i.e.
- *          not general IR measurement data).
- * @note The hrirs are returned as NULL if the file does not exist.
- *
- * @param[in]  sofa_filepath Directory/file_name of the SOFA file you wish to
- *                           load. Optionally, you may set this as NULL, and the
- *                           function will return the default HRIR data.
- * @param[out] hrirs         (&) the HRIR data;
- *                           FLAT: N_hrir_dirs x #NUM_EARS x hrir_len
- * @param[out] hrir_dirs_deg (&) the HRIR positions; FLAT: N_hrir_dirs x 2
- * @param[out] N_hrir_dirs   (&) number of HRIR positions
- * @param[out] hrir_len      (&) length of the HRIRs, in samples
- * @param[out] hrir_fs       (&) sampling rate of the HRIRs
- */ 
-void loadSofaFile(/* Input Arguments */
-                  char* sofa_filepath,
-                  /* Output Arguments */
-                  float** hrirs,
-                  float** hrir_dirs_deg,
-                  int* N_hrir_dirs,
-                  int* hrir_len,
-                  int* hrir_fs );
 
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
 

@@ -968,7 +968,6 @@ int calculateGridWeights
     float sumW;
     float** Y_N, **Y_N_T, **Y_leftinv;
 
-
     if(order<0){
         int nSH, ind;
         float minVal, maxVal, cond_N;
@@ -1880,7 +1879,7 @@ void cylModalCoeffs
         case ARRAY_CONSTRUCTION_OPEN:
             /* compute spherical Bessels of the first kind */
             Jn = malloc1d(nBands*(order+1)*sizeof(double));
-            bessel_Jn(order, kr, nBands, Jn, NULL);
+            bessel_Jn_ALL(order, kr, nBands, Jn, NULL);
             
             /* modal coefficients for open spherical array (omni sensors): 1i^n * jn; */
             for(n=0; n<order+1; n++)
@@ -1896,8 +1895,8 @@ void cylModalCoeffs
             Jnprime = malloc1d(nBands*(order+1)*sizeof(double));
             Hn2 = malloc1d(nBands*(order+1)*sizeof(double_complex));
             Hn2prime = malloc1d(nBands*(order+1)*sizeof(double_complex));
-            bessel_Jn(order, kr, nBands, Jn, Jnprime);
-            hankel_Hn2(order, kr, nBands, Hn2, Hn2prime);
+            bessel_Jn_ALL(order, kr, nBands, Jn, Jnprime);
+            hankel_Hn2_ALL(order, kr, nBands, Hn2, Hn2prime);
             
             /* modal coefficients for rigid spherical array: 1i^n * (jn-(jnprime./hn2prime).*hn2); */
             for(i=0; i<nBands; i++){
@@ -1984,7 +1983,7 @@ void sphModalCoeffs
         case ARRAY_CONSTRUCTION_OPEN:
             /* compute spherical Bessels of the first kind */
             jn = malloc1d(nBands*(order+1)*sizeof(double));
-            bessel_jn(order, kr, nBands, &maxN, jn, NULL);
+            bessel_jn_ALL(order, kr, nBands, &maxN, jn, NULL);
             
             /* modal coefficients for open spherical array (omni sensors): 4*pi*1i^n * jn; */
             for(n=0; n<maxN+1; n++)
@@ -1998,7 +1997,7 @@ void sphModalCoeffs
             /* compute spherical Bessels of the first kind + derivatives */
             jn = malloc1d(nBands*(order+1)*sizeof(double));
             jnprime = malloc1d(nBands*(order+1)*sizeof(double));
-            bessel_jn(order, kr, nBands, &maxN, jn, jnprime);
+            bessel_jn_ALL(order, kr, nBands, &maxN, jn, jnprime);
 
             /* modal coefficients for open spherical array (directional sensors): 4*pi*1i^n * (dirCoeff*jn - 1i*(1-dirCoeff)*jnprime); */
             for(n=0; n<maxN+1; n++)
@@ -2021,9 +2020,9 @@ void sphModalCoeffs
             hn2 = malloc1d(nBands*(order+1)*sizeof(double_complex));
             hn2prime = malloc1d(nBands*(order+1)*sizeof(double_complex));
             maxN = 1000000000;
-            bessel_jn(order, kr, nBands, &maxN_tmp, jn, jnprime);
+            bessel_jn_ALL(order, kr, nBands, &maxN_tmp, jn, jnprime);
             maxN = SAF_MIN(maxN_tmp, maxN);
-            hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, hn2prime);
+            hankel_hn2_ALL(order, kr, nBands, &maxN_tmp, hn2, hn2prime);
             maxN = SAF_MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
 
             /* modal coefficients for rigid spherical array: 4*pi*1i^n * (jn-(jnprime./hn2prime).*hn2); */
@@ -2067,13 +2066,13 @@ void sphScattererModalCoeffs
     hn2 = malloc1d(nBands*(order+1)*sizeof(double_complex));
     hn2prime = malloc1d(nBands*(order+1)*sizeof(double_complex));
     maxN = 1000000000;
-    bessel_jn(order, kr, nBands, &maxN_tmp, jn, NULL);
+    bessel_jn_ALL(order, kr, nBands, &maxN_tmp, jn, NULL);
     maxN = SAF_MIN(maxN_tmp, maxN);
-    bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime);
+    bessel_jn_ALL(order, kR, nBands, &maxN_tmp, NULL, jnprime);
     maxN = SAF_MIN(maxN_tmp, maxN);
-    hankel_hn2(order, kr, nBands, &maxN_tmp, hn2, NULL);
+    hankel_hn2_ALL(order, kr, nBands, &maxN_tmp, hn2, NULL);
     maxN = SAF_MIN(maxN_tmp, maxN);
-    hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime);
+    hankel_hn2_ALL(order, kR, nBands, &maxN_tmp, NULL, hn2prime);
     maxN = SAF_MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
     
     /* modal coefficients for rigid spherical array (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kr./hn2prime_kr).*hn2_kr); */
@@ -2119,13 +2118,13 @@ void sphScattererDirModalCoeffs
     hn2prime_kr = malloc1d(nBands*(order+1)*sizeof(double_complex));
     hn2prime_kR = malloc1d(nBands*(order+1)*sizeof(double_complex));
     maxN = 1000000000;
-    bessel_jn(order, kr, nBands, &maxN_tmp, jn_kr, jnprime_kr);
+    bessel_jn_ALL(order, kr, nBands, &maxN_tmp, jn_kr, jnprime_kr);
     maxN = SAF_MIN(maxN_tmp, maxN);
-    bessel_jn(order, kR, nBands, &maxN_tmp, NULL, jnprime_kR);
+    bessel_jn_ALL(order, kR, nBands, &maxN_tmp, NULL, jnprime_kR);
     maxN = SAF_MIN(maxN_tmp, maxN);
-    hankel_hn2(order, kr, nBands, &maxN_tmp, hn2_kr, hn2prime_kr);
+    hankel_hn2_ALL(order, kr, nBands, &maxN_tmp, hn2_kr, hn2prime_kr);
     maxN = SAF_MIN(maxN_tmp, maxN);
-    hankel_hn2(order, kR, nBands, &maxN_tmp, NULL, hn2prime_kR);
+    hankel_hn2_ALL(order, kR, nBands, &maxN_tmp, NULL, hn2prime_kR);
     maxN = SAF_MIN(maxN_tmp, maxN); /* maxN being the minimum highest order that was computed for all values in kr */
     
     /* modal coefficients for rigid spherical array (OMNI): 4*pi*1i^n * (jn_kr-(jnprime_kr./hn2prime_kr).*hn2_kr); */
@@ -2198,7 +2197,7 @@ void sphDiffCohMtxTheory
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN, 1.0, b_N); break;
         case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, dirCoeff, b_N); break;
-        case ARRAY_CONSTRUCTION_RIGID:
+        case ARRAY_CONSTRUCTION_RIGID: /* fall through */
         case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N);
             break;
@@ -2323,7 +2322,7 @@ void simulateSphArray
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN, 1.0, b_N); break;
         case ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL:
             sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_OPEN_DIRECTIONAL, dirCoeff, b_N); break;
-        case ARRAY_CONSTRUCTION_RIGID:
+        case ARRAY_CONSTRUCTION_RIGID: /* fall through */
         case ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL:
             if(kR==NULL)
                 sphModalCoeffs(order, kr, nBands, ARRAY_CONSTRUCTION_RIGID, 1.0, b_N); /* if kr==kR, dirCoeff is irrelevant */

@@ -677,4 +677,6 @@ void fractalheapFree(struct FRACTALHEAP *fractalheap) {
   free(fractalheap->filter_information);
 }
 
+#else
+extern int to_avoid_iso_compiler_warning_when_there_are_no_symbols;
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */

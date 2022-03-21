@@ -991,4 +991,6 @@ float loudness(float *in, int size) {
   return res;
 }
 
+#else
+extern int to_avoid_iso_compiler_warning_when_there_are_no_symbols;
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */

@@ -40,18 +40,17 @@ extern "C" {
 /* ========================================================================== */
 
 /**
- * Computes the (cylindrical) Bessel function of the first kind: Jn
+ * Computes the values of the (cylindrical) Bessel function of the first kind
+ * (Jn) and it's derivative (dJn)
  *
- * Computes the Bessel values and their derivatives up to order N for all values
- * in vector z
+ * @test test__cylindricalBesselFunctions()
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
  * @param[in]  nZ   Number of input values
- * @param[out] J_n  Bessel values (set as NULL if not required);
- *                  FLAT: nZ x (N+1)
+ * @param[out] J_n  Bessel values (set as NULL if not required); FLAT: nZ x 1
  * @param[out] dJ_n Bessel derivative values (set as NULL if not required);
- *                  FLAT: nZ x (N+1)
+ *                  FLAT: nZ x 1
  */
 void bessel_Jn(/* Input arguments */
                int N,
@@ -62,18 +61,37 @@ void bessel_Jn(/* Input arguments */
                double* dJ_n);
 
 /**
- * Computes the (cylindrical) Bessel function of the second kind: Yn
- *
- * Computes the Bessel values and their derivatives up to order N for all values
- * in vector z
+ * Computes the (cylindrical) Bessel function of the first kind (Jn) and their
+ * derivatives (dJn) for ALL orders from 0 to N
  *
  * @param[in]  N    Function order (highest is ~30 given numerical precision)
  * @param[in]  z    Input values; nZ x 1
  * @param[in]  nZ   Number of input values
- * @param[out] Y_n  Bessel values (set as NULL if not required);
+ * @param[out] J_n  Bessel values (set as NULL if not required);
  *                  FLAT: nZ x (N+1)
+ * @param[out] dJ_n Bessel derivative values (set as NULL if not required);
+ *                  FLAT: nZ x (N+1)
+ */
+void bessel_Jn_ALL(/* Input arguments */
+                   int N,
+                   double* z,
+                   int nZ,
+                   /* Output arguments */
+                   double* J_n,
+                   double* dJ_n);
+
+/**
+ * Computes the values of the (cylindrical) Bessel function of the second kind
+ * (Yn) and it's derivative (dYn)
+ *
+ * @test test__cylindricalBesselFunctions()
+ *
+ * @param[in]  N    Function order (highest is ~30 given numerical precision)
+ * @param[in]  z    Input values; nZ x 1
+ * @param[in]  nZ   Number of input values
+ * @param[out] Y_n  Bessel values (set as NULL if not required); FLAT: nZ x 1
  * @param[out] dY_n Bessel derivative values (set as NULL if not required);
- *                  FLAT: nZ x (N+1)
+ *                  FLAT: nZ x 1
  */
 void bessel_Yn(/* Input arguments */
                int N,
@@ -84,18 +102,35 @@ void bessel_Yn(/* Input arguments */
                double* dY_n);
 
 /**
- * Computes the (cylindrical) Hankel function of the first kind: Hn1
+ * Computes the (cylindrical) Bessel function of the second kind (Yn) and their
+ * derivatives (dYn) for ALL orders from 0 to N
  *
- * Computes the Hankel values and their derivatives up to order N for all values
- * in vector z
+ * @param[in]  N    Function order (highest is ~30 given numerical precision)
+ * @param[in]  z    Input values; nZ x 1
+ * @param[in]  nZ   Number of input values
+ * @param[out] Y_n  Bessel values (set as NULL if not required);
+ *                  FLAT: nZ x (N+1)
+ * @param[out] dY_n Bessel derivative values (set as NULL if not required);
+ *                  FLAT: nZ x (N+1)
+ */
+void bessel_Yn_ALL(/* Input arguments */
+                   int N,
+                   double* z,
+                   int nZ,
+                   /* Output arguments */
+                   double* Y_n,
+                   double* dY_n);
+
+/**
+ * Computes the values of the (cylindrical) Hankel function of the first kind
+ * (Hn1) and it's derivative (dHn1)
  *
  * @param[in]  N      Function order (highest is ~30 given numerical precision)
  * @param[in]  z      Input values; nZ x 1
  * @param[in]  nZ     Number of input values
- * @param[out] Hn1_n  Hankel values (set as NULL if not required);
- *                    FLAT: nZ x (N+1)
+ * @param[out] Hn1_n  Hankel values (set as NULL if not required); FLAT: nZ x 1
  * @param[out] dHn1_n Hankel derivative values (set as NULL if not required);
- *                    FLAT: nZ x (N+1)
+ *                    FLAT: nZ x 1
  */
 void hankel_Hn1(/* Input arguments */
                 int N,
@@ -106,18 +141,35 @@ void hankel_Hn1(/* Input arguments */
                 double_complex* dHn1_n);
 
 /**
- * Computes the (cylindrical) Hankel function of the second kind: Hn2
- *
- * Computes the Hankel values and their derivatives up to order N for all values
- * in vector z
+ * Computes the (cylindrical) Hankel function of the first kind (Hn1) and their
+ * derivatives (dHn1) for ALL orders from 0 to N
  *
  * @param[in]  N      Function order (highest is ~30 given numerical precision)
  * @param[in]  z      Input values; nZ x 1
  * @param[in]  nZ     Number of input values
- * @param[out] Hn2_n  Hankel values (set as NULL if not required);
+ * @param[out] Hn1_n  Hankel values (set as NULL if not required);
  *                    FLAT: nZ x (N+1)
+ * @param[out] dHn1_n Hankel derivative values (set as NULL if not required);
+ *                    FLAT: nZ x (N+1)
+ */
+void hankel_Hn1_ALL(/* Input arguments */
+                    int N,
+                    double* z,
+                    int nZ,
+                    /* Output arguments */
+                    double_complex* Hn1_n,
+                    double_complex* dHn1_n);
+
+/**
+ * Computes the values of the (cylindrical) Hankel function of the second kind
+ * (Hn2) and it's derivative (dHn2)
+ *
+ * @param[in]  N      Function order (highest is ~30 given numerical precision)
+ * @param[in]  z      Input values; nZ x 1
+ * @param[in]  nZ     Number of input values
+ * @param[out] Hn2_n  Hankel values (set as NULL if not required); FLAT: nZ x 1
  * @param[out] dHn2_n Hankel derivative values (set as NULL if not required);
- *                    FLAT: nZ x (N+1)
+ *                    FLAT: nZ x 1
  */
 void hankel_Hn2(/* Input arguments */
                 int N,
@@ -127,16 +179,59 @@ void hankel_Hn2(/* Input arguments */
                 double_complex* Hn2_n,
                 double_complex* dHn2_n);
 
+/**
+ * Computes the (cylindrical) Hankel function of the second kind (Hn2) and their
+ * derivatives (dHn2) for ALL orders from 0 to N
+ *
+ * @param[in]  N      Function order (highest is ~30 given numerical precision)
+ * @param[in]  z      Input values; nZ x 1
+ * @param[in]  nZ     Number of input values
+ * @param[out] Hn2_n  Hankel values (set as NULL if not required);
+ *                    FLAT: nZ x (N+1)
+ * @param[out] dHn2_n Hankel derivative values (set as NULL if not required);
+ *                    FLAT: nZ x (N+1)
+ */
+void hankel_Hn2_ALL(/* Input arguments */
+                    int N,
+                    double* z,
+                    int nZ,
+                    /* Output arguments */
+                    double_complex* Hn2_n,
+                    double_complex* dHn2_n);
+
 
 /* ========================================================================== */
 /*                         Spherical Bessel Functions                         */
 /* ========================================================================== */
 
 /**
- * Computes the spherical Bessel function of the first kind: jn
+ * Computes the values of the spherical Bessel function of the first kind (jn)
+ * and it's derivative (djn)
  *
- * Computes the Bessel values and their derivatives up to order N for all values
- * in vector z
+ * @note If the function fails to compute the function at the specified order
+ *       'N', then the output values are set to zero, and this function will
+ *       return 0.
+ * @test test__sphericalBesselFunctions()
+ *
+ * @param[in]  N    Function order (highest is ~30 given numerical precision)
+ * @param[in]  z    Input values; nZ x 1
+ * @param[in]  nZ   Number of input values
+ * @param[out] j_n  Bessel values (set as NULL if not required); FLAT: nZ x 1
+ * @param[out] dj_n Bessel derivative values (set as NULL if not required);
+ *                  FLAT: nZ x 1
+ * @returns 0: if the function failed to compute, 1: if it was successful
+ */
+int bessel_jn(/* Input arguments */
+              int N,
+              double* z,
+              int nZ,
+              /* Output arguments */
+              double* j_n,
+              double* dj_n);
+
+/**
+ * Computes the spherical Bessel function of the first kind (jn) and their
+ * derivatives (djn) for ALL orders from 0 to N
  *
  * @note If the function fails to compute the function up to the specified
  *       order 'N', then the function will compute up to maximum order possible,
@@ -152,20 +247,43 @@ void hankel_Hn2(/* Input arguments */
  * @param[out] dj_n Bessel derivative values (set as NULL if not required);
  *                  FLAT: nZ x (N+1)
  */
-void bessel_jn(/* Input arguments */
-               int N,
-               double* z,
-               int nZ,
-               /* Output arguments */
-               int* maxN,
-               double* j_n,
-               double* dj_n);
+void bessel_jn_ALL(/* Input arguments */
+                   int N,
+                   double* z,
+                   int nZ,
+                   /* Output arguments */
+                   int* maxN,
+                   double* j_n,
+                   double* dj_n);
 
 /**
- * Computes the modified spherical Bessel function of the first kind: in
+ * Computes the values of the modified spherical Bessel function of the first
+ * kind (in) and it's derivative (din)
  *
- * Computes the Bessel values and their derivatives up to order N for all values
- * in vector z.
+ * @note If the function fails to compute the function at the specified order
+ *       'N', then the output values are set to zero, and this function will
+ *       return 0.
+ * @test test__sphericalBesselFunctions()
+ *
+ * @param[in]  N    Function order (highest is ~30 given numerical precision)
+ * @param[in]  z    Input values; nZ x 1
+ * @param[in]  nZ   Number of input values
+ * @param[out] i_n  Bessel values (set as NULL if not required); FLAT: nZ x 1
+ * @param[out] di_n Bessel derivative values (set as NULL if not required);
+ *                  FLAT: nZ x 1
+ * @returns 0: if the function failed to compute, 1: if it was successful
+ */
+int bessel_in(/* Input arguments */
+              int N,
+              double* z,
+              int nZ,
+              /* Output arguments */
+              double* i_n,
+              double* di_n);
+
+/**
+ * Computes the modified spherical Bessel function of the first kind (in) and
+ * their derivatives (din) for ALL orders from 0 to N
  *
  * @note If the function fails to compute the function up to the specified
  *       order 'N', then the function will compute up to maximum order possible,
@@ -181,20 +299,43 @@ void bessel_jn(/* Input arguments */
  * @param[out] di_n Bessel derivative values (set as NULL if not required);
  *                  FLAT: nZ x (N+1)
  */
-void bessel_in(/* Input arguments */
-               int N,
-               double* z,
-               int nZ,
-               /* Output arguments */
-               int* maxN,
-               double* i_n,
-               double* di_n);
+void bessel_in_ALL(/* Input arguments */
+                   int N,
+                   double* z,
+                   int nZ,
+                   /* Output arguments */
+                   int* maxN,
+                   double* i_n,
+                   double* di_n);
 
 /**
- * Computes the spherical Bessel function of the second kind (Neumann): yn
+ * Computes the values of the spherical Bessel function of the second kind (yn)
+ * and it's derivative (dyn)
  *
- * Computes the Bessel values and their derivatives up to order N for all values
- * in vector z
+ * @note If the function fails to compute the function at the specified order
+ *       'N', then the output values are set to zero, and this function will
+ *       return 0.
+ * @test test__sphericalBesselFunctions()
+ *
+ * @param[in]  N    Function order (highest is ~30 given numerical precision)
+ * @param[in]  z    Input values; nZ x 1
+ * @param[in]  nZ   Number of input values
+ * @param[out] y_n  Bessel values (set as NULL if not required); FLAT: nZ x 1
+ * @param[out] dy_n Bessel derivative values (set as NULL if not required);
+ *                  FLAT: nZ x 1
+ * @returns 0: if the function failed to compute, 1: if it was successful
+ */
+int bessel_yn(/* Input arguments */
+              int N,
+              double* z,
+              int nZ,
+              /* Output arguments */
+              double* y_n,
+              double* dy_n);
+
+/**
+ * Computes the spherical Bessel function of the second kind (yn) and their
+ * derivatives (dyn) for ALL orders from 0 to N
  *
  * @note If the function fails to compute the function up to the specified
  *       order 'N', then the function will compute up to maximum order possible,
@@ -210,20 +351,43 @@ void bessel_in(/* Input arguments */
  * @param[out] dy_n Bessel derivative values (set as NULL if not required);
  *                  FLAT: nZ x (N+1)
  */
-void bessel_yn(/* Input arguments */
-               int N,
-               double* z,
-               int nZ,
-               /* Output arguments */
-               int* maxN,
-               double* y_n,
-               double* dy_n);
+void bessel_yn_ALL(/* Input arguments */
+                   int N,
+                   double* z,
+                   int nZ,
+                   /* Output arguments */
+                   int* maxN,
+                   double* y_n,
+                   double* dy_n);
 
 /**
- * Computes the modified spherical Bessel function of the second kind: kn
+ * Computes the values of the modified spherical Bessel function of the second
+ * kind (kn) and it's derivative (dkn)
  *
- * Computes the Bessel values and their derivatives up to order N for all values
- * in vector z
+ * @note If the function fails to compute the function at the specified order
+ *       'N', then the output values are set to zero, and this function will
+ *       return 0.
+ * @test test__sphericalBesselFunctions()
+ *
+ * @param[in]  N    Function order (highest is ~30 given numerical precision)
+ * @param[in]  z    Input values; nZ x 1
+ * @param[in]  nZ   Number of input values
+ * @param[out] k_n  Bessel values (set as NULL if not required); FLAT: nZ x 1
+ * @param[out] dk_n Bessel derivative values (set as NULL if not required);
+ *                  FLAT: nZ x 1
+ * @returns 0: if the function failed to compute, 1: if it was successful
+ */
+int bessel_kn(/* Input arguments */
+              int N,
+              double* z,
+              int nZ,
+              /* Output arguments */
+              double* k_n,
+              double* dk_n);
+
+/**
+ * Computes the modified spherical Bessel function of the second kind (kn) and
+ * their derivatives (dkn) for ALL orders from 0 to N
  *
  * @note If the function fails to compute the function up to the specified
  *       order 'N', then the function will compute up to maximum order possible,
@@ -239,20 +403,42 @@ void bessel_yn(/* Input arguments */
  * @param[out] dk_n Bessel derivative values (set as NULL if not required);
  *                  FLAT: nZ x (N+1)
  */
-void bessel_kn(/* Input arguments */
+void bessel_kn_ALL(/* Input arguments */
+                   int N,
+                   double* z,
+                   int nZ,
+                   /* Output arguments */
+                   int* maxN,
+                   double* k_n,
+                   double* dk_n);
+
+/**
+ * Computes the values of the spherical Hankel function of the first kind (hn1)
+ * and it's derivative (dhn1)
+ *
+ * @note If the function fails to compute the function at the specified order
+ *       'N', then the output values are set to zero, and this function will
+ *       return 0.
+ *
+ * @param[in]  N     Function order (highest is ~30 given numerical precision)
+ * @param[in]  z     Input values; nZ x 1
+ * @param[in]  nZ    Number of input values
+ * @param[out] h_n1  Hankel values (set as NULL if not required); FLAT: nZ x 1
+ * @param[out] dh_n1 Hankel derivative values (set as NULL if not required);
+ *                   FLAT: nZ x 1
+ * @returns 0: if the function failed to compute, 1: if it was successful
+ */
+int hankel_hn1(/* Input arguments */
                int N,
                double* z,
                int nZ,
                /* Output arguments */
-               int* maxN,
-               double* k_n,
-               double* dk_n);
+               double_complex* h_n1,
+               double_complex* dh_n1);
 
 /**
- * Computes the spherical Hankel function of the first kind: hn1
- *
- * Computes the Hankel values and their derivatives up to order N for all values
- * in vector z.
+ * Computes the spherical Hankel function of the first kind (hn1) and their
+ * derivatives (dhn1) for ALL orders from 0 to N
  *
  * @note If the function fails to compute the function up to the specified
  *       order 'N', then the function will compute up to maximum order possible,
@@ -268,20 +454,42 @@ void bessel_kn(/* Input arguments */
  * @param[out] dh_n1 Hankel derivative values (set as NULL if not required);
  *                   FLAT: nZ x (N+1)
  */
-void hankel_hn1(/* Input arguments */
-                int N,
-                double* z,
-                int nZ,
-                /* Output arguments */
-                int* maxN,
-                double_complex* h_n1,
-                double_complex* dh_n1);
+void hankel_hn1_ALL(/* Input arguments */
+                    int N,
+                    double* z,
+                    int nZ,
+                    /* Output arguments */
+                    int* maxN,
+                    double_complex* h_n1,
+                    double_complex* dh_n1);
 
 /**
- * Computes the spherical Hankel function of the second kind: hn2
+ * Computes the values of the spherical Hankel function of the second kind (hn2)
+ * and it's derivative (dhn2)
  *
- * Computes the Hankel values and their derivatives up to order N for all values
- * in vector z
+ * @note If the function fails to compute the function at the specified order
+ *       'N', then the output values are set to zero, and this function will
+ *       return 0.
+ *
+ * @param[in]  N     Function order (highest is ~30 given numerical precision)
+ * @param[in]  z     Input values; nZ x 1
+ * @param[in]  nZ    Number of input values
+ * @param[out] h_n2  Hankel values (set as NULL if not required); FLAT: nZ x 1
+ * @param[out] dh_n2 Hankel derivative values (set as NULL if not required);
+ *                   FLAT: nZ x 1
+ * @returns 0: if the function failed to compute, 1: if it was successful
+ */
+int hankel_hn2(/* Input arguments */
+               int N,
+               double* z,
+               int nZ,
+               /* Output arguments */
+               double_complex* h_n2,
+               double_complex* dh_n2);
+
+/**
+ * Computes the spherical Hankel function of the second kind (hn2) and their
+ * derivatives (dhn2) for ALL orders from 0 to N
  *
  * @note If the function fails to compute the function up to the specified
  *       order 'N', then the function will compute up to maximum order possible,
@@ -297,14 +505,14 @@ void hankel_hn1(/* Input arguments */
  * @param[out] dh_n2 Hankel derivative values (set as NULL if not required);
  *                   FLAT: nZ x (N+1)
  */
-void hankel_hn2(/* Input arguments */
-                int N,
-                double* z,
-                int nZ,
-                /* Output arguments */
-                int* maxN,
-                double_complex* h_n2,
-                double_complex* dh_n2);
+void hankel_hn2_ALL(/* Input arguments */
+                    int N,
+                    double* z,
+                    int nZ,
+                    /* Output arguments */
+                    int* maxN,
+                    double_complex* h_n2,
+                    double_complex* dh_n2);
 
 
 #ifdef __cplusplus

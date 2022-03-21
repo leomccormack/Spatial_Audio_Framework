@@ -78,6 +78,7 @@ void calcDVFCoeffs(
  * @param[out] iGInf Interpolated high shelf gain
  * @param[out] iFc   Interpolated high shelf cutoff frequency
  */
+
 void interpDVFShelfParams(
                          /* Input Arguments */
                          float theta,

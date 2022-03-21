@@ -430,6 +430,7 @@ void test__calculateGridWeights(void){
     /* Config */
     const float acceptedTolerance = 0.00001f;
     int testOrder = 3;
+    
     /* Pull an appropriate t-design */
     t_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[2 * testOrder -1];
     nDirs = __Tdesign_nPoints_per_degree[2 * testOrder - 1];
@@ -438,12 +439,16 @@ void test__calculateGridWeights(void){
         t_dirs_rad[i] = DEG2RAD(t_dirs_deg[i]);
     for(i=0; i<nDirs; i++)
         t_dirs_rad[i*2+1] = SAF_PI/2.0f - t_dirs_rad[i*2+1];
-    w = malloc(nDirs * sizeof(float));
+    w = malloc1d(nDirs * sizeof(float));
     order =  calculateGridWeights(t_dirs_rad,nDirs,-1,w);
 
     TEST_ASSERT_EQUAL(testOrder, order);
     for (i=0; i<nDirs; i++)
         TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance,FOURPI/nDirs, w[i]);
+
+    /* clean-up */
+    free(t_dirs_rad);
+    free(w);
 }
 
 void test__sphMUSIC(void){

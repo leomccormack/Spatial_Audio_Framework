@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Michael McCrea, Leo McCormack
+ * Copyright 2022 Michael McCrea, Leo McCormack
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above

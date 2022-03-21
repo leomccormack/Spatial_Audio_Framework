@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+#include <inttypes.h>
 #include "hdf_reader.h"
 
 /* Only external library requirement is zlib: */
@@ -643,7 +644,7 @@ for (;;) {
 		if (err)
 			return err;
 
-		err = inflate(&stream, Z_SYNC_FLUSH);
+        err = inflate(&stream, Z_SYNC_FLUSH);
 		*outlen = (int)stream.total_out;
 		inflateEnd(&stream);
 		if (err && err != Z_STREAM_END) {
@@ -858,4 +859,6 @@ for (;;) {
 		dataobjectFree(reader, &superblock->dataobject);
 	}
 
+#else
+extern int to_avoid_iso_compiler_warning_when_there_are_no_symbols;
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */

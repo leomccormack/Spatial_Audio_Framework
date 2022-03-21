@@ -648,8 +648,7 @@ static int readOHDRHeaderMessageGroupInfo(struct READER *reader,
 static int readOHDRHeaderMessageFilterPipelineV1(struct READER *reader,
                                                  uint8_t filters) {
   int i, j;
-  uint16_t filter_identification_value, number_client_data_values,
-      namelength; //flags
+  uint16_t filter_identification_value, number_client_data_values, namelength, flags;
 
   if (readValue(reader, 6) != 0) {
     mylog("reserved values not zero\n");
@@ -671,7 +670,7 @@ static int readOHDRHeaderMessageFilterPipelineV1(struct READER *reader,
       // LCOV_EXCL_STOP
     }
     namelength = (uint16_t)readValue(reader, 2);
-    //flags = (uint16_t)readValue(reader, 2);
+    flags = (uint16_t)readValue(reader, 2);
     number_client_data_values = (uint16_t)readValue(reader, 2);
 
     if (namelength > 0)
@@ -1334,4 +1333,6 @@ void dataobjectFree(struct READER *reader, struct DATAOBJECT *dataobject) {
   }
 }
 
+#else
+extern int to_avoid_iso_compiler_warning_when_there_are_no_symbols;
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */

@@ -234,7 +234,7 @@ void spreader_initCodec
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
     else{
         /* Use sofa loader */
-        error = saf_sofa_open(&sofa, pData->sofa_filepath);
+        error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_DEFAULT);
         if(error!=SAF_SOFA_OK){
             /* if failed, then load default data instead */
             pData->useDefaultHRIRsFLAG = 1;

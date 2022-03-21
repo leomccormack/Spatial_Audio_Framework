@@ -75,8 +75,9 @@
      defined(SAF_USE_INTEL_MKL_ILP64) + \
      defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
      defined(SAF_USE_ATLAS) + \
-     defined(SAF_USE_APPLE_ACCELERATE)) > 1
-# error Only one performance library flag can be defined!
+     defined(SAF_USE_GSL) + \
+     defined(SAF_USE_APPLE_ACCELERATE)) != 1
+# error One (and only one) performance library flag should be defined!
 #endif
 
 /*
@@ -182,7 +183,7 @@
  * functions used in saf_utility_veclib will need to be swapped out for
  * equivalent functions in GSL
  */
-# warning Using GNU Scientific Library (GSL) is currently experimental
+# error Using GNU Scientific Library (GSL) is currently unsupported/incomplete
 # include "gsl_cblas.h"
 
 #else
@@ -267,25 +268,27 @@
 # endif
 #endif
 
-
-/* ========================================================================== */
-/*     External Libraries Required by the Optional saf_sofa_reader Module     */
-/* ========================================================================== */
-
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
 /*
  * The built-in saf_sofa_open() SOFA file reader has two implementations:
  *    - By default, the function wraps around the "libmysofa" library
- *      (BSD-3-Clause license), which depends only on zlib (which is included
- *      in framework/resources/zlib)
- *    - However, if SAF_ENABLE_NETCDF is defined, then an approximately 3 times
- *      faster implementation is used instead. Therefore, if you intend to load
- *      many large SOFA files (especially microphone arrays or Ambisonic IRs),
- *      then this latter option may be preferable. Otherwise, the default
- *      libmysofa SOFA reader is likely sufficient for most purposes.
+ *      (BSD-3-Clause license), which depends on only zlib (which is included
+ *      in framework/resources/zlib). The downsides of this option, is that zlib
+ *      has file size limits for each chunk (<4GB) and it is quite slow at
+ *      decompressing large files.
+ *    - If SAF_ENABLE_NETCDF is defined, then an alternative SOFA reader may be
+ *      used. This version requires netcdf to be linked to SAF, along with its
+ *      dependencies. The netcdf loader gets around the file size limits of
+ *      the libmysofa loader and is also approximately 3 times faster.
+ *      Therefore, if you intend to load many large SOFA files
+ *      (especially microphone arrays or Ambisonic IRs), then this alternative
+ *      SOFA reader is either required (to get around the file size limit) or
+ *      may be preferred due to the shorter loading times. The downsides of
+ *      using the netcdf option is that it is NOT thread-safe! and requires
+ *      these additional external libraries to be linked to SAF.
  *
- * The "mysofa" interface, e.g. mysofa_load(), may also be used directly in
- * either case.
+ * Note that the "mysofa" interface, e.g. mysofa_load(), may also be called
+ * directly, rather than using saf_sofa_open().
  */
 # ifdef SAF_ENABLE_NETCDF
 #  include <netcdf.h>

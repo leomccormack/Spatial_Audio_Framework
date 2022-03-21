@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Michael McCrea, Leo McCormack
+ * Copyright 2022 Michael McCrea, Leo McCormack
  *
  * Permission to use, copy, modify, and/or distribute this software for any
  * purpose with or without fee is hereby granted, provided that the above
@@ -65,10 +65,6 @@ extern "C" {
 #endif /* __cplusplus */
 
 /* ========================================================================== */
-/*                             Presets + Constants                            */
-/* ========================================================================== */
-
-/* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
 
@@ -95,7 +91,7 @@ void binauraliserNF_destroy(void** const phBin);
  * @param[in] samplerate Host samplerate.
  */
 void binauraliserNF_init(void* const hBin,
-                       int samplerate);
+                         int samplerate);
 
 /**
  * Intialises the codec variables, based on current global/user parameters
@@ -126,11 +122,11 @@ void binauraliserNF_initCodec(void* const hBin);
  * @param[in] nSamples  Number of samples in 'inputs'/'output' matrices
  */
 void binauraliserNF_process(void* const hBin,
-                          const float *const * inputs,
-                          float** const outputs,
-                          int nInputs,
-                          int nOutputs,
-                          int nSamples);
+                            const float *const * inputs,
+                            float** const outputs,
+                            int nInputs,
+                            int nOutputs,
+                            int nSamples);
 
 /**
  * Alternate version of binauraliserNF_process() that performs frequency-domain
