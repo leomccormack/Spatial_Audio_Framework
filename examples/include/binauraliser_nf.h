@@ -128,6 +128,17 @@ void binauraliserNF_process(void* const hBin,
                             int nOutputs,
                             int nSamples);
 
+/**
+ * Alternate version of binauraliserNF_process() that performs frequency-domain
+ * DVF filtering. Not used but kept for posterity.
+ */
+void binauraliserNF_processFD(void* const hBin,
+                          const float *const * inputs,
+                          float** const outputs,
+                          int nInputs,
+                          int nOutputs,
+                          int nSamples);
+
 
 /* ========================================================================== */
 /*                                Set Functions                               */
@@ -166,12 +177,14 @@ void binauraliserNF_setInputConfigPreset(void* const hBin,
 float binauraliserNF_getSourceDist_m(void* const hBin, int index);
 
 /**
- * Returns the distance considered to be the far field (beyond which no near field filtering is applied), in METERS
+ * Returns the distance considered to be the far field (beyond which no near
+ * field filtering is applied), in METERS
  */
 float binauraliserNF_getFarfieldThresh_m(void* const hBin);
 
 /**
- * Returns the scaling factor to give the far field threshold headroom (useful for UI range limits)
+ * Returns the scaling factor to give the far field threshold headroom (useful
+ * for UI range limits)
  */
 float binauraliserNF_getFarfieldHeadroom(void* const hBin);
 

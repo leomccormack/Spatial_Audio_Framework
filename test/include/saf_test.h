@@ -159,6 +159,10 @@ void test__latticeDecorrelator(void);
  * similar to the "butter" function in Matlab */
 void test__butterCoeffs(void);
 /**
+ * Testing that the magnitudes and phases returned by evalIIRTransferFunction()
+ * are numerically similar to the "freqz" function in Matlab */
+void test__evalIIRTransferFunction(void);
+/**
  * Testing that the faf_IIRFilterbank can reconstruct the original signal power
  */
 void test__faf_IIRFilterbank(void);
@@ -169,15 +173,15 @@ void test__gexpm(void);
 /**
  * Calculate high shelf parameters, g0, gInf, fc, from the lookup table
  * coefficients (10 degree steps) */
-void test__dvf_calcHighShelfParams(void);
+void test__dvf_calcDVFShelfParams(void);
 /**
  * Test the interpolation of high shelf parameters based on distance and
  * incidence angle parameters */
-void test__dvf_interpHighShelfParams(void);
+void test__dvf_interpDVFShelfParams(void);
 /**
- * Test the generation of high shelf coeffs based on shelf gains and fc
+ * Test the generation of high shelf coeffs based on shelf gain and fc
  * parameters */
-void test__dvf_calcIIRCoeffs(void);
+void test__dvf_dvfShelfCoeffs(void);
 
 
 /* ========================================================================== */

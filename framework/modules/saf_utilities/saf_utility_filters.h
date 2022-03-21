@@ -272,6 +272,84 @@ void evalBiQuadTransferFunction(/* Input arguments */
                                 float* phase_rad);
 
 /**
+ * Computes magnitude and phase response of an IIR filter from its coefficients
+ * at user-specified frequencies (Hz).
+ *
+ * The function optionally returns magnitude and/or phase. The function is
+ * tested against Matlab's 'freqz' function.
+ *
+ * @note This function operates on filter coefficients of type **double**, for
+ * more accuracy for higher order filters, in particular at lower frequencies.
+ * See `evalIIRTransferFunctionf()` (operating on **float** type coefficients)
+ * for a more efficient implementation (e.g. for lower order filters).
+ *
+ * @test test__evalIIRTransferFunction()
+ *
+ * @param[in]  b            Filter coefficients for the numerator; nCoeffs x 1
+ * @param[in]  a            Filter coefficients for the denominator; nCoeffs x 1
+ * @param[in]  nCoeffs      Number of filter coefficients
+ * @param[in]  freqs        Frequencies at which to evaluate the
+ *                          magnitude/phase response (Hz); nFreqs x 1
+ * @param[in]  nFreqs       Number of frequencies
+ * @param[in]  fs           Sampling rate (Hz)
+ * @param[in]  mag2dB       0: 'magnitude' returned in linear scale, 1: dB scale
+ * @param[out] magnitude    Magnitudes at each frequency (set to NULL of not
+ *                          wanted); nFreqs x 1
+ * @param[out] phase_rad    Phases at each frequency (radians; set to NULL of
+ *                          not wanted); nFreqs x 1
+ */
+void evalIIRTransferFunction(/* Input arguments */
+                                double* b,
+                                double* a,
+                                int nCoeffs,
+                                float* freqs,
+                                int nFreqs,
+                                float fs,
+                                int mag2dB,
+                                /* Output arguments */
+                                float* magnitude,
+                                float* phase_rad);
+
+/**
+ * Computes magnitude and phase response of an IIR filter from its coefficients
+ * (floats) at user-specified frequencies (Hz).
+ *
+ * @note This function operates on filter coefficients of type **float**, and is
+ * suitable for low order filters, or otherwise less accuracy at low frequencies
+ * for higher order filters. For higher-order filters, especially when evaluated
+ * at low frequencies, `evalIIRTransferFunction()` is recommended.
+ *
+ * The function optionally returns magnitude and/or phase. The function is
+ * tested against Matlab's 'freqz' function.
+ *
+ * @test test__evalIIRTransferFunction()
+ *
+ * @param[in]  b            Filter coefficients for the numerator; nCoeffs x 1
+ * @param[in]  a            Filter coefficients for the denominator; nCoeffs x 1
+ * @param[in]  nCoeffs      Number of filter coefficients
+ * @param[in]  freqs        Frequencies at which to evaluate the
+ *                          magnitude/phase response (Hz); nFreqs x 1
+ * @param[in]  nFreqs       Number of frequencies
+ * @param[in]  fs           Sampling rate (Hz)
+ * @param[in]  mag2dB       0: 'magnitude' returned in linear scale, 1: dB scale
+ * @param[out] magnitude    Magnitudes at each frequency (set to NULL of not
+ *                          wanted); nFreqs x 1
+ * @param[out] phase_rad    Phases at each frequency (radians; set to NULL of
+ *                          not wanted); nFreqs x 1
+ */
+void evalIIRTransferFunctionf(/* Input arguments */
+                                float* b,
+                                float* a,
+                                int nCoeffs,
+                                float* freqs,
+                                int nFreqs,
+                                float fs,
+                                int mag2dB,
+                                /* Output arguments */
+                                float* magnitude,
+                                float* phase_rad);
+
+/**
  * Applies an IIR filter to a time-domain signal (using the direct form II
  * difference equation)
  *

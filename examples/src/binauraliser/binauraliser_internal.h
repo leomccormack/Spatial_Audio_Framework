@@ -67,7 +67,8 @@ extern "C" {
 
 /**
  * Main structure for binauraliser. Contains variables for audio buffers,
- * afSTFT, HRTFs, internal variables, flags, user parameters
+ * afSTFT, HRTFs, internal variables, flags, user parameters.
+ * Note: if this is modified, identically modify _binauraliserNF struct.
  */
 typedef struct _binauraliser
 {

@@ -56,12 +56,13 @@ extern "C" {
  * Main structure for binauraliserNF. Contains all variables from binauraliser
  * (audio buffers, afSTFT, HRTFs, internal variables, flags, user parameters) plus
  * those specific to the near field variant.
+ * FREQUENCY DOMAIN implementation.
  */
 typedef struct _binauraliserNF {
-    //struct _binauraliser;               /**< "inherit" member vars of binauraliser struct */
+    //struct _binauraliser; /**< "inherit" member vars of binauraliser struct - requires -fms-extensions compile flag */
 
     /* The following variables MUST match those of the _binauraliser struct */
-    
+
     /* audio buffers */
     float** inputFrameTD;            /**< time-domain input frame; #MAX_NUM_INPUTS x #BINAURALISER_FRAME_SIZE */
     float** outframeTD;              /**< time-domain output frame; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
@@ -70,7 +71,7 @@ typedef struct _binauraliserNF {
     int fs;                          /**< Host sampling rate, in Hz */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
     void* hSTFT;                     /**< afSTFT handle */
-    
+
     /* sofa file info */
     char* sofa_filepath;             /**< absolute/relevative file path for a sofa file */
     float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
@@ -81,19 +82,19 @@ typedef struct _binauraliserNF {
     int hrir_loaded_fs;              /**< sampling rate of the loaded HRIRs  */
     int hrir_runtime_fs;             /**< sampling rate of the HRIRs being used for processing (after any resampling) */
     float* weights;                  /**< Integration weights for the HRIR measurement grid */
-    
+
     /* vbap gain table */
     int hrtf_vbapTableRes[2];        /**< [0] azimuth, and [1] elevation grid resolution, in degrees */
     int N_hrtf_vbap_gtable;          /**< Number of interpolation weights/directions */
     int* hrtf_vbap_gtableIdx;        /**< N_hrtf_vbap_gtable x 3 */
     float* hrtf_vbap_gtableComp;     /**< N_hrtf_vbap_gtable x 3 */
-    
+
     /* hrir filterbank coefficients */
     float* itds_s;                   /**< interaural-time differences for each HRIR (in seconds); nBands x 1 */
     float_complex* hrtf_fb;          /**< hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float* hrtf_fb_mag;              /**< magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs */
     float_complex hrtf_interp[MAX_NUM_INPUTS][HYBRID_BANDS][NUM_EARS]; /**< Interpolated HRTFs */
-    
+
     /* flags/status */
     CODEC_STATUS codecStatus;        /**< see #CODEC_STATUS */
     float progressBar0_1;            /**< Current (re)initialisation progress, between [0..1] */
@@ -102,7 +103,7 @@ typedef struct _binauraliserNF {
     int recalc_hrtf_interpFLAG[MAX_NUM_INPUTS]; /**< 1: re-calculate/interpolate the HRTF, 0: do not */
     int reInitHRTFsAndGainTables;    /**< 1: reinitialise the HRTFs and interpolation tables, 0: do not */
     int recalc_M_rotFLAG;            /**< 1: re-calculate the rotation matrix, 0: do not */
-    
+
     /* misc. */
     float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
     float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
@@ -125,22 +126,28 @@ typedef struct _binauraliserNF {
     int bFlipRoll;                           /**< flag to flip the sign of the roll rotation angle */
     int useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     float src_gains[MAX_NUM_INPUTS];         /**< Gains applied per source */
-    
+
     /* End copied _binauraliser struct members. The following are unique to the _binauraliserNF struct */
-    
-    /* audio buffers */
-    float**          binsrcsTD;         /**< near field DVF-filtered sources frame; (#MAX_NUM_INPUTS * #NUM_EARS) x #BINAURALISER_FRAME_SIZE */
-    float_complex*** binauralTF;        /**< time-frequency domain output frame; #HYBRID_BANDS x (#MAX_NUM_INPUTS * #NUM_EARS) x #TIME_SLOTS
-                                         *   Note: (#MAX_NUM_INPUTS * #NUM_EARS) dimensions are combined because afSTFT requires type float_complex*** */
+
+    float b_dvf[MAX_NUM_INPUTS][NUM_EARS][2];                   /**< shelf IIR numerator coefficients for each input, left and right. */
+    float a_dvf[MAX_NUM_INPUTS][NUM_EARS][2];                   /**< shelf IIR denominator coefficients for each input, left and right. */
+    float dvfmags[MAX_NUM_INPUTS][NUM_EARS][HYBRID_BANDS];      /**< DVF filter frequency band magnitudes. */
+    float dvfphases[MAX_NUM_INPUTS][NUM_EARS][HYBRID_BANDS];    /**< DVF filter frequency band phases. */
+
     /* misc. */
-    float src_dists_m[MAX_NUM_INPUTS];  /**< source distance,  meters */
-    float farfield_thresh_m;            /**< distance considered to be far field (no near field filtering),  meters */
-    float farfield_headroom;            /**< scale factor applied to farfield_thresh_m when resetting to the far field, and for UI range, meters */
-    float nearfield_limit_m;            /**< minimum distance allowed for near-field filtering, from head _center_,  meters, def. 0.15 */
-    float head_radius;                  /**< head radius, used calculate normalized source distance meters, def. 0.09096 */
-    float head_radius_recip;            /**< reciprocal of head radius */
+    float src_dists_m[MAX_NUM_INPUTS];  /**< Source distance,  meters. */
+    float farfield_thresh_m;            /**< Distance considered to be far field (no near field filtering),  meters. */
+    float farfield_headroom;            /**< Scale factor applied to farfield_thresh_m when resetting to the far field, and for UI range, meters. */
+    float nearfield_limit_m;            /**< Minimum distance allowed for near-field filtering, from head _center_, meters, def. 0.15. */
+    float head_radius;                  /**< Head radius, used calculate normalized source distance meters, def. 0.09096. */
+    float head_radius_recip;            /**< Reciprocal of head radius. */
+    float (*src_dirs_cur)[2];           /**< Pointer to assign to the current HRTF directions being operated on (non/rotated directions switch). */
+
+    /* flags/status */
+    int recalc_dvfCoeffFLAG[MAX_NUM_INPUTS]; /**< 1: re-calculate the DVF coefficients on change in distance, 0: do not. */
 
 } binauraliserNF_data;
+
 
 /* ========================================================================== */
 /*                             Internal Functions                             */

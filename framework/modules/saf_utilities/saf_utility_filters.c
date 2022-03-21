@@ -592,7 +592,7 @@ void evalBiQuadTransferFunction
         /* substituting Euler, z = e^(-jwn) = cos(wn) + j*sin(wn), into:
          * H(z) = (b0 + b1*z^(-1) + b2*z^(-2)) / (1 + a1*z^(-1) + a2*z^(-2)): */
         denom_real = 1.0f + a[1]*cosf(w) + a[2]*cosf(2.0f*w);
-        denom_imag = a[1]*sinf(w) + a[2]*sinf(2*w);
+        denom_imag = a[1]*sinf(w) + a[2]*sinf(2.0f*w);
         num_real = b[0] + b[1]*cosf(w) + b[2]*cosf(2.0f*w);
         num_imag = b[1]*sinf(w) + b[2]*sinf(2.0f*w);
         
@@ -605,6 +605,136 @@ void evalBiQuadTransferFunction
             phase_rad[ff] = atan2f(num_imag,num_real) - atan2f(denom_imag, denom_real);
     }
 }
+
+void evalIIRTransferFunctionf
+ (
+    float* b_coeff, /* Note coeffs are *floats* */
+    float* a_coeff,
+    int nCoeffs,
+    float* freqs,
+    int nFreqs,
+    float fs,
+    int mag2dB,
+    float* magnitude,
+    float* phase_rad
+)
+{
+    int ff;
+    float w, x, a, b, c, d, h_re, h_im, cosx, sinx;
+    float norm_frq = -2.0 * SAF_PI / fs; // -1 factored in from negated 'n' below
+
+    /*
+     * substitute Euler's  z = e^(jwn) = cos(wn) + j*sin(wn)
+     * into
+     *        [b0*z^(0) + b1*z^(-1) ... + bn*z^(-n)]
+     * H(z) = --------------------------------------
+     *        [a0*z^(0) + a1*z^(-1) ... + an*z^(-n)]
+     */
+    
+    for(ff = 0; ff < nFreqs; ff++){
+        w = freqs[ff] * norm_frq;
+        
+        // n = 0; real terms are b[0] and a[0], imag terms are 0
+        a = b_coeff[0];    // num_re;   b_coeff[0] * cos(x); x = -1.f * n * w;
+        b = 0.0;           // num_imag; b_coeff[0] * sin(x);
+        c = a_coeff[0];    // den_re
+        d = 0.0;           // den_imag
+        
+        /* sum over remaining numerator and denominator terms */
+        for(int n = 1; n < nCoeffs; n++){
+            x = (n * w);    // n * -1.f * w (-1.f applied in norm_frq)
+            cosx = cosf(x); // alt: cosx = 1 - 2.f * powf(sinf(x/2.f), 2.f);
+            sinx = sinf(x);
+            a += b_coeff[n] * cosx;  // 'a'
+            b += b_coeff[n] * sinx;  // 'b'
+            c += a_coeff[n] * cosx;  // 'c'
+            d += a_coeff[n] * sinx;  // 'd'
+        }
+
+        /* 1 / (c^2 + d^2 + eps) */
+        double dvsr = 1.0 / (powf(c, 2.f) + powf(d, 2.f) + 2.23e-7f);
+        
+        if(magnitude!=NULL){
+            /* sqrt((a^2 + b^2) / (c^2 + d^2)) */
+            magnitude[ff] = (float)sqrt( (powf(a, 2.0f) + powf(b, 2.0f)) * dvsr );
+            if(mag2dB)
+                magnitude[ff] = 20.0f*log10f(magnitude[ff]);
+        }
+        
+        if(phase_rad!=NULL) {
+            /* complex division */
+            h_re = (a*c + b*d) * dvsr;
+            h_im = (b*c - a*d) * dvsr;
+            phase_rad[ff] = (float)atan2(h_im, h_re);
+        }
+    }
+}
+
+void evalIIRTransferFunction
+ (
+    double* b_coeff, /* Note coeffs are *doubles* */
+    double* a_coeff,
+    int nCoeffs,
+    float* freqs,
+    int nFreqs,
+    float fs,
+    int mag2dB,
+    float* magnitude,
+    float* phase_rad
+)
+{
+    int ff;
+    float w;
+    double x, a, b, c, d, h_re, h_im, cosx, sinx;
+    float norm_frq = -2.0 * SAF_PI / fs; // -1 factored in from negated 'n' below
+    
+    /*
+     * substitute Euler's  z = e^(jwn) = cos(wn) + j*sin(wn)
+     * into
+     *        [b0*z^(0) + b1*z^(-1) ... + bn*z^(-n)]
+     * H(z) = --------------------------------------
+     *        [a0*z^(0) + a1*z^(-1) ... + an*z^(-n)]
+     */
+    
+    for(ff = 0; ff < nFreqs; ff++){
+        w = freqs[ff] * norm_frq;
+        
+        // n = 0; real terms are b[0] and a[0], imag terms are 0
+        a = b_coeff[0];    // num_re;   b_coeff[0] * cos(x); x = -1.f * n * w;
+        b = 0.0;           // num_imag; b_coeff[0] * sin(x);
+        c = a_coeff[0];    // den_re
+        d = 0.0;           // den_imag
+        
+        /* sum over remaining numerator and denominator terms */
+        for(int n = 1; n < nCoeffs; n++){
+            x = (double)(n * w);     // n * -1.f * w (-1.f applied in norm_frq)
+            cosx = 1 - 2.f * pow(sin(x/2.f), 2.f); // cos(x) = 1 - 2sin^2(x/2)
+            sinx = sin(x);
+            a += b_coeff[n] * cosx;  // 'a'
+            b += b_coeff[n] * sinx;  // 'b'
+            c += a_coeff[n] * cosx;  // 'c'
+            d += a_coeff[n] * sinx;  // 'd'
+        }
+
+        /* 1 / (c^2 + d^2 + eps) */
+        double dvsr = 1.0 / (pow(c, 2.f) + pow(d, 2.f) + 2.23e-17f);
+
+        if(magnitude!=NULL){
+            /* sqrt((a^2 + b^2) / (c^2 + d^2)) */
+            magnitude[ff] = (float)sqrt( (pow(a, 2.0f) + pow(b, 2.0f)) * dvsr );
+            if(mag2dB)
+                magnitude[ff] = 20.0f*log10f(magnitude[ff]);
+        }
+        
+        if(phase_rad!=NULL) {
+            /* complex division */
+            h_re = (a*c + b*d) * dvsr;
+            h_im = (b*c - a*d) * dvsr;
+            phase_rad[ff] = (float)atan2(h_im, h_re);
+        }
+    }
+}
+
 
 void applyIIR
 (
