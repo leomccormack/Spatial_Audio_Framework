@@ -357,8 +357,14 @@ endif()
 
 
 ############################################################################
+# Extra compiler flags
 if(UNIX)
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
+endif()
+if(SAF_USE_FAST_MATH_FLAG)
+    if((CMAKE_CXX_COMPILER_ID MATCHES "Clang") OR (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+        add_compile_options(-ffast-math)
+    endif()
 endif()
 
 

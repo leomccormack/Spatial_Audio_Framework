@@ -15,6 +15,7 @@ option(SAF_USE_INTEL_IPP             "Use Intel IPP for the FFT, resampler, etc.
 option(SAF_USE_FFTW                  "Use FFTW3 for the FFT."                     OFF)
 option(SAF_ENABLE_SIMD               "Enable the use of SSE3, AVX2, AVX512"       OFF)
 option(SAF_ENABLE_NETCDF             "Enable netcdf for the sofa reader module"   OFF)
+option(SAF_USE_FAST_MATH_FLAG        "Enable -ffast-math compiler flag"           ON)
 if (NOT SAF_PERFORMANCE_LIB)
     set(SAF_PERFORMANCE_LIB "SAF_USE_INTEL_MKL_LP64" CACHE STRING "Performance library for SAF to use.")
 endif()
