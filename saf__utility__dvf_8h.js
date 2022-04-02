@@ -1,8 +1,8 @@
 var saf__utility__dvf_8h =
 [
-    [ "applyDVF", "group___utilities.html#gae523ce5715457d81ff42fbbf4e93d535", null ],
-    [ "calcHighShelfParams", "group___utilities.html#ga5f770f4b4144e5bcd3869527cb53be58", null ],
-    [ "calcIIRCoeffs", "group___utilities.html#gab05240992fe990804e54ec063a3c9757", null ],
-    [ "convertFrontalDoAToIpsilateral", "group___utilities.html#ga668ec97e2feccb2a9a592d8792a061f1", null ],
-    [ "interpHighShelfParams", "group___utilities.html#ga7cf22c49aa839422d40e5f970be2b196", null ]
+    [ "calcDVFCoeffs", "group___utilities.html#gae26005af45bba1d1f4707ac8a76cd03e", null ],
+    [ "calcDVFShelfParams", "group___utilities.html#gaf44e2b6d41550fc56a94f4b43d5b3440", null ],
+    [ "doaToIpsiInteraural", "group___utilities.html#ga05095d6fcd13d29073aababbcad893c8", null ],
+    [ "dvfShelfCoeffs", "group___utilities.html#gab1a7e1766b721bad1155fea7820c90bb", null ],
+    [ "interpDVFShelfParams", "group___utilities.html#ga32f0ba123dbcde2f29d3832a0fa61d50", null ]
 ];

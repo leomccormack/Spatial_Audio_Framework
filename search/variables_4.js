@@ -29,5 +29,7 @@ var searchData=
   ['doa_5frad_26',['doa_rad',['../structsldoa__data.html#a7e58e3bf30c68f53000ca646e88466c5',1,'sldoa_data']]],
   ['doaopt_27',['doaOpt',['../structhades__analysis__data.html#a4830c8c387caff237aebaf9443ed30d7',1,'hades_analysis_data']]],
   ['dt_28',['dt',['../structtracker3d__config.html#a0504fc3d19d3fba10514c8cdd71b6f4d',1,'tracker3d_config::dt()'],['../struct_m_c_s__data.html#a303bbdc77de3cc21b1fcd49f365a672b',1,'MCS_data::dt()']]],
-  ['dtt_29',['DTT',['../structpanner__data.html#a28c7940f3b6f0b9304771cabf9139f3d',1,'panner_data']]]
+  ['dtt_29',['DTT',['../structpanner__data.html#a28c7940f3b6f0b9304771cabf9139f3d',1,'panner_data']]],
+  ['dvfmags_30',['dvfmags',['../structbinauraliser_n_f__data.html#aa53cb95f73683e00a0b2ec648f2b951a',1,'binauraliserNF_data']]],
+  ['dvfphases_31',['dvfphases',['../structbinauraliser_n_f__data.html#a6e9cf61b4ba0216610d29cf913115ad3',1,'binauraliserNF_data']]]
 ];

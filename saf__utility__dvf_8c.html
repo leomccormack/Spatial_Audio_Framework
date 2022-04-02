@@ -116,21 +116,21 @@ Functions</h2></td></tr>
 <tr class="memitem:ac67e183007b7e34c1ae8243e44c567db"><td class="memItemLeft" align="right" valign="top">static float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html#ac67e183007b7e34c1ae8243e44c567db">db2mag</a> (float dB)</td></tr>
 <tr class="memdesc:ac67e183007b7e34c1ae8243e44c567db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Covert decibels to a magnitude.  <a href="saf__utility__dvf_8c.html#ac67e183007b7e34c1ae8243e44c567db">More...</a><br /></td></tr>
 <tr class="separator:ac67e183007b7e34c1ae8243e44c567db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga5f770f4b4144e5bcd3869527cb53be58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga5f770f4b4144e5bcd3869527cb53be58">calcHighShelfParams</a> (int i, float rhoIn, float *g0, float *gInf, float *fc)</td></tr>
-<tr class="memdesc:ga5f770f4b4144e5bcd3869527cb53be58"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the High shelf gains and cutoff parameters, given a azimuth index 'i' and distance 'rho'.  <a href="group___utilities.html#ga5f770f4b4144e5bcd3869527cb53be58">More...</a><br /></td></tr>
-<tr class="separator:ga5f770f4b4144e5bcd3869527cb53be58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7cf22c49aa839422d40e5f970be2b196"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga7cf22c49aa839422d40e5f970be2b196">interpHighShelfParams</a> (float theta, float rho, float *iG0, float *iGInf, float *iFc)</td></tr>
-<tr class="memdesc:ga7cf22c49aa839422d40e5f970be2b196"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the Distance Variation function to the input signal.  <a href="group___utilities.html#ga7cf22c49aa839422d40e5f970be2b196">More...</a><br /></td></tr>
-<tr class="separator:ga7cf22c49aa839422d40e5f970be2b196"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gab05240992fe990804e54ec063a3c9757"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab05240992fe990804e54ec063a3c9757">calcIIRCoeffs</a> (float g0, float gInf, float fc, float fs, float *b0, float *b1, float *a1)</td></tr>
-<tr class="memdesc:gab05240992fe990804e54ec063a3c9757"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the Distance Variation function to the input signal.  <a href="group___utilities.html#gab05240992fe990804e54ec063a3c9757">More...</a><br /></td></tr>
-<tr class="separator:gab05240992fe990804e54ec063a3c9757"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gae523ce5715457d81ff42fbbf4e93d535"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae523ce5715457d81ff42fbbf4e93d535">applyDVF</a> (float theta, float rho, float *in_signal, int nSamples, float fs, float *wz, float *out_signal)</td></tr>
-<tr class="memdesc:gae523ce5715457d81ff42fbbf4e93d535"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply the Distance Variation function to the input signal, as described in [1].  <a href="group___utilities.html#gae523ce5715457d81ff42fbbf4e93d535">More...</a><br /></td></tr>
-<tr class="separator:gae523ce5715457d81ff42fbbf4e93d535"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga668ec97e2feccb2a9a592d8792a061f1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga668ec97e2feccb2a9a592d8792a061f1">convertFrontalDoAToIpsilateral</a> (float thetaFront, float *ipsiDoaLR)</td></tr>
-<tr class="memdesc:ga668ec97e2feccb2a9a592d8792a061f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert user-supplied DoA theta (0˚ forward) to a theta value understood by the filter designer (DoA on the interaural axis, 0˚ is ipsilateral).  <a href="group___utilities.html#ga668ec97e2feccb2a9a592d8792a061f1">More...</a><br /></td></tr>
-<tr class="separator:ga668ec97e2feccb2a9a592d8792a061f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf44e2b6d41550fc56a94f4b43d5b3440"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gaf44e2b6d41550fc56a94f4b43d5b3440">calcDVFShelfParams</a> (int i, float rhoIn, float *g0, float *gInf, float *fc)</td></tr>
+<tr class="memdesc:gaf44e2b6d41550fc56a94f4b43d5b3440"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the high shelf gains and cutoff parameters, given a azimuth index <code>i</code> and distance <code>rho</code>.  <a href="group___utilities.html#gaf44e2b6d41550fc56a94f4b43d5b3440">More...</a><br /></td></tr>
+<tr class="separator:gaf44e2b6d41550fc56a94f4b43d5b3440"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga32f0ba123dbcde2f29d3832a0fa61d50"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga32f0ba123dbcde2f29d3832a0fa61d50">interpDVFShelfParams</a> (float theta, float rho, float *iG0, float *iGInf, float *iFc)</td></tr>
+<tr class="memdesc:ga32f0ba123dbcde2f29d3832a0fa61d50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the shelving filter parameters for the Distance Variation Function filter from the source (ipsilateral) azimuth and distance.  <a href="group___utilities.html#ga32f0ba123dbcde2f29d3832a0fa61d50">More...</a><br /></td></tr>
+<tr class="separator:ga32f0ba123dbcde2f29d3832a0fa61d50"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab1a7e1766b721bad1155fea7820c90bb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gab1a7e1766b721bad1155fea7820c90bb">dvfShelfCoeffs</a> (float g0, float gInf, float fc, float fs, float *b0, float *b1, float *a1)</td></tr>
+<tr class="memdesc:gab1a7e1766b721bad1155fea7820c90bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the DVF filter coefficients from shelving filter parameters.  <a href="group___utilities.html#gab1a7e1766b721bad1155fea7820c90bb">More...</a><br /></td></tr>
+<tr class="separator:gab1a7e1766b721bad1155fea7820c90bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae26005af45bba1d1f4707ac8a76cd03e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#gae26005af45bba1d1f4707ac8a76cd03e">calcDVFCoeffs</a> (float alpha, float rho, float fs, float *b, float *a)</td></tr>
+<tr class="memdesc:gae26005af45bba1d1f4707ac8a76cd03e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the Distance Variation Function (DVF) filter coefficients, as described in [1].  <a href="group___utilities.html#gae26005af45bba1d1f4707ac8a76cd03e">More...</a><br /></td></tr>
+<tr class="separator:gae26005af45bba1d1f4707ac8a76cd03e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga05095d6fcd13d29073aababbcad893c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___utilities.html#ga05095d6fcd13d29073aababbcad893c8">doaToIpsiInteraural</a> (float azimuth, float elevation, float *alphaLR, float *betaLR)</td></tr>
+<tr class="memdesc:ga05095d6fcd13d29073aababbcad893c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert a frontal azimuth/elevation to a modified Interaural-Polar coordinate.  <a href="group___utilities.html#ga05095d6fcd13d29073aababbcad893c8">More...</a><br /></td></tr>
+<tr class="separator:ga05095d6fcd13d29073aababbcad893c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -163,9 +163,9 @@ Variables</h2></td></tr>
 <tr class="separator:a568cfa3ab675a6eda89757fb2d389948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3834bff20a5fd69a6b7eba784bd24499"><td class="memItemLeft" align="right" valign="top">static const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html#a3834bff20a5fd69a6b7eba784bd24499">numAz_table</a> = sizeof(q23)</td></tr>
 <tr class="separator:a3834bff20a5fd69a6b7eba784bd24499"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a309c9aa60a6a55060245064415d77099"><td class="memItemLeft" align="right" valign="top">static const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html#a309c9aa60a6a55060245064415d77099">headDim</a> = <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * (0.0875f / 0.09096f )</td></tr>
+<tr class="memitem:a309c9aa60a6a55060245064415d77099"><td class="memItemLeft" align="right" valign="top">static const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html#a309c9aa60a6a55060245064415d77099">headDim</a> = <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * (0.0875f / 0.09096f)</td></tr>
 <tr class="separator:a309c9aa60a6a55060245064415d77099"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af32c3b8885b3c3add54c4e899c3173e6"><td class="memItemLeft" align="right" valign="top">static const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html#af32c3b8885b3c3add54c4e899c3173e6">sosDiv2PiA</a> = 343.0f / (2.0f * <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * 0.09096f )</td></tr>
+<tr class="memitem:af32c3b8885b3c3add54c4e899c3173e6"><td class="memItemLeft" align="right" valign="top">static const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__utility__dvf_8c.html#af32c3b8885b3c3add54c4e899c3173e6">sosDiv2PiA</a> = 343.0f / (2.0f * <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * 0.09096f)</td></tr>
 <tr class="separator:af32c3b8885b3c3add54c4e899c3173e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -264,7 +264,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const float headDim = <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * (0.0875f / 0.09096f )</td>
+          <td class="memname">const float headDim = <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * (0.0875f / 0.09096f)</td>
         </tr>
       </table>
   </td>
@@ -298,7 +298,7 @@ Variables</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00052">52</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__dvf_8c_source.html#l00051">51</a> of file <a class="el" href="saf__utility__dvf_8c_source.html">saf_utility_dvf.c</a>.</p>
 
 </div>
 </div>
@@ -627,7 +627,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const float sosDiv2PiA = 343.0f / (2.0f * <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * 0.09096f )</td>
+          <td class="memname">const float sosDiv2PiA = 343.0f / (2.0f * <a class="el" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a> * 0.09096f)</td>
         </tr>
       </table>
   </td>
@@ -648,7 +648,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__dvf_8c.html">saf_utility_dvf.c</a></li>
-    <li class="footer">Generated on Thu Mar 17 2022 07:54:31 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Sat Apr 2 2022 12:09:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

@@ -41,6 +41,8 @@ var saf__utility__filters_8h =
     [ "convertBW2Q", "group___utilities.html#gad5bf8140a1b8d72f8b5af72a7b9ee753", null ],
     [ "convertQ2BW", "group___utilities.html#ga88473e6168d6e6c92719bd41f15cb417", null ],
     [ "evalBiQuadTransferFunction", "group___utilities.html#gab1719c6d26a5814d90b85e97ca5d2795", null ],
+    [ "evalIIRTransferFunction", "group___utilities.html#gad6314159f2c655a5aa3a59fc3d24530c", null ],
+    [ "evalIIRTransferFunctionf", "group___utilities.html#ga7575260b8c7770b4e0a32e04ee5eb426", null ],
     [ "faf_IIRFilterbank_apply", "group___utilities.html#gafa740d1a0519f90812b163acef93a7c6", null ],
     [ "faf_IIRFilterbank_create", "group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96", null ],
     [ "faf_IIRFilterbank_destroy", "group___utilities.html#ga00f5c126694c84c301e6dff7716b6bc2", null ],

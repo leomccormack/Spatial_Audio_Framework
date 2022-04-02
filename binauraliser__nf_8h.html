@@ -123,6 +123,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a8f3d362bc56a8639bb593553eb15cee9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser__nf_8h.html#a8f3d362bc56a8639bb593553eb15cee9">binauraliserNF_process</a> (void *const hBin, const float *const *inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
 <tr class="memdesc:a8f3d362bc56a8639bb593553eb15cee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binauralises the input signals at the user specified directions.  <a href="binauraliser__nf_8h.html#a8f3d362bc56a8639bb593553eb15cee9">More...</a><br /></td></tr>
 <tr class="separator:a8f3d362bc56a8639bb593553eb15cee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa756bf32b13ed7465f9b1e144332c9e2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser__nf_8h.html#aa756bf32b13ed7465f9b1e144332c9e2">binauraliserNF_processFD</a> (void *const hBin, const float *const *inputs, float **const outputs, int nInputs, int nOutputs, int nSamples)</td></tr>
+<tr class="memdesc:aa756bf32b13ed7465f9b1e144332c9e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alternate version of <a class="el" href="binauraliser__nf_8h.html#a8f3d362bc56a8639bb593553eb15cee9" title="Binauralises the input signals at the user specified directions.">binauraliserNF_process()</a> that performs frequency-domain DVF filtering.  <a href="binauraliser__nf_8h.html#aa756bf32b13ed7465f9b1e144332c9e2">More...</a><br /></td></tr>
+<tr class="separator:aa756bf32b13ed7465f9b1e144332c9e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:addb02b19e681bb3f07caf562d3c38420"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="binauraliser__nf_8h.html#addb02b19e681bb3f07caf562d3c38420">binauraliserNF_setSourceDist_m</a> (void *const hBin, int index, float newDist_m)</td></tr>
 <tr class="memdesc:addb02b19e681bb3f07caf562d3c38420"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the panning distance for a specific channel index, in METERS.  <a href="binauraliser__nf_8h.html#addb02b19e681bb3f07caf562d3c38420">More...</a><br /></td></tr>
 <tr class="separator:addb02b19e681bb3f07caf562d3c38420"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -208,7 +211,7 @@ Functions</h2></td></tr>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a1">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00127">127</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00138">138</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -229,10 +232,10 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the scaling factor to give the far field threshold headroom (useful for UI range limits) </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a9">binauraliser_nf.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a10">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00393">393</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00416">416</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -253,10 +256,10 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the distance considered to be the far field (beyond which no near field filtering is applied), in METERS. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a8">binauraliser_nf.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a9">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00386">386</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00409">409</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -277,10 +280,10 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Returns the minimum distance possible for near field filter, in METERS. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a10">binauraliser_nf.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a11">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00401">401</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00423">423</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -318,10 +321,10 @@ Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a7">binauraliser_nf.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a8">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00379">379</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00402">402</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -363,7 +366,7 @@ Functions</h2></td></tr>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a2">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00164">164</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00173">173</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -396,7 +399,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a3">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00179">179</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00188">188</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -465,7 +468,64 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a4">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00215">215</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00224">224</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+
+</div>
+</div>
+<a id="aa756bf32b13ed7465f9b1e144332c9e2" name="aa756bf32b13ed7465f9b1e144332c9e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa756bf32b13ed7465f9b1e144332c9e2">&#9670;&nbsp;</a></span>binauraliserNF_processFD()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void binauraliserNF_processFD </td>
+          <td>(</td>
+          <td class="paramtype">void *const&#160;</td>
+          <td class="paramname"><em>hBin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const float *const *&#160;</td>
+          <td class="paramname"><em>inputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float **const&#160;</td>
+          <td class="paramname"><em>outputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nInputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nOutputs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nSamples</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Alternate version of <a class="el" href="binauraliser__nf_8h.html#a8f3d362bc56a8639bb593553eb15cee9" title="Binauralises the input signals at the user specified directions.">binauraliserNF_process()</a> that performs frequency-domain DVF filtering. </p>
+<p >Not used but kept for posterity. </p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a5">binauraliser_nf.h</a>.</dd>
+</dl>
 
 </div>
 </div>
@@ -503,10 +563,10 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a6">binauraliser_nf.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a7">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00364">364</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00385">385</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -551,10 +611,10 @@ This function does nothing if no re-initialisations are required.</dd></dl>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a5">binauraliser_nf.h</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="binauraliser_nf_8h-example.html#a6">binauraliser_nf.h</a>.</dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00355">355</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__nf_8c_source.html#l00375">375</a> of file <a class="el" href="binauraliser__nf_8c_source.html">binauraliser_nf.c</a>.</p>
 
 </div>
 </div>
@@ -565,7 +625,7 @@ This function does nothing if no re-initialisations are required.</dd></dl>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_7ea9cec8c8a74419de82b1d94b0f1364.html">include</a></li><li class="navelem"><a class="el" href="binauraliser__nf_8h.html">binauraliser_nf.h</a></li>
-    <li class="footer">Generated on Thu Mar 17 2022 07:54:30 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Sat Apr 2 2022 12:09:20 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">

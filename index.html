@@ -170,6 +170,7 @@ Building with CMake</h2>
 <div class="line">-DSAF_BUILD_TESTS=1                          # build unit testing program</div>
 <div class="line">-DSAF_USE_INTEL_IPP=0                        # link and use Intel IPP for the FFT, resampler, etc.</div>
 <div class="line">-DSAF_ENABLE_SIMD=0                          # enable/disable SSE, AVX, and/or AVX-512 support</div>
+<div class="line">-DSAF_USE_FAST_MATH_FLAG=1                   # enable the -ffast-math compiler flag on clang/gcc</div>
 </div><!-- fragment --><p >If using e.g. <b>SAF_USE_INTEL_MKL_LP64</b> as the performance library, note that the default header and library search paths may be overridden <a class="el" href="md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">according to your setup</a> with: </p><div class="fragment"><div class="line">-DINTEL_MKL_HEADER_PATH=&quot;path/to/mkl/headers&quot;</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)&quot;   # OR:</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)&quot;</div>
@@ -208,10 +209,12 @@ Examples</h2>
 <li><b>array2sh</b> - converts microphone array signals into spherical harmonic signals (aka Ambisonic signals), based on theoretical descriptions of the array configuration and construction.</li>
 <li><b>beamformer</b> - a beamformer/virtual microphone generator for Ambisonic signals, with several different beam pattern options.</li>
 <li><b>binauraliser</b> - convolves input audio with interpolated HRTFs, which can be optionally loaded from a SOFA file.</li>
+<li><b>binauraliser_nf</b> - binauraliser, with the addition of proximity filtering for near field sound sources.</li>
 <li><b>decorrelator</b> - a basic multi-channel signal decorrelator.</li>
 <li><b>dirass</b> - a sound-field visualiser based on re-assigning the energy of beamformers. This re-assignment is based on the DoA estimates extracted from spatially-localised active-intensity vectors, which are biased towards each beamformer direction.</li>
 <li><b>matrixconv</b> - a basic matrix convolver with an optional partitioned convolution mode.</li>
 <li><b>multiconv</b> - a basic multi-channel convolver with an optional partitioned convolution mode.</li>
+<li><b>tvconv</b> - a time-varying partitioned convolution multi-channel convolver for SOFA files containing RIRs with multiple listener positions.</li>
 <li><b>panner</b> - a frequency-dependent VBAP panner, which accommodates a source loudness compensation (as a function of the room) option.</li>
 <li><b>pitch_shifter</b> - a basic multi-channel pitch shifter, based on the phase vocoder approach.</li>
 <li><b>powermap</b> - sound-field visualiser based on beamformer (PWD, MVDR) energy or subspace methods (MUSIC).</li>
@@ -259,7 +262,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Thu Mar 17 2022 07:54:32 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Sat Apr 2 2022 12:09:23 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">
