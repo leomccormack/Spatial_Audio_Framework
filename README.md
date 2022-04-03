@@ -98,7 +98,8 @@ The available SAF-related CMake options (and their default values) are:
 -DSAF_BUILD_TESTS=1                          # build unit testing program
 -DSAF_USE_INTEL_IPP=0                        # link and use Intel IPP for the FFT, resampler, etc.
 -DSAF_ENABLE_SIMD=0                          # enable/disable SSE, AVX, and/or AVX-512 support
--DSAF_USE_FAST_MATH_FLAG=1                   # enable the -ffast-math compiler flag on clang/gcc
+-DSAF_ENABLE_NETCDF=0                        # enable the use of NetCDF (requires external libs)
+-DSAF_ENABLE_FAST_MATH_FLAG=1                # enable the -ffast-math compiler flag on clang/gcc
 ```
 
 If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that the default header and library search paths may be overridden [according to your setup](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md) with:
