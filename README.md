@@ -111,12 +111,16 @@ If using e.g. **SAF_USE_INTEL_MKL_LP64** as the performance library, note that t
 
 For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows:
 ```
+# By default:
 cmake -S . -B build 
-# Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code)
-cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_CXX_FLAGS="-msse3 -mavx2" -DCMAKE_C_FLAGS="-msse3 -mavx2"
+# Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code):
+cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_C_FLAGS="-msse3 -mavx2"
+# Or to build Universal binaries for macOS (ARM/x86), which must therefore use Apple Accelerate:
+cmake -S . -B build -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+# Then to build and run the unit testing program:
 cd build
 make
-test/saf_test # To run the unit testing program
+test/saf_test 
 ```
 
 Or for Visual Studio users (using x64 Native Tools Command Prompt for VS):
@@ -124,11 +128,12 @@ Or for Visual Studio users (using x64 Native Tools Command Prompt for VS):
 # e.g. for VS2019:
 cmake -S . -B build -G "Visual Studio 16" -A x64  
 # e.g. for VS2017:
-cmake -S . -B build -G "Visual Studio 15 Win64"
+cmake -S . -B build -G "Visual Studio 15 2017" -DCMAKE_GENERATOR_PLATFORM=x64
+# Then to build and run the unit testing program:
 cd build
 msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m
 cd test/Release
-saf_test.exe  # To run the unit testing program
+saf_test.exe  
 ```
 
 ## Documentation 
