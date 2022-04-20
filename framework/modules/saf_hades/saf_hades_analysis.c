@@ -24,7 +24,11 @@
  * The framework for binaural rendering of Hearing-Assistive/Augmented-reality
  * Devices (HADES) is described further in [1].
  *
- * @see [1] paper submitted for review.
+ * @see [1] Fernandez, J., McCormack, L., Hyvärinen, P., Politis, A., and
+ *          Pulkki, V. 2022. “Enhancing binaural rendering of head-worn
+ *          microphone arrays through the use of adaptive spatial covariance
+ *          matching”, The Journal of the Acoustical Society of America 151,
+ *          2624-2635
  *
  * @author Leo McCormack and Janani Fernandez
  * @date 01.02.2021
