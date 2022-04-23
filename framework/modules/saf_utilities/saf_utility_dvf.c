@@ -120,16 +120,16 @@ void interpDVFShelfParams
     float gInf_1, gInf_2;   /* high shelf gain at inf */
     float fc_1, fc_2;       /* high shelf cutoff frequency */
     
-    // TBD: could add range checking, clipping theta and rho to valid range
-    
     /* Linearly interpolate DC gain, HF gain, center freq at theta.
      * Table is in 10 degree steps, floor(x/10) gets lower index. */
+    theta = SAF_CLAMP(theta, 0.f, 180.f);
+    rho = SAF_MAX(rho, 1.0);
     thetaDiv10 = theta / 10.f;
     theta_idx_lower = (int)thetaDiv10;
     theta_idx_upper = theta_idx_lower + 1;
-    if(theta_idx_upper == numAz_table) {    // could alternatively check theta_idx_upper => numAz_table, clip the value > 180 here
-        theta_idx_upper = theta_idx_lower;
-        theta_idx_lower = theta_idx_lower - 1;
+    if(theta_idx_upper >= numAz_table) {
+        theta_idx_upper = numAz_table - 1;
+        theta_idx_lower = theta_idx_upper - 1;
     }
     
     calcDVFShelfParams(theta_idx_lower, rho, &g0_1, &gInf_1, &fc_1);
