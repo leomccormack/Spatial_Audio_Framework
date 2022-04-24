@@ -48,7 +48,7 @@ static const double p23[19] = { -0.67, 0.142, 3404., -0.91, -0.67, -1.21, -1.76,
 static const double p33[19] = { 0.174, -0.11, -1699., 0.437, 0.658, 2.02, 6.815, 0.614, 589.3, 16818., -9.39, -44.1, -23.6, -92.3, -1.81, 10.54, 0.532, 0.285, -2.08 };
 static const double q13[19] = { -1.75, -0.01, 7354., -2.18, -1.2, -1.59, -1.23, -0.89, 29.23, 1945., -0.06, 5.635, 3.308, 13.88, -0.88, -2.23, -0.96, -0.9, -0.57 };
 static const double q23[19] = { 0.699, -0.35, -5350., 1.188, 0.256, 0.816, 1.166, 0.76, 59.51, 1707., -1.12, -6.18, -3.39, -12.7, -0.19, 1.295, -0.02, -0.08, -0.4 };
-static const int numAz_table = sizeof(q23);
+static const int numAz_table = sizeof(q23) / sizeof(q23[0]);
 
 /* a_0 = 0.0875f; Reference head size, 8.75 centimeters, used in the generation of the coeff lookup table. */
 /* a_head = 0.09096f; This head size, see note for head_radius in binauraliser_nf. */
@@ -120,16 +120,16 @@ void interpDVFShelfParams
     float gInf_1, gInf_2;   /* high shelf gain at inf */
     float fc_1, fc_2;       /* high shelf cutoff frequency */
     
-    // TBD: could add range checking, clipping theta and rho to valid range
-    
     /* Linearly interpolate DC gain, HF gain, center freq at theta.
      * Table is in 10 degree steps, floor(x/10) gets lower index. */
+    theta = SAF_CLAMP(theta, 0.f, 180.f);
+    rho = SAF_MAX(rho, 1.0);
     thetaDiv10 = theta / 10.f;
     theta_idx_lower = (int)thetaDiv10;
     theta_idx_upper = theta_idx_lower + 1;
-    if(theta_idx_upper == numAz_table) {    // could alternatively check theta_idx_upper => numAz_table, clip the value > 180 here
-        theta_idx_upper = theta_idx_lower;
-        theta_idx_lower = theta_idx_lower - 1;
+    if(theta_idx_upper >= numAz_table) {
+        theta_idx_upper = numAz_table - 1;
+        theta_idx_lower = theta_idx_upper - 1;
     }
     
     calcDVFShelfParams(theta_idx_lower, rho, &g0_1, &gInf_1, &fc_1);
