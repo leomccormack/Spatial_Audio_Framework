@@ -175,20 +175,25 @@ Building with CMake</h2>
 </div><!-- fragment --><p >If using e.g. <b>SAF_USE_INTEL_MKL_LP64</b> as the performance library, note that the default header and library search paths may be overridden <a class="el" href="md_docs__p_e_r_f_o_r_m_a_n_c_e__l_i_b_r_a_r_y__i_n_s_t_r_u_c_t_i_o_n_s.html">according to your setup</a> with: </p><div class="fragment"><div class="line">-DINTEL_MKL_HEADER_PATH=&quot;path/to/mkl/headers&quot;</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/mkl/libs/mkl_rt(.so/.dylib/.lib)&quot;   # OR:</div>
 <div class="line">-DINTEL_MKL_LIB=&quot;path/to/custom/mkl/lib/saf_mkl_custom_lp64(.so/.dylib/.lib)&quot;</div>
-</div><!-- fragment --><p >For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows: </p><div class="fragment"><div class="line">cmake -S . -B build </div>
-<div class="line"># Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code)</div>
-<div class="line">cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_CXX_FLAGS=&quot;-msse3 -mavx2&quot; -DCMAKE_C_FLAGS=&quot;-msse3 -mavx2&quot;</div>
+</div><!-- fragment --><p >For Linux/MacOS users: the framework, examples, and unit testing program may be built as follows: </p><div class="fragment"><div class="line"># By default:</div>
+<div class="line">cmake -S . -B build </div>
+<div class="line"># Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code):</div>
+<div class="line">cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_C_FLAGS=&quot;-msse3 -mavx2&quot;</div>
+<div class="line"># Or to build Universal binaries for macOS (ARM/x86), which must therefore use Apple Accelerate:</div>
+<div class="line">cmake -S . -B build -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DCMAKE_OSX_ARCHITECTURES=&quot;arm64;x86_64&quot;</div>
+<div class="line"># Then to build and run the unit testing program:</div>
 <div class="line">cd build</div>
 <div class="line">make</div>
-<div class="line">test/saf_test # To run the unit testing program</div>
+<div class="line">test/saf_test </div>
 </div><!-- fragment --><p >Or for Visual Studio users (using x64 Native Tools Command Prompt for VS): </p><div class="fragment"><div class="line"># e.g. for VS2019:</div>
 <div class="line">cmake -S . -B build -G &quot;Visual Studio 16&quot; -A x64  </div>
 <div class="line"># e.g. for VS2017:</div>
-<div class="line">cmake -S . -B build -G &quot;Visual Studio 15 Win64&quot;</div>
+<div class="line">cmake -S . -B build -G &quot;Visual Studio 15 2017&quot; -DCMAKE_GENERATOR_PLATFORM=x64</div>
+<div class="line"># Then to build and run the unit testing program:</div>
 <div class="line">cd build</div>
 <div class="line">msbuild ALL_BUILD.vcxproj /p:Configuration=Release /m</div>
 <div class="line">cd test/Release</div>
-<div class="line">saf_test.exe  # To run the unit testing program</div>
+<div class="line">saf_test.exe  </div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md101"></a>
 Documentation</h2>
 <p ><img src="https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master" alt="Doxygen Generate" style="pointer-events: none;" class="inline"/></p>
@@ -263,7 +268,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Apr 3 2022 13:27:04 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
+    <li class="footer">Generated on Thu Apr 28 2022 11:28:25 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.3 </li>
   </ul>
 </div>
 <script type="text/javascript">
