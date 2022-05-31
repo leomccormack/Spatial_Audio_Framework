@@ -82,7 +82,7 @@ static void qmfAnalyse
     int nTimeSlots, nBands;
 
     nBands = hopSize + (hybridmode ? 7 : 0);
-    nTimeSlots = nSamplesTD/hopSize;
+    nTimeSlots = (int)((float)nSamplesTD / (float)hopSize + 0.9999f); /*ceil*/
 
     /* allocate memory */
     qmf_create(&(hQMF), nCH, 1, hopSize, hybridmode, QMF_TIME_CH_BANDS);
@@ -687,7 +687,7 @@ void qmf_FIRtoFilterbankCoeffs
 
     nBands = hopSize + (hybridmode ? 7 : 0);
     ir_pad = 1024;//+512;
-    nTimeSlots = (SAF_MAX(ir_len,hopSize)+ir_pad)/hopSize;
+    nTimeSlots = (int)((float)(SAF_MAX(ir_len, hopSize) + ir_pad) / (float)hopSize + 0.9999f); /*ceil*/
     maxIdx = calloc1d(nCH,sizeof(int));
     centerImpulse = calloc1d(SAF_MAX(ir_len,hopSize)+ir_pad, sizeof(float));
 

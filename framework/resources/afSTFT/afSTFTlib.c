@@ -93,7 +93,7 @@ static void afAnalyse
     int nTimeSlots, nBands;
 
     nBands = hopSize + (hybridmode ? 5 : 1);
-    nTimeSlots = nSamplesTD/hopSize;
+    nTimeSlots = (int)((float)nSamplesTD/(float)hopSize + 0.9999f); /*ceil*/
 
     /* allocate memory */
     afSTFT_create(&(hSTFT), nCH, 1, hopSize, LDmode, hybridmode, AFSTFT_TIME_CH_BANDS);
@@ -610,7 +610,7 @@ void afSTFT_FIRtoFilterbankCoeffs
 
     nBands = hopSize + (hybridmode ? 5 : 1);
     ir_pad = 1024;//+512;
-    nTimeSlots = (SAF_MAX(ir_len,hopSize)+ir_pad)/hopSize;
+    nTimeSlots = (int)((float)(SAF_MAX(ir_len,hopSize)+ir_pad)/(float)hopSize + 0.9999f); /*ceil*/
     maxIdx = calloc1d(nCH,sizeof(int));
     centerImpulse = calloc1d(SAF_MAX(ir_len,hopSize)+ir_pad, sizeof(float));
 
