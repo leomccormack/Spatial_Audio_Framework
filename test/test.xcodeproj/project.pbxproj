@@ -1353,9 +1353,8 @@
 					"-Wall",
 					"-Wextra",
 					"-mavx2",
-					"-fms-extensions",
-					"-Wno-microsoft",
 				);
+				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
 					"-lsaf_mkl_custom_lp64",
@@ -1400,9 +1399,8 @@
 					"-Wall",
 					"-Wextra",
 					"-mavx2",
-					"-fms-extensions",
-					"-Wno-microsoft",
 				);
+				OTHER_CPLUSPLUSFLAGS = "";
 				OTHER_LDFLAGS = (
 					"-L/usr/local/lib",
 					"-lsaf_mkl_custom_lp64",

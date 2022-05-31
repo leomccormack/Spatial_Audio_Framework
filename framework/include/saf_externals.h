@@ -66,6 +66,10 @@
 #ifndef __SAF_EXTERNALS_H_INCLUDED__
 #define __SAF_EXTERNALS_H_INCLUDED__
 
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
 /* ========================================================================== */
 /*                        Performance Library to Employ                       */
 /* ========================================================================== */
@@ -364,5 +368,8 @@
     " - Enabled intrinsics:  " SAF_ENABLED_SIMD_INTRINSICS_STRING         "\n" \
     " - netCDF status:       " SAF_NETCDF_STATUS_STRING                   "\n"
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif /* __cplusplus */
 
 #endif /* __SAF_EXTERNALS_H_INCLUDED__ */

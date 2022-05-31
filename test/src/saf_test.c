@@ -157,7 +157,7 @@ int main_test(void) {
 #endif /* SAF_ENABLE_TRACKER_MODULE */
     
 /* SAF HADES module unit tests */
-#ifdef SAF_ENABLE_HADES_MODULE
+#if defined(SAF_ENABLE_HADES_MODULE) && defined(SAF_ENABLE_SOFA_READER_MODULE) /* unit tests rely also on SOFA reader */
     RUN_TEST(test__hades);
 #endif /* SAF_ENABLE_HADES_MODULE */
 

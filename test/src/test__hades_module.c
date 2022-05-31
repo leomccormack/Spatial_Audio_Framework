@@ -26,7 +26,7 @@
 
 #include "saf_test.h"
 
-#ifdef SAF_ENABLE_HADES_MODULE
+#if defined(SAF_ENABLE_HADES_MODULE) && defined(SAF_ENABLE_SOFA_READER_MODULE) /* unit tests rely also on SOFA reader */
 
 void test__hades(void){
     hades_analysis_handle hAna = NULL;          /* Analysis handle */

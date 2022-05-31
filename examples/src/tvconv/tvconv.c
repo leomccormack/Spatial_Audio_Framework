@@ -240,7 +240,12 @@ void tvconv_setFiltersAndPositions
 )
 {
     tvconv_data* pData = (tvconv_data*) hTVCnv;
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
+    int i;
     vectorND tmp;
+    SAF_SOFA_ERROR_CODES error;
+    saf_sofa_container sofa;
+#endif
     
     if (pData->codecStatus != CODEC_STATUS_NOT_INITIALISED)
         return; /* re-init not required, or already happening */
@@ -254,10 +259,8 @@ void tvconv_setFiltersAndPositions
     pData->codecStatus = CODEC_STATUS_INITIALISING;
     strcpy(pData->progressBarText,"Initialising");
     pData->progressBar0_1 = 0.0f;
-    
-    SAF_SOFA_ERROR_CODES error;
-    saf_sofa_container sofa;
-    int i;
+
+#ifdef SAF_ENABLE_SOFA_READER_MODULE
     if(pData->sofa_filepath!=NULL){
         strcpy(pData->progressBarText,"Opening SOFA file");
         pData->progressBar0_1 = 0.2f;
@@ -294,10 +297,14 @@ void tvconv_setFiltersAndPositions
             memcpy(pData->listenerPositions, sofa.ListenerPosition, pData->nListenerPositions*sizeof(vectorND));
         }
     }
-    
-    pData->nOutputChannels = SAF_MIN(pData->nIrChannels, MAX_NUM_CHANNELS);
     saf_sofa_close(&sofa);
+    pData->nOutputChannels = SAF_MIN(pData->nIrChannels, MAX_NUM_CHANNELS);
     tvconv_setMinMaxDimensions(hTVCnv);
+#else
+    pData->ir_length = 0;
+    saf_print_warning("This example requires SAF_ENABLE_SOFA_READER_MODULE to do anything");
+#endif
+
     pData->position_idx = 0;
     pData->codecStatus = CODEC_STATUS_INITIALISED;
     pData->reInitFilters = 1;
