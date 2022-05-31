@@ -117,7 +117,7 @@ $(document).ready(function(){initNavTree('test____hades__module_8c_source.html',
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &quot;<a class="code" href="saf__test_8h.html">saf_test.h</a>&quot;</span></div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#ifdef SAF_ENABLE_HADES_MODULE</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#if defined(SAF_ENABLE_HADES_MODULE) &amp;&amp; defined(SAF_ENABLE_SOFA_READER_MODULE) </span><span class="comment">/* unit tests rely also on SOFA reader */</span><span class="preprocessor"></span></div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="saf__test_8h.html#aacc4400dcc34cc31b86d73772a69ab6b">   31</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="test____hades__module_8c.html#aacc4400dcc34cc31b86d73772a69ab6b">test__hades</a>(<span class="keywordtype">void</span>){</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <a class="code hl_typedef" href="saf__hades__analysis_8h.html#a54c8a9a24e2fd4deaed0d4a81825e5ce">hades_analysis_handle</a> hAna = NULL;          <span class="comment">/* Analysis handle */</span></div>
@@ -260,7 +260,7 @@ $(document).ready(function(){initNavTree('test____hades__module_8c_source.html',
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_13e138d54eb8818da29c3992edef070a.html">test</a></li><li class="navelem"><a class="el" href="dir_7440c80a84150c89eded6c163cdc56e5.html">src</a></li><li class="navelem"><a class="el" href="test____hades__module_8c.html">test__hades_module.c</a></li>
-    <li class="footer">Generated on Tue May 31 2022 12:58:48 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4 </li>
+    <li class="footer">Generated on Tue May 31 2022 14:53:49 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4 </li>
   </ul>
 </div>
 <script type="text/javascript">
