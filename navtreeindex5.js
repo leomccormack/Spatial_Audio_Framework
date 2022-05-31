@@ -167,8 +167,8 @@ var NAVTREEINDEX5 =
 "dirass__internal_8h_source.html":[2,0,0,1,10,2],
 "examples.html":[3],
 "files.html":[2,0],
-"functions.html":[1,1,0],
 "functions.html":[1,1,0,0],
+"functions.html":[1,1,0],
 "functions_b.html":[1,1,0,1],
 "functions_c.html":[1,1,0,2],
 "functions_d.html":[1,1,0,3],
@@ -219,8 +219,8 @@ var NAVTREEINDEX5 =
 "functions_x.html":[1,1,0,22],
 "functions_y.html":[1,1,0,23],
 "functions_z.html":[1,1,0,24],
-"globals.html":[2,1,0,0],
 "globals.html":[2,1,0],
+"globals.html":[2,1,0,0],
 "globals_a.html":[2,1,0,1],
 "globals_b.html":[2,1,0,2],
 "globals_c.html":[2,1,0,3],
@@ -247,7 +247,7 @@ var NAVTREEINDEX5 =
 "globals_enum.html":[2,1,4],
 "globals_eval.html":[2,1,5],
 "globals_f.html":[2,1,0,6],
-"globals_func.html":[2,1,1],
 "globals_func.html":[2,1,1,0],
+"globals_func.html":[2,1,1],
 "globals_func_a.html":[2,1,1,1]
 };
