@@ -38,6 +38,12 @@ message("
 
 # Configure SAF
 message(STATUS "Configuring the Spatial_Audio_Framework (SAF):")
+
+if(SAF_ENABLE_SIMD) # before declaring project, set compilation flags for SIMD support
+    set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}   -march=native" CACHE STRING "Default C options"   FORCE)
+    set(CMAKE_C_FLAGS   "${CMAKE_CXX_FLAGS} -march=native" CACHE STRING "Default CXX options" FORCE)
+endif()
+
 project(saf VERSION ${SAF_VERSION} LANGUAGES C)
 add_library(${PROJECT_NAME}) #STATIC
 set_target_properties(${PROJECT_NAME}
@@ -239,9 +245,7 @@ endif()
 ############################################################################
 # Enable SIMD intrinsics
 if(SAF_ENABLE_SIMD)
-    # Note that you need to pass the appropriate compiler flags to actually
-    # enable certain intrinsics, for example:
-    # $ cmake -S . -B build -DCMAKE_CXX_FLAGS="-msse3 -mavx2" -DCMAKE_C_FLAGS="-msse3 -mavx2"
+    # Note: appropriate compiler flags were previously added before declaration of project 
     message(STATUS "SIMD intrinsics support is enabled.")
     target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_ENABLE_SIMD=1)
 endif()

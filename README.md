@@ -59,7 +59,7 @@ The framework can be configured further, with the following options:
 ```
 SAF_USE_INTEL_IPP # To use Intel IPP for performing the DFT/FFT and resampling
 SAF_USE_FFTW      # To use the FFTW library for performing the DFT/FFT 
-SAF_ENABLE_SIMD   # To enable SIMD (SSE, AVX, AVX512) intrinsics for certain vector operations
+SAF_ENABLE_SIMD   # To enable SIMD (SSE3, AVX2 and/or AVX512) intrinsics for certain vector operations
 ```
 
 # Using the framework
@@ -97,7 +97,7 @@ The available SAF-related CMake options (and their default values) are:
 -DSAF_BUILD_EXTRAS=0                         # build safmex etc.
 -DSAF_BUILD_TESTS=1                          # build unit testing program
 -DSAF_USE_INTEL_IPP=0                        # link and use Intel IPP for the FFT, resampler, etc.
--DSAF_ENABLE_SIMD=0                          # enable/disable SSE, AVX, and/or AVX-512 support
+-DSAF_ENABLE_SIMD=0                          # enable/disable SSE3, AVX2, and/or AVX-512 support
 -DSAF_ENABLE_NETCDF=0                        # enable the use of NetCDF (requires external libs)
 -DSAF_ENABLE_FAST_MATH_FLAG=1                # enable the -ffast-math compiler flag on clang/gcc
 ```
@@ -113,8 +113,8 @@ For Linux/MacOS users: the framework, examples, and unit testing program may be 
 ```
 # By default:
 cmake -S . -B build 
-# Or to also enable e.g. SSE3 and AVX2 intrinsics (for both C and C++ code):
-cmake -S . -B build -DSAF_ENABLE_SIMD=1 -DCMAKE_C_FLAGS="-msse3 -mavx2"
+# Or to also enable e.g. SSE3, AVX2, and/or AVX-512 intrinsics (for both C and C++ code):
+cmake -S . -B build -DSAF_ENABLE_SIMD=1
 # Or to build Universal binaries for macOS (ARM/x86), which must therefore use Apple Accelerate:
 cmake -S . -B build -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 # Then to build and run the unit testing program:
