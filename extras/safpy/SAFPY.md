@@ -1,8 +1,8 @@
 # safpy
 
-**extras/safpy** is a collection of Cython wrappers which allow SAF functions to be called within Python. 
+**extras/safpy** is a collection of wrappers which allow SAF functions to be called within Python. 
 
-WIP!
+https://github.com/chris-hld/SAFpy
 
 ## Contributing
 
