@@ -778,7 +778,7 @@ void test__latticeDecorrelator(void){
     const int nCH = 24;
     const int nTestHops = 800;
     const int hopSize = 128;
-    const int procDelay = hopSize*12;  // from afSTFT
+    const int procDelay = hopSize*12 + 12;  // from afSTFT + decor
     const int lSig = nTestHops*hopSize+procDelay;
     const float fs = 48e3f;
     nBands = hopSize+5;
