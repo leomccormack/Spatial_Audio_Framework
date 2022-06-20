@@ -749,6 +749,20 @@ void array2sh_initArray
                 }
             }
             break;
+        case MICROPHONE_ARRAY_PRESET_EIGENMIKE64:
+            (*arrayOrder) = 6;
+            Q = 64;
+            pars->r = 0.042f;
+            pars->R = 0.042f;
+            pars->arrayType = ARRAY_SPHERICAL;
+            pars->weightType = WEIGHT_RIGID_OMNI;
+            for(ch=0; ch<Q; ch++){
+                for(i=0; i<2; i++){
+                    pars->sensorCoords_rad[ch][i] = __Eigenmike64_coords_rad[ch][i];
+                    pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
+                }
+            }
+            break;
         case MICROPHONE_ARRAY_PRESET_DTU_MIC:
             (*arrayOrder) = 6;
             Q = 52;
