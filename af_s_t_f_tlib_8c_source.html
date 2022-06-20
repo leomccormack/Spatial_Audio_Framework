@@ -696,7 +696,7 @@ $(document).ready(function(){initNavTree('af_s_t_f_tlib_8c_source.html',''); ini
 <div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>    centerImpulse[(int)idxDel] = 1.0f;</div>
 <div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span> </div>
 <div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>    <span class="comment">/* analyse impulse with the filterbank */</span></div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    centerImpulseFB = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nBands*nTimeSlots*nCH*<span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span>    centerImpulseFB = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nBands*nTimeSlots*1*<span class="keyword">sizeof</span>(float_complex));</div>
 <div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>    <a class="code hl_function" href="af_s_t_f_tlib_8c.html#ac050d7bf5bbaaf5d930b01691a689e5b">afAnalyse</a>(centerImpulse, <a class="code hl_define" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(ir_len,hopSize)+ir_pad, 1, hopSize, LDmode, hybridmode, centerImpulseFB);</div>
 <div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>    centerImpulseFB_energy = <a class="code hl_function" href="md__malloc_8c.html#a2e1c70e8084771a2def99ca25cf20682">calloc1d</a>(nBands, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
 <div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>    <span class="keywordflow">for</span>(i=0; i&lt;nBands; i++)</div>
@@ -705,7 +705,7 @@ $(document).ready(function(){initNavTree('af_s_t_f_tlib_8c_source.html',''); ini
 <div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span> </div>
 <div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>    <span class="comment">/* initialise FB coefficients */</span></div>
 <div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    ir = <a class="code hl_function" href="md__malloc_8c.html#a2e1c70e8084771a2def99ca25cf20682">calloc1d</a>( (<a class="code hl_define" href="group___utilities.html#ga30c447b96fd750ea49c28b918cf0e03d">SAF_MAX</a>(ir_len,hopSize)+ir_pad) * nCH, <span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    irFB = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nBands*nCH*nTimeSlots*<span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    irFB = <a class="code hl_function" href="md__malloc_8c.html#a2e1c70e8084771a2def99ca25cf20682">calloc1d</a>(nBands*nTimeSlots*nCH,<span class="keyword">sizeof</span>(float_complex));</div>
 <div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>    <span class="keywordflow">for</span>(nd=0; nd&lt;N_dirs; nd++){</div>
 <div class="line"><a id="l00648" name="l00648"></a><span class="lineno">  648</span>        <span class="keywordflow">for</span>(j=0; j&lt;ir_len; j++)</div>
 <div class="line"><a id="l00649" name="l00649"></a><span class="lineno">  649</span>            <span class="keywordflow">for</span>(i=0; i&lt;nCH; i++)</div>
@@ -794,7 +794,7 @@ $(document).ready(function(){initNavTree('af_s_t_f_tlib_8c_source.html',''); ini
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_c95fe3454413c7e9946bfee944a4e42b.html">resources</a></li><li class="navelem"><a class="el" href="dir_45a37e71ed05dd7d57de17724fd5b226.html">afSTFT</a></li><li class="navelem"><a class="el" href="af_s_t_f_tlib_8c.html">afSTFTlib.c</a></li>
-    <li class="footer">Generated on Tue Jun 14 2022 11:43:49 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4 </li>
+    <li class="footer">Generated on Mon Jun 20 2022 09:28:23 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.4 </li>
   </ul>
 </div>
 <script type="text/javascript">

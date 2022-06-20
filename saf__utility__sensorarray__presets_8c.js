@@ -11,6 +11,8 @@ var saf__utility__sensorarray__presets_8c =
     [ "__Eigenmike32_coords_rad", "group___utilities.html#ga293be455b487ed54041983fa3861792b", null ],
     [ "__Eigenmike32_freqRange", "group___utilities.html#ga9dc2c55a2ff266321d5619e7cf4c0270", null ],
     [ "__Eigenmike32_maxOrder", "group___utilities.html#gaaec701f809e4d306ce2e745eced1f509", null ],
+    [ "__Eigenmike64_coords_rad", "group___utilities.html#ga13e6e5edfe4c019c5d1ddcf008ebd66d", null ],
+    [ "__Eigenmike64_maxOrder", "group___utilities.html#gabf8f14b121340ff0a31e23cb2da40ce6", null ],
     [ "__Sennheiser_Ambeo_coords_rad", "group___utilities.html#ga17ffde4c55850ad527548942758ceea7", null ],
     [ "__Sennheiser_Ambeo_maxOrder", "group___utilities.html#ga8eb7536c29f8da6844e0c3b653b12ab0", null ],
     [ "__Sound_field_SPS200_coords_rad", "group___utilities.html#ga781fe0b27be1554a4784492d67e90c7a", null ],

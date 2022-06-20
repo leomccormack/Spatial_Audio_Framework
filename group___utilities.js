@@ -410,6 +410,8 @@ var group___utilities =
     [ "__Eigenmike32_coords_rad", "group___utilities.html#ga293be455b487ed54041983fa3861792b", null ],
     [ "__Eigenmike32_freqRange", "group___utilities.html#ga9dc2c55a2ff266321d5619e7cf4c0270", null ],
     [ "__Eigenmike32_maxOrder", "group___utilities.html#gaaec701f809e4d306ce2e745eced1f509", null ],
+    [ "__Eigenmike64_coords_rad", "group___utilities.html#ga13e6e5edfe4c019c5d1ddcf008ebd66d", null ],
+    [ "__Eigenmike64_maxOrder", "group___utilities.html#gabf8f14b121340ff0a31e23cb2da40ce6", null ],
     [ "__geosphere_ico_0_0_dirs_deg", "group___utilities.html#ga57db563fb644142e82bbe9975666d532", null ],
     [ "__geosphere_ico_0_0_nPoints", "group___utilities.html#gad81eba13a4e4a652884021fca0a0dcfa", null ],
     [ "__geosphere_ico_10_0_dirs_deg", "group___utilities.html#ga85181e7ad3dac1665a786566dfc74d0a", null ],

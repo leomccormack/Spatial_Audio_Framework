@@ -39,6 +39,7 @@ var array2sh_8h =
       [ "MICROPHONE_ARRAY_PRESET_SOUND_FIELD_SPS200", "array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94a756c12cb6f723d6e19802c28fd852d9e", null ],
       [ "MICROPHONE_ARRAY_PRESET_ZYLIA_1D", "array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94a69b08d2c4d73bb8a4c069f16ba547b5c", null ],
       [ "MICROPHONE_ARRAY_PRESET_EIGENMIKE32", "array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94a2a797698959cd176d6d55f1fd5af0499", null ],
+      [ "MICROPHONE_ARRAY_PRESET_EIGENMIKE64", "array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94a70df7a8e2bf6e2b663e975d7d9a12b10", null ],
       [ "MICROPHONE_ARRAY_PRESET_DTU_MIC", "array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94aa245df5d160f43f30ff4a68ccce87836", null ]
     ] ],
     [ "ARRAY2SH_WEIGHT_TYPES", "array2sh_8h.html#a8603b68eaa432f98f556a3592b8b15ff", [
