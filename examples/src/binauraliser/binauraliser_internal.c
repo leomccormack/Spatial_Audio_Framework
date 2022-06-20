@@ -126,7 +126,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
     int i, new_len;
-    float* hrtf_vbap_gtable, *hrirs_resampled;
+    float* hrtf_vbap_gtable, *hrirs_resampled;//, *hrir_dirs_rad;
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
@@ -224,13 +224,19 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     pData->progressBar0_1 = 0.6f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
     HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_runtime_len, HOP_SIZE, 0, 1, pData->hrtf_fb);
+
     /* HRIR pre-processing */
     if(pData->enableHRIRsDiffuseEQ){
         /* get integration weights */
         strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
         pData->progressBar0_1 = 0.9f;
-        if(pData->N_hrir_dirs<=3600){
+        if(pData->N_hrir_dirs<=1000){//3600
+//            hrir_dirs_rad = malloc1d(pData->N_hrir_dirs*2*sizeof(float));
+//            memcpy(hrir_dirs_rad, pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
+//            cblas_sscal(pData->N_hrir_dirs*2, SAF_PI/180.0f, hrir_dirs_rad, 1);
             pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
+//            calculateGridWeights(hrir_dirs_rad, pData->N_hrir_dirs, -1, pData->weights);
+//            free(hrir_dirs_rad);
             getVoronoiWeights(pData->hrir_dirs_deg, pData->N_hrir_dirs, 0, pData->weights);
         }
         else{

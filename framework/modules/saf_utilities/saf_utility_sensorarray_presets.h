@@ -80,6 +80,9 @@ extern const float __Eigenmike32_coords_rad[32][2];
  *          University of Denmark, Department of Electrical Engineering). */
 extern const float __DTU_mic_coords_rad[52][2];
 /**
+ * Sensor array coordinates for the Eigenmike64 */
+extern const float __Eigenmike64_coords_rad[64][2];
+/**
  * Default sensor array coordinates */
 extern const float __default_SENSORcoords64_rad[64][2];
 /**
@@ -105,6 +108,9 @@ extern const int __Eigenmike32_maxOrder;
  * Max spherical harmonic order for the custom 52-sensor array built at the
  * Technical University of Denmark (DTU) */
 extern const int __DTU_mic_maxOrder;
+/**
+ * Max spherical harmonic order for the Eigenmike64 */
+extern const int __Eigenmike64_maxOrder;
 /**
  * Sensor array frequency ranges for each SH order, for the Zylia array (should
  * only be used as a rough estimate).

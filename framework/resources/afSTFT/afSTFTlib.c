@@ -634,7 +634,7 @@ void afSTFT_FIRtoFilterbankCoeffs
     centerImpulse[(int)idxDel] = 1.0f;
 
     /* analyse impulse with the filterbank */
-    centerImpulseFB = malloc1d(nBands*nTimeSlots*nCH*sizeof(float_complex));
+    centerImpulseFB = malloc1d(nBands*nTimeSlots*1*sizeof(float_complex));
     afAnalyse(centerImpulse, SAF_MAX(ir_len,hopSize)+ir_pad, 1, hopSize, LDmode, hybridmode, centerImpulseFB);
     centerImpulseFB_energy = calloc1d(nBands, sizeof(float));
     for(i=0; i<nBands; i++)
@@ -643,7 +643,7 @@ void afSTFT_FIRtoFilterbankCoeffs
 
     /* initialise FB coefficients */
     ir = calloc1d( (SAF_MAX(ir_len,hopSize)+ir_pad) * nCH, sizeof(float));
-    irFB = malloc1d(nBands*nCH*nTimeSlots*sizeof(float_complex));
+    irFB = calloc1d(nBands*nTimeSlots*nCH,sizeof(float_complex));
     for(nd=0; nd<N_dirs; nd++){
         for(j=0; j<ir_len; j++)
             for(i=0; i<nCH; i++)
