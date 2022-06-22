@@ -655,15 +655,16 @@ void checkCondNumberSHTReal(/* Input arguments */
                             float* cond_N);
 
 /**
- * Computes the integration weights for a given grid
+ * Computes approximation of quadrature/integration weights for a given grid
  *
  * @test test__calculateGridWeights
  *
  * @param[in]  dirs_rad Grid directions [azi, INCLINATION] convention, in
  *                      RADIANS; FLAT: nDirs x 2
  * @param[in]  nDirs    Number of directions in the grid
- * @param[in]  order    Spherical harmonic order
+ * @param[in]  order    Supported spherical harmonic order, or -1 to calculate
  * @param[out] w        Integration weights; nDirs x 1
+ * @returns             Supported spherical harmonic order, or 0 if not found 
  */
 int calculateGridWeights(/* Input arguments */
                          float* dirs_rad,
