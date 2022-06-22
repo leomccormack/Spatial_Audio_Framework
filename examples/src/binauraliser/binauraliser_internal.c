@@ -238,11 +238,13 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
             sphElev2incl(hrir_dirs_rad, pData->N_hrir_dirs, 0, hrir_dirs_rad);
             int supOrder = calculateGridWeights(hrir_dirs_rad, pData->N_hrir_dirs, -1, pData->weights);
             if(supOrder < 1){
+                saf_print_warning("Could not calculate grid weights");
                 free(pData->weights);
                 pData->weights = NULL;
             }
         }
         else{
+            saf_print_warning("Too many grid points");
             free(pData->weights);
             pData->weights = NULL;
         }

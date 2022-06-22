@@ -263,11 +263,13 @@ void ambi_bin_initCodec
                 sphElev2incl(hrir_dirs_rad, pars->N_hrir_dirs, 0, hrir_dirs_rad);
                 int supOrder = calculateGridWeights(hrir_dirs_rad, pars->N_hrir_dirs, -1, pars->weights);
                 if(supOrder < 1){
+                    saf_print_warning("Could not calculate grid weights");
                     free(pars->weights);
                     pars->weights = NULL;
                 }
             }
             else{
+                saf_print_warning("Too many grid points");
                 free(pars->weights);
                 pars->weights = NULL;
             }
