@@ -424,12 +424,20 @@ void ambi_dec_initCodec
             pData->progressBar0_1 = 0.95f;
             if(pars->N_hrir_dirs<=3600){
                 pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
-                getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
+                //getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
+                float * hrir_dirs_rad = (float*) malloc1d(pars->N_hrir_dirs*2*sizeof(float));
+                memcpy(hrir_dirs_rad, pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+                cblas_sscal(pars->N_hrir_dirs*2, SAF_PI/180.f, hrir_dirs_rad, 1);
+                sphElev2incl(hrir_dirs_rad, pars->N_hrir_dirs, 0, hrir_dirs_rad);
+                int supOrder = calculateGridWeights(hrir_dirs_rad, pars->N_hrir_dirs, -1, pars->weights);
+                if(supOrder < 1){
+                    free(pars->weights);
+                    pars->weights = NULL;
+                }
             }
             else{
-                pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
-                for(int idx=0; idx < pars->N_hrir_dirs; idx++)
-                    pars->weights[idx] = 4.f*SAF_PI / (float)pars->N_hrir_dirs;
+                free(pars->weights);
+                pars->weights = NULL;
             }
             diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights, 1, 0, pars->hrtf_fb);
         }

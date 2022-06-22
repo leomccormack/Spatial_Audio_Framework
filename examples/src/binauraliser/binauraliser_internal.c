@@ -230,19 +230,21 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         /* get integration weights */
         strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
         pData->progressBar0_1 = 0.9f;
-        if(pData->N_hrir_dirs<=1000){//3600
-//            hrir_dirs_rad = malloc1d(pData->N_hrir_dirs*2*sizeof(float));
-//            memcpy(hrir_dirs_rad, pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
-//            cblas_sscal(pData->N_hrir_dirs*2, SAF_PI/180.0f, hrir_dirs_rad, 1);
+        if(pData->N_hrir_dirs<=3600){
             pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
-//            calculateGridWeights(hrir_dirs_rad, pData->N_hrir_dirs, -1, pData->weights);
-//            free(hrir_dirs_rad);
-            getVoronoiWeights(pData->hrir_dirs_deg, pData->N_hrir_dirs, 0, pData->weights);
+            float * hrir_dirs_rad = (float*) malloc1d(pData->N_hrir_dirs*2*sizeof(float));
+            memcpy(hrir_dirs_rad, pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
+            cblas_sscal(pData->N_hrir_dirs*2, SAF_PI/180.f, hrir_dirs_rad, 1);
+            sphElev2incl(hrir_dirs_rad, pData->N_hrir_dirs, 0, hrir_dirs_rad);
+            int supOrder = calculateGridWeights(hrir_dirs_rad, pData->N_hrir_dirs, -1, pData->weights);
+            if(supOrder < 1){
+                free(pData->weights);
+                pData->weights = NULL;
+            }
         }
         else{
-            pData->weights = realloc1d(pData->weights, pData->N_hrir_dirs*sizeof(float));
-            for(int idx=0; idx < pData->N_hrir_dirs; idx++)
-                pData->weights[idx] = 4.f*SAF_PI / (float)pData->N_hrir_dirs;
+            free(pData->weights);
+            pData->weights = NULL;
         }
         diffuseFieldEqualiseHRTFs(pData->N_hrir_dirs, pData->itds_s, pData->freqVector, HYBRID_BANDS, pData->weights, 1, 0, pData->hrtf_fb);
     }
