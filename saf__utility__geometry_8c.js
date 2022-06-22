@@ -21,6 +21,8 @@ var saf__utility__geometry_8c =
     [ "rotationMatrix2quaternion", "group___utilities.html#ga7a6535d2ee4b9f1147d3394b2d186a1a", null ],
     [ "sph2cart", "group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b", null ],
     [ "sphDelaunay", "group___utilities.html#gab81aab7da3deb5671c4cde3448855543", null ],
+    [ "sphElev2incl", "group___utilities.html#ga96f961db1b60c15b1397c3e6baca2bce", null ],
+    [ "sphIncl2Elev", "group___utilities.html#ga5bcd1360c616a95dcb3781c8cbe5baf9", null ],
     [ "sphVoronoi", "group___utilities.html#ga9eaf842897a359954c56aa53b151fc81", null ],
     [ "sphVoronoiAreas", "group___utilities.html#ga3fa1da3ec65285471c82ce5ac8cee740", null ],
     [ "unitCart2sph", "group___utilities.html#gaab3f2df9d2ea60183f71a75ebe417628", null ],

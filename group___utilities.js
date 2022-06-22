@@ -256,6 +256,8 @@ var group___utilities =
     [ "sortz", "group___utilities.html#gab0931ca50923ff84c52d328c93bd96e8", null ],
     [ "sph2cart", "group___utilities.html#ga6d6346f44f08ddae58339b54be3fa49b", null ],
     [ "sphDelaunay", "group___utilities.html#gab81aab7da3deb5671c4cde3448855543", null ],
+    [ "sphElev2incl", "group___utilities.html#ga96f961db1b60c15b1397c3e6baca2bce", null ],
+    [ "sphIncl2Elev", "group___utilities.html#ga5bcd1360c616a95dcb3781c8cbe5baf9", null ],
     [ "sphVoronoi", "group___utilities.html#ga9eaf842897a359954c56aa53b151fc81", null ],
     [ "sphVoronoiAreas", "group___utilities.html#ga3fa1da3ec65285471c82ce5ac8cee740", null ],
     [ "sumf", "group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598", null ],
