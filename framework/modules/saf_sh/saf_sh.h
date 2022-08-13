@@ -87,6 +87,22 @@ typedef enum {
     
 }SECTOR_PATTERNS;
 
+/**
+ * Microphone array to spherical harmonic domain conversion options
+ *
+ * @see [1] Jin, C.T., Epain, N. and Parthy, A., 2014. Design, optimization and
+ *          evaluation of a dual-radius spherical microphone array. IEEE/ACM
+ *          Transactions on Audio, Speech, and Language Processing, 22(1),
+ *          pp.193-204.
+ */
+typedef enum {
+    ARRAY_SHT_DEFAULT, /**< The default SHT filters are #ARRAY_SHT_REG_LS */
+    ARRAY_SHT_REG_LS,  /**< Regularised least-squares (LS) */
+    ARRAY_SHT_REG_LSHD /**< Regularised least-squares (LS) in the SH domain
+                        *   (similar as in [1]) */
+
+} ARRAY_SHT_OPTIONS;
+
 
 /* ========================================================================== */
 /*                               Misc. Functions                              */
@@ -963,6 +979,62 @@ void generateMinNormMap(/* Input arguments */
 /* ========================================================================== */
 /*              Microphone/Hydrophone array processing functions              */
 /* ========================================================================== */
+
+/**
+ * Computes matrices required to transform array signals into spherical harmonic
+ * signals (frequency-domain)
+ *
+ * @param[in]  method        See #ARRAY_SHT_OPTIONS
+ * @param[in]  order         Transform order
+ * @param[in]  amp_thresh_dB Maximum gain amplification (in dB)
+ * @param[in]  H_array       Array TFs; FLAT: nBins x nMics x nGrid
+ * @param[in]  grid_dirs_deg Grid directions [azi ELEV] degrees; FLAT: nGrid x 2
+ * @param[in]  nBins         Number of frequencies
+ * @param[in]  nMics         Number of microphones
+ * @param[in]  nGrid         Number of directions in the grid
+ * @param[in]  w_grid        Integration weights (set to NULL if not available)
+ * @param[out] H_sht         The SHT matrices; FLAT: nBins x nSH x nMics
+ */
+void arraySHTmatrices(/* Input arguments */
+                      ARRAY_SHT_OPTIONS method,
+                      int order,
+                      float amp_thresh_dB,
+                      float_complex* H_array,
+                      float* grid_dirs_deg,
+                      int nBins,
+                      int nMics,
+                      int nGrid,
+                      float* w_grid,
+                      /* Output arguments */
+                      float_complex* H_sht);
+
+/**
+ * Computes filters required to transform array signals into spherical harmonic
+ * signals (time-domain)
+ *
+ * @param[in]  method        See #ARRAY_SHT_OPTIONS
+ * @param[in]  order         Transform order
+ * @param[in]  amp_thresh_dB Maximum gain amplification (in dB)
+ * @param[in]  H_array       Array TFs; FLAT: (nFFT/2+1) x nMics x nGrid
+ * @param[in]  grid_dirs_deg Grid directions [azi ELEV] degrees; FLAT: nGrid x 2
+ * @param[in]  nFFT          FFT size / filter length
+ * @param[in]  nMics         Number of microphones
+ * @param[in]  nGrid         Number of directions in the grid
+ * @param[in]  w_grid        Integration weights (set to NULL if not available)
+ * @param[out] h_sht         The SHT filters; FLAT: nSH x nMics x nFFT
+ */
+void arraySHTfilters(/* Input arguments */
+                     ARRAY_SHT_OPTIONS method,
+                     int order,
+                     float amp_thresh_dB,
+                     float_complex* H_array,
+                     float* grid_dirs_deg,
+                     int nFFT,
+                     int nMics,
+                     int nGrid,
+                     float* w_grid,
+                     /* Output arguments */
+                     float* h_sht);
 
 /**
  * Calculates the modal coefficients for open/rigid cylindrical arrays

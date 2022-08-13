@@ -732,3 +732,32 @@ void test__sphModalCoeffs(void){
     free(b_N_omni);
     free(b_N_omni_test);
 }
+
+void test__arraySHTmatrices(void){
+    int nGrid;
+    float* grid_dirs_deg;
+    float_complex* H_array, *H_sht;
+
+    /* Configuration */
+    const int order = 2;
+    const int nMics = 13;
+    const int nBins = 129;
+    const float amp_thresh_dB = 15.0f;
+
+    /* Prep */
+    nGrid = __Tdesign_degree_30_nPoints;
+    grid_dirs_deg = (float*)__Tdesign_degree_30_dirs_deg;
+    H_array = malloc1d(nBins*nMics*nGrid*sizeof(float_complex));
+    rand_m1_1((float*)H_array, /*re+im*/2*nBins*nMics*nGrid);
+    H_sht = malloc1d(nBins*ORDER2NSH(order)*nMics*sizeof(float_complex));
+
+    /* (Tikhonov) regularised LS solution */
+    arraySHTmatrices(ARRAY_SHT_REG_LS, order, amp_thresh_dB, H_array, grid_dirs_deg, nBins, nMics, nGrid, NULL, H_sht);
+
+    /* (Tikhonov) regularised LS solution in the spherical harmonic domain */
+    arraySHTmatrices(ARRAY_SHT_REG_LSHD, order, amp_thresh_dB, H_array, grid_dirs_deg, nBins, nMics, nGrid, NULL, H_sht);
+
+    /* clean-up */
+    free(H_array);
+    free(H_sht);
+}

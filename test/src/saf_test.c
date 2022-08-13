@@ -85,6 +85,8 @@ int main_test(void) {
     start = timer_current();
     UNITY_BEGIN();
 
+    RUN_TEST(test__arraySHTmatrices);
+
     /* SAF utilities modules unit tests */
     RUN_TEST(test__cylindricalBesselFunctions);
     RUN_TEST(test__sphericalBesselFunctions);
