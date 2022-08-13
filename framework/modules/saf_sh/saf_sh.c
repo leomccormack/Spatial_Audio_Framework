@@ -1882,7 +1882,6 @@ void arraySHTmatrices
     float_complex* W, *Y_grid, *HW, *YW;
     float_complex *YWH_H,  *HWH_H, *inv_HWH_H;                       /* LS */
     float_complex* HWY_T, *YWY_T, *inv_YWY_T, *Q, *QQ_H, *inv_QQ_H;  /* LSHD */
-
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* Checks */
@@ -2456,6 +2455,42 @@ void sphDiffCohMtxTheory
     free(ppm_z1);
     free(ppm_z2);
     free(Pn);
+}
+
+void diffCohMtxMeas
+(
+    float_complex* H_array,
+    int nBins,
+    int nCH,
+    int nGrid,
+    float* w_grid,
+    float_complex* M_diffcoh
+)
+{
+    int kk, i;
+    float_complex* W, *HW;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Grid weights */
+    W = calloc1d(nGrid*nGrid,sizeof(float_complex));
+    for(i=0; i<nGrid; i++)
+        W[i*nGrid+i] = w_grid==NULL ? 1.0f : w_grid[i];
+
+    /* Loop over frequency */
+    HW = malloc1d(nCH*nGrid*sizeof(float_complex));
+    for (kk=0; kk<nBins; kk++){
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nCH, nGrid, nGrid, &calpha,
+                    &H_array[kk*nCH*nGrid], nGrid,
+                    W, nGrid, &cbeta,
+                    HW, nGrid);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nCH, nCH, nGrid, &calpha,
+                    HW, nGrid,
+                    &H_array[kk*nCH*nGrid], nGrid, &cbeta,
+                    &M_diffcoh[kk*nCH*nCH], nCH);
+    }
+
+    /* Clean-up */
+    free(W);
 }
 
 void simulateCylArray /*untested*/
