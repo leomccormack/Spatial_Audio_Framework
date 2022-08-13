@@ -1037,6 +1037,30 @@ void arraySHTfilters(/* Input arguments */
                      float* h_sht);
 
 /**
+ * Diffuse-field equalisation of SHT matrices above the spatial aliasing
+ * frequency
+ *
+ * @param[out] H_sht         Input SHT matrices; FLAT: nBins x nSH x nMics
+ * @param[in]  DCM           Diffuse coh matrices; FLAT: nBins x nMics x nMics
+ * @param[in]  freqVector    Frequency vector; nBins x 1
+ * @param[in]  alias_freq_hz Spatial aliasing frequency, in Hz
+ * @param[in]  nBins         Number of frequencies
+ * @param[in]  order         Transform order
+ * @param[in]  nMics         Number of microphones in array
+ * @param[out] H_sht_eq      Equalised SHT matrices; FLAT: nBins x nSH x nMics
+ */
+void arraySHTmatricesDiffEQ(/* Input arguments */
+                            float_complex* H_sht,
+                            float_complex* DCM,
+                            float* freqVector,
+                            float alias_freq_hz,
+                            int nBins,
+                            int order,
+                            int nMics,
+                            /* Output arguments */
+                            float_complex* H_sht_eq);
+
+/**
  * Calculates the modal coefficients for open/rigid cylindrical arrays
  *
  * @param[in]  order     Max order (highest is ~30 given numerical precision)

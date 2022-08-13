@@ -2077,6 +2077,77 @@ void arraySHTfilters
     free(H_sht_bins);
 }
 
+void arraySHTmatricesDiffEQ
+(
+    float_complex* H_sht,
+    float_complex* DCM,
+    float* freqVector,
+    float alias_freq_hz,
+    int nBins,
+    int order,
+    int nMics,
+    float_complex* H_sht_eq
+)
+{
+    int i, kk, idxf_alias, nSH;
+    float_complex* HD, *HDH_H, *EQ;
+    float* L_diff_fal;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Prep */
+    nSH = ORDER2NSH(order);
+    HD = malloc1d(nSH*nMics*sizeof(float_complex));
+    HDH_H = malloc1d(nSH*nSH*sizeof(float_complex));
+    L_diff_fal = malloc1d(nSH*sizeof(float));
+    EQ = calloc1d(nSH*nSH, sizeof(float_complex));
+
+    /* Channel energies under diffuse conditions for the aliasing frequency limit */
+    idxf_alias = 0;
+    while(freqVector[idxf_alias]<alias_freq_hz)
+        idxf_alias++;
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nMics, &calpha,
+                &H_sht[idxf_alias*nSH*nMics], nMics,
+                &DCM[idxf_alias*nMics*nMics], nMics, &cbeta,
+                HD, nMics);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nMics, &calpha,
+                HD, nMics,
+                &H_sht[idxf_alias*nSH*nMics], nMics, &cbeta,
+                HDH_H, nSH);
+    for(i=0; i<nSH; i++)
+        L_diff_fal[i] = crealf(HDH_H[i*nSH+i]);
+
+    /* Loop over frequency */
+    for(kk=0; kk<nBins; kk++){
+        if(kk<=idxf_alias)
+            cblas_ccopy(nSH*nMics, &H_sht[kk*nSH*nMics], 1, &H_sht_eq[kk*nSH*nMics], 1);
+        else{
+            /* Channel energies under diffuse conditions for this frequency */
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nMics, &calpha,
+                        &H_sht[kk*nSH*nMics], nMics,
+                        &DCM[kk*nMics*nMics], nMics, &cbeta,
+                        HD, nMics);
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nMics, &calpha,
+                        HD, nMics,
+                        &H_sht[kk*nSH*nMics], nMics, &cbeta,
+                        HDH_H, nSH);
+
+            /* Compute and apply EQ matrix */
+            for(i=0; i<nSH; i++)
+                EQ[i*nSH+i] = cmplxf(sqrtf(L_diff_fal[i]/crealf(HDH_H[i*nSH+i])), 0.0f);
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nSH, &calpha,
+                        EQ, nSH,
+                        &H_sht[kk*nSH*nMics], nMics, &cbeta,
+                        &H_sht_eq[kk*nSH*nMics], nMics);
+        }
+    }
+
+    /* clean-up */
+    free(HD);
+    free(HDH_H);
+    free(L_diff_fal);
+    free(EQ);
+}
+
 void cylModalCoeffs
 (
     int order,
