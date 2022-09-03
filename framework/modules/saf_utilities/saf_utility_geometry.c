@@ -485,10 +485,10 @@ float getDistBetween2Points
     float point_b[3]
 )
 {
-#if defined(SAF_USE_APPLE_ACCELERATE)
-    float dist;
-    vDSP_distancesq((const float*)point_a, 1, (const float*)point_b, 1, &dist, 3);
-    return dist;
+#if defined(SAF_USE_APPLE_ACCELERATE) && 0
+    float sqdist;
+    vDSP_distancesq((const float*)point_a, 1, (const float*)point_b, 1, &sqdist, 3);
+    return sqrtf(sqdist);
 #else
     float a_b[3];
     a_b[0] = point_a[0] - point_b[0];
