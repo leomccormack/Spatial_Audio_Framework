@@ -1890,7 +1890,7 @@ void arraySHTmatrices
     /* Grid weights */
     W = calloc1d(nGrid*nGrid,sizeof(float_complex));
     for(i=0; i<nGrid; i++)
-        W[i*nGrid+i] = w_grid==NULL ? 1.0f : w_grid[i];
+        W[i*nGrid+i] = w_grid==NULL ? calpha : cmplxf(w_grid[i], 0.0f);
 
     /* Grid order and allocations */
     nSH = ORDER2NSH(order);
@@ -2545,7 +2545,7 @@ void diffCohMtxMeas
     /* Grid weights */
     W = calloc1d(nGrid*nGrid,sizeof(float_complex));
     for(i=0; i<nGrid; i++)
-        W[i*nGrid+i] = w_grid==NULL ? 1.0f : w_grid[i];
+        W[i*nGrid+i] = w_grid==NULL ? calpha : cmplxf(w_grid[i], 0.0f);
 
     /* Loop over frequency */
     HW = malloc1d(nCH*nGrid*sizeof(float_complex));
