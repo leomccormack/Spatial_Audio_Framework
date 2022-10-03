@@ -3479,8 +3479,8 @@ void utility_spinv
     float wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
@@ -3618,8 +3618,8 @@ void utility_cpinv
     float_complex wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
@@ -3758,8 +3758,8 @@ void utility_dpinv
     double wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
@@ -3897,8 +3897,8 @@ void utility_zpinv
     double_complex wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
