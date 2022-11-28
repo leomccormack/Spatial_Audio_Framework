@@ -143,7 +143,7 @@ void panner_initCodec(void* const hPan);
  */
 void panner_process(void* const hPan,
                     const float *const * inputs,
-                    float** const outputs,
+                    float* const* outputs,
                     int nInputs,
                     int nOutputs,
                     int nSamples);

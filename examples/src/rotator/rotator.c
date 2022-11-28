@@ -101,7 +101,7 @@ void rotator_process
 (
     void        *  const hRot,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples

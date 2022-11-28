@@ -118,7 +118,7 @@ void spreader_initCodec(void* const hSpr);
  */
 void spreader_process(void* const hSpr,
                       const float *const * inputs,
-                      float** const outputs,
+                      float* const* outputs,
                       int nInputs,
                       int nOutputs,
                       int nSamples);

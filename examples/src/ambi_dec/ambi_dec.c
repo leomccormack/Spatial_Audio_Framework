@@ -147,7 +147,7 @@ void ambi_dec_destroy
         free(pars->hrtf_fb);
         free(pars->hrtf_fb_mag);
         free(pars->itds_s);
-	free(pars->sofa_filepath);
+    free(pars->sofa_filepath);
         free(pars->hrirs);
         free(pars->hrir_dirs_deg);
         free(pars->weights);
@@ -458,7 +458,7 @@ void ambi_dec_process
 (
     void        *  const hAmbi,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples

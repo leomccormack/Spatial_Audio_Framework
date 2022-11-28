@@ -160,7 +160,7 @@ void ambi_dec_initCodec(void* const hAmbi);
  */
 void ambi_dec_process(void* const hAmbi,
                       const float *const * inputs,
-                      float** const outputs,
+                      float* const* outputs,
                       int nInputs,
                       int nOutputs,
                       int nSamples);

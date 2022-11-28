@@ -130,7 +130,7 @@ void ambi_drc_init(void* const hAmbi,
  */
 void ambi_drc_process(void* const hAmbi,
                       const float *const * inputs,
-                      float** const outputs,
+                      float* const* outputs,
                       int nCH,
                       int nSamples);
 

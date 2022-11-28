@@ -119,7 +119,7 @@ void binauraliser_initCodec(void* const hBin);
  */
 void binauraliser_process(void* const hBin,
                           const float *const * inputs,
-                          float** const outputs,
+                          float* const* outputs,
                           int nInputs,
                           int nOutputs,
                           int nSamples);

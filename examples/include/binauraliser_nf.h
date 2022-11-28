@@ -123,7 +123,7 @@ void binauraliserNF_initCodec(void* const hBin);
  */
 void binauraliserNF_process(void* const hBin,
                             const float *const * inputs,
-                            float** const outputs,
+                            float* const* outputs,
                             int nInputs,
                             int nOutputs,
                             int nSamples);
@@ -134,7 +134,7 @@ void binauraliserNF_process(void* const hBin,
  */
 void binauraliserNF_processFD(void* const hBin,
                           const float *const * inputs,
-                          float** const outputs,
+                          float* const* outputs,
                           int nInputs,
                           int nOutputs,
                           int nSamples);
