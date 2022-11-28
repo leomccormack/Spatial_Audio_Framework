@@ -1000,13 +1000,14 @@ int calculateGridWeights
             minVal = s[ind];
             cond_N = maxVal/(minVal+2.23e-7f);
 
-            if(cond_N > 1.5f * n){
+            if(cond_N > 2 * (n + 1)){  // experimental condition
                 order = n-1;
                 break;
             }
         }
     }
-    assert(order>0);
+    if(order<1)  // could not find order
+        order=0;
         
     nSH = ORDER2NSH(order);
     Y_N = (float**)malloc2d(nSH, nDirs, sizeof(float));
@@ -1028,6 +1029,7 @@ int calculateGridWeights
     }
 
     if(fabs(sumW - FOURPI) > 0.001){
+        order=0;
         saf_print_warning("Grid weights no bueno!");
     }
     return order;

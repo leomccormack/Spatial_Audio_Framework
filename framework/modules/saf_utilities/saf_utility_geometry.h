@@ -205,6 +205,36 @@ void unitCart2sph(/* Input Arguments */
                   /* Output Arguments */
                   float* dirs);
 
+/**
+ * Converts spherical coordinates of unit length from elevation to inclination
+ *
+ * @param[in]  dirsElev    Spherical coordinates; FLAT: nDirs x 2
+ * @param[in]  nDirs       Number of directions/coordinates
+ * @param[in]  degreesFlag 1: angles are in degrees, 0: angles are in radians
+ * @param[out] dirsIncl    Spherical coordinates; FLAT: nDirs x 2
+ */
+void sphElev2incl(/* Input Arguments */
+                  float* dirsElev,
+                  int nDirs,
+                  int degreesFlag,
+                  /* Output Arguments */
+                  float* dirsIncl);
+
+/**
+ * Converts spherical coordinates of unit length from inclination to elevation
+ *
+ * @param[in]  dirsIncl    Spherical coordinates; FLAT: nDirs x 2
+ * @param[in]  nDirs       Number of directions/coordinates
+ * @param[in]  degreesFlag 1: angles are in degrees, 0: angles are in radians
+ * @param[out] dirsElev    Spherical coordinates; FLAT: nDirs x 2
+ */
+void sphIncl2Elev(/* Input Arguments */
+                  float* dirsIncl,
+                  int nDirs,
+                  int degreesFlag,
+                  /* Output Arguments */
+                  float* dirsElev);
+
 /** Returns the L2 (Euclidean) norm of a 3-element vector */
 float L2_norm3(float v[3]);
 

@@ -7,7 +7,7 @@
 
 # About
 
-The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. While originally intended as a resource for researchers in the field, the framework has gradually grown into a large and well-documented codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). The framework also makes use of highly optimised linear algebra libraries (such as Intel MKL, Apple Accelerate, OpenBLAS) as well as SIMD intrinsics (SSE, AVX, AVX-512). Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects. These examples have also been integrated into VST audio plug-ins under the [**SPARTA**](https://github.com/leomccormack/SPARTA) banner, which demonstrate how the framework may be used for practical real-time applications.
+The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. Originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large and well-documented codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). The framework also makes use of highly optimised linear algebra libraries (such as Intel MKL, Apple Accelerate, OpenBLAS) as well as SIMD intrinsics (SSE, AVX, AVX-512). Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects. These examples have also been integrated into VST audio plug-ins under the [**SPARTA**](https://github.com/leomccormack/SPARTA) banner, which demonstrate how the framework may be used for practical real-time applications.
 
 Owing to its modular design, expanding the framework is relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-) 
 
@@ -176,7 +176,7 @@ Several **examples** have also been included in the repository, which may serve 
 * **sldoa** - a sound-field visualiser based on directly depicting the DoA estimates extracted from multiple spatially-localised active-intensity vectors for multiple frequencies. 
 * **spreader** - an arbitrary array panner (HRIRs, microphone array IRs, etc.) with coherent and incoherent spreading modes.
 
-Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [Super-Hearing](https://github.com/leomccormack/Super-Hearing/), [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
+Many of these examples have also been released as VST audio plug-ins under the [SPARTA](https://github.com/leomccormack/SPARTA) banner. The following open-source projects also employ the framework: [HADES](https://github.com/jananifernandez/HADES), [Super-Hearing](https://github.com/leomccormack/Super-Hearing/), [HO-SIRR-GUI](https://github.com/leomccormack/HO-SIRR-GUI), and [CroPaC-Binaural](https://github.com/leomccormack/CroPaC-Binaural).
 
 ## Extras
 
@@ -184,7 +184,7 @@ The repository also includes the following **extras**:
 
 * [matlab](extras/matlab/SAF_MATLAB_CODE.md) - a bunch of MATLAB scripts/functions to accompany the framework (a script to generate saf_default_hrirs.c, MATLAB versions of certain SAF functions, etc.).
 * [safmex](extras/safmex/SAFMEX.md) - a bunch of MATLAB MEX wrappers, which allow certain SAF functions to be used within MATLAB.
-* [safpy](extras/safpy/SAFPY.md) - a work-in-progress initiative to bring SAF functionality to Python.
+* [safpy](extras/safpy/SAFPY.md) - a bunch of Python wrappers, which allow certain SAF functions to be used within Python.
 * [safwwise](extras/safwwise/SAFWWISE.md) - a proof of concept regarding how one might integrate SAF into Wwise.
 
 ## Contributing
