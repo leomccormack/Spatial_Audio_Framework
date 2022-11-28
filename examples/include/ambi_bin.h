@@ -207,7 +207,7 @@ void ambi_bin_initCodec(void* const hAmbi);
  */
 void ambi_bin_process(void* const hAmbi,
                       const float *const * inputs,
-                      float** const outputs,
+                      float* const* const outputs,
                       int nInputs,
                       int nOutputs,
                       int nSamples);

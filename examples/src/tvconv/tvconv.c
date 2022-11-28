@@ -119,8 +119,8 @@ void tvconv_init
 void tvconv_process
 (
     void  *  const hTVCnv,
-    float ** const inputs,
-    float ** const outputs,
+    float* const* const inputs,
+    float* const* const outputs,
     int            nInputs,
     int            nOutputs,
     int            nSamples

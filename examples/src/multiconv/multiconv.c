@@ -95,7 +95,7 @@ void multiconv_process
 (
     void        *  const hMCnv,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples
@@ -194,7 +194,7 @@ void multiconv_checkReInit(void* const hMCnv)
 void multiconv_setFilters
 (
     void* const hMCnv,
-    const float** H,
+    const float* const* H,
     int numChannels,
     int numSamples,
     int sampleRate
