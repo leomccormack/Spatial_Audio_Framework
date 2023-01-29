@@ -1504,6 +1504,114 @@ void utility_ssv2cv_inds
 #endif
 }
 
+void utility_csv2cv_inds
+(
+    const float_complex* sv,
+    const int* inds,
+    const int len,
+    float_complex* cv
+)
+{
+    int i;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_cgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_cgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
+#elif defined(NDEBUG)
+    /* try to indirectly "trigger" some compiler optimisations */
+    for(i=0; i<len-3; i+=4){
+        cv[i] = sv[inds[i]];
+        cv[i+1] = sv[inds[i+1]];
+        cv[i+2] = sv[inds[i+2]];
+        cv[i+3] = sv[inds[i+3]];
+    }
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
+        cv[i] = sv[inds[i]];
+#else
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
+void utility_dsv2cv_inds
+(
+    const double* sv,
+    const int* inds,
+    const int len,
+    double* cv
+)
+{
+    int i;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_dgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_dgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
+#elif defined(NDEBUG)
+    /* try to indirectly "trigger" some compiler optimisations */
+    for(i=0; i<len-3; i+=4){
+        cv[i] = sv[inds[i]];
+        cv[i+1] = sv[inds[i+1]];
+        cv[i+2] = sv[inds[i+2]];
+        cv[i+3] = sv[inds[i+3]];
+    }
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
+        cv[i] = sv[inds[i]];
+#else
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
+void utility_zsv2cv_inds
+(
+    const double_complex* sv,
+    const int* inds,
+    const int len,
+    double_complex* cv
+)
+{
+    int i;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_zgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_zgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
+#elif defined(NDEBUG)
+    /* try to indirectly "trigger" some compiler optimisations */
+    for(i=0; i<len-3; i+=4){
+        cv[i] = sv[inds[i]];
+        cv[i+1] = sv[inds[i+1]];
+        cv[i+2] = sv[inds[i+2]];
+        cv[i+3] = sv[inds[i+3]];
+    }
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
+        cv[i] = sv[inds[i]];
+#else
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
 
 /* ========================================================================== */
 /*                     Singular-Value Decomposition (?svd)                    */
