@@ -273,10 +273,7 @@ void utility_siminv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    float minVal;
-    ippsMinAbsIndx_32f((Ipp32f*)a, len, &minVal, index);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     float minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgvi(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
@@ -334,10 +331,7 @@ void utility_diminv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    double minVal;
-    ippsMinAbsIndx_64f((Ipp64f*)a, len, &minVal, index);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     double minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgviD(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
@@ -400,12 +394,7 @@ void utility_simaxv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    float maxVal;
-    ippsMaxAbsIndx_32f((Ipp32f*)a, len, &maxVal, index);
-#else
     *index = (int)cblas_isamax(len, a, 1);
-#endif
 }
 
 void utility_cimaxv
@@ -425,12 +414,7 @@ void utility_dimaxv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    double maxVal;
-    ippsMaxAbsIndx_64f((Ipp64f*)a, len, &maxVal, index);
-#else
     *index = (int)cblas_idamax(len, a, 1);
-#endif
 }
 
 void utility_zimaxv
