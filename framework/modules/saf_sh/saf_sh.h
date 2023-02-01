@@ -1245,6 +1245,24 @@ void diffCohMtxMeas(/* Input arguments */
                     float_complex* M_diffcoh);
 
 /**
+ * Calculates the diffuse coherence matrices for an array that uses a broad-band
+ * real-valued basis
+ *
+ * @param[in]  H_array    Array TFs; FLAT: N_sensors x nGrid 
+ * @param[in]  N_sensors  Number of sensors
+ * @param[in]  nGrid      Number of directions
+ * @param[in]  w_grid     Integration weights (set to NULL if not available)
+ * @param[out] M_diffcoh  Diffuse coherence matrix; N_sensors x N_sensors
+ */
+void diffCohMtxMeasReal(/* Input arguments */
+                        float* H_array,
+                        int N_sensors,
+                        int nGrid,
+                        float* w_grid,
+                        /* Output arguments */
+                        float* M_diffcoh);
+
+/**
  * Simulates a cylindrical microphone array, returning the transfer functions
  * for each (plane wave) source direction on the surface of the cylinder
  *

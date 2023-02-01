@@ -2564,6 +2564,38 @@ void diffCohMtxMeas
     free(W);
 }
 
+void diffCohMtxMeasReal
+(
+    float* H_array,
+    int nCH,
+    int nGrid,
+    float* w_grid,
+    float* M_diffcoh
+)
+{
+    int i;
+    float* W, *HW;
+
+    /* Grid weights */
+    W = calloc1d(nGrid*nGrid,sizeof(float));
+    for(i=0; i<nGrid; i++)
+        W[i*nGrid+i] = w_grid==NULL ? 1.0f : 0.0f;
+
+    /* Loop over frequency */
+    HW = malloc1d(nCH*nGrid*sizeof(float_complex));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nCH, nGrid, nGrid, 1.0f,
+                H_array, nGrid,
+                W, nGrid, 0.0f,
+                HW, nGrid);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nCH, nCH, nGrid, 1.0f,
+                HW, nGrid,
+                H_array, nGrid, 0.0f,
+                M_diffcoh, nCH);
+
+    /* Clean-up */
+    free(W);
+}
+
 void simulateCylArray /*untested*/
 (
     int order,
