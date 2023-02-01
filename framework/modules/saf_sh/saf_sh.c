@@ -1894,10 +1894,11 @@ void arraySHTmatrices
 
     /* Grid order and allocations */
     nSH = ORDER2NSH(order);
+	HWY_T = YWY_T = inv_YWY_T = Q = QQ_H = inv_QQ_H = NULL;
+	YW = YWH_H = HW = HWH_H = inv_HWH_H = NULL;
     switch (method){
         case ARRAY_SHT_DEFAULT:  /* fall through */
         case ARRAY_SHT_REG_LS:
-            HWY_T = YWY_T = inv_YWY_T = Q = QQ_H = inv_QQ_H = NULL;
             order_grid = order;
             nSH_grid = ORDER2NSH(order_grid);
 
@@ -1907,8 +1908,7 @@ void arraySHTmatrices
             inv_HWH_H = malloc1d(nMics*nMics*sizeof(float_complex));
             break;
 
-        case ARRAY_SHT_REG_LSHD:
-            YW = YWH_H = HW = HWH_H = inv_HWH_H = NULL;
+        case ARRAY_SHT_REG_LSHD: 
             order_grid = (int)(sqrtf((float)nGrid)/2.0f-1.0f);
             nSH_grid = ORDER2NSH(order_grid);
 
