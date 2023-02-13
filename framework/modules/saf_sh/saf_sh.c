@@ -1882,6 +1882,7 @@ void arraySHTmatrices
     float_complex* W, *Y_grid, *HW, *YW;
     float_complex *YWH_H,  *HWH_H, *inv_HWH_H;                       /* LS */
     float_complex* HWY_T, *YWY_T, *inv_YWY_T, *Q, *QQ_H, *inv_QQ_H;  /* LSHD */
+    void* hInv;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
 
     /* Checks */
@@ -1941,6 +1942,7 @@ void arraySHTmatrices
     beta = 1.0f/(2.0f*alpha);
 
     /* Loop over frequency */
+    utility_cinv_create(&hInv, SAF_MAX(nSH_grid, nMics));
     for (kk=0; kk<nBins; kk++){
         switch (method){
             case ARRAY_SHT_DEFAULT:  /* fall through */
@@ -1965,7 +1967,7 @@ void arraySHTmatrices
                 /* Tikhonov regularised inversion */
                 for(i=0; i<nMics; i++)
                     HWH_H[i*nMics+i] = craddf(HWH_H[i*nMics+i], beta*beta);
-                utility_cinv(NULL, HWH_H, inv_HWH_H, nMics);
+                utility_cinv(hInv, HWH_H, inv_HWH_H, nMics);
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nMics, &calpha,
                             YWH_H, nMics,
                             inv_HWH_H, nMics, &cbeta,
@@ -1989,7 +1991,7 @@ void arraySHTmatrices
                             YW, nGrid,
                             Y_grid, nGrid, &cbeta,
                             YWY_T, nSH_grid);
-                utility_cinv(NULL, YWY_T, inv_YWY_T, nSH_grid);
+                utility_cinv(hInv, YWY_T, inv_YWY_T, nSH_grid);
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nMics, nSH_grid, nSH_grid, &calpha,
                             HWY_T, nSH_grid,
                             inv_YWY_T, nSH_grid, &cbeta,
@@ -2002,7 +2004,7 @@ void arraySHTmatrices
                             QQ_H, nMics);
                 for(i=0; i<nMics; i++)
                     QQ_H[i*nMics+i] = craddf(QQ_H[i*nMics+i], beta*beta);
-                utility_cinv(NULL, QQ_H, inv_QQ_H, nMics);
+                utility_cinv(hInv, QQ_H, inv_QQ_H, nMics);
                 cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans,  nSH /*truncated here*/, nMics, nMics, &calpha,
                             Q, nSH_grid,
                             inv_QQ_H, nMics, &cbeta,
@@ -2034,6 +2036,7 @@ void arraySHTmatrices
     }
     free(YW);
     free(HW);
+    utility_cinv_destroy(&hInv);
 }
 
 void arraySHTfilters
