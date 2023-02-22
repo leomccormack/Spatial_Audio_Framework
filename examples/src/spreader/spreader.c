@@ -121,7 +121,7 @@ void spreader_destroy
             SAF_SLEEP(10);
         }
 
-	free(pData->sofa_filepath);
+    free(pData->sofa_filepath);
         
         /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
@@ -341,7 +341,7 @@ void spreader_process
 (
     void        *  const hSpr,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples

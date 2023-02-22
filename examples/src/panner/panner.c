@@ -174,7 +174,7 @@ void panner_process
 (
     void        *  const hPan,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples

@@ -100,7 +100,7 @@ void decorrelator_initCodec(void* const hDecor);
  */
 void decorrelator_process(void* const hDecor,
                           const float *const * inputs,
-                          float** const outputs,
+                          float* const* outputs,
                           int nInputs,
                           int nOutputs,
                           int nSamples);

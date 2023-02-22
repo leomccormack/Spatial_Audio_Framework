@@ -272,7 +272,7 @@ void array2sh_evalEncoder(void* const hA2sh);
  */
 void array2sh_process(void* const hA2sh,
                       const float *const * inputs,
-                      float** const outputs,
+                      float* const* outputs,
                       int nInputs,
                       int nOutputs,
                       int nSamples);

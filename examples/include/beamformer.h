@@ -83,7 +83,7 @@ void beamformer_init(void* const hBeam,
  */
 void beamformer_process(void* const hBeam,
                         const float *const * inputs,
-                        float** const outputs,
+                        float* const* outputs,
                         int nInputs,
                         int nOutputs,
                         int nSamples);

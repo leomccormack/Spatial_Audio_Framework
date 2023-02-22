@@ -170,7 +170,7 @@ void array2sh_process
 (
     void        *  const hA2sh,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples

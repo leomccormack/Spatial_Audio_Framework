@@ -225,7 +225,7 @@ void binauraliserNF_process /* FREQ DOMAIN version */
 (
     void        *  const hBin,
     const float *const * inputs,
-    float       ** const outputs,
+    float* const*  const outputs,
     int                  nInputs,
     int                  nOutputs,
     int                  nSamples
