@@ -31,7 +31,7 @@ var ambi__dec_8c =
     [ "ambi_dec_getUseDefaultHRIRsflag", "ambi__dec_8c.html#a738500776cf4a3b28dd67e725b9c8082", null ],
     [ "ambi_dec_init", "ambi__dec_8c.html#ad0887ed5ef302cecf03452b691213d6e", null ],
     [ "ambi_dec_initCodec", "ambi__dec_8c.html#a70234b6dd9c05ba4defff41a81f3b9ca", null ],
-    [ "ambi_dec_process", "ambi__dec_8c.html#af9a5ea47e08067b64bb0de66af123413", null ],
+    [ "ambi_dec_process", "ambi__dec_8c.html#a244e68609c1b0d1487c10fd18967c740", null ],
     [ "ambi_dec_refreshSettings", "ambi__dec_8c.html#a7c1ef1357309f4c8296f5045558a350c", null ],
     [ "ambi_dec_setBinauraliseLSflag", "ambi__dec_8c.html#a49bbbde369b32690f1b4f384ebb3e0b3", null ],
     [ "ambi_dec_setChOrder", "ambi__dec_8c.html#a5063614a2b101e55053e8401aed2b830", null ],

@@ -26,7 +26,7 @@ var panner_8c =
     [ "panner_getYaw", "panner_8c.html#a248bacb0db5006c01e6ea402d94ec17d", null ],
     [ "panner_init", "panner_8c.html#a8c62f8510a4326ce1a82935c13d697de", null ],
     [ "panner_initCodec", "panner_8c.html#ad525480ae418f09aa0ab7225b7adca91", null ],
-    [ "panner_process", "panner_8c.html#aa6bc261c063928de68498d2d5930d456", null ],
+    [ "panner_process", "panner_8c.html#a0c8fca3054e075f7e59449f03e8b4025", null ],
     [ "panner_refreshSettings", "panner_8c.html#ade77f7cbef0d4840174b2fe0fd25a147", null ],
     [ "panner_setDTT", "panner_8c.html#a971689193e1c41c6d40153df1138723c", null ],
     [ "panner_setFlipPitch", "panner_8c.html#a1b1039a9e771b5bf68634e5806c3894e", null ],

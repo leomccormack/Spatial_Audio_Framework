@@ -21,7 +21,7 @@ var rotator_8c =
     [ "rotator_getRPYflag", "rotator_8c.html#a0e6493a5e09ad1066e0facd75a5a1f4f", null ],
     [ "rotator_getYaw", "rotator_8c.html#a74594b0ff15e880324345ae78857c087", null ],
     [ "rotator_init", "rotator_8c.html#aa3800909cc8f62723dd3e7c0c3928c6d", null ],
-    [ "rotator_process", "rotator_8c.html#ab1cde5fd46c846c1c792d23b75d92889", null ],
+    [ "rotator_process", "rotator_8c.html#a757cefa0b547fd2d383b536a53d0c103", null ],
     [ "rotator_setChOrder", "rotator_8c.html#ab517ada7840c6d5acb4f9208375aa903", null ],
     [ "rotator_setFlipPitch", "rotator_8c.html#a3617d07c75d37dd48656fa7c168bc210", null ],
     [ "rotator_setFlipQuaternion", "rotator_8c.html#af297849bbde2df7932873bd516da7037", null ],

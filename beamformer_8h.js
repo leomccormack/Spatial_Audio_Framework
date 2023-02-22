@@ -14,7 +14,7 @@ var beamformer_8h =
     [ "beamformer_getNumBeams", "beamformer_8h.html#a37f6e24062aa34a213cee08a7ef4ffa2", null ],
     [ "beamformer_getProcessingDelay", "beamformer_8h.html#a2518e0bd354d5d49c82ef4857f724763", null ],
     [ "beamformer_init", "beamformer_8h.html#a6979b023ef547f9a03b75879c0948d38", null ],
-    [ "beamformer_process", "beamformer_8h.html#a2891b3780608af8deb4bba61a1119e7f", null ],
+    [ "beamformer_process", "beamformer_8h.html#aa8b70d48ac9c6b22c27a4334595ca815", null ],
     [ "beamformer_refreshSettings", "beamformer_8h.html#ada4f400901972da1ae49848856bebfdc", null ],
     [ "beamformer_setBeamAzi_deg", "beamformer_8h.html#ab6c19076251aa6e416b9586b847eaff4", null ],
     [ "beamformer_setBeamElev_deg", "beamformer_8h.html#aae8efc150223a1896e5eacdaad6e3753", null ],

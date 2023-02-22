@@ -37,7 +37,7 @@ var array2sh_8c =
     [ "array2sh_getSpatialCorrelation_Handle", "array2sh_8c.html#a0b85b58608fe2f67d6449692ab74626f", null ],
     [ "array2sh_getWeightType", "array2sh_8c.html#ae383a8a989d2e92df50dbda32ca59b16", null ],
     [ "array2sh_init", "array2sh_8c.html#a6a58a7322ffc0abfefaf73f315de38cd", null ],
-    [ "array2sh_process", "array2sh_8c.html#a0695cdf9b5cee3cb1890ac9baf853c61", null ],
+    [ "array2sh_process", "array2sh_8c.html#a01534bc8227fc2a27747a8ae77714430", null ],
     [ "array2sh_refreshSettings", "array2sh_8c.html#a642731bd32026402f67476dcbc3dea04", null ],
     [ "array2sh_setArrayType", "array2sh_8c.html#a5a11fdd65d913a743f8c4da270eeb5ce", null ],
     [ "array2sh_setc", "array2sh_8c.html#a8c30e632378ac18cfc718ac239640e19", null ],

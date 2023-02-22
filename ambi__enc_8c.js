@@ -14,7 +14,7 @@ var ambi__enc_8c =
     [ "ambi_enc_getSourceAzi_deg", "ambi__enc_8c.html#ae0561538f935ab8eec6f7b7ae592b401", null ],
     [ "ambi_enc_getSourceElev_deg", "ambi__enc_8c.html#ad7a6cec3e139c1b875021a09b7752fee", null ],
     [ "ambi_enc_init", "ambi__enc_8c.html#afea441688a41405da68d2f68d695d80d", null ],
-    [ "ambi_enc_process", "ambi__enc_8c.html#a0ddf80a79deb2b322d1740eb6dab9c39", null ],
+    [ "ambi_enc_process", "ambi__enc_8c.html#ad1ba33f4d9be0c48312fac63373cf2d4", null ],
     [ "ambi_enc_refreshParams", "ambi__enc_8c.html#a261a1f584979af30dd9c17e267c76e54", null ],
     [ "ambi_enc_setChOrder", "ambi__enc_8c.html#af0754e972e00bc278f86df823875e8f8", null ],
     [ "ambi_enc_setEnablePostScaling", "ambi__enc_8c.html#a183dffff01ca3170f6c046c6eec57c52", null ],

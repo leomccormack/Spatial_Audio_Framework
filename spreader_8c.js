@@ -26,7 +26,7 @@ var spreader_8c =
     [ "spreader_getUseDefaultHRIRsflag", "spreader_8c.html#ad74ce3b9c86011bcbf41aa351405e0a2", null ],
     [ "spreader_init", "spreader_8c.html#aef36b1b04d11a994441809a267d75ebb", null ],
     [ "spreader_initCodec", "spreader_8c.html#a661fd4572d10fb69bda55b9bb3704f9a", null ],
-    [ "spreader_process", "spreader_8c.html#a040e65e2a65a4f2e8c2ca4af4703467d", null ],
+    [ "spreader_process", "spreader_8c.html#a31465ab3d80e2fe545f7ab3b451e5b38", null ],
     [ "spreader_refreshSettings", "spreader_8c.html#ad09e88d29c89a6401b0a2bb7b5db65d8", null ],
     [ "spreader_setAveragingCoeff", "spreader_8c.html#ae74250fe7479bed281d098f515fc251c", null ],
     [ "spreader_setNumSources", "spreader_8c.html#ad05f265a0d605fe82e6a5af06d569eac", null ],

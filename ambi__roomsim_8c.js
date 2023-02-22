@@ -25,7 +25,7 @@ var ambi__roomsim_8c =
     [ "ambi_roomsim_getSourceZ", "ambi__roomsim_8c.html#a0f152d06568bf891cf39b8612bbe7f0b", null ],
     [ "ambi_roomsim_getWallAbsCoeff", "ambi__roomsim_8c.html#a1ca1ed2f011443b5d8a3e85356f1b52e", null ],
     [ "ambi_roomsim_init", "ambi__roomsim_8c.html#a55935df4c479bf792184d6a04c3ec785", null ],
-    [ "ambi_roomsim_process", "ambi__roomsim_8c.html#a4fa9449b46c83c1c6b54b63c5748b331", null ],
+    [ "ambi_roomsim_process", "ambi__roomsim_8c.html#a1bfb16a75ca80eca577df8d7150a68d4", null ],
     [ "ambi_roomsim_refreshParams", "ambi__roomsim_8c.html#a7befccb2ce578d081c19a8a7632baca8", null ],
     [ "ambi_roomsim_setChOrder", "ambi__roomsim_8c.html#a691b52b9a5d8d02afbfb73e6e4c4ce05", null ],
     [ "ambi_roomsim_setEnableIMSflag", "ambi__roomsim_8c.html#a68fb74b7f69cbe49d66251507ca2f964", null ],

@@ -33,7 +33,7 @@ var ambi__bin_8c =
     [ "ambi_bin_getYaw", "ambi__bin_8c.html#ae2118f337a9cc0cb7e57dd9554b98fa7", null ],
     [ "ambi_bin_init", "ambi__bin_8c.html#adacd25ce222712fe55444b63e47dd5cc", null ],
     [ "ambi_bin_initCodec", "ambi__bin_8c.html#a5d950301131218cc3c05abc204ba4e87", null ],
-    [ "ambi_bin_process", "ambi__bin_8c.html#aa22247c4479ee3c6beff08254b14b094", null ],
+    [ "ambi_bin_process", "ambi__bin_8c.html#a5e06d83dd7401c2a82ff3a21f18b7ac3", null ],
     [ "ambi_bin_refreshParams", "ambi__bin_8c.html#affbef03043aab1e4e03584651bc13ded", null ],
     [ "ambi_bin_setChOrder", "ambi__bin_8c.html#a03a90a9bea5936b0cd342d2b88484840", null ],
     [ "ambi_bin_setDecodingMethod", "ambi__bin_8c.html#ac9600bd850784886a5e2ea4734548570", null ],

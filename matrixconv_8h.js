@@ -14,9 +14,9 @@ var matrixconv_8h =
     [ "matrixconv_getNumOutputChannels", "matrixconv_8h.html#a162f1a32ee6223f36b46216ff778fdd0", null ],
     [ "matrixconv_getProcessingDelay", "matrixconv_8h.html#a55b97272e74c3a61b1191c0d53391889", null ],
     [ "matrixconv_init", "matrixconv_8h.html#a5013deb64f9024bd00968d92ebf41a91", null ],
-    [ "matrixconv_process", "matrixconv_8h.html#ada0b9456f894f7420aba7328b3d0d207", null ],
+    [ "matrixconv_process", "matrixconv_8h.html#a4b8e7f98245f98d7d32ec5c6344ff743", null ],
     [ "matrixconv_refreshParams", "matrixconv_8h.html#acba0c7d4bc087d1014126010c71edb20", null ],
     [ "matrixconv_setEnablePart", "matrixconv_8h.html#a6c10175e2122f4f5708e1af866e9720f", null ],
-    [ "matrixconv_setFilters", "matrixconv_8h.html#a81e9131a8df8394e3ab75528325e6d27", null ],
+    [ "matrixconv_setFilters", "matrixconv_8h.html#ae40d0b039abd0d5b02acf95318c94707", null ],
     [ "matrixconv_setNumInputChannels", "matrixconv_8h.html#a392bc108dee85c9ecf6befe611541b42", null ]
 ];

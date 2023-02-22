@@ -8,8 +8,8 @@ var binauraliser__nf_8h =
     [ "binauraliserNF_getSourceDist_m", "binauraliser__nf_8h.html#a51844773978d903c6ed63fba0eb4036e", null ],
     [ "binauraliserNF_init", "binauraliser__nf_8h.html#a3d04d71290a522b64f9616b2530ea4c9", null ],
     [ "binauraliserNF_initCodec", "binauraliser__nf_8h.html#aedfd24e19a397ebfb73c5fd38214c88d", null ],
-    [ "binauraliserNF_process", "binauraliser__nf_8h.html#a8f3d362bc56a8639bb593553eb15cee9", null ],
-    [ "binauraliserNF_processFD", "binauraliser__nf_8h.html#aa756bf32b13ed7465f9b1e144332c9e2", null ],
+    [ "binauraliserNF_process", "binauraliser__nf_8h.html#af0ba20e691053b70d85318619c6e3cc7", null ],
+    [ "binauraliserNF_processFD", "binauraliser__nf_8h.html#a3606a794da4d1c18b52c057de1699d33", null ],
     [ "binauraliserNF_setInputConfigPreset", "binauraliser__nf_8h.html#a803f65b94277e41949125a114c470886", null ],
     [ "binauraliserNF_setSourceDist_m", "binauraliser__nf_8h.html#addb02b19e681bb3f07caf562d3c38420", null ]
 ];

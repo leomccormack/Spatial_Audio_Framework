@@ -12,9 +12,9 @@ var multiconv_8c =
     [ "multiconv_getNumChannels", "multiconv_8c.html#aa582d94066ef2b57ad4d4cacc6de0f9e", null ],
     [ "multiconv_getProcessingDelay", "multiconv_8c.html#ad8a4a21c55238d29c70d5974e605c323", null ],
     [ "multiconv_init", "multiconv_8c.html#a298fa0c83ecc594d2c725984326c13df", null ],
-    [ "multiconv_process", "multiconv_8c.html#ae96e7a6249f60898b79df1a75fcca844", null ],
+    [ "multiconv_process", "multiconv_8c.html#af076f35cbfffb3ce24ea71aa8ca8e421", null ],
     [ "multiconv_refreshParams", "multiconv_8c.html#ad1ff0aa602e5db93b1f53ce7ffd22551", null ],
     [ "multiconv_setEnablePart", "multiconv_8c.html#aaeeddbebac21c5184d449ad4b4f0ce68", null ],
-    [ "multiconv_setFilters", "multiconv_8c.html#a79f19cfc2f9aa5f1b2ac9c93b75b7d2d", null ],
+    [ "multiconv_setFilters", "multiconv_8c.html#af57c4139da6151b1bafa5ea5d69ccc14", null ],
     [ "multiconv_setNumChannels", "multiconv_8c.html#ad07993a1fc85d522677a110f19f75503", null ]
 ];

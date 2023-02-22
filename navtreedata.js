@@ -53,7 +53,7 @@ var NAVTREEINDEX =
 [
 "__common_8h.html",
 "ambi__bin_8h.html#a1c44e4164f30673afce6d1cd45028bd0",
-"ambi__drc_8h.html#a3651c0e22ff19ae055f6ff3099cc8345",
+"ambi__drc_8h.html#a358912104c07e14477f0e890642e7991",
 "array2sh_8c.html#a309e81aa012f4c748b0302c2f70ecc28",
 "binauraliser_8c.html#a0a2a00ded7bc0cdc4c755863441cd063",
 "dir_7440c80a84150c89eded6c163cdc56e5.html",
@@ -64,7 +64,7 @@ var NAVTREEINDEX =
 "panner_8c.html#abc24592c12c3512fc39ee3ab17ccd551",
 "powermap__internal_8c.html",
 "saf__test_8h.html#aeb7e6c04ac91cc3d90025bcac95e8549",
-"spreader_8h.html#a0f757a258d9144e398249d409bd2658c",
+"spreader_8h.html#a1db2887ae610271d7e6437acccb69287",
 "structambi__roomsim__data.html#aff735476bf5f2a87081a59e4da6ae94a",
 "structdirass__data.html#acaa9d4e1c8b6250e1229d9135eea1ee5",
 "structpanner__data.html#a7b05e0a0b9535c277213b52dd9737d72",

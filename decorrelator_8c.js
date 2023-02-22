@@ -14,7 +14,7 @@ var decorrelator_8c =
     [ "decorrelator_getTransientBypassFlag", "decorrelator_8c.html#a64c35ad69067eceeac1fff92114d3524", null ],
     [ "decorrelator_init", "decorrelator_8c.html#ab270e8046aa246f9d50f544ca6e38f49", null ],
     [ "decorrelator_initCodec", "decorrelator_8c.html#af809d1b12a9fce524a68afa8a45b5362", null ],
-    [ "decorrelator_process", "decorrelator_8c.html#ac79c4802b40c8abba4a5ad287b761ae0", null ],
+    [ "decorrelator_process", "decorrelator_8c.html#ab7043ba4eb786185879d70287ecbb737", null ],
     [ "decorrelator_refreshParams", "decorrelator_8c.html#a5b469d5cb9eb094f3446ec2e1e46d5cf", null ],
     [ "decorrelator_setDecorrelationAmount", "decorrelator_8c.html#a2902edec636e52eae241157542d52439", null ],
     [ "decorrelator_setLevelCompensationFlag", "decorrelator_8c.html#a6ab7d31622e6171c0f914877125e0deb", null ],
