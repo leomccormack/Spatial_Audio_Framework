@@ -2582,7 +2582,7 @@ void diffCohMtxMeasReal
     /* Grid weights */
     W = calloc1d(nGrid*nGrid,sizeof(float));
     for(i=0; i<nGrid; i++)
-        W[i*nGrid+i] = w_grid==NULL ? 1.0f : 0.0f;
+        W[i*nGrid+i] = w_grid==NULL ? 1.0f : w_grid[i];
 
     /* Loop over frequency */
     HW = malloc1d(nCH*nGrid*sizeof(float_complex));
@@ -2594,7 +2594,7 @@ void diffCohMtxMeasReal
                 HW, nGrid,
                 H_array, nGrid, 0.0f,
                 M_diffcoh, nCH);
-
+    
     /* Clean-up */
     free(W);
 }
