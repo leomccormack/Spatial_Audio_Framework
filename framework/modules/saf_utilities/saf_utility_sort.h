@@ -160,7 +160,7 @@ void cmplxPairUp(double_complex* in_vec,
  *                           nTarget x 1
  * @param [out] dirs_closest grid_dirs(idx_closest); (set to NULL to ignore);
  *                           nTarget x 1
- * @param [out] angle_diff   Angle diff between target a d grid dir, in degrees
+ * @param [out] angle_diff   Angle diff between target and grid dir, in degrees
  *                           (set to NULL to ignore); nTarget x 1
  */
 void findClosestGridPoints(float* grid_dirs,
@@ -171,6 +171,25 @@ void findClosestGridPoints(float* grid_dirs,
                            int* idx_closest,
                            float* dirs_closest,
                            float* angle_diff);
+
+/**
+ * Finds indicies into "grid_dirs_xyz" that are the closest to "target dirs_xyz"
+ *
+ * @param [in]  grid_dirs_xyz    Grid directions (Cartesian unit-length); FLAT: nGrid x 3
+ * @param [in]  nGrid            Number of directions in grid
+ * @param [in]  target_dirs_xyz  Target directions (Cartesian unit-length); FLAT: nTarget x 3
+ * @param [in]  nTarget          Number of target directions to find
+ * @param [out] idx_closest      Resulting indices (set to NULL to ignore); nTarget x 1
+ * @param [out] dirs_xyz_closest grid_dirs(idx_closest); (set to NULL to ignore);  nTarget x 1
+ * @param [out] angle_diff       Angle diff between target and grid dir, in degrees (set to NULL to ignore); nTarget x 1
+ */
+void findClosestGridPointsCartesian(float* grid_dirs_xyz,
+                                    int nGrid,
+                                    float* target_dirs_xyz,
+                                    int nTarget,
+                                    int* idx_closest,
+                                    float* dirs_xyz_closest,
+                                    float* angle_diff);
 
 
 #ifdef __cplusplus
