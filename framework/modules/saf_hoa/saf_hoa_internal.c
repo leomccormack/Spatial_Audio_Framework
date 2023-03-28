@@ -537,8 +537,11 @@ void getBinDecoder_MAGLS
     int i, j, nSH, band, band_cutoff;
     float cutoff, minVal;
     float* Y_tmp;
-    float_complex* W, *Y_na, *hrtfs_ls, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
+    float_complex* W, *Y_na, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+    float phi_delta_l = .0f;
+    float phi_delta_r = .0f;
+
     
     nSH = ORDER2NSH(order);
 
@@ -574,7 +577,6 @@ void getBinDecoder_MAGLS
     Yna_W_Yna = malloc1d(nSH * nSH * sizeof(float_complex));
     Yna_W_H = malloc1d(nSH * 2 * sizeof(float_complex));
     B_magls = malloc1d(nSH * 2 * sizeof(float_complex));
-    hrtfs_ls = malloc1d(2*N_dirs*sizeof(float_complex));
     H_mod = malloc1d(2*N_dirs*sizeof(float_complex));
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, N_dirs, N_dirs, &calpha,
                 Y_na, N_dirs,
@@ -584,27 +586,36 @@ void getBinDecoder_MAGLS
                 Yna_W, N_dirs,
                 Y_na, N_dirs, &cbeta,
                 Yna_W_Yna, nSH);
-    for (band=0; band<N_bands; band++){
-        if(band<=band_cutoff){
+    /* Linear Decoding part*/
+    for (band=0; band<=band_cutoff; band++){
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &calpha,
                         Yna_W, N_dirs,
                         &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
                         Yna_W_H, 2);
             utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+        
+            /* extract phase delta from spatial average after transform*/
+            phi_delta_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0])) - phi_delta_l;
+            phi_delta_r = atan2f(cimagf(B_magls[nSH]), crealf(B_magls[nSH])) - phi_delta_r;
         }
-        else{
-            /* Remove itd from high frequency HRTFs */
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
-                        &decMtx[(band-1)*2*nSH] , nSH,
-                        Y_na, N_dirs, &cbeta,
-                        H_mod, N_dirs);
-            for(i=0; i<2*N_dirs; i++)
-                H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*2*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])))));
-            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &calpha,
-                        Yna_W, N_dirs,
-                        H_mod, N_dirs, &cbeta,
-                        Yna_W_H, 2);
-            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+
+    for (band=band_cutoff; band<N_bands; band++){
+        /* Remove itd from high frequency HRTFs */
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
+                    &decMtx[(band-1)*2*nSH] , nSH,
+                    Y_na, N_dirs, &cbeta,
+                    H_mod, N_dirs);
+        for(i=0; i<2*N_dirs; i++)
+        {   /* Phase continuation */
+            if (i < N_dirs)
+                H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*2*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])) + phi_delta_l)));
+            else
+                H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*2*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])) + phi_delta_r)));
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &calpha,
+                    Yna_W, N_dirs,
+                    H_mod, N_dirs, &cbeta,
+                    Yna_W_H, 2);
+        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
         }
         
         for(i=0; i<nSH; i++)
@@ -618,6 +629,5 @@ void getBinDecoder_MAGLS
     free(Yna_W_Yna);
     free(Yna_W_H);
     free(B_magls);
-    free(hrtfs_ls);
     free(H_mod);
 }
