@@ -539,9 +539,8 @@ void getBinDecoder_MAGLS
     float* Y_tmp;
     float_complex* W, *Y_na, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    float phi_delta_l = .0f;
-    float phi_delta_r = .0f;
-
+    float phi_delta_l = .0f, phi_delta_r = .0f;
+    float phi_l = .0f, phi_r = .0f, phi_lprev = .0f, phi_rprev = .0f;
     
     nSH = ORDER2NSH(order);
 
@@ -595,14 +594,31 @@ void getBinDecoder_MAGLS
                     Yna_W_H, 2);
         utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, NUM_EARS, B_magls);
 
+        if(band<=(band_cutoff/3))  // try to stay low enough before we run into SHT errors
+        {
         /* extract phase delta from spatial average after transform*/
-        phi_delta_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0])) - phi_delta_l;
-        phi_delta_r = atan2f(cimagf(B_magls[1]), crealf(B_magls[1])) - phi_delta_r;
+        phi_lprev = phi_l;
+        phi_rprev = phi_r;
+        phi_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0]));
+        phi_r = atan2f(cimagf(B_magls[1]), crealf(B_magls[1]));
+        if(band==1)
+        {
+            phi_delta_l = phi_l - phi_lprev;
+            phi_delta_r = phi_r - phi_rprev;
+        }
+        if(band>1)
+        {
+            if((phi_l-phi_lprev)>0.f) phi_l -= 2*SAF_PI;
+            if((phi_r-phi_rprev)>0.f) phi_r -= 2*SAF_PI;
+            phi_delta_l = 0.5*phi_delta_l + 0.5*(phi_l - phi_lprev);
+            phi_delta_r = 0.5*phi_delta_l + 0.5*(phi_r - phi_rprev);
+        }
+        }
 
         for(i=0; i<nSH; i++)
             for(j=0; j<NUM_EARS; j++)
                 decMtx[band*NUM_EARS*nSH + j*nSH + i] = conjf(B_magls[i*NUM_EARS+j]); /* ^H */
-    }
+    } 
 
     for (band=band_cutoff; band<N_bands; band++){
         /* Remove itd from high frequency HRTFs */
@@ -613,8 +629,10 @@ void getBinDecoder_MAGLS
 
         for(i=0; i<N_dirs; i++) {
             /* Phase continuation */
-            H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])) + phi_delta_l)));
-            H_mod[i+N_dirs] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i+N_dirs]), crealf(H_mod[i+N_dirs])) + phi_delta_r)));
+            H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + i]), 0.0f),
+                              cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])) + phi_delta_l)));
+            H_mod[i+N_dirs] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + i]), 0.0f),
+                              cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i+N_dirs]), crealf(H_mod[i+N_dirs])) + phi_delta_r)));
         }
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, NUM_EARS, N_dirs, &calpha,
                     Yna_W, N_dirs,
