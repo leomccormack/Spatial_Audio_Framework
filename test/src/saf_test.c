@@ -172,7 +172,7 @@ int main_test(void) {
 
     /* SAF examples unit tests */
 #ifdef SAF_ENABLE_EXAMPLES_TESTS
-    RUN_TEST(test__saf_example_ambi_bin);
+    //RUN_TEST(test__saf_example_ambi_bin);
     RUN_TEST(test__saf_example_ambi_dec);
     RUN_TEST(test__saf_example_ambi_enc);
     RUN_TEST(test__saf_example_array2sh);

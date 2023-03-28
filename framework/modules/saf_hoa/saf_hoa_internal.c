@@ -539,8 +539,13 @@ void getBinDecoder_MAGLS
     float* Y_tmp;
     float_complex* W, *Y_na, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+<<<<<<< HEAD
     float phi_delta_l = .0f, phi_delta_r = .0f;
     float phi_l = .0f, phi_r = .0f, phi_lprev = .0f, phi_rprev = .0f;
+=======
+    float phi_delta_l = .0f;
+    float phi_delta_r = .0f;
+>>>>>>> 6c6b41107... disabled ambiBIN unit test to test CI
     
     nSH = ORDER2NSH(order);
 
@@ -574,9 +579,9 @@ void getBinDecoder_MAGLS
     /* calculate decoding matrix per band */
     Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
     Yna_W_Yna = malloc1d(nSH * nSH * sizeof(float_complex));
-    Yna_W_H = malloc1d(nSH * 2 * sizeof(float_complex));
-    B_magls = malloc1d(nSH * 2 * sizeof(float_complex));
-    H_mod = malloc1d(2*N_dirs*sizeof(float_complex));
+    Yna_W_H = malloc1d(nSH * NUM_EARS * sizeof(float_complex));
+    B_magls = malloc1d(nSH * NUM_EARS * sizeof(float_complex));
+    H_mod = malloc1d(NUM_EARS*N_dirs*sizeof(float_complex));
     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, N_dirs, N_dirs, &calpha,
                 Y_na, N_dirs,
                 W, N_dirs, &cbeta,
@@ -590,8 +595,8 @@ void getBinDecoder_MAGLS
     for (band=0; band<=band_cutoff; band++){
         cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, NUM_EARS, N_dirs, &calpha,
                     Yna_W, N_dirs,
-                    &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
-                    Yna_W_H, 2);
+                    &hrtfs[band*NUM_EARS*N_dirs], N_dirs, &cbeta,
+                    Yna_W_H, NUM_EARS);
         utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, NUM_EARS, B_magls);
 
         if(band<=(band_cutoff/3))  // try to stay low enough before we run into SHT errors
@@ -622,8 +627,8 @@ void getBinDecoder_MAGLS
 
     for (band=band_cutoff; band<N_bands; band++){
         /* Remove itd from high frequency HRTFs */
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
-                    &decMtx[(band-1)*2*nSH] , nSH,
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, N_dirs, nSH, &calpha,
+                    &decMtx[(band-1)*NUM_EARS*nSH], nSH,
                     Y_na, N_dirs, &cbeta,
                     H_mod, N_dirs);
 
