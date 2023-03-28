@@ -539,13 +539,8 @@ void getBinDecoder_MAGLS
     float* Y_tmp;
     float_complex* W, *Y_na, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-<<<<<<< HEAD
     float phi_delta_l = .0f, phi_delta_r = .0f;
     float phi_l = .0f, phi_r = .0f, phi_lprev = .0f, phi_rprev = .0f;
-=======
-    float phi_delta_l = .0f;
-    float phi_delta_r = .0f;
->>>>>>> 6c6b41107... disabled ambiBIN unit test to test CI
     
     nSH = ORDER2NSH(order);
 
