@@ -476,6 +476,7 @@ void getBinDecoder_TA
             band_cutoff = band;
         }
     }
+    saf_assert(band_cutoff>0, "Frequency vector is wrong!");
     
     /* calculate decoding matrix per band */
     Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
@@ -570,6 +571,7 @@ void getBinDecoder_MAGLS
             band_cutoff = band;
         }
     }
+    saf_assert(band_cutoff>0, "Frequency vector is wrong!");
     
     /* calculate decoding matrix per band */
     Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
@@ -596,23 +598,23 @@ void getBinDecoder_MAGLS
 
         if(band<=(band_cutoff/3))  // try to stay low enough before we run into SHT errors
         {
-        /* extract phase delta from spatial average after transform*/
-        phi_lprev = phi_l;
-        phi_rprev = phi_r;
-        phi_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0]));
-        phi_r = atan2f(cimagf(B_magls[1]), crealf(B_magls[1]));
-        if(band==1)
-        {
-            phi_delta_l = phi_l - phi_lprev;
-            phi_delta_r = phi_r - phi_rprev;
-        }
-        if(band>1)
-        {
-            if((phi_l-phi_lprev)>0.f) phi_l -= 2*SAF_PI;
-            if((phi_r-phi_rprev)>0.f) phi_r -= 2*SAF_PI;
-            phi_delta_l = 0.5*phi_delta_l + 0.5*(phi_l - phi_lprev);
-            phi_delta_r = 0.5*phi_delta_l + 0.5*(phi_r - phi_rprev);
-        }
+            /* extract phase delta from spatial average after transform*/
+            phi_lprev = phi_l;
+            phi_rprev = phi_r;
+            phi_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0]));
+            phi_r = atan2f(cimagf(B_magls[1]), crealf(B_magls[1]));
+            if(band==1)
+            {
+                phi_delta_l = phi_l - phi_lprev;
+                phi_delta_r = phi_r - phi_rprev;
+            }
+            if(band>1)
+            {
+                if((phi_l-phi_lprev)>0.f) phi_l -= 2*SAF_PI;
+                if((phi_r-phi_rprev)>0.f) phi_r -= 2*SAF_PI;
+                phi_delta_l = 0.5*phi_delta_l + 0.5*(phi_l - phi_lprev);
+                phi_delta_r = 0.5*phi_delta_l + 0.5*(phi_r - phi_rprev);
+            }
         }
 
         for(i=0; i<nSH; i++)

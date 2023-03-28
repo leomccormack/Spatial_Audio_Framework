@@ -79,12 +79,13 @@ void ambi_bin_create
     pData->nSH =  (pData->order+1)*(pData->order+1);
     
     /* afSTFT and audio buffers */
-    pData->fs = 0;
+    pData->fs = 48e3f;
     pData->hSTFT = NULL;
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, AMBI_BIN_FRAME_SIZE, sizeof(float));
     pData->binFrameTD = (float**)malloc2d(NUM_EARS, AMBI_BIN_FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* codec data */
     pData->progressBar0_1 = 0.0f;
