@@ -74,7 +74,7 @@ void ambi_bin_create
     pData->bFlipPitch = 0;
     pData->bFlipRoll = 0;
     pData->useRollPitchYawFlag = 0;
-    pData->method = DECODING_METHOD_LS;
+    pData->method = DECODING_METHOD_MAGLS;
     pData->order = pData->new_order = 1;
     pData->nSH =  (pData->order+1)*(pData->order+1);
     
