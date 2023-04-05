@@ -538,7 +538,7 @@ void getBinDecoder_MAGLS
     int i, j, nSH, band, band_cutoff;
     float cutoff, minVal;
     float* Y_tmp;
-    float_complex* W, *Y_na, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
+    float_complex* W, *Y_na, *Yna_pinv, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
     float phi_delta_l = .0f, phi_delta_r = .0f;
     float phi_l = .0f, phi_r = .0f, phi_lprev = .0f, phi_rprev = .0f;
@@ -574,27 +574,19 @@ void getBinDecoder_MAGLS
     saf_assert(band_cutoff>0, "Frequency vector is wrong!");
     
     /* calculate decoding matrix per band */
-    Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
-    Yna_W_Yna = malloc1d(nSH * nSH * sizeof(float_complex));
-    Yna_W_H = malloc1d(nSH * NUM_EARS * sizeof(float_complex));
+    Yna_pinv = malloc1d(nSH * N_dirs*sizeof(float_complex));
     B_magls = malloc1d(nSH * NUM_EARS * sizeof(float_complex));
     H_mod = malloc1d(NUM_EARS*N_dirs*sizeof(float_complex));
-    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, N_dirs, N_dirs, &calpha,
-                Y_na, N_dirs,
-                W, N_dirs, &cbeta,
-                Yna_W, N_dirs);
-    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, N_dirs, &calpha,
-                Yna_W, N_dirs,
-                Y_na, N_dirs, &cbeta,
-                Yna_W_Yna, nSH);
+
+    utility_cpinv(NULL, Y_na, nSH, N_dirs, Yna_pinv);
 
     /* Linear Decoding part*/
     for (band=0; band<=band_cutoff; band++){
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, NUM_EARS, N_dirs, &calpha,
-                    Yna_W, N_dirs,
+
+        cblas_cgemm(CblasRowMajor, CblasTrans, CblasTrans, nSH, NUM_EARS, N_dirs, &calpha,
+                    Yna_pinv, nSH,
                     &hrtfs[band*NUM_EARS*N_dirs], N_dirs, &cbeta,
-                    Yna_W_H, NUM_EARS);
-        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, NUM_EARS, B_magls);
+                    B_magls, NUM_EARS);
 
         if(band<=(band_cutoff/3))  // try to stay low enough before we run into SHT errors
         {
@@ -619,7 +611,7 @@ void getBinDecoder_MAGLS
 
         for(i=0; i<nSH; i++)
             for(j=0; j<NUM_EARS; j++)
-                decMtx[band*NUM_EARS*nSH + j*nSH + i] = conjf(B_magls[i*NUM_EARS+j]); /* ^H */
+                decMtx[band*NUM_EARS*nSH + j*nSH + i] = conjf(B_magls[i*NUM_EARS+j]);
     } 
 
     for (band=band_cutoff; band<N_bands; band++){
@@ -628,6 +620,7 @@ void getBinDecoder_MAGLS
                     &decMtx[(band-1)*NUM_EARS*nSH], nSH,
                     Y_na, N_dirs, &cbeta,
                     H_mod, N_dirs);
+                    
 
         for(i=0; i<N_dirs; i++) {
             /* Phase continuation */
@@ -636,22 +629,19 @@ void getBinDecoder_MAGLS
             H_mod[i+N_dirs] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + i]), 0.0f),
                               cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i+N_dirs]), crealf(H_mod[i+N_dirs])) + phi_delta_r)));
         }
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, NUM_EARS, N_dirs, &calpha,
-                    Yna_W, N_dirs,
+
+        cblas_cgemm(CblasRowMajor, CblasTrans, CblasTrans, nSH, NUM_EARS, N_dirs, &calpha,
+                    Yna_pinv, nSH,
                     H_mod, N_dirs, &cbeta,
-                    Yna_W_H, NUM_EARS);
-        utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, NUM_EARS, B_magls);
+                    B_magls, NUM_EARS);
 
         for(i=0; i<nSH; i++)
             for(j=0; j<NUM_EARS; j++)
-                decMtx[band*NUM_EARS*nSH + j*nSH + i] = conjf(B_magls[i*NUM_EARS+j]); /* ^H */
+                decMtx[band*NUM_EARS*nSH + j*nSH + i] = B_magls[i*NUM_EARS+j]; /* ^T */
     }
-    
     free(W);
     free(Y_na);
-    free(Yna_W);
-    free(Yna_W_Yna);
-    free(Yna_W_H);
+    free(Yna_pinv);
     free(B_magls);
     free(H_mod);
 }
