@@ -77,8 +77,8 @@ void ambi_enc_init
         pData->interpolator_fadeIn[i-1]  = (float)i*1.0f/(float)AMBI_ENC_FRAME_SIZE;
         pData->interpolator_fadeOut[i-1] = 1.0f - pData->interpolator_fadeIn[i-1];
     }
-    memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(float));
-    memset(pData->prev_inputFrameTD, 0, MAX_NUM_SH_SIGNALS*AMBI_ENC_FRAME_SIZE*sizeof(float));
+    memset(pData->prev_Y, 0, MAX_NUM_SH_SIGNALS*MAX_NUM_INPUTS*sizeof(float));
+    memset(pData->prev_inputFrameTD, 0, MAX_NUM_INPUTS*AMBI_ENC_FRAME_SIZE*sizeof(float));
     for(i=0; i<MAX_NUM_INPUTS; i++)
         pData->recalc_SH_FLAG[i] = 1;
 }
