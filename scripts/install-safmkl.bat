@@ -16,7 +16,7 @@ ECHO   - "C:/Windows/System32/saf_mkl_custom[lp64|ilp64].dll".
 ECHO You may choose between sequential and threaded versions of the library. Sequential is the
 ECHO recommended option.
 ECHO.
-ECHO NOTE: you will need to run this script using the "x64 Command Prompt for VS.exe", which 
+ECHO NOTE: you will need to run this script using the "x64 Native Tools Command Prompt for VS [year].exe", which 
 ECHO will require Administrator privileges!
 ECHO.
 
@@ -59,7 +59,7 @@ IF ERRORLEVEL 1 GOTO Parallel_LP64
 :Parallel_LP64
 ECHO.
 ECHO Building threaded versions of the custom MKL library (LP64 interface) for SAF...
-cd C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
+cd /d  C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
 nmake intel64 interface=lp64 threading=parallel name=saf_mkl_custom_lp64 export=saf_mkl_list
 ECHO.
 ECHO Copying files to correct folders...
@@ -71,7 +71,7 @@ GOTO End
 :Parallel_ILP64
 ECHO.
 ECHO Building threaded versions of the custom MKL library (ILP64 interface) for SAF...
-cd C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
+cd /d  C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
 nmake intel64 interface=ilp64 threading=parallel name=saf_mkl_custom_ilp64 export=saf_mkl_list
 ECHO.
 ECHO Copying files to correct folders...
@@ -94,7 +94,7 @@ IF ERRORLEVEL 1 GOTO Sequential_LP64
 :Sequential_LP64
 ECHO.
 ECHO Building sequential versions of the custom MKL library (LP64 interface) for SAF...
-cd C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
+cd /d  C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
 nmake intel64 interface=lp64 threading=sequential name=saf_mkl_custom_lp64 export=saf_mkl_list
 ECHO.
 ECHO Copying files to correct folders...
@@ -106,7 +106,7 @@ GOTO End
 :Sequential_ILP64
 ECHO.
 ECHO Building sequential versions of the custom MKL library (ILP64 interface) for SAF...
-cd C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
+cd /d  C:/Program Files (x86)/Intel/oneAPI/mkl/latest/tools/builder
 nmake intel64 interface=ilp64 threading=sequential name=saf_mkl_custom_ilp64 export=saf_mkl_list
 ECHO.
 ECHO Copying files to correct folders...

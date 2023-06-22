@@ -94,6 +94,7 @@ typedef struct _tvconv
     int nInputChannels;        /**< number of input channels */
     vectorND targetPosition;    
     char* sofa_filepath;
+    SAF_TVCONV_ERROR_CODES sofa_file_error;
 
 } tvconv_data;
 
