@@ -24,20 +24,17 @@
  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
  */
-
-#ifndef MYSOFA_KDTREE_H_
-#define MYSOFA_KDTREE_H_
+#ifndef _KDTREE_H_
+#define _KDTREE_H_
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if defined(SAF_ENABLE_SOFA_READER_MODULE)
-
 struct kdtree;
 
 /* create a kd-tree for 3-dimensional data */
-struct kdtree *kd_create(void);
+struct kdtree *kd_create();
 
 /* free the struct kdtree */
 void kd_free(struct kdtree *tree);
@@ -48,10 +45,8 @@ int kd_insert(struct kdtree *tree, const float *pos, void *data);
 /* Find the nearest node from a given point */
 int kd_nearest(struct kdtree *tree, const float *pos, void **res);
 
-#endif /* SAF_ENABLE_SOFA_READER_MODULE */
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* MYSOFA_KDTREE_H_ */
+#endif /* _KDTREE_H_ */
