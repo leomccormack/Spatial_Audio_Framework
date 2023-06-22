@@ -264,7 +264,9 @@ void tvconv_setFiltersAndPositions
     if(pData->sofa_filepath!=NULL){
         strcpy(pData->progressBarText,"Opening SOFA file");
         pData->progressBar0_1 = 0.2f;
-        error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_NETCDF);
+		// MB hack
+        //error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_NETCDF);
+		error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_LIBMYSOFA);
         
         if(error==SAF_SOFA_OK){
             strcpy(pData->progressBarText,"Loading IRs");
