@@ -442,3 +442,45 @@ void findClosestGridPoints
     free(grid_xyz);
     free(target_xyz);
 }
+
+void findClosestGridPointsCartesian
+(
+    float* grid_dirs_xyz,
+    int nGrid,
+    float* target_dirs_xyz,
+    int nTarget,
+    int* idx_closest,
+    float* dirs_xyz_closest,
+    float* angle_diff
+)
+{
+    int i, j;
+    float max_val, current_val;
+
+    /* determine which 'grid_xyz_dirs' indices are the closest to 'target_xyz_dirs' */
+    for(i=0; i<nTarget; i++){
+        max_val = -2.23e10f;
+        for(j=0; j<nGrid; j++){
+            current_val = grid_dirs_xyz[j*3] * target_dirs_xyz[i*3] +
+                          grid_dirs_xyz[j*3+1] * target_dirs_xyz[i*3+1] +
+                          grid_dirs_xyz[j*3+2] * target_dirs_xyz[i*3+2];
+            if(current_val > max_val)
+                idx_closest[i] = j;
+            if(current_val>max_val){
+                idx_closest[i] = j;
+                max_val = current_val;
+                if(angle_diff!=NULL)
+                    angle_diff[i] = acosf(max_val);
+            }
+        }
+    }
+
+    /* optional output of directions */
+    if(dirs_xyz_closest!=NULL){
+        for(i=0; i<nTarget; i++){
+            dirs_xyz_closest[i*3] = grid_dirs_xyz[idx_closest[i]*3];
+            dirs_xyz_closest[i*3+1] = grid_dirs_xyz[idx_closest[i]*3+1];
+            dirs_xyz_closest[i*3+2] = grid_dirs_xyz[idx_closest[i]*3+2];
+        }
+    }
+}

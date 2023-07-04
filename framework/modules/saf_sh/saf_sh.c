@@ -1862,6 +1862,295 @@ void generateMinNormMap
 /*              Microphone/Hydrophone array processing functions              */
 /* ========================================================================== */
 
+void arraySHTmatrices
+(
+    ARRAY_SHT_OPTIONS method,
+    int order,
+    float amp_thresh_dB,
+    float_complex* H_array, //nBins x nMics x nGrid
+    float* grid_dirs_deg,
+    int nBins,
+    int nMics,
+    int nGrid,
+    float* w_grid,
+    float_complex* H_sht //nBins x nSH x nMics
+)
+{
+    int i, kk, nSH, order_grid, nSH_grid;
+    float alpha, beta;
+    float* grid_dirs_rad, *Ytmp;
+    float_complex* W, *Y_grid, *HW, *YW;
+    float_complex *YWH_H,  *HWH_H, *inv_HWH_H;                       /* LS */
+    float_complex* HWY_T, *YWY_T, *inv_YWY_T, *Q, *QQ_H, *inv_QQ_H;  /* LSHD */
+    void* hInv;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Checks */
+    saf_assert(order<=sqrt(nMics)-1, "Order exceeds maximum possible for this number of sensors.");
+
+    /* Grid weights */
+    W = calloc1d(nGrid*nGrid,sizeof(float_complex));
+    for(i=0; i<nGrid; i++)
+        W[i*nGrid+i] = w_grid==NULL ? calpha : cmplxf(w_grid[i], 0.0f);
+
+    /* Grid order and allocations */
+    nSH = ORDER2NSH(order);
+	HWY_T = YWY_T = inv_YWY_T = Q = QQ_H = inv_QQ_H = NULL;
+	YW = YWH_H = HW = HWH_H = inv_HWH_H = NULL;
+    switch (method){
+        case ARRAY_SHT_DEFAULT:  /* fall through */
+        case ARRAY_SHT_REG_LS:
+            order_grid = order;
+            nSH_grid = ORDER2NSH(order_grid);
+
+            /* Intermediaries */
+            YWH_H = malloc1d(nSH*nMics*sizeof(float_complex));
+            HWH_H = malloc1d(nMics*nMics*sizeof(float_complex));
+            inv_HWH_H = malloc1d(nMics*nMics*sizeof(float_complex));
+            break;
+
+        case ARRAY_SHT_REG_LSHD: 
+            order_grid = (int)(sqrtf((float)nGrid)/2.0f-1.0f);
+            nSH_grid = ORDER2NSH(order_grid);
+
+            /* Intermediaries */
+            HWY_T = malloc1d(nMics*nSH_grid*sizeof(float_complex));
+            YWY_T = malloc1d(nSH_grid*nSH_grid*sizeof(float_complex));
+            inv_YWY_T = malloc1d(nSH_grid*nSH_grid*sizeof(float_complex));
+            Q = malloc1d(nMics*nSH_grid*sizeof(float_complex));
+            QQ_H = malloc1d(nMics*nMics*sizeof(float_complex));
+            inv_QQ_H = malloc1d(nMics*nMics*sizeof(float_complex));
+            break;
+    }
+    HW = malloc1d(nMics*nGrid*sizeof(float_complex));
+    YW = malloc1d(nSH_grid*nGrid*sizeof(float_complex));
+
+    /* SH basis */
+    grid_dirs_rad = malloc1d(nGrid*2*sizeof(float));
+    for(i=0; i<nGrid; i++){
+        grid_dirs_rad[i*2+0] = SAF_PI/180.0f * grid_dirs_deg[i*2+0];
+        grid_dirs_rad[i*2+1] = SAF_PI/2.0f - SAF_PI/180.0f * grid_dirs_deg[i*2+1];
+    }
+    Ytmp = malloc1d(nSH_grid*nGrid*sizeof(float));
+    getSHreal(order_grid, grid_dirs_rad, nGrid, Ytmp);
+    cblas_sscal(nSH_grid*nGrid, SQRT4PI, Ytmp, 1);
+    Y_grid = calloc1d(nSH_grid*nGrid, sizeof(float_complex));
+    cblas_scopy(nSH_grid*nGrid, Ytmp, 1, (float*)Y_grid, 2);
+
+    /* Regularisation parameters */
+    alpha = powf(10.0f, amp_thresh_dB/20.0f);
+    beta = 1.0f/(2.0f*alpha);
+
+    /* Loop over frequency */
+    utility_cinv_create(&hInv, SAF_MAX(nSH_grid, nMics));
+    for (kk=0; kk<nBins; kk++){
+        switch (method){
+            case ARRAY_SHT_DEFAULT:  /* fall through */
+            case ARRAY_SHT_REG_LS:
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH_grid, nGrid, nGrid, &calpha,
+                            Y_grid, nGrid,
+                            W, nGrid, &cbeta,
+                            YW, nGrid);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH_grid, nMics, nGrid, &calpha,
+                            YW, nGrid,
+                            &H_array[kk*nMics*nGrid], nGrid, &cbeta,
+                            YWH_H, nMics);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nMics, nGrid, nGrid, &calpha,
+                            &H_array[kk*nMics*nGrid], nGrid,
+                            W, nGrid, &cbeta,
+                            HW, nGrid);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nMics, nMics, nGrid, &calpha,
+                            HW, nGrid,
+                            &H_array[kk*nMics*nGrid], nGrid, &cbeta,
+                            HWH_H, nMics);
+
+                /* Tikhonov regularised inversion */
+                for(i=0; i<nMics; i++)
+                    HWH_H[i*nMics+i] = craddf(HWH_H[i*nMics+i], beta*beta);
+                utility_cinv(hInv, HWH_H, inv_HWH_H, nMics);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nMics, &calpha,
+                            YWH_H, nMics,
+                            inv_HWH_H, nMics, &cbeta,
+                            &H_sht[kk*nSH*nMics], nMics);
+                break;
+
+            case ARRAY_SHT_REG_LSHD:
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nMics, nGrid, nGrid, &calpha,
+                            &H_array[kk*nMics*nGrid], nGrid,
+                            W, nGrid, &cbeta,
+                            HW, nGrid);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nMics, nSH_grid, nGrid, &calpha,
+                            HW, nGrid,
+                            Y_grid, nGrid, &cbeta,
+                            HWY_T, nSH_grid);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH_grid, nGrid, nGrid, &calpha,
+                            Y_grid, nGrid,
+                            W, nGrid, &cbeta,
+                            YW, nGrid);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH_grid, nSH_grid, nGrid, &calpha,
+                            YW, nGrid,
+                            Y_grid, nGrid, &cbeta,
+                            YWY_T, nSH_grid);
+                utility_cinv(hInv, YWY_T, inv_YWY_T, nSH_grid);
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nMics, nSH_grid, nSH_grid, &calpha,
+                            HWY_T, nSH_grid,
+                            inv_YWY_T, nSH_grid, &cbeta,
+                            Q, nSH_grid);
+
+                /* Apply Tikhonov regularised inversion in the SHD */
+                cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nMics, nMics, nSH_grid, &calpha,
+                            Q, nSH_grid,
+                            Q, nSH_grid, &cbeta,
+                            QQ_H, nMics);
+                for(i=0; i<nMics; i++)
+                    QQ_H[i*nMics+i] = craddf(QQ_H[i*nMics+i], beta*beta);
+                utility_cinv(hInv, QQ_H, inv_QQ_H, nMics);
+                cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans,  nSH /*truncated here*/, nMics, nMics, &calpha,
+                            Q, nSH_grid,
+                            inv_QQ_H, nMics, &cbeta,
+                            &H_sht[kk*nSH*nMics], nMics);
+                break;
+        }
+    }
+
+    /* clean-up */
+    free(W);
+    free(grid_dirs_rad);
+    free(Ytmp);
+    free(Y_grid);
+    switch (method){
+        case ARRAY_SHT_DEFAULT:  /* fall through */
+        case ARRAY_SHT_REG_LS:
+            free(YWH_H);
+            free(HWH_H);
+            free(inv_HWH_H);
+            break;
+        case ARRAY_SHT_REG_LSHD:
+            free(HWY_T);
+            free(YWY_T);
+            free(inv_YWY_T);
+            free(Q);
+            free(QQ_H);
+            free(inv_QQ_H);
+            break;
+    }
+    free(YW);
+    free(HW);
+    utility_cinv_destroy(&hInv);
+}
+
+void arraySHTfilters
+(
+    ARRAY_SHT_OPTIONS method,
+    int order,
+    float amp_thresh_dB,
+    float_complex* H_array,
+    float* grid_dirs_deg,
+    int nFFT,
+    int nMics,
+    int nGrid,
+    float* w_grid,
+    float* h_sht
+)
+{
+    int i, j, k, nBins, nSH;
+    float_complex* H_sht, *H_sht_bins;
+    void* hSafFFT;
+
+    /* compute decoding matrix per bin */
+    nBins = nFFT/2 + 1;
+    nSH = ORDER2NSH(order);
+    H_sht = malloc1d(nBins*nSH*nMics*sizeof(float_complex));
+    arraySHTmatrices(method, order, amp_thresh_dB, H_array, grid_dirs_deg, nBins, nMics, nGrid, w_grid, H_sht);
+
+    /* ifft, to obtain time-domain filters */
+    H_sht_bins = malloc1d(nBins*sizeof(float_complex));
+    saf_rfft_create(&hSafFFT, nFFT);
+    for(i=0; i<nSH; i++){
+        for(j=0; j<nMics; j++){
+            for(k=0; k<nBins; k++)
+                H_sht_bins[k] = H_sht[k*nSH*nMics + i*nMics + j];
+            saf_rfft_backward(hSafFFT, H_sht_bins, &h_sht[i*nMics*nFFT + j*nFFT]);
+        }
+    }
+
+    /* clean-up */
+    saf_rfft_destroy(&hSafFFT);
+    free(H_sht);
+    free(H_sht_bins);
+}
+
+void arraySHTmatricesDiffEQ
+(
+    float_complex* H_sht,
+    float_complex* DCM,
+    float* freqVector,
+    float alias_freq_hz,
+    int nBins,
+    int order,
+    int nMics,
+    float_complex* H_sht_eq
+)
+{
+    int i, kk, idxf_alias, nSH;
+    float_complex* HD, *HDH_H, *EQ;
+    float* L_diff_fal;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Prep */
+    nSH = ORDER2NSH(order);
+    HD = malloc1d(nSH*nMics*sizeof(float_complex));
+    HDH_H = malloc1d(nSH*nSH*sizeof(float_complex));
+    L_diff_fal = malloc1d(nSH*sizeof(float));
+    EQ = calloc1d(nSH*nSH, sizeof(float_complex));
+
+    /* Channel energies under diffuse conditions for the aliasing frequency limit */
+    idxf_alias = 0;
+    while(freqVector[idxf_alias]<alias_freq_hz)
+        idxf_alias++;
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nMics, &calpha,
+                &H_sht[idxf_alias*nSH*nMics], nMics,
+                &DCM[idxf_alias*nMics*nMics], nMics, &cbeta,
+                HD, nMics);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nMics, &calpha,
+                HD, nMics,
+                &H_sht[idxf_alias*nSH*nMics], nMics, &cbeta,
+                HDH_H, nSH);
+    for(i=0; i<nSH; i++)
+        L_diff_fal[i] = crealf(HDH_H[i*nSH+i]);
+
+    /* Loop over frequency */
+    for(kk=0; kk<nBins; kk++){
+        if(kk<=idxf_alias)
+            cblas_ccopy(nSH*nMics, &H_sht[kk*nSH*nMics], 1, &H_sht_eq[kk*nSH*nMics], 1);
+        else{
+            /* Channel energies under diffuse conditions for this frequency */
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nMics, &calpha,
+                        &H_sht[kk*nSH*nMics], nMics,
+                        &DCM[kk*nMics*nMics], nMics, &cbeta,
+                        HD, nMics);
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, nMics, &calpha,
+                        HD, nMics,
+                        &H_sht[kk*nSH*nMics], nMics, &cbeta,
+                        HDH_H, nSH);
+
+            /* Compute and apply EQ matrix */
+            for(i=0; i<nSH; i++)
+                EQ[i*nSH+i] = cmplxf(sqrtf(L_diff_fal[i]/crealf(HDH_H[i*nSH+i])), 0.0f);
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, nMics, nSH, &calpha,
+                        EQ, nSH,
+                        &H_sht[kk*nSH*nMics], nMics, &cbeta,
+                        &H_sht_eq[kk*nSH*nMics], nMics);
+        }
+    }
+
+    /* clean-up */
+    free(HD);
+    free(HDH_H);
+    free(L_diff_fal);
+    free(EQ);
+}
+
 void cylModalCoeffs
 (
     int order,
@@ -2240,6 +2529,74 @@ void sphDiffCohMtxTheory
     free(ppm_z1);
     free(ppm_z2);
     free(Pn);
+}
+
+void diffCohMtxMeas
+(
+    float_complex* H_array,
+    int nBins,
+    int nCH,
+    int nGrid,
+    float* w_grid,
+    float_complex* M_diffcoh
+)
+{
+    int kk, i;
+    float_complex* W, *HW;
+    const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
+
+    /* Grid weights */
+    W = calloc1d(nGrid*nGrid,sizeof(float_complex));
+    for(i=0; i<nGrid; i++)
+        W[i*nGrid+i] = w_grid==NULL ? calpha : cmplxf(w_grid[i], 0.0f);
+
+    /* Loop over frequency */
+    HW = malloc1d(nCH*nGrid*sizeof(float_complex));
+    for (kk=0; kk<nBins; kk++){
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nCH, nGrid, nGrid, &calpha,
+                    &H_array[kk*nCH*nGrid], nGrid,
+                    W, nGrid, &cbeta,
+                    HW, nGrid);
+        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nCH, nCH, nGrid, &calpha,
+                    HW, nGrid,
+                    &H_array[kk*nCH*nGrid], nGrid, &cbeta,
+                    &M_diffcoh[kk*nCH*nCH], nCH);
+    }
+
+    /* Clean-up */
+    free(W);
+}
+
+void diffCohMtxMeasReal
+(
+    float* H_array,
+    int nCH,
+    int nGrid,
+    float* w_grid,
+    float* M_diffcoh
+)
+{
+    int i;
+    float* W, *HW;
+
+    /* Grid weights */
+    W = calloc1d(nGrid*nGrid,sizeof(float));
+    for(i=0; i<nGrid; i++)
+        W[i*nGrid+i] = w_grid==NULL ? 1.0f : w_grid[i];
+
+    /* Loop over frequency */
+    HW = malloc1d(nCH*nGrid*sizeof(float_complex));
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nCH, nGrid, nGrid, 1.0f,
+                H_array, nGrid,
+                W, nGrid, 0.0f,
+                HW, nGrid);
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nCH, nCH, nGrid, 1.0f,
+                HW, nGrid,
+                H_array, nGrid, 0.0f,
+                M_diffcoh, nCH);
+    
+    /* Clean-up */
+    free(W);
 }
 
 void simulateCylArray /*untested*/

@@ -273,10 +273,7 @@ void utility_siminv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    float minVal;
-    ippsMinAbsIndx_32f((Ipp32f*)a, len, &minVal, index);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     float minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgvi(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
@@ -334,10 +331,7 @@ void utility_diminv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    double minVal;
-    ippsMinAbsIndx_64f((Ipp64f*)a, len, &minVal, index);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#if defined(SAF_USE_APPLE_ACCELERATE)
     double minVal;
     vDSP_Length ind_tmp;
     vDSP_minmgviD(a, 1, &minVal, &ind_tmp, (vDSP_Length)len);
@@ -400,12 +394,7 @@ void utility_simaxv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    float maxVal;
-    ippsMaxAbsIndx_32f((Ipp32f*)a, len, &maxVal, index);
-#else
     *index = (int)cblas_isamax(len, a, 1);
-#endif
 }
 
 void utility_cimaxv
@@ -425,12 +414,7 @@ void utility_dimaxv
     int* index
 )
 {
-#if defined(SAF_USE_INTEL_IPP)
-    double maxVal;
-    ippsMaxAbsIndx_64f((Ipp64f*)a, len, &maxVal, index);
-#else
     *index = (int)cblas_idamax(len, a, 1);
-#endif
 }
 
 void utility_zimaxv
@@ -1486,6 +1470,114 @@ void utility_ssv2cv_inds
         for(i=0; i<len; i++)
             inds_tmp[i] = (veclib_int)inds[i];
         cblas_sgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
+#elif defined(NDEBUG)
+    /* try to indirectly "trigger" some compiler optimisations */
+    for(i=0; i<len-3; i+=4){
+        cv[i] = sv[inds[i]];
+        cv[i+1] = sv[inds[i+1]];
+        cv[i+2] = sv[inds[i+2]];
+        cv[i+3] = sv[inds[i+3]];
+    }
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
+        cv[i] = sv[inds[i]];
+#else
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
+void utility_csv2cv_inds
+(
+    const float_complex* sv,
+    const int* inds,
+    const int len,
+    float_complex* cv
+)
+{
+    int i;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_cgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_cgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
+#elif defined(NDEBUG)
+    /* try to indirectly "trigger" some compiler optimisations */
+    for(i=0; i<len-3; i+=4){
+        cv[i] = sv[inds[i]];
+        cv[i+1] = sv[inds[i+1]];
+        cv[i+2] = sv[inds[i+2]];
+        cv[i+3] = sv[inds[i+3]];
+    }
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
+        cv[i] = sv[inds[i]];
+#else
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
+void utility_dsv2cv_inds
+(
+    const double* sv,
+    const int* inds,
+    const int len,
+    double* cv
+)
+{
+    int i;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_dgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_dgthr(len, sv, cv, (veclib_int*)inds_tmp);
+        free(inds_tmp);
+    }
+#elif defined(NDEBUG)
+    /* try to indirectly "trigger" some compiler optimisations */
+    for(i=0; i<len-3; i+=4){
+        cv[i] = sv[inds[i]];
+        cv[i+1] = sv[inds[i+1]];
+        cv[i+2] = sv[inds[i+2]];
+        cv[i+3] = sv[inds[i+3]];
+    }
+    for(; i<len; i++) /* The residual (if len was not divisable by the step size): */
+        cv[i] = sv[inds[i]];
+#else
+    for(i=0; i<len; i++)
+        cv[i] = sv[inds[i]];
+#endif
+}
+
+void utility_zsv2cv_inds
+(
+    const double_complex* sv,
+    const int* inds,
+    const int len,
+    double_complex* cv
+)
+{
+    int i;
+#if defined(SAF_USE_INTEL_MKL_LP64) || defined(SAF_USE_INTEL_MKL_ILP64)
+    veclib_int* inds_tmp;
+    if(sizeof(veclib_int)==sizeof(int)) /* LP64 MKL */
+        cblas_zgthr(len, sv, cv, (veclib_int*)inds);
+    else{ /* ILP64 MKL */
+        inds_tmp = malloc1d(len*sizeof(veclib_int)); /* Unfortunately requires a malloc call */
+        for(i=0; i<len; i++)
+            inds_tmp[i] = (veclib_int)inds[i];
+        cblas_zgthr(len, sv, cv, (veclib_int*)inds_tmp);
         free(inds_tmp);
     }
 #elif defined(NDEBUG)
@@ -3479,8 +3571,8 @@ void utility_spinv
     float wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
@@ -3618,8 +3710,8 @@ void utility_cpinv
     float_complex wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
@@ -3758,8 +3850,8 @@ void utility_dpinv
     double wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)
@@ -3897,8 +3989,8 @@ void utility_zpinv
     double_complex wkopt;
     
     m = lda = ldu = dim1;
-    n = dim2;
-    k = ldvt = m < n ? m : n;
+    n = ldvt = dim2;
+    k = m < n ? m : n;
 
     /* Work struct */
     if(hWork==NULL)

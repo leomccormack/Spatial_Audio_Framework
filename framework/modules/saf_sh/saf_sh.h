@@ -87,6 +87,22 @@ typedef enum {
     
 }SECTOR_PATTERNS;
 
+/**
+ * Microphone array to spherical harmonic domain conversion options
+ *
+ * @see [1] Jin, C.T., Epain, N. and Parthy, A., 2014. Design, optimization and
+ *          evaluation of a dual-radius spherical microphone array. IEEE/ACM
+ *          Transactions on Audio, Speech, and Language Processing, 22(1),
+ *          pp.193-204.
+ */
+typedef enum {
+    ARRAY_SHT_DEFAULT, /**< The default SHT filters are #ARRAY_SHT_REG_LS */
+    ARRAY_SHT_REG_LS,  /**< Regularised least-squares (LS) */
+    ARRAY_SHT_REG_LSHD /**< Regularised least-squares (LS) in the SH domain
+                        *   (similar as in [1]) */
+
+} ARRAY_SHT_OPTIONS;
+
 
 /* ========================================================================== */
 /*                               Misc. Functions                              */
@@ -965,6 +981,86 @@ void generateMinNormMap(/* Input arguments */
 /* ========================================================================== */
 
 /**
+ * Computes matrices required to transform array signals into spherical harmonic
+ * signals (frequency-domain)
+ *
+ * @param[in]  method        See #ARRAY_SHT_OPTIONS
+ * @param[in]  order         Transform order
+ * @param[in]  amp_thresh_dB Maximum gain amplification (in dB)
+ * @param[in]  H_array       Array TFs; FLAT: nBins x nMics x nGrid
+ * @param[in]  grid_dirs_deg Grid directions [azi ELEV] degrees; FLAT: nGrid x 2
+ * @param[in]  nBins         Number of frequencies
+ * @param[in]  nMics         Number of microphones
+ * @param[in]  nGrid         Number of directions in the grid
+ * @param[in]  w_grid        Integration weights (set to NULL if not available)
+ * @param[out] H_sht         The SHT matrices; FLAT: nBins x nSH x nMics
+ */
+void arraySHTmatrices(/* Input arguments */
+                      ARRAY_SHT_OPTIONS method,
+                      int order,
+                      float amp_thresh_dB,
+                      float_complex* H_array,
+                      float* grid_dirs_deg,
+                      int nBins,
+                      int nMics,
+                      int nGrid,
+                      float* w_grid,
+                      /* Output arguments */
+                      float_complex* H_sht);
+
+/**
+ * Computes filters required to transform array signals into spherical harmonic
+ * signals (time-domain)
+ *
+ * @param[in]  method        See #ARRAY_SHT_OPTIONS
+ * @param[in]  order         Transform order
+ * @param[in]  amp_thresh_dB Maximum gain amplification (in dB)
+ * @param[in]  H_array       Array TFs; FLAT: (nFFT/2+1) x nMics x nGrid
+ * @param[in]  grid_dirs_deg Grid directions [azi ELEV] degrees; FLAT: nGrid x 2
+ * @param[in]  nFFT          FFT size / filter length
+ * @param[in]  nMics         Number of microphones
+ * @param[in]  nGrid         Number of directions in the grid
+ * @param[in]  w_grid        Integration weights (set to NULL if not available)
+ * @param[out] h_sht         The SHT filters; FLAT: nSH x nMics x nFFT
+ */
+void arraySHTfilters(/* Input arguments */
+                     ARRAY_SHT_OPTIONS method,
+                     int order,
+                     float amp_thresh_dB,
+                     float_complex* H_array,
+                     float* grid_dirs_deg,
+                     int nFFT,
+                     int nMics,
+                     int nGrid,
+                     float* w_grid,
+                     /* Output arguments */
+                     float* h_sht);
+
+/**
+ * Diffuse-field equalisation of SHT matrices above the spatial aliasing
+ * frequency
+ *
+ * @param[out] H_sht         Input SHT matrices; FLAT: nBins x nSH x nMics
+ * @param[in]  DCM           Diffuse coh matrices; FLAT: nBins x nMics x nMics
+ * @param[in]  freqVector    Frequency vector; nBins x 1
+ * @param[in]  alias_freq_hz Spatial aliasing frequency, in Hz
+ * @param[in]  nBins         Number of frequencies
+ * @param[in]  order         Transform order
+ * @param[in]  nMics         Number of microphones in array
+ * @param[out] H_sht_eq      Equalised SHT matrices; FLAT: nBins x nSH x nMics
+ */
+void arraySHTmatricesDiffEQ(/* Input arguments */
+                            float_complex* H_sht,
+                            float_complex* DCM,
+                            float* freqVector,
+                            float alias_freq_hz,
+                            int nBins,
+                            int order,
+                            int nMics,
+                            /* Output arguments */
+                            float_complex* H_sht_eq);
+
+/**
  * Calculates the modal coefficients for open/rigid cylindrical arrays
  *
  * @param[in]  order     Max order (highest is ~30 given numerical precision)
@@ -1127,6 +1223,44 @@ void sphDiffCohMtxTheory(/* Input arguments */
                          int nBands,
                          /* Output arguments */
                          double* M_diffcoh);
+
+/**
+ * Calculates the diffuse coherence matrices for an arbitrary array
+ *
+ * @param[in]  H_array    Array TFs; FLAT: nBins x N_sensors x nGrid
+ * @param[in]  nBins      Number of frequencies
+ * @param[in]  N_sensors  Number of sensors
+ * @param[in]  nGrid      Number of directions
+ * @param[in]  w_grid     Integration weights (set to NULL if not available)
+ * @param[out] M_diffcoh  Diffuse coherence matrix per frequency;
+ *                        FLAT: nBands x N_sensors x N_sensors
+ */
+void diffCohMtxMeas(/* Input arguments */
+                    float_complex* H_array,
+                    int nBins,
+                    int N_sensors,
+                    int nGrid,
+                    float* w_grid,
+                    /* Output arguments */
+                    float_complex* M_diffcoh);
+
+/**
+ * Calculates the diffuse coherence matrices for an array that uses a broad-band
+ * real-valued basis
+ *
+ * @param[in]  H_array    Array TFs; FLAT: N_sensors x nGrid 
+ * @param[in]  N_sensors  Number of sensors
+ * @param[in]  nGrid      Number of directions
+ * @param[in]  w_grid     Integration weights (set to NULL if not available)
+ * @param[out] M_diffcoh  Diffuse coherence matrix; N_sensors x N_sensors
+ */
+void diffCohMtxMeasReal(/* Input arguments */
+                        float* H_array,
+                        int N_sensors,
+                        int nGrid,
+                        float* w_grid,
+                        /* Output arguments */
+                        float* M_diffcoh);
 
 /**
  * Simulates a cylindrical microphone array, returning the transfer functions

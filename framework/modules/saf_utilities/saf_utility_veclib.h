@@ -832,6 +832,69 @@ void utility_ssv2cv_inds(/* Input Arguments */
                          /* Output Arguments */
                          float* cv);
 
+/**
+ * Single-precision complex, sparse-vector to compressed vector given known
+ * indices. i.e.
+ * \code{.m}
+ *     cv = sv(inds)
+ * \endcode
+ *
+ * @warning 'sv' must be of at least max(inds) in length!
+ *
+ * @param[in]  sv   Input sparse-vector; ? x 1
+ * @param[in]  inds Indices; len x 1
+ * @param[in]  len  Compressed-vector length/number of indices
+ * @param[out] cv   Output compressed-vector; len x 1
+ */
+void utility_csv2cv_inds(/* Input Arguments */
+                         const float_complex* sv,
+                         const int* inds,
+                         const int len,
+                         /* Output Arguments */
+                         float_complex* cv);
+
+/**
+ * Double-precision, sparse-vector to compressed vector given known indices
+ * i.e.
+ * \code{.m}
+ *     cv = sv(inds)
+ * \endcode
+ *
+ * @warning 'sv' must be of at least max(inds) in length!
+ *
+ * @param[in]  sv   Input sparse-vector; ? x 1
+ * @param[in]  inds Indices; len x 1
+ * @param[in]  len  Compressed-vector length/number of indices
+ * @param[out] cv   Output compressed-vector; len x 1
+ */
+void utility_dsv2cv_inds(/* Input Arguments */
+                         const double* sv,
+                         const int* inds,
+                         const int len,
+                         /* Output Arguments */
+                         double* cv);
+
+/**
+ * Double-precision complex, sparse-vector to compressed vector given known
+ * indices. i.e.
+ * \code{.m}
+ *     cv = sv(inds)
+ * \endcode
+ *
+ * @warning 'sv' must be of at least max(inds) in length!
+ *
+ * @param[in]  sv   Input sparse-vector; ? x 1
+ * @param[in]  inds Indices; len x 1
+ * @param[in]  len  Compressed-vector length/number of indices
+ * @param[out] cv   Output compressed-vector; len x 1
+ */
+void utility_zsv2cv_inds(/* Input Arguments */
+                         const double_complex* sv,
+                         const int* inds,
+                         const int len,
+                         /* Output Arguments */
+                         double_complex* cv);
+
 
 /* ========================================================================== */
 /*                     Singular-Value Decomposition (?svd)                    */

@@ -2,6 +2,7 @@ deprecated/
 docs/doxygen/html
 docs/doxygen/latex
 xcuserdata/
+xcshareddata/
 build/
 x64/
 UpgradeLog.htm

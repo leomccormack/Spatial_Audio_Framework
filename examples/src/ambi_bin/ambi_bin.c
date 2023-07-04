@@ -79,12 +79,13 @@ void ambi_bin_create
     pData->nSH =  (pData->order+1)*(pData->order+1);
     
     /* afSTFT and audio buffers */
-    pData->fs = 0;
+    pData->fs = 48e3f;
     pData->hSTFT = NULL;
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, AMBI_BIN_FRAME_SIZE, sizeof(float));
     pData->binFrameTD = (float**)malloc2d(NUM_EARS, AMBI_BIN_FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
     pData->binframeTF = (float_complex***)malloc3d(HYBRID_BANDS, NUM_EARS, TIME_SLOTS, sizeof(float_complex));
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, (float*)pData->freqVector);
 
     /* codec data */
     pData->progressBar0_1 = 0.0f;
@@ -244,27 +245,43 @@ void ambi_bin_initCodec
             pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
             memcpy(pars->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
         }
-        
-        /* estimate the ITDs for each HRIR */
-        pData->progressBar0_1 = 0.3f;
-        pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
-        estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
  
         /* convert hrirs to filterbank coefficients */
         pData->progressBar0_1 = 0.4f;
         pars->hrtf_fb = realloc1d(pars->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pars->N_hrir_dirs)*sizeof(float_complex));
         HRIRs2HRTFs_afSTFT(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, HOP_SIZE, 0, 1, pars->hrtf_fb);
-        /* get integration weights */
-        pData->progressBar0_1 = 0.6f;
-        if(pars->N_hrir_dirs<=1000){
-            pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
-            getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
-        }
-        else{
-            free(pars->weights);
-            pars->weights = NULL;
-        }
         /* HRIR pre-processing */
+        if(pData->preProc == HRIR_PREPROC_EQ || pData->preProc == HRIR_PREPROC_ALL){
+            /* get integration weights */
+            strcpy(pData->progressBarText,"Applying HRIR diffuse-field EQ");
+            pData->progressBar0_1 = 0.5f;
+            if(pars->N_hrir_dirs<=3600){
+                pars->weights = realloc1d(pars->weights, pars->N_hrir_dirs*sizeof(float));
+                //getVoronoiWeights(pars->hrir_dirs_deg, pars->N_hrir_dirs, 0, pars->weights);
+                float * hrir_dirs_rad = (float*) malloc1d(pars->N_hrir_dirs*2*sizeof(float));
+                memcpy(hrir_dirs_rad, pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+                cblas_sscal(pars->N_hrir_dirs*2, SAF_PI/180.f, hrir_dirs_rad, 1);
+                sphElev2incl(hrir_dirs_rad, pars->N_hrir_dirs, 0, hrir_dirs_rad);
+                int supOrder = calculateGridWeights(hrir_dirs_rad, pars->N_hrir_dirs, -1, pars->weights);
+                if(supOrder < 1){
+                    saf_print_warning("Could not calculate grid weights");
+                    free(pars->weights);
+                    pars->weights = NULL;
+                }
+            }
+            else{
+                saf_print_warning("Too many grid points");
+                free(pars->weights);
+                pars->weights = NULL;
+            }
+        }
+        if(pData->preProc == HRIR_PREPROC_PHASE || pData->preProc == HRIR_PREPROC_ALL){
+            /* estimate the ITDs for each HRIR */
+            pData->progressBar0_1 = 0.6f;
+            pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
+            estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
+        }
+        /* apply HRIR pre-processing */
         pData->progressBar0_1 = 0.75f;
         diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights,
                                   pData->preProc == HRIR_PREPROC_EQ    || pData->preProc == HRIR_PREPROC_ALL ? 1 : 0, /* Apply Diffuse-field EQ? */

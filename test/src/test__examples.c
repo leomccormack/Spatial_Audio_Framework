@@ -62,8 +62,9 @@ void test__saf_example_ambi_bin(void){
     nSH = ORDER2NSH(order);
     inSig = malloc1d(signalLength*sizeof(float));
     shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
-    rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
-
+    //rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
+    memset(inSig, 0.f, signalLength*sizeof(float));
+    inSig[5000] = 1.f;
     /* Encode to get input spherical harmonic (Ambisonic) signal */
     direction_deg[0] = -90.0f; /* encode hard-right */
     direction_deg[1] = 0.0f;
@@ -95,6 +96,8 @@ void test__saf_example_ambi_bin(void){
         rightEarEnergy += powf(fabsf(binSig[1][i]), 2.0f);
     }
     TEST_ASSERT_TRUE(leftEarEnergy>=rightEarEnergy);
+    TEST_ASSERT_TRUE(leftEarEnergy>=0.f);
+    TEST_ASSERT_TRUE(leftEarEnergy<=10.f);
 
     /* Clean-up */
     ambi_bin_destroy(&hAmbi);

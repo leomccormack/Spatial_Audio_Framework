@@ -258,6 +258,9 @@ void test__sphESPRIT(void);
 /**
  * Testing the sphModalCoeffs() function */
 void test__sphModalCoeffs(void);
+/**
+ * Testing the arraySHTmatrices() function */
+void test__arraySHTmatrices(void);
 
 
 /* ========================================================================== */
