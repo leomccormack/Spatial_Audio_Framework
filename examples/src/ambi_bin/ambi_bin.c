@@ -275,12 +275,12 @@ void ambi_bin_initCodec
                 pars->weights = NULL;
             }
         }
-        if(pData->preProc == HRIR_PREPROC_PHASE || pData->preProc == HRIR_PREPROC_ALL){
-            /* estimate the ITDs for each HRIR */
-            pData->progressBar0_1 = 0.6f;
-            pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
-            estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
-        }
+        
+        /* estimate the ITDs for each HRIR */
+        pData->progressBar0_1 = 0.6f;
+        pars->itds_s = realloc1d(pars->itds_s, pars->N_hrir_dirs*sizeof(float));
+        estimateITDs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pars->itds_s);
+
         /* apply HRIR pre-processing */
         pData->progressBar0_1 = 0.75f;
         diffuseFieldEqualiseHRTFs(pars->N_hrir_dirs, pars->itds_s, pData->freqVector, HYBRID_BANDS, pars->weights,

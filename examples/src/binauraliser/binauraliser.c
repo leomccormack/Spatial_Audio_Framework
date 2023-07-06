@@ -46,7 +46,7 @@ void binauraliser_create
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
     pData->enableHRIRsDiffuseEQ = 1;
     pData->nSources = pData->new_nSources;
-    pData->interpMode = INTERP_TRI;
+    pData->interpMode = INTERP_TRI_PS;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;

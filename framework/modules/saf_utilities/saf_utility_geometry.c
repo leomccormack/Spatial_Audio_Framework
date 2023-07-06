@@ -369,14 +369,17 @@ void unitCart2sph
             dirs[i] *= (180.0f/SAF_PI);
 }
 
-void sphElev2incl(float* dirsElev,
-                  int nDirs,
-                  int degreesFlag,
-                  float* dirsIncl)
+void sphElev2incl
+(
+    float* dirsElev,
+    int nDirs,
+    int degreesFlag,
+    float* dirsIncl
+)
 {
     int i;
-
-    cblas_scopy(nDirs, dirsElev, 2, dirsIncl, 2);
+    if(dirsIncl!=dirsElev)
+        cblas_scopy(nDirs*2, dirsElev, 1, dirsIncl, 1);
     if(degreesFlag){
         for (i=0; i<nDirs; i++)
             dirsIncl[i*2+1] = 90.f - dirsElev[i*2+1];        
@@ -387,14 +390,17 @@ void sphElev2incl(float* dirsElev,
     }
 }
 
-void sphIncl2Elev(float* dirsIncl,
-                  int nDirs,
-                  int degreesFlag,
-                  float* dirsElev)
+void sphIncl2Elev
+(
+    float* dirsIncl,
+    int nDirs,
+    int degreesFlag,
+    float* dirsElev
+)
 {
     int i;
-
-    cblas_scopy(nDirs, dirsIncl, 2, dirsElev, 2);
+    if(dirsIncl!=dirsElev)
+        cblas_scopy(nDirs*2, dirsIncl, 1, dirsElev, 1);
     if(degreesFlag){
         for (i=0; i<nDirs; i++)
             dirsElev[i*2+1] = 90.f - dirsIncl[i*2+1];        

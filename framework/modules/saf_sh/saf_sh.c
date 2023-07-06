@@ -1004,6 +1004,12 @@ int calculateGridWeights
                 order = n-1;
                 break;
             }
+            
+            /* Hard limit */
+            if(n>30){
+                order = n-1;
+                break;
+            }
         }
     }
     if(order<1)  // could not find order
