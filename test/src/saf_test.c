@@ -125,6 +125,7 @@ int main_test(void) {
     /* SAF sh module unit tests */
     RUN_TEST(test__getSHreal);
     RUN_TEST(test__getSHreal_recur);
+    RUN_TEST(test__getSHreal_part);
     RUN_TEST(test__getSHcomplex);
     RUN_TEST(test__getSHrotMtxReal);
     RUN_TEST(test__real2complexSHMtx);

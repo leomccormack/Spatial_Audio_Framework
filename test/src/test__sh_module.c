@@ -108,6 +108,38 @@ void test__getSHreal_recur(void){
     }
 }
 
+void test__getSHreal_part(void){
+    int i, j;
+
+    /* Config */
+    /* In general, the values from this recusive alternative are well below this
+     * tolerance value. However, the error does get larger for higher-orders and
+     * when dir[1] is near 0. */
+    float acceptedTolerance = 0.005f;
+    const int order_start = 5;
+    const int order_end = 15;
+    const int nSH_end = ORDER2NSH(order_end);
+    float dir[2];
+
+    /* Check that the output of getSHreal_part matches that of getSH_recur */
+    float Yp0[ORDER2NSH(15)];
+    float Yp5[ORDER2NSH(15)];
+    float Y[ORDER2NSH(15)];
+    for(i=0; i<1e3; i++){
+        rand_m1_1(&dir[0] , 1);
+        rand_m1_1(&dir[1] , 1);
+        dir[0] *= SAF_PI;
+        dir[1] *= SAF_PI/2.0f;
+        getSHreal_part(0, order_end, (float*)dir, 1, (float*)Yp0);
+        getSHreal_part(order_start, order_end, (float*)dir, 1, (float*)Yp5);
+        getSHreal(order_end, (float*)dir, 1, (float*)Y);
+        for(j=0; j<nSH_end; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Yp0[j], Y[j]);
+        for(j=(order_start+1)*(order_start+1); j<nSH_end; j++)
+            TEST_ASSERT_FLOAT_WITHIN(acceptedTolerance, Yp5[j], Y[j]);
+    }
+}
+
 void test__getSHcomplex(void){
     int i, j, k, order, nDirs, nSH;
     float_complex scale;

@@ -330,6 +330,120 @@ void getSHreal_recur
     }
 }
 
+void getSHreal_part
+(
+    int order_start,
+    int order_end,
+    float* dirs_rad,
+    int nDirs,
+    float* Y  /* the SH weights: (order_end+1)^2 x nDirs */
+)
+{
+    int dir, i, j, n, m, index_n;
+    float Nn0, Nnm;
+    double* Lnm;
+    double *p_nm;
+    double *norm_real;
+    double *cos_incl;
+    float *fcos_incl;
+    float* leg_n, *leg_n_1, *leg_n_2, *factorials_n;
+
+
+    if(nDirs<1)
+        return;
+    
+    assert((order_end - order_start) >= 0);
+    Lnm = malloc1d((2*order_end+1)*nDirs*sizeof(double));
+    norm_real = malloc1d((2*order_end+1)*sizeof(double));
+    p_nm = malloc1d((order_end+1)*nDirs * sizeof(double));
+    cos_incl = malloc1d(nDirs * sizeof(double));
+
+    fcos_incl = malloc1d(nDirs * sizeof(float));
+    factorials_n = malloc1d((2*order_end+1)*sizeof(float));
+    leg_n = malloc1d((order_end+1)*nDirs * sizeof(float));
+    leg_n_1 = malloc1d((order_end+1)*nDirs * sizeof(float));
+    leg_n_2 = malloc1d((order_end+1)*nDirs * sizeof(float));
+
+
+
+    index_n = 0;
+
+    /* precompute factorials */
+    for (i = 0; i < 2*order_end+1; i++)
+        factorials_n[i] = (float)factorial(i); 
+
+
+    for(n=0; n<=order_end; n++){
+        if(n < order_start){
+            for(dir=0; dir<nDirs; dir++){
+                for(m=-n, j=0; m<=n; m++, j++){
+                    Y[(j+index_n)*nDirs+dir] = 0.f;
+                }
+            }
+        } else {
+        
+        if (n==0) {
+            for (dir = 0; dir<nDirs; dir++)
+                Y[n*nDirs+dir] = 1.0f/SQRT4PI;
+        } else {
+        
+        
+        /* cos(inclination) = sin(elevation) */
+        for (dir = 0; dir<nDirs; dir++){
+            cos_incl[dir] = cos(dirs_rad[dir*2+1]);
+            fcos_incl[dir] = (float) cos_incl[dir];
+        }
+        
+        if (n==order_start || n==order_start+1) {
+
+        /* vector of unnormalised associated Legendre functions of current order */
+        unnorm_legendreP(n, cos_incl, nDirs, p_nm); /* includes Condon-Shortley phase term */
+        
+        for(dir=0; dir<nDirs; dir++){
+            /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
+            if (n != 0)
+                for(m = 0; m<n+1; m++) 
+                    leg_n[m*nDirs+dir] = powf(-1.0, (float)abs(m)) * (float)p_nm[abs(m)*nDirs+dir];
+            else
+                leg_n[dir] = (float)p_nm[dir];
+        }
+        } else {
+            unnorm_legendreP_recur(n, fcos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase term */
+        }
+        utility_svvcopy(leg_n_1, (order_end+1)*nDirs, leg_n_2);  // should be n copies only
+        utility_svvcopy(leg_n,   (order_end+1)*nDirs, leg_n_1);
+        
+
+        Nn0 = sqrtf(2.0f*(float)n+1.0f);
+        for (dir = 0; dir<nDirs; dir++){
+            for (m = 0; m<n+1; m++) {
+                if (m==0)
+                    Y[(index_n+n)*nDirs+dir] = Nn0/SQRT4PI * leg_n[m*nDirs+dir];
+                else {
+                    Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
+                    Y[(index_n+n-m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
+                    Y[(index_n+n+m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
+                }
+            }
+        }
+        }
+        }
+        
+        /* increment */
+        index_n += 2*n+1;
+    }
+    
+    free(p_nm);
+    free(Lnm);
+    free(norm_real);
+    free(cos_incl);
+    free(fcos_incl);
+    free(factorials_n);
+    free(leg_n);
+    free(leg_n_1);
+    free(leg_n_2);
+}
+
 void getSHcomplex
 (
     int order,

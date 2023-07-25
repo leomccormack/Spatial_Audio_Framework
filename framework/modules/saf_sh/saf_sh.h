@@ -231,6 +231,15 @@ void getSHreal_recur(/* Input Arguments */
                      /* Output Arguments */
                      float* Y);
 
+void getSHreal_part
+(
+    int order_start,
+    int order_end,
+    float* dirs_rad,
+    int nDirs,
+    float* Y  /* the SH weights: (order_end+1)^2 x nDirs */
+);
+
 /**
  * Computes complex-valued spherical harmonics [1] for each given direction on
  * the unit sphere

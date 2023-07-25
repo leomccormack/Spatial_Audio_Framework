@@ -223,6 +223,10 @@ void test__getSHreal(void);
  * to the full-fat getSHreal() function */
 void test__getSHreal_recur(void);
 /**
+ * Testing that the getSHreal_part() function is somewhat numerically identical
+ * to the full-fat getSHreal() function between start and end order.*/
+void test__getSHreal_part(void);
+/**
  * Testing the orthogonality of the getSHcomplex() function */
 void test__getSHcomplex(void);
 /**
