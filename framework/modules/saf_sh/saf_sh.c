@@ -196,7 +196,7 @@ void getSHreal
 )
 {
     int dir, j, n, m, idx_Y;
-    double* Lnm, *CosSin;
+    double* Lnm;
     double *p_nm, *cos_incl;
     double *norm_real;
 
@@ -205,7 +205,6 @@ void getSHreal
     
     Lnm = malloc1d((2*order+1)*nDirs*sizeof(double));
     norm_real = malloc1d((2*order+1)*sizeof(double));
-    CosSin = malloc1d((2*order+1)*sizeof(double));
     cos_incl = malloc1d(nDirs*sizeof(double));
     p_nm = malloc1d((order+1)*nDirs * sizeof(double));
     for (dir = 0; dir<nDirs; dir++)
@@ -248,7 +247,6 @@ void getSHreal
     free(p_nm);
     free(Lnm);
     free(norm_real);
-    free(CosSin);
     free(cos_incl);
 }
 
@@ -339,7 +337,7 @@ void getSHreal_part
     float* Y  /* the SH weights: (order_end+1)^2 x nDirs */
 )
 {
-    int dir, i, j, n, m, index_n;
+    int dir, i, n, m, index_n, powm;
     float Nn0, Nnm;
     double* Lnm;
     double *p_nm;
@@ -375,16 +373,16 @@ void getSHreal_part
 
     for(n=0; n<=order_end; n++){
         if(n < order_start){
-            for(dir=0; dir<nDirs; dir++){
-                for(m=-n, j=0; m<=n; m++, j++){
-                    Y[(j+index_n)*nDirs+dir] = 0.f;
+            for(m=0; m<=2*n+1; m++){
+                for(dir=0; dir<nDirs; dir++){
+                    Y[(index_n+m)*nDirs+dir] = 0.f;
                 }
             }
         } else {
         
         if (n==0) {
             for (dir = 0; dir<nDirs; dir++)
-                Y[n*nDirs+dir] = 1.0f/SQRT4PI;
+                Y[dir] = 1.0f/SQRT4PI;
         } else {
         
         
@@ -401,10 +399,13 @@ void getSHreal_part
         
         for(dir=0; dir<nDirs; dir++){
             /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
-            if (n != 0)
-                for(m = 0; m<n+1; m++) 
-                    leg_n[m*nDirs+dir] = powf(-1.0, (float)abs(m)) * (float)p_nm[abs(m)*nDirs+dir];
-            else
+            if (n != 0){
+                powm = -1;
+                for(m = 0; m<n+1; m++){
+                    powm = -powm;
+                    leg_n[m*nDirs+dir] = powm * (float)p_nm[abs(m)*nDirs+dir];
+                }
+            } else
                 leg_n[dir] = (float)p_nm[dir];
         }
         } else {
