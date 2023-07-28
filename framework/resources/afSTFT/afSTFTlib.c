@@ -336,9 +336,9 @@ void afSTFT_forward_flat
                         dataFD[band * (h->nCHin) * nHops + ch * nHops + t] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
                 break;
             case AFSTFT_TIME_CH_BANDS:
-                for(band=0; band<h->nBands; band++)
-                    for(ch=0; ch < h->nCHin; ch++)
-                        dataFD[t * (h->nCHin) * (band<h->nBands) + ch * (band<h->nBands) + band] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
+                for(ch=0; ch < h->nCHin; ch++)
+                    for(band=0; band<h->nBands; band++)
+                        dataFD[t * (h->nCHin) * (h->nBands) + ch * (h->nBands) + band] = cmplxf(h->STFTInputFrameTF[ch].re[band], h->STFTInputFrameTF[ch].im[band]);
                 break;
         }
     }
