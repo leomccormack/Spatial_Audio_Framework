@@ -30,6 +30,25 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** SOFA loader error codes */
+typedef enum {
+    /** Not initialized */
+    SAF_TVCONV_NOT_INIT,
+    /** Loading file */
+    SAF_TVCONV_SOFA_LOADING,
+    /** None of the error checks failed */
+    SAF_TVCONV_SOFA_OK,
+    /** Not a SOFA file, or no such file was found in the specified location */
+    SAF_TVCONV_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH,
+    /** Dimensions of the SOFA data were not as expected */
+    SAF_TVCONV_SOFA_ERROR_DIMENSIONS_UNEXPECTED,
+    /** The data-type of the SOFA data was not as expected */
+    SAF_TVCONV_SOFA_ERROR_FORMAT_UNEXPECTED,
+    /** NetCDF is not thread safe! */
+    SAF_TVCONV_SOFA_ERROR_NETCDF_IN_USE
+
+} SAF_TVCONV_ERROR_CODES;
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
@@ -172,6 +191,9 @@ int tvconv_getProcessingDelay(void* const hTVCnv);
 
 /** Returns the current Sofa file path */
 char* tvconv_getSofaFilePath(void* const hTVCnv);
+
+/** Returns the current Sofa file error state */
+SAF_TVCONV_ERROR_CODES tvconv_getSofaErrorState(void* const hTVCnv);
 
 /** Returns current codec status (see #CODEC_STATUS enum) */
 CODEC_STATUS tvconv_getCodecStatus(void* const hTVCnv);
