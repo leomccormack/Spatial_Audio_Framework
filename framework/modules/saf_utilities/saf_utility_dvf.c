@@ -123,7 +123,7 @@ void interpDVFShelfParams
     /* Linearly interpolate DC gain, HF gain, center freq at theta.
      * Table is in 10 degree steps, floor(x/10) gets lower index. */
     theta = SAF_CLAMP(theta, 0.f, 180.f);
-    rho = SAF_MAX(rho, 1.0);
+    rho = SAF_MAX(rho, 1.f);
     thetaDiv10 = theta / 10.f;
     theta_idx_lower = (int)thetaDiv10;
     theta_idx_upper = theta_idx_lower + 1;

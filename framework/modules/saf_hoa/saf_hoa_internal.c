@@ -604,8 +604,8 @@ void getBinDecoder_MAGLS
             {
                 if((phi_l-phi_lprev)>0.f) phi_l -= 2*SAF_PI;
                 if((phi_r-phi_rprev)>0.f) phi_r -= 2*SAF_PI;
-                phi_delta_l = 0.5*phi_delta_l + 0.5*(phi_l - phi_lprev);
-                phi_delta_r = 0.5*phi_delta_l + 0.5*(phi_r - phi_rprev);
+                phi_delta_l = 0.5f*phi_delta_l + 0.5f*(phi_l - phi_lprev);
+                phi_delta_r = 0.5f*phi_delta_l + 0.5f*(phi_r - phi_rprev);
             }
         }
 
