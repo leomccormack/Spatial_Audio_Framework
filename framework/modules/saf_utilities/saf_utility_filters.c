@@ -1282,7 +1282,7 @@ void FIRCoeffs
     float_complex h_z_sum;
     
     h_len = order + 1;
-    ft1 = fc1/(fs*2.0f);
+    ft1 = fc1/fs;
     
     /* compute filter weights */
     if(order % 2 == 0){
@@ -1299,7 +1299,7 @@ void FIRCoeffs
                 break;
                 
             case FIR_FILTER_BPF:
-                ft2 = fc2/(fs*2.0f);
+                ft2 = fc2/fs;
                 for(i=0; i<h_len; i++){
                     h_filt[i] = i==order/2 ? 2.0f*(ft2-ft1) :
                         sinf(2.0f*SAF_PI*ft2*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2)) - sinf(2.0f*SAF_PI*ft1*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2));
@@ -1307,7 +1307,7 @@ void FIRCoeffs
                 break;
                 
             case FIR_FILTER_BSF:
-                ft2 = fc2/(fs*2.0f);
+                ft2 = fc2/fs;
                 for(i=0; i<h_len; i++){
                     h_filt[i] = i==order/2 ? 1.0f - 2.0f*(ft2-ft1) :
                         sinf(2.0f*SAF_PI*ft1*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2)) - sinf(2.0f*SAF_PI*ft2*(float)(i-order/2)) / (SAF_PI*(float)(i-order/2));
@@ -1347,7 +1347,7 @@ void FIRCoeffs
                 break;
                 
             case FIR_FILTER_BPF:
-                f0 = (fc1/fs+fc2/fs)/2.0f;
+                f0 = fc1/fs + fc2/fs;
                 h_z_sum = cmplxf(0.0f, 0.0f);
                 for(i=0; i<h_len; i++)
                     h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*SAF_PI*(float)i*f0/2.0f)), h_filt[i]));
