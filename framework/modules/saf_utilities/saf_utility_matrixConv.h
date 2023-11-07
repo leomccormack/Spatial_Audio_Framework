@@ -69,6 +69,14 @@ void saf_matrixConv_create(/* Input Arguments */
 void saf_matrixConv_destroy(/* Input Arguments */
                             void ** const phMC);
 
+
+/**
+ * Flushes internal buffers with zeros
+ *
+ * @param[in]  hMC        matrixConv handle
+ */
+void saf_matrixConv_reset(void * const hMC);
+
 /**
  * Performs the matrix convolution.
  *
@@ -121,6 +129,13 @@ void saf_multiConv_create(/* Input Arguments */
  */
 void saf_multiConv_destroy(/* Input Arguments */
                            void ** const phMC);
+
+/**
+ * Flushes internal buffers with zeros
+ *
+ * @param[in]  hMC        matrixConv handle
+ */
+void saf_multiConv_reset(void * const hMC);
 
 /**
  * Performs the multi-channel convolution

@@ -160,6 +160,19 @@ void saf_matrixConv_destroy
     }
 }
 
+void saf_matrixConv_reset
+(
+    void * const hMC
+)
+{
+    safMatConv_data *h = (safMatConv_data*)(hMC);
+
+    if(!h->usePartFLAG)
+        memset(h->ovrlpAddBuffer, 0, h->nCHout*(h->fftSize)*sizeof(float));
+    else
+        memset(h->y_n_overlap, 0, h->nCHout*h->hopSize*sizeof(float));
+}
+
 void saf_matrixConv_apply
 (
     void * const hMC,
@@ -354,6 +367,19 @@ void saf_multiConv_destroy
     }
 }
 
+void saf_multiConv_reset
+(
+    void * const hMC
+)
+{
+    safMulConv_data *h = (safMulConv_data*)(hMC);
+
+    if(!h->usePartFLAG)
+        memset(h->ovrlpAddBuffer, 0, h->nCH*h->fftSize*sizeof(float));
+    else
+        memset(h->y_n_overlap, 0, h->nCH*h->hopSize*sizeof(float));
+}
+
 void saf_multiConv_apply
 (
     void * const hMC,
@@ -387,7 +413,7 @@ void saf_multiConv_apply
     /* apply partitioned convolution */
     else{
         /* zero-pad input signals and perform fft. Store in partition slot 1. */
-        memcpy(&(h->X_n[1*(h->nCH)*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nCH)*(h->nBins)*sizeof(float_complex));
+        memmove(&(h->X_n[1*(h->nCH)*(h->nBins)]), h->X_n, (h->numFilterBlocks-1)*(h->nCH)*(h->nBins)*sizeof(float_complex));
         for(nc=0; nc<h->nCH; nc++){
             memcpy(h->x_pad, &(inputSig[nc*(h->hopSize)]), h->hopSize * sizeof(float));
             saf_rfft_forward(h->hFFT, h->x_pad, &(h->X_n[0*(h->nCH)*(h->nBins)+nc*(h->nBins)]));
