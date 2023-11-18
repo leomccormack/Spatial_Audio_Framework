@@ -112,6 +112,8 @@ void findERBpartitions
     int i, band, counter, next_erb_idx;
     float band_centreFreq, erb, erb_centre, tmp;
 
+    saf_assert(centerFreq[nBands-1]>maxFreqLim, "maxFreqLim must be set to be lower than Nyquist...");
+
     band_centreFreq = (powf(2.0f, 1.0f/3.0f)+1.0f)/2.0f;
     free(*erb_idx);
     free(*erb_freqs);
