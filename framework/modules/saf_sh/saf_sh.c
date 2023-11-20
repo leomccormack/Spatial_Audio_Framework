@@ -2686,6 +2686,7 @@ void diffCohMtxMeas
 
     /* Clean-up */
     free(W);
+    free(HW);
 }
 
 void diffCohMtxMeasReal
@@ -2711,13 +2712,14 @@ void diffCohMtxMeasReal
                 H_array, nGrid,
                 W, nGrid, 0.0f,
                 HW, nGrid);
-    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nCH, nCH, nGrid, 1.0f,
+    cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nCH, nCH, nGrid, 1.0f,
                 HW, nGrid,
                 H_array, nGrid, 0.0f,
                 M_diffcoh, nCH);
     
     /* Clean-up */
     free(W);
+    free(HW);
 }
 
 void simulateCylArray /*untested*/
