@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['r_0',['r',['../structarray2sh__array_pars.html#a26d7db536f293c1ec954dc3f4246d305',1,'array2sh_arrayPars::R'],['../structarray2sh__array_pars.html#afab68c3dcf3e79fe98bddcd0f5ea1f43',1,'array2sh_arrayPars::r'],['../structtracker3d__data.html#a9101ad752f4e6527dcd788562446fc0e',1,'tracker3d_data::R']]],
+  ['r_0',['r',['../structtracker3d__data.html#a9101ad752f4e6527dcd788562446fc0e',1,'tracker3d_data::R'],['../structarray2sh__array_pars.html#a26d7db536f293c1ec954dc3f4246d305',1,'array2sh_arrayPars::R'],['../structarray2sh__array_pars.html#afab68c3dcf3e79fe98bddcd0f5ea1f43',1,'array2sh_arrayPars::r']]],
   ['ratio_1',['ratio',['../structambi__drc__data.html#a5064f44b51f5d92759ada36057a5d173',1,'ambi_drc_data']]],
   ['re_5fweight_2',['rE_WEIGHT',['../structambi__dec__data.html#a75f1b256ce9128affb84a7c5d03a6ffd',1,'ambi_dec_data']]],
   ['rec_3',['rec',['../structims__core__workspace.html#a2737ee38ea0fa94873d0f38566acc7db',1,'ims_core_workspace']]],

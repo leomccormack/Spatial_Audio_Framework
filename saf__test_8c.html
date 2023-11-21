@@ -138,10 +138,10 @@ Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:a6aec73a6feb926e21556a2adeae8fecf" id="r_a6aec73a6feb926e21556a2adeae8fecf"><td class="memItemLeft" align="right" valign="top">static tick_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__test_8c.html#a6aec73a6feb926e21556a2adeae8fecf">start</a></td></tr>
+<tr class="memitem:a6aec73a6feb926e21556a2adeae8fecf" id="r_a6aec73a6feb926e21556a2adeae8fecf"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="timer_8h.html#a52183d06eb13da2c0f515d0cd90f9004">tick_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__test_8c.html#a6aec73a6feb926e21556a2adeae8fecf">start</a></td></tr>
 <tr class="memdesc:a6aec73a6feb926e21556a2adeae8fecf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time for whole test program.  <br /></td></tr>
 <tr class="separator:a6aec73a6feb926e21556a2adeae8fecf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd95090af51c393d941571b765e7ccf8" id="r_afd95090af51c393d941571b765e7ccf8"><td class="memItemLeft" align="right" valign="top">static tick_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__test_8c.html#afd95090af51c393d941571b765e7ccf8">start_test</a></td></tr>
+<tr class="memitem:afd95090af51c393d941571b765e7ccf8" id="r_afd95090af51c393d941571b765e7ccf8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="timer_8h.html#a52183d06eb13da2c0f515d0cd90f9004">tick_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="saf__test_8c.html#afd95090af51c393d941571b765e7ccf8">start_test</a></td></tr>
 <tr class="memdesc:afd95090af51c393d941571b765e7ccf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Start time for the current unit test.  <br /></td></tr>
 <tr class="separator:afd95090af51c393d941571b765e7ccf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -156,8 +156,7 @@ Variables</h2></td></tr>
 <div class="line">    <span class="comment">// examples on how to interface with unity, or visit:</span></div>
 <div class="line">    <span class="comment">//     https://github.com/ThrowTheSwitch/Unity</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>3) add a call for the new unit test in the main test source file: <a class="el" href="saf__test_8c.html" title="Unit test program for the Spatial_Audio_Framework.">saf_test.c</a> for example: </p><div class="fragment"><div class="line"><a class="code hl_define" href="saf__test_8c.html#a2dd273a252c1e79b21f222579a35c21a">RUN_TEST</a>(test__descriptiveNameOfNewUnitTest);</div>
-<div class="ttc" id="asaf__test_8c_html_a2dd273a252c1e79b21f222579a35c21a"><div class="ttname"><a href="saf__test_8c.html#a2dd273a252c1e79b21f222579a35c21a">RUN_TEST</a></div><div class="ttdeci">#define RUN_TEST(testfunc)</div><div class="ttdoc">A custom Unity RUN_TEST, which calls timerResult() upon exiting each test.</div><div class="ttdef"><b>Definition</b> <a href="saf__test_8c_source.html#l00067">saf_test.c:67</a></div></div>
+</div><!-- fragment --><p>3) add a call for the new unit test in the main test source file: <a class="el" href="saf__test_8c.html" title="Unit test program for the Spatial_Audio_Framework.">saf_test.c</a> for example: </p><div class="fragment"><div class="line">RUN_TEST(test__descriptiveNameOfNewUnitTest);</div>
 </div><!-- fragment --><dl class="section author"><dt>Author</dt><dd>Leo McCormack </dd></dl>
 <dl class="section date"><dt>Date</dt><dd>27.04.2020 </dd></dl>
 <dl class="section user"><dt>License</dt><dd>Mixed (module dependent) </dd></dl>
@@ -301,7 +300,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">tick_t start</td>
+          <td class="memname"><a class="el" href="timer_8h.html#a52183d06eb13da2c0f515d0cd90f9004">tick_t</a> start</td>
         </tr>
       </table>
   </td>
@@ -327,7 +326,7 @@ Variables</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">tick_t start_test</td>
+          <td class="memname"><a class="el" href="timer_8h.html#a52183d06eb13da2c0f515d0cd90f9004">tick_t</a> start_test</td>
         </tr>
       </table>
   </td>
@@ -350,7 +349,7 @@ Variables</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_13e138d54eb8818da29c3992edef070a.html">test</a></li><li class="navelem"><a class="el" href="dir_7440c80a84150c89eded6c163cdc56e5.html">src</a></li><li class="navelem"><a class="el" href="saf__test_8c.html">saf_test.c</a></li>
-    <li class="footer">Generated on Tue Nov 21 2023 13:40:56 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue Nov 21 2023 15:20:28 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 <script type="text/javascript">

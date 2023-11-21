@@ -81,6 +81,7 @@ var annotated_dup =
     [ "tracker3d_data", "structtracker3d__data.html", "structtracker3d__data" ],
     [ "transientDucker_data", "structtransient_ducker__data.html", null ],
     [ "tvconv_data", "structtvconv__data.html", "structtvconv__data" ],
+    [ "UNITY_STORAGE_T", "struct_u_n_i_t_y___s_t_o_r_a_g_e___t.html", null ],
     [ "utility_cchol_data", "structutility__cchol__data.html", null ],
     [ "utility_ceig_data", "structutility__ceig__data.html", null ],
     [ "utility_ceigmp_data", "structutility__ceigmp__data.html", null ],

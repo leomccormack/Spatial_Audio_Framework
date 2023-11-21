@@ -30,6 +30,7 @@ var NAVTREEINDEX10 =
 "struct_p66.html":[0,0,51],
 "struct_quality_mapping.html":[0,0,57],
 "struct_speex_resampler_state__.html":[0,0,72],
+"struct_u_n_i_t_y___s_t_o_r_a_g_e___t.html":[0,0,81],
 "structaf_hybrid.html":[0,0,0],
 "structaf_s_t_f_t__data.html":[0,0,1],
 "structaf_s_t_f_t__data.html#a408dc511cc33c5d2f1f036554db677c1":[0,0,1,7],
@@ -248,6 +249,5 @@ var NAVTREEINDEX10 =
 "structarray2sh__data.html#ab9659821404b5657de64592493284299":[0,0,11,9],
 "structarray2sh__data.html#ac37a14d04bcac0f439486be30f5a9e02":[0,0,11,29],
 "structarray2sh__data.html#ac6f659982575ca9ab09b636dc9d1188b":[0,0,11,21],
-"structarray2sh__data.html#ad5f9bb6847be3cc06aedab25adfc21b5":[0,0,11,3],
-"structarray2sh__data.html#ad786bd3a2e2b012ac470c482377aec41":[0,0,11,28]
+"structarray2sh__data.html#ad5f9bb6847be3cc06aedab25adfc21b5":[0,0,11,3]
 };

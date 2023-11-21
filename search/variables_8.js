@@ -1,15 +1,15 @@
 var searchData=
 [
   ['h_0',['H',['../structtracker3d__data.html#aed92a7b0367c68ede0b354b8ec9384c5',1,'tracker3d_data']]],
-  ['h_5farray_1',['h_array',['../structhades__analysis__data.html#a3b1653477b94101965a1f464ff1e769b',1,'hades_analysis_data::h_array'],['../structhades__synthesis__data.html#a3890fda44f3815f28fd3644f45e6342e',1,'hades_synthesis_data::H_array'],['../structhades__analysis__data.html#a9d040946fb75ef1c2c4e1f85e83b9cbd',1,'hades_analysis_data::H_array']]],
+  ['h_5farray_1',['h_array',['../structhades__analysis__data.html#a9d040946fb75ef1c2c4e1f85e83b9cbd',1,'hades_analysis_data::H_array'],['../structhades__analysis__data.html#a3b1653477b94101965a1f464ff1e769b',1,'hades_analysis_data::h_array'],['../structhades__synthesis__data.html#a3890fda44f3815f28fd3644f45e6342e',1,'hades_synthesis_data::H_array']]],
   ['h_5farray_5fw_2',['H_array_w',['../structhades__analysis__data.html#a6663ce26c25298d934599b6360b87114',1,'hades_analysis_data']]],
   ['h_5fbin_3',['H_bin',['../structhades__synthesis__data.html#a5d00f3bb69cb8988f2be54e97be234bb',1,'hades_synthesis_data']]],
   ['h_5ffilt_4',['H_filt',['../structims__scene__data.html#ac7d1bb7d6d13cf3b939d55c412fe068d',1,'ims_scene_data']]],
   ['h_5ffrac_5',['h_frac',['../structechogram__data.html#a8c03cb89cfc6ebb2fe15da780a7d0466',1,'echogram_data']]],
   ['h_5ffs_6',['h_fs',['../structspreader__data.html#a7f398b381b4e1611ebbb80e19127ee9f',1,'spreader_data']]],
-  ['h_5fgrid_7',['h_grid',['../structspreader__data.html#a55f2df69f559f771632c5718b1f15a4a',1,'spreader_data::h_grid'],['../structspreader__data.html#ad54320558852a75afe872113a7a27a5c',1,'spreader_data::H_grid']]],
+  ['h_5fgrid_7',['h_grid',['../structspreader__data.html#ad54320558852a75afe872113a7a27a5c',1,'spreader_data::H_grid'],['../structspreader__data.html#a55f2df69f559f771632c5718b1f15a4a',1,'spreader_data::h_grid']]],
   ['h_5flen_8',['h_len',['../structspreader__data.html#a5a5ca94d8531a8b1b882424d76a987ad',1,'spreader_data::h_len'],['../structhades__analysis__data.html#a7bbe48348ce060925d1909b5fd2d03ba',1,'hades_analysis_data::h_len']]],
-  ['hcdf_9',['hcdf',['../structspreader__data.html#ad80daaa10f965ad24f95773c2d6ced03',1,'spreader_data::hCdf'],['../structhades__synthesis__data.html#a10011cac390583fde7d3cb940761d199',1,'hades_synthesis_data::hCDF']]],
+  ['hcdf_9',['hcdf',['../structhades__synthesis__data.html#a10011cac390583fde7d3cb940761d199',1,'hades_synthesis_data::hCDF'],['../structspreader__data.html#ad80daaa10f965ad24f95773c2d6ced03',1,'spreader_data::hCdf']]],
   ['hcdf_5fres_10',['hCdf_res',['../structspreader__data.html#a0ff2ccb10d00fd66900afeda6392add0',1,'spreader_data']]],
   ['hcorewrkspc_11',['hCoreWrkSpc',['../structims__scene__data.html#a9fb5cdf534279ebf0c70f1987feec8eb',1,'ims_scene_data']]],
   ['hdecor_12',['hdecor',['../structdecorrelator__data.html#afba0996c979e515940aa56d77d6eacd2',1,'decorrelator_data::hDecor'],['../structspreader__data.html#a644b59013bd06cd622caebcc4123dce6',1,'spreader_data::hDecor']]],
