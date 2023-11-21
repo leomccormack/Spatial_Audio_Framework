@@ -1415,7 +1415,7 @@ $(document).ready(function(){initNavTree('saf__utility__filters_8c_source.html',
 <div class="line"><a id="l01282" name="l01282"></a><span class="lineno"> 1282</span>    float_complex h_z_sum;</div>
 <div class="line"><a id="l01283" name="l01283"></a><span class="lineno"> 1283</span>    </div>
 <div class="line"><a id="l01284" name="l01284"></a><span class="lineno"> 1284</span>    h_len = order + 1;</div>
-<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>    ft1 = fc1/(fs*2.0f);</div>
+<div class="line"><a id="l01285" name="l01285"></a><span class="lineno"> 1285</span>    ft1 = fc1/fs;</div>
 <div class="line"><a id="l01286" name="l01286"></a><span class="lineno"> 1286</span>    </div>
 <div class="line"><a id="l01287" name="l01287"></a><span class="lineno"> 1287</span>    <span class="comment">/* compute filter weights */</span></div>
 <div class="line"><a id="l01288" name="l01288"></a><span class="lineno"> 1288</span>    <span class="keywordflow">if</span>(order % 2 == 0){</div>
@@ -1432,7 +1432,7 @@ $(document).ready(function(){initNavTree('saf__utility__filters_8c_source.html',
 <div class="line"><a id="l01299" name="l01299"></a><span class="lineno"> 1299</span>                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l01300" name="l01300"></a><span class="lineno"> 1300</span>                </div>
 <div class="line"><a id="l01301" name="l01301"></a><span class="lineno"> 1301</span>            <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="group___utilities.html#gga2857ab29a6bb725942759947350f5e49af7a02beec869c5657a04945224e92337">FIR_FILTER_BPF</a>:</div>
-<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>                ft2 = fc2/(fs*2.0f);</div>
+<div class="line"><a id="l01302" name="l01302"></a><span class="lineno"> 1302</span>                ft2 = fc2/fs;</div>
 <div class="line"><a id="l01303" name="l01303"></a><span class="lineno"> 1303</span>                <span class="keywordflow">for</span>(i=0; i&lt;h_len; i++){</div>
 <div class="line"><a id="l01304" name="l01304"></a><span class="lineno"> 1304</span>                    h_filt[i] = i==order/2 ? 2.0f*(ft2-ft1) :</div>
 <div class="line"><a id="l01305" name="l01305"></a><span class="lineno"> 1305</span>                        sinf(2.0f*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*ft2*(<span class="keywordtype">float</span>)(i-order/2)) / (<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*(float)(i-order/2)) - sinf(2.0f*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*ft1*(<span class="keywordtype">float</span>)(i-order/2)) / (<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*(float)(i-order/2));</div>
@@ -1440,7 +1440,7 @@ $(document).ready(function(){initNavTree('saf__utility__filters_8c_source.html',
 <div class="line"><a id="l01307" name="l01307"></a><span class="lineno"> 1307</span>                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l01308" name="l01308"></a><span class="lineno"> 1308</span>                </div>
 <div class="line"><a id="l01309" name="l01309"></a><span class="lineno"> 1309</span>            <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="group___utilities.html#gga2857ab29a6bb725942759947350f5e49a5f31f31c063d78aa077b2c45d5719e04">FIR_FILTER_BSF</a>:</div>
-<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>                ft2 = fc2/(fs*2.0f);</div>
+<div class="line"><a id="l01310" name="l01310"></a><span class="lineno"> 1310</span>                ft2 = fc2/fs;</div>
 <div class="line"><a id="l01311" name="l01311"></a><span class="lineno"> 1311</span>                <span class="keywordflow">for</span>(i=0; i&lt;h_len; i++){</div>
 <div class="line"><a id="l01312" name="l01312"></a><span class="lineno"> 1312</span>                    h_filt[i] = i==order/2 ? 1.0f - 2.0f*(ft2-ft1) :</div>
 <div class="line"><a id="l01313" name="l01313"></a><span class="lineno"> 1313</span>                        sinf(2.0f*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*ft1*(<span class="keywordtype">float</span>)(i-order/2)) / (<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*(float)(i-order/2)) - sinf(2.0f*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*ft2*(<span class="keywordtype">float</span>)(i-order/2)) / (<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*(float)(i-order/2));</div>
@@ -1480,7 +1480,7 @@ $(document).ready(function(){initNavTree('saf__utility__filters_8c_source.html',
 <div class="line"><a id="l01347" name="l01347"></a><span class="lineno"> 1347</span>                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l01348" name="l01348"></a><span class="lineno"> 1348</span>                </div>
 <div class="line"><a id="l01349" name="l01349"></a><span class="lineno"> 1349</span>            <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="group___utilities.html#gga2857ab29a6bb725942759947350f5e49af7a02beec869c5657a04945224e92337">FIR_FILTER_BPF</a>:</div>
-<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span>                f0 = (fc1/fs+fc2/fs)/2.0f;</div>
+<div class="line"><a id="l01350" name="l01350"></a><span class="lineno"> 1350</span>                f0 = fc1/fs + fc2/fs;</div>
 <div class="line"><a id="l01351" name="l01351"></a><span class="lineno"> 1351</span>                h_z_sum = cmplxf(0.0f, 0.0f);</div>
 <div class="line"><a id="l01352" name="l01352"></a><span class="lineno"> 1352</span>                <span class="keywordflow">for</span>(i=0; i&lt;h_len; i++)</div>
 <div class="line"><a id="l01353" name="l01353"></a><span class="lineno"> 1353</span>                    h_z_sum = ccaddf(h_z_sum, crmulf(cexpf(cmplxf(0.0f, -2.0f*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>*(<span class="keywordtype">float</span>)i*f0/2.0f)), h_filt[i]));</div>
@@ -1631,7 +1631,7 @@ $(document).ready(function(){initNavTree('saf__utility__filters_8c_source.html',
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__filters_8c.html">saf_utility_filters.c</a></li>
-    <li class="footer">Generated on Tue Nov 21 2023 13:21:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue Nov 21 2023 13:24:07 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 <script type="text/javascript">
