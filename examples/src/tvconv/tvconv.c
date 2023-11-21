@@ -262,9 +262,7 @@ void tvconv_setFiltersAndPositions( void* const hTVCnv )
     if(pData->sofa_filepath!=NULL){
         strcpy(pData->progressBarText,"Opening SOFA file");
         pData->progressBar0_1 = 0.2f;
-		// MB hack
-        error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_NETCDF);
-		//error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_LIBMYSOFA);
+        error = saf_sofa_open(&sofa, pData->sofa_filepath, SAF_SOFA_READER_OPTION_DEFAULT);
         
         if(error==SAF_SOFA_OK){
             strcpy(pData->progressBarText,"Loading IRs");
@@ -283,7 +281,6 @@ void tvconv_setFiltersAndPositions( void* const hTVCnv )
             else
                 memcpy(pData->sourcePosition, sofa.SourcePosition, sizeof(vectorND));
 
-            
             pData->irs = (float**)realloc2d((void**)pData->irs, pData->nListenerPositions, pData->nIrChannels*pData->ir_length, sizeof(float));
             int tmp_length = pData->nIrChannels * pData->ir_length;
             for(i=0; i<pData->nListenerPositions; i++){
@@ -295,6 +292,25 @@ void tvconv_setFiltersAndPositions( void* const hTVCnv )
             
             pData->listenerPositions = (vectorND*)realloc1d((void*)pData->listenerPositions, pData->nListenerPositions*sizeof(vectorND));
             memcpy(pData->listenerPositions, sofa.ListenerPosition, pData->nListenerPositions*sizeof(vectorND));
+        }
+
+        /* extra error handling */
+        switch(error){
+            case SAF_SOFA_OK: /** None of the error checks failed */
+                pData->sofa_file_error = SAF_TVCONV_SOFA_OK;
+                break;
+            case SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH:  /** Not a SOFA file, or no such file was found in the specified location */
+                pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
+                break;
+            case SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED:      /** Dimensions of the SOFA data were not as expected */
+                pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_DIMENSIONS_UNEXPECTED;
+                break;
+            case SAF_SOFA_ERROR_FORMAT_UNEXPECTED: /** The data-type of the SOFA data was not as expected */
+                pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_FORMAT_UNEXPECTED;
+                break;
+            case SAF_SOFA_ERROR_NETCDF_IN_USE: /** NetCDF is not thread safe! */
+                pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_NETCDF_IN_USE;
+                break;
         }
     }
     saf_sofa_close(&sofa);
@@ -312,26 +328,6 @@ void tvconv_setFiltersAndPositions( void* const hTVCnv )
     /* done! */
     strcpy(pData->progressBarText,"Done!");
     pData->progressBar0_1 = 1.0f;
-
-    switch(error)
-    {
-    case SAF_SOFA_OK: /** None of the error checks failed */
-        pData->sofa_file_error = SAF_TVCONV_SOFA_OK;
-        break;
-    case SAF_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH:  /** Not a SOFA file, or no such file was found in the specified location */
-        pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH;
-        break;
-    case SAF_SOFA_ERROR_DIMENSIONS_UNEXPECTED:      /** Dimensions of the SOFA data were not as expected */
-        pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_DIMENSIONS_UNEXPECTED;
-        break;
-    case SAF_SOFA_ERROR_FORMAT_UNEXPECTED: /** The data-type of the SOFA data was not as expected */
-        pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_FORMAT_UNEXPECTED;
-        break;
-    case SAF_SOFA_ERROR_NETCDF_IN_USE: /** NetCDF is not thread safe! */
-        pData->sofa_file_error = SAF_TVCONV_SOFA_ERROR_NETCDF_IN_USE;
-        break;
-    }
-
 }
 
 void tvconv_setSofaFilePath(void* const hTVCnv, const char* path)

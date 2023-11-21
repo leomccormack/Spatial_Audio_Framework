@@ -52,8 +52,8 @@
 #ifndef __SAF_TEST_H_INCLUDED__
 #define __SAF_TEST_H_INCLUDED__
 
-#include "resources/unity.h" /* unit testing suite (MIT license) */
-#include "resources/timer.h" /* for timing the individual tests */
+#include "unity.h" /* unit testing suite (MIT license) */
+#include "timer.h" /* for timing the individual tests */
 #include "saf.h"             /* master framework include header */
 #include "saf_externals.h"   /* to also include saf dependencies (cblas etc.) */
 #ifdef SAF_ENABLE_EXAMPLES_TESTS

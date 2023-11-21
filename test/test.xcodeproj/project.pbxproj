@@ -37,6 +37,15 @@
 		5093401227181D460064F222 /* test__cdf4sap_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093400927181D460064F222 /* test__cdf4sap_module.c */; };
 		5093401727181F8B0064F222 /* test__examples.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093401527181F8B0064F222 /* test__examples.c */; };
 		5093401827181F8B0064F222 /* test__resources.c in Sources */ = {isa = PBXBuildFile; fileRef = 5093401627181F8B0064F222 /* test__resources.c */; };
+		50C0BCA72B0CF3A80024C4D0 /* btree.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BC982B0CF3A80024C4D0 /* btree.c */; };
+		50C0BCA82B0CF3A80024C4D0 /* superblock.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BC9A2B0CF3A80024C4D0 /* superblock.c */; };
+		50C0BCA92B0CF3A80024C4D0 /* gcol.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BC9B2B0CF3A80024C4D0 /* gcol.c */; };
+		50C0BCAA2B0CF3A80024C4D0 /* fractalhead.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BC9C2B0CF3A80024C4D0 /* fractalhead.c */; };
+		50C0BCAB2B0CF3A80024C4D0 /* gunzip.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BC9D2B0CF3A80024C4D0 /* gunzip.c */; };
+		50C0BCAC2B0CF3A80024C4D0 /* dataobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BC9E2B0CF3A80024C4D0 /* dataobject.c */; };
+		50C0BCAD2B0CF3A80024C4D0 /* tools.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BCA22B0CF3A80024C4D0 /* tools.c */; };
+		50C0BCAE2B0CF3A80024C4D0 /* reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BCA42B0CF3A80024C4D0 /* reader.c */; };
+		50C0BCAF2B0CF3A80024C4D0 /* kdtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C0BCA62B0CF3A80024C4D0 /* kdtree.c */; };
 		50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED3261E3FCC008A17B1 /* spreader.c */; };
 		50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50C18ED5261E3FCC008A17B1 /* spreader_internal.c */; };
 		50CB1DFF27CE18B200E080E3 /* test__hades_module.c in Sources */ = {isa = PBXBuildFile; fileRef = 50CB1DFE27CE18B200E080E3 /* test__hades_module.c */; };
@@ -115,12 +124,6 @@
 		50E3DFBA24E1B64800589B17 /* ambi_roomsim.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E3DFB824E1B64800589B17 /* ambi_roomsim.c */; };
 		50E5CD1624AF3E5800019898 /* saf_utility_geometry.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */; };
 		50E5CDAA24B4580900019898 /* saf_utility_latticeCoeffs.c in Sources */ = {isa = PBXBuildFile; fileRef = 50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */; };
-		50FA6ABB26D433B000369945 /* mysofa_internal.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB326D433B000369945 /* mysofa_internal.c */; };
-		50FA6ABC26D433B000369945 /* hdf_dataobject.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB626D433B000369945 /* hdf_dataobject.c */; };
-		50FA6ABD26D433B000369945 /* kdtree.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB726D433B000369945 /* kdtree.c */; };
-		50FA6ABE26D433B000369945 /* hdf_fractalhead.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB826D433B000369945 /* hdf_fractalhead.c */; };
-		50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6AB926D433B000369945 /* hdf_reader.c */; };
-		50FA6AC026D433B000369945 /* mysofa.c in Sources */ = {isa = PBXBuildFile; fileRef = 50FA6ABA26D433B000369945 /* mysofa.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -188,9 +191,25 @@
 		5093400927181D460064F222 /* test__cdf4sap_module.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__cdf4sap_module.c; sourceTree = "<group>"; };
 		5093401527181F8B0064F222 /* test__examples.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__examples.c; sourceTree = "<group>"; };
 		5093401627181F8B0064F222 /* test__resources.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test__resources.c; sourceTree = "<group>"; };
-		5093401C2718205E0064F222 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
-		5093401D2718205E0064F222 /* unity_internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity_internals.h; sourceTree = "<group>"; };
-		5093401E2718205E0064F222 /* unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity.h; sourceTree = "<group>"; };
+		50C0BC902B0CF3900024C4D0 /* unity_internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity_internals.h; sourceTree = "<group>"; };
+		50C0BC912B0CF3910024C4D0 /* unity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = unity.h; sourceTree = "<group>"; };
+		50C0BC922B0CF3910024C4D0 /* timer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = timer.h; sourceTree = "<group>"; };
+		50C0BC952B0CF3A80024C4D0 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		50C0BC962B0CF3A80024C4D0 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
+		50C0BC982B0CF3A80024C4D0 /* btree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = btree.c; sourceTree = "<group>"; };
+		50C0BC992B0CF3A80024C4D0 /* reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = reader.h; sourceTree = "<group>"; };
+		50C0BC9A2B0CF3A80024C4D0 /* superblock.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = superblock.c; sourceTree = "<group>"; };
+		50C0BC9B2B0CF3A80024C4D0 /* gcol.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gcol.c; sourceTree = "<group>"; };
+		50C0BC9C2B0CF3A80024C4D0 /* fractalhead.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = fractalhead.c; sourceTree = "<group>"; };
+		50C0BC9D2B0CF3A80024C4D0 /* gunzip.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = gunzip.c; sourceTree = "<group>"; };
+		50C0BC9E2B0CF3A80024C4D0 /* dataobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = dataobject.c; sourceTree = "<group>"; };
+		50C0BCA02B0CF3A80024C4D0 /* mysofa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysofa.h; sourceTree = "<group>"; };
+		50C0BCA12B0CF3A80024C4D0 /* kdtree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdtree.h; sourceTree = "<group>"; };
+		50C0BCA22B0CF3A80024C4D0 /* tools.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tools.c; sourceTree = "<group>"; };
+		50C0BCA32B0CF3A80024C4D0 /* mysofa_export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysofa_export.h; sourceTree = "<group>"; };
+		50C0BCA42B0CF3A80024C4D0 /* reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = reader.c; sourceTree = "<group>"; };
+		50C0BCA52B0CF3A80024C4D0 /* tools.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = tools.h; sourceTree = "<group>"; };
+		50C0BCA62B0CF3A80024C4D0 /* kdtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kdtree.c; sourceTree = "<group>"; };
 		50C18ED1261E3FBB008A17B1 /* spreader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader.h; sourceTree = "<group>"; };
 		50C18ED3261E3FCC008A17B1 /* spreader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = spreader.c; sourceTree = "<group>"; };
 		50C18ED4261E3FCC008A17B1 /* spreader_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = spreader_internal.h; sourceTree = "<group>"; };
@@ -354,16 +373,6 @@
 		50E5CD1424AF3E5800019898 /* saf_utility_geometry.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_geometry.c; sourceTree = "<group>"; };
 		50E5CD1524AF3E5800019898 /* saf_utility_geometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saf_utility_geometry.h; sourceTree = "<group>"; };
 		50E5CDA924B4580900019898 /* saf_utility_latticeCoeffs.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = saf_utility_latticeCoeffs.c; sourceTree = "<group>"; };
-		50FA6AB026D433B000369945 /* mysofa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysofa.h; sourceTree = "<group>"; };
-		50FA6AB226D433B000369945 /* kdtree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = kdtree.h; sourceTree = "<group>"; };
-		50FA6AB326D433B000369945 /* mysofa_internal.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mysofa_internal.c; sourceTree = "<group>"; };
-		50FA6AB426D433B000369945 /* hdf_reader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = hdf_reader.h; sourceTree = "<group>"; };
-		50FA6AB526D433B000369945 /* mysofa_internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mysofa_internal.h; sourceTree = "<group>"; };
-		50FA6AB626D433B000369945 /* hdf_dataobject.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdf_dataobject.c; sourceTree = "<group>"; };
-		50FA6AB726D433B000369945 /* kdtree.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = kdtree.c; sourceTree = "<group>"; };
-		50FA6AB826D433B000369945 /* hdf_fractalhead.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdf_fractalhead.c; sourceTree = "<group>"; };
-		50FA6AB926D433B000369945 /* hdf_reader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = hdf_reader.c; sourceTree = "<group>"; };
-		50FA6ABA26D433B000369945 /* mysofa.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mysofa.c; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -483,20 +492,51 @@
 		50933FE927181A450064F222 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				5093401B2718205E0064F222 /* resources */,
+				50C0BC922B0CF3910024C4D0 /* timer.h */,
+				50C0BC902B0CF3900024C4D0 /* unity_internals.h */,
+				50C0BC912B0CF3910024C4D0 /* unity.h */,
 				50933FEB27181A450064F222 /* saf_test.h */,
 			);
 			path = include;
 			sourceTree = "<group>";
 		};
-		5093401B2718205E0064F222 /* resources */ = {
+		50C0BC942B0CF3A80024C4D0 /* libmysofa */ = {
 			isa = PBXGroup;
 			children = (
-				5093401C2718205E0064F222 /* timer.h */,
-				5093401D2718205E0064F222 /* unity_internals.h */,
-				5093401E2718205E0064F222 /* unity.h */,
+				50C0BC952B0CF3A80024C4D0 /* LICENSE */,
+				50C0BC962B0CF3A80024C4D0 /* config.h */,
+				50C0BC972B0CF3A80024C4D0 /* hdf */,
+				50C0BC9F2B0CF3A80024C4D0 /* hrtf */,
 			);
-			path = resources;
+			path = libmysofa;
+			sourceTree = "<group>";
+		};
+		50C0BC972B0CF3A80024C4D0 /* hdf */ = {
+			isa = PBXGroup;
+			children = (
+				50C0BC982B0CF3A80024C4D0 /* btree.c */,
+				50C0BC992B0CF3A80024C4D0 /* reader.h */,
+				50C0BC9A2B0CF3A80024C4D0 /* superblock.c */,
+				50C0BC9B2B0CF3A80024C4D0 /* gcol.c */,
+				50C0BC9C2B0CF3A80024C4D0 /* fractalhead.c */,
+				50C0BC9D2B0CF3A80024C4D0 /* gunzip.c */,
+				50C0BC9E2B0CF3A80024C4D0 /* dataobject.c */,
+			);
+			path = hdf;
+			sourceTree = "<group>";
+		};
+		50C0BC9F2B0CF3A80024C4D0 /* hrtf */ = {
+			isa = PBXGroup;
+			children = (
+				50C0BCA02B0CF3A80024C4D0 /* mysofa.h */,
+				50C0BCA12B0CF3A80024C4D0 /* kdtree.h */,
+				50C0BCA22B0CF3A80024C4D0 /* tools.c */,
+				50C0BCA32B0CF3A80024C4D0 /* mysofa_export.h */,
+				50C0BCA42B0CF3A80024C4D0 /* reader.c */,
+				50C0BCA52B0CF3A80024C4D0 /* tools.h */,
+				50C0BCA62B0CF3A80024C4D0 /* kdtree.c */,
+			);
+			path = hrtf;
 			sourceTree = "<group>";
 		};
 		50C18ED2261E3FCC008A17B1 /* spreader */ = {
@@ -722,7 +762,7 @@
 		50E3604E249BDDCC00B74C25 /* saf_sofa_reader */ = {
 			isa = PBXGroup;
 			children = (
-				50FA6AAF26D433B000369945 /* libmysofa */,
+				50C0BC942B0CF3A80024C4D0 /* libmysofa */,
 				50E3604F249BDDCC00B74C25 /* saf_sofa_reader.h */,
 				50E36050249BDDCC00B74C25 /* saf_sofa_reader.c */,
 			);
@@ -988,31 +1028,6 @@
 			path = ambi_roomsim;
 			sourceTree = "<group>";
 		};
-		50FA6AAF26D433B000369945 /* libmysofa */ = {
-			isa = PBXGroup;
-			children = (
-				50FA6AB126D433B000369945 /* internal */,
-				50FA6ABA26D433B000369945 /* mysofa.c */,
-				50FA6AB026D433B000369945 /* mysofa.h */,
-			);
-			path = libmysofa;
-			sourceTree = "<group>";
-		};
-		50FA6AB126D433B000369945 /* internal */ = {
-			isa = PBXGroup;
-			children = (
-				50FA6AB626D433B000369945 /* hdf_dataobject.c */,
-				50FA6AB826D433B000369945 /* hdf_fractalhead.c */,
-				50FA6AB926D433B000369945 /* hdf_reader.c */,
-				50FA6AB426D433B000369945 /* hdf_reader.h */,
-				50FA6AB726D433B000369945 /* kdtree.c */,
-				50FA6AB226D433B000369945 /* kdtree.h */,
-				50FA6AB326D433B000369945 /* mysofa_internal.c */,
-				50FA6AB526D433B000369945 /* mysofa_internal.h */,
-			);
-			path = internal;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1076,13 +1091,14 @@
 				50E3DEB224C1BC1B00589B17 /* ambi_dec.c in Sources */,
 				50CB1DFF27CE18B200E080E3 /* test__hades_module.c in Sources */,
 				50E36063249BDDCC00B74C25 /* saf_hoa.c in Sources */,
+				50C0BCAC2B0CF3A80024C4D0 /* dataobject.c in Sources */,
 				5032CDDD2744FDE2001855CD /* crc32.c in Sources */,
+				50C0BCAF2B0CF3A80024C4D0 /* kdtree.c in Sources */,
 				50E3DE3124BE00F400589B17 /* saf_utility_qmf.c in Sources */,
 				50E3DEE724C1C80C00589B17 /* matrixconv_internal.c in Sources */,
 				5032CDDE2744FDE2001855CD /* infback.c in Sources */,
 				5032CDDB2744FDE2001855CD /* compress.c in Sources */,
 				50933FF027181A450064F222 /* timer.c in Sources */,
-				50FA6AC026D433B000369945 /* mysofa.c in Sources */,
 				50E3DEDF24C1C80C00589B17 /* pitch_shifter_internal.c in Sources */,
 				50E36072249BDDCC00B74C25 /* saf_reverb.c in Sources */,
 				5032CDE22744FDE2001855CD /* trees.c in Sources */,
@@ -1093,28 +1109,30 @@
 				50E3DEEE24C1D16400589B17 /* binauraliser.c in Sources */,
 				50E3DEB124C1BC1B00589B17 /* ambi_dec_internal.c in Sources */,
 				50E36073249BDDCC00B74C25 /* saf_reverb_internal.c in Sources */,
+				50C0BCAD2B0CF3A80024C4D0 /* tools.c in Sources */,
+				50C0BCAE2B0CF3A80024C4D0 /* reader.c in Sources */,
 				50E3606E249BDDCC00B74C25 /* saf_utility_veclib.c in Sources */,
 				5093401827181F8B0064F222 /* test__resources.c in Sources */,
 				50E3605D249BDDCC00B74C25 /* kiss_fft.c in Sources */,
-				50FA6ABB26D433B000369945 /* mysofa_internal.c in Sources */,
 				50E3606B249BDDCC00B74C25 /* saf_utility_filters.c in Sources */,
 				50E36065249BDDCC00B74C25 /* saf_utility_bessel.c in Sources */,
 				50E3DEE024C1C80C00589B17 /* pitch_shifter.c in Sources */,
 				5032CDE32744FDE2001855CD /* inffast.c in Sources */,
 				50E3DEF424C1D3A900589B17 /* decorrelator_internal.c in Sources */,
-				50FA6ABD26D433B000369945 /* kdtree.c in Sources */,
 				506DE0D1268311B700BFD406 /* resample.c in Sources */,
 				36D23EA327C6614800046EBC /* saf_utility_dvf.c in Sources */,
 				50E36075249BDDCC00B74C25 /* saf_sh_internal.c in Sources */,
 				50E3DEE124C1C80C00589B17 /* rotator_internal.c in Sources */,
 				50933FEF27181A450064F222 /* saf_test.c in Sources */,
+				50C0BCA82B0CF3A80024C4D0 /* superblock.c in Sources */,
 				5093400C27181D460064F222 /* test__tracker_module.c in Sources */,
 				50E36078249BDDCC00B74C25 /* saf_vbap.c in Sources */,
-				50FA6ABC26D433B000369945 /* hdf_dataobject.c in Sources */,
 				50E3605F249BDDCC00B74C25 /* afSTFTlib.c in Sources */,
 				50E3DF0724C1D4EA00589B17 /* sldoa_internal.c in Sources */,
 				50E36061249BDDCC00B74C25 /* saf_cdf4sap.c in Sources */,
+				50C0BCA92B0CF3A80024C4D0 /* gcol.c in Sources */,
 				50E3DF0424C1D4EA00589B17 /* panner.c in Sources */,
+				50C0BCA72B0CF3A80024C4D0 /* btree.c in Sources */,
 				5093400D27181D460064F222 /* test__vbap_module.c in Sources */,
 				50E36069249BDDCC00B74C25 /* saf_utility_pitch.c in Sources */,
 				50E3DFBA24E1B64800589B17 /* ambi_roomsim.c in Sources */,
@@ -1137,12 +1155,10 @@
 				50E3607B249BDDCC00B74C25 /* saf_hrir.c in Sources */,
 				50C18ED7261E3FCC008A17B1 /* spreader_internal.c in Sources */,
 				50CB1E0927CE18D300E080E3 /* saf_hades_analysis.c in Sources */,
-				50FA6ABF26D433B000369945 /* hdf_reader.c in Sources */,
 				5093401227181D460064F222 /* test__cdf4sap_module.c in Sources */,
 				508CC48024EAA0A4006DF0C7 /* saf_tracker_internal.c in Sources */,
 				50E3DEF324C1D3A900589B17 /* decorrelator.c in Sources */,
 				5093401127181D460064F222 /* test__sofa_reader_module.c in Sources */,
-				50FA6ABE26D433B000369945 /* hdf_fractalhead.c in Sources */,
 				50E36079249BDDCC00B74C25 /* saf_default_hrirs.c in Sources */,
 				50933FED27181A450064F222 /* saf_test_wrapper.cpp in Sources */,
 				50E3605C249BDDCC00B74C25 /* md_malloc.c in Sources */,
@@ -1150,6 +1166,7 @@
 				50E3DEE824C1C80C00589B17 /* matrixconv.c in Sources */,
 				5093401727181F8B0064F222 /* test__examples.c in Sources */,
 				50E3DE3424C087B300589B17 /* afSTFT_internal.c in Sources */,
+				50C0BCAA2B0CF3A80024C4D0 /* fractalhead.c in Sources */,
 				50CB1E0B27CE18D300E080E3 /* saf_hades_internal.c in Sources */,
 				5032CDE42744FDE2001855CD /* adler32.c in Sources */,
 				50E3DEE224C1C80C00589B17 /* rotator.c in Sources */,
@@ -1171,6 +1188,7 @@
 				50E3606C249BDDCC00B74C25 /* saf_utility_complex.c in Sources */,
 				5032CDE02744FDE2001855CD /* inftrees.c in Sources */,
 				5093400F27181D460064F222 /* test__utilities_module.c in Sources */,
+				50C0BCAB2B0CF3A80024C4D0 /* gunzip.c in Sources */,
 				50E3DFB924E1B64800589B17 /* ambi_roomsim_internal.c in Sources */,
 				50E3DEC324C1C5AB00589B17 /* array2sh_internal.c in Sources */,
 				50C18ED6261E3FCC008A17B1 /* spreader.c in Sources */,
