@@ -2,6 +2,7 @@ var saf__test_8h =
 [
     [ "main_test", "saf__test_8h.html#acfeb9407e10c9d0488784cf02748be16", null ],
     [ "test__afSTFT", "saf__test_8h.html#a905bf3c380d7d04e6a0a4d9b4e056bf7", null ],
+    [ "test__arraySHTmatrices", "saf__test_8h.html#a57950cd664c1acbae7756bc36354122f", null ],
     [ "test__butterCoeffs", "saf__test_8h.html#a394db4aaade6966e740d8ca24a04dc7b", null ],
     [ "test__calculateGridWeights", "saf__test_8h.html#a0dc0f8c8aacddf5f3cc6a19b7ba254be", null ],
     [ "test__cart2sph", "saf__test_8h.html#abf9662ef7915426f52af62ffa70418f6", null ],
@@ -21,6 +22,7 @@ var saf__test_8h =
     [ "test__getLoudspeakerDecoderMtx", "saf__test_8h.html#a5e73f4abcab45bb014c621804a6864a6", null ],
     [ "test__getSHcomplex", "saf__test_8h.html#ad64c17df200f732d064245776199dee0", null ],
     [ "test__getSHreal", "saf__test_8h.html#a26eb1d422499252a5d6ce0fa72b0df8a", null ],
+    [ "test__getSHreal_part", "saf__test_8h.html#a6406ce6b49c958838c323e2bd91d10c0", null ],
     [ "test__getSHreal_recur", "saf__test_8h.html#a180a86ce81b6ee9cdd6e9c1390045632", null ],
     [ "test__getSHrotMtxReal", "saf__test_8h.html#a8a5477ba3d6118be1ea4b962c573c9f9", null ],
     [ "test__getVoronoiWeights", "saf__test_8h.html#a195368bc46775c4a9370249c54b0bc35", null ],

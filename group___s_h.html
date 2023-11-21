@@ -152,6 +152,12 @@ Enumerations</h2></td></tr>
  }</td></tr>
 <tr class="memdesc:gab457e2a01928e0357f12b00cdb6035c2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sector pattern designs for directionally-constraining sound-fields [1].  <a href="group___s_h.html#gab457e2a01928e0357f12b00cdb6035c2">More...</a><br /></td></tr>
 <tr class="separator:gab457e2a01928e0357f12b00cdb6035c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf857bc214e1eaf0a18b4edf9a11c2191" id="r_gaf857bc214e1eaf0a18b4edf9a11c2191"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">ARRAY_SHT_OPTIONS</a> { <a class="el" href="group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191a6288afc89b2e22c96a3b92b1570ce8e1">ARRAY_SHT_DEFAULT</a>
+, <a class="el" href="group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191a816e847437ef7dd5649ded0e668c1afd">ARRAY_SHT_REG_LS</a>
+, <a class="el" href="group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191aedef5e00365ef49241a9df6f4323469e">ARRAY_SHT_REG_LSHD</a>
+ }</td></tr>
+<tr class="memdesc:gaf857bc214e1eaf0a18b4edf9a11c2191"><td class="mdescLeft">&#160;</td><td class="mdescRight">Microphone array to spherical harmonic domain conversion options.  <a href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">More...</a><br /></td></tr>
+<tr class="separator:gaf857bc214e1eaf0a18b4edf9a11c2191"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -167,6 +173,8 @@ Functions</h2></td></tr>
 <tr class="memitem:gabf4d86ed458c9fcdb13065c7e2f4c436" id="r_gabf4d86ed458c9fcdb13065c7e2f4c436"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gabf4d86ed458c9fcdb13065c7e2f4c436">getSHreal_recur</a> (int order, float *dirs_rad, int nDirs, float *Y)</td></tr>
 <tr class="memdesc:gabf4d86ed458c9fcdb13065c7e2f4c436"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.  <br /></td></tr>
 <tr class="separator:gabf4d86ed458c9fcdb13065c7e2f4c436"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga01bd04a2c511cf4f81bfdb408e92ab73" id="r_ga01bd04a2c511cf4f81bfdb408e92ab73"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga01bd04a2c511cf4f81bfdb408e92ab73">getSHreal_part</a> (int order_start, int order_end, float *dirs_rad, int nDirs, float *Y)</td></tr>
+<tr class="separator:ga01bd04a2c511cf4f81bfdb408e92ab73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4f83c48c3d7c7f20726512e0495cf4b9" id="r_ga4f83c48c3d7c7f20726512e0495cf4b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga4f83c48c3d7c7f20726512e0495cf4b9">getSHcomplex</a> (int order, float *dirs_rad, int nDirs, float_complex *Y)</td></tr>
 <tr class="memdesc:ga4f83c48c3d7c7f20726512e0495cf4b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes complex-valued spherical harmonics [1] for each given direction on the unit sphere.  <br /></td></tr>
 <tr class="separator:ga4f83c48c3d7c7f20726512e0495cf4b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -263,6 +271,15 @@ Functions</h2></td></tr>
 <tr class="memitem:ga08d3bc0f9e750716e3fb73c1c3aafe6e" id="r_ga08d3bc0f9e750716e3fb73c1c3aafe6e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga08d3bc0f9e750716e3fb73c1c3aafe6e">generateMinNormMap</a> (int order, float_complex *Cx, float_complex *Y_grid, int nSources, int nGrid_dirs, int logScaleFlag, float *pmap)</td></tr>
 <tr class="memdesc:ga08d3bc0f9e750716e3fb73c1c3aafe6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates an activity-map based on the sub-space minimum-norm (MinNorm) method.  <br /></td></tr>
 <tr class="separator:ga08d3bc0f9e750716e3fb73c1c3aafe6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaacd63bc64a935f6cb4e12777985a6c8f" id="r_gaacd63bc64a935f6cb4e12777985a6c8f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gaacd63bc64a935f6cb4e12777985a6c8f">arraySHTmatrices</a> (<a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">ARRAY_SHT_OPTIONS</a> method, int order, float amp_thresh_dB, float_complex *H_array, float *grid_dirs_deg, int nBins, int nMics, int nGrid, float *w_grid, float_complex *H_sht)</td></tr>
+<tr class="memdesc:gaacd63bc64a935f6cb4e12777985a6c8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes matrices required to transform array signals into spherical harmonic signals (frequency-domain)  <br /></td></tr>
+<tr class="separator:gaacd63bc64a935f6cb4e12777985a6c8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gac52bf7dcee8f87d9e7c77cc88b30d7d7" id="r_gac52bf7dcee8f87d9e7c77cc88b30d7d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gac52bf7dcee8f87d9e7c77cc88b30d7d7">arraySHTfilters</a> (<a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">ARRAY_SHT_OPTIONS</a> method, int order, float amp_thresh_dB, float_complex *H_array, float *grid_dirs_deg, int nFFT, int nMics, int nGrid, float *w_grid, float *h_sht)</td></tr>
+<tr class="memdesc:gac52bf7dcee8f87d9e7c77cc88b30d7d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes filters required to transform array signals into spherical harmonic signals (time-domain)  <br /></td></tr>
+<tr class="separator:gac52bf7dcee8f87d9e7c77cc88b30d7d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga1055c73e4cbb73f210b4b0f0bbd6db0f" id="r_ga1055c73e4cbb73f210b4b0f0bbd6db0f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga1055c73e4cbb73f210b4b0f0bbd6db0f">arraySHTmatricesDiffEQ</a> (float_complex *H_sht, float_complex *DCM, float *freqVector, float alias_freq_hz, int nBins, int order, int nMics, float_complex *H_sht_eq)</td></tr>
+<tr class="memdesc:ga1055c73e4cbb73f210b4b0f0bbd6db0f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Diffuse-field equalisation of SHT matrices above the spatial aliasing frequency.  <br /></td></tr>
+<tr class="separator:ga1055c73e4cbb73f210b4b0f0bbd6db0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2c63d4e98e234ed80ba8eca7f939b653" id="r_ga2c63d4e98e234ed80ba8eca7f939b653"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga2c63d4e98e234ed80ba8eca7f939b653">cylModalCoeffs</a> (int order, double *kr, int nBands, <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b">ARRAY_CONSTRUCTION_TYPES</a> arrayType, double_complex *b_N)</td></tr>
 <tr class="memdesc:ga2c63d4e98e234ed80ba8eca7f939b653"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the modal coefficients for open/rigid cylindrical arrays.  <br /></td></tr>
 <tr class="separator:ga2c63d4e98e234ed80ba8eca7f939b653"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -284,6 +301,12 @@ Functions</h2></td></tr>
 <tr class="memitem:gadbfb43c7f737a1f030ebe471272e7c04" id="r_gadbfb43c7f737a1f030ebe471272e7c04"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gadbfb43c7f737a1f030ebe471272e7c04">sphDiffCohMtxTheory</a> (int order, float *sensor_dirs_rad, int N_sensors, <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b">ARRAY_CONSTRUCTION_TYPES</a> arrayType, double dirCoeff, double *kr, int nBands, double *M_diffcoh)</td></tr>
 <tr class="memdesc:gadbfb43c7f737a1f030ebe471272e7c04"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the theoretical diffuse coherence matrix for a spherical array.  <br /></td></tr>
 <tr class="separator:gadbfb43c7f737a1f030ebe471272e7c04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4d71e06b5d776f81fb81329e0e9931a4" id="r_ga4d71e06b5d776f81fb81329e0e9931a4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga4d71e06b5d776f81fb81329e0e9931a4">diffCohMtxMeas</a> (float_complex *H_array, int nBins, int N_sensors, int nGrid, float *w_grid, float_complex *M_diffcoh)</td></tr>
+<tr class="memdesc:ga4d71e06b5d776f81fb81329e0e9931a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the diffuse coherence matrices for an arbitrary array.  <br /></td></tr>
+<tr class="separator:ga4d71e06b5d776f81fb81329e0e9931a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga94b5c3aba5f25146603b992b6c50ddfa" id="r_ga94b5c3aba5f25146603b992b6c50ddfa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#ga94b5c3aba5f25146603b992b6c50ddfa">diffCohMtxMeasReal</a> (float *H_array, int N_sensors, int nGrid, float *w_grid, float *M_diffcoh)</td></tr>
+<tr class="memdesc:ga94b5c3aba5f25146603b992b6c50ddfa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the diffuse coherence matrices for an array that uses a broad-band real-valued basis.  <br /></td></tr>
+<tr class="separator:ga94b5c3aba5f25146603b992b6c50ddfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa5203b16cf67ef27b422078d20618863" id="r_gaa5203b16cf67ef27b422078d20618863"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___s_h.html#gaa5203b16cf67ef27b422078d20618863">simulateCylArray</a> (int order, double *kr, int nBands, float *sensor_dirs_rad, int N_sensors, float *src_dirs_deg, int N_srcs, <a class="el" href="group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b">ARRAY_CONSTRUCTION_TYPES</a> arrayType, float_complex *H_array)</td></tr>
 <tr class="memdesc:gaa5203b16cf67ef27b422078d20618863"><td class="mdescLeft">&#160;</td><td class="mdescRight">Simulates a cylindrical microphone array, returning the transfer functions for each (plane wave) source direction on the surface of the cylinder.  <br /></td></tr>
 <tr class="separator:gaa5203b16cf67ef27b422078d20618863"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -370,6 +393,33 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="gaf857bc214e1eaf0a18b4edf9a11c2191" name="gaf857bc214e1eaf0a18b4edf9a11c2191"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf857bc214e1eaf0a18b4edf9a11c2191">&#9670;&#160;</a></span>ARRAY_SHT_OPTIONS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">ARRAY_SHT_OPTIONS</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Microphone array to spherical harmonic domain conversion options. </p>
+<dl class="section see"><dt>See also</dt><dd>[1] Jin, C.T., Epain, N. and Parthy, A., 2014. Design, optimization and evaluation of a dual-radius spherical microphone array. IEEE/ACM Transactions on Audio, Speech, and Language Processing, 22(1), pp.193-204. </dd></dl>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ggaf857bc214e1eaf0a18b4edf9a11c2191a6288afc89b2e22c96a3b92b1570ce8e1" name="ggaf857bc214e1eaf0a18b4edf9a11c2191a6288afc89b2e22c96a3b92b1570ce8e1"></a>ARRAY_SHT_DEFAULT&#160;</td><td class="fielddoc"><p>The default SHT filters are <a class="el" href="group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191a816e847437ef7dd5649ded0e668c1afd" title="Regularised least-squares (LS)">ARRAY_SHT_REG_LS</a>. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaf857bc214e1eaf0a18b4edf9a11c2191a816e847437ef7dd5649ded0e668c1afd" name="ggaf857bc214e1eaf0a18b4edf9a11c2191a816e847437ef7dd5649ded0e668c1afd"></a>ARRAY_SHT_REG_LS&#160;</td><td class="fielddoc"><p>Regularised least-squares (LS) </p>
+</td></tr>
+<tr><td class="fieldname"><a id="ggaf857bc214e1eaf0a18b4edf9a11c2191aedef5e00365ef49241a9df6f4323469e" name="ggaf857bc214e1eaf0a18b4edf9a11c2191aedef5e00365ef49241a9df6f4323469e"></a>ARRAY_SHT_REG_LSHD&#160;</td><td class="fielddoc"><p>Regularised least-squares (LS) in the SH domain (similar as in [1]) </p>
+</td></tr>
+</table>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8h_source.html#l00098">98</a> of file <a class="el" href="saf__sh_8h_source.html">saf_sh.h</a>.</p>
+
+</div>
+</div>
 <a id="gab457e2a01928e0357f12b00cdb6035c2" name="gab457e2a01928e0357f12b00cdb6035c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gab457e2a01928e0357f12b00cdb6035c2">&#9670;&#160;</a></span>SECTOR_PATTERNS</h2>
 
@@ -398,6 +448,277 @@ Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="gac52bf7dcee8f87d9e7c77cc88b30d7d7" name="gac52bf7dcee8f87d9e7c77cc88b30d7d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gac52bf7dcee8f87d9e7c77cc88b30d7d7">&#9670;&#160;</a></span>arraySHTfilters()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void arraySHTfilters </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">ARRAY_SHT_OPTIONS</a>&#160;</td>
+          <td class="paramname"><em>method</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>amp_thresh_dB</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>H_array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>grid_dirs_deg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nFFT</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nMics</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nGrid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>w_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>h_sht</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes filters required to transform array signals into spherical harmonic signals (time-domain) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">method</td><td>See <a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191" title="Microphone array to spherical harmonic domain conversion options.">ARRAY_SHT_OPTIONS</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Transform order </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">amp_thresh_dB</td><td>Maximum gain amplification (in dB) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">H_array</td><td>Array TFs; FLAT: (nFFT/2+1) x nMics x nGrid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">grid_dirs_deg</td><td>Grid directions [azi ELEV] degrees; FLAT: nGrid x 2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nFFT</td><td>FFT size / filter length </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nMics</td><td>Number of microphones </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nGrid</td><td>Number of directions in the grid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">w_grid</td><td>Integration weights (set to NULL if not available) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">h_sht</td><td>The SHT filters; FLAT: nSH x nMics x nFFT </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02163">2163</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="gaacd63bc64a935f6cb4e12777985a6c8f" name="gaacd63bc64a935f6cb4e12777985a6c8f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaacd63bc64a935f6cb4e12777985a6c8f">&#9670;&#160;</a></span>arraySHTmatrices()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void arraySHTmatrices </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191">ARRAY_SHT_OPTIONS</a>&#160;</td>
+          <td class="paramname"><em>method</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>amp_thresh_dB</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>H_array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>grid_dirs_deg</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBins</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nMics</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nGrid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>w_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>H_sht</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes matrices required to transform array signals into spherical harmonic signals (frequency-domain) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">method</td><td>See <a class="el" href="group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191" title="Microphone array to spherical harmonic domain conversion options.">ARRAY_SHT_OPTIONS</a> </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Transform order </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">amp_thresh_dB</td><td>Maximum gain amplification (in dB) </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">H_array</td><td>Array TFs; FLAT: nBins x nMics x nGrid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">grid_dirs_deg</td><td>Grid directions [azi ELEV] degrees; FLAT: nGrid x 2 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBins</td><td>Number of frequencies </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nMics</td><td>Number of microphones </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nGrid</td><td>Number of directions in the grid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">w_grid</td><td>Integration weights (set to NULL if not available) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">H_sht</td><td>The SHT matrices; FLAT: nBins x nSH x nMics </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01986">1986</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="ga1055c73e4cbb73f210b4b0f0bbd6db0f" name="ga1055c73e4cbb73f210b4b0f0bbd6db0f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga1055c73e4cbb73f210b4b0f0bbd6db0f">&#9670;&#160;</a></span>arraySHTmatricesDiffEQ()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void arraySHTmatricesDiffEQ </td>
+          <td>(</td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>H_sht</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>DCM</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>freqVector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>alias_freq_hz</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBins</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nMics</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>H_sht_eq</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Diffuse-field equalisation of SHT matrices above the spatial aliasing frequency. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[out]</td><td class="paramname">H_sht</td><td>Input SHT matrices; FLAT: nBins x nSH x nMics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">DCM</td><td>Diffuse coh matrices; FLAT: nBins x nMics x nMics </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">freqVector</td><td>Frequency vector; nBins x 1 </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">alias_freq_hz</td><td>Spatial aliasing frequency, in Hz </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBins</td><td>Number of frequencies </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">order</td><td>Transform order </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nMics</td><td>Number of microphones in array </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">H_sht_eq</td><td>Equalised SHT matrices; FLAT: nBins x nSH x nMics </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02204">2204</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
 <a id="ga7ad01934dabcf7a8f8b08bcdd4439fe3" name="ga7ad01934dabcf7a8f8b08bcdd4439fe3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ga7ad01934dabcf7a8f8b08bcdd4439fe3">&#9670;&#160;</a></span>beamWeightsCardioid2Spherical()</h2>
 
@@ -434,7 +755,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00716">716</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00831">831</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -528,7 +849,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00733">733</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00848">848</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -569,7 +890,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Zotter, F., Pomberger, H. and Noisternig, M., 2012. Energy- preserving ambisonic decoding. Acta Acustica united with Acustica, 98(1), pp.37-47. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00751">751</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00866">866</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -638,7 +959,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Politis, A. and Pulkki, V., 2016. Acoustic intensity, energy-density and diffuseness estimation in a directionally-constrained region. arXiv preprint arXiv:1609.03409. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00799">799</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00914">914</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -707,7 +1028,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Politis, A. and Pulkki, V., 2016. Acoustic intensity, energy-density and diffuseness estimation in a directionally-constrained region. arXiv preprint arXiv:1609.03409. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00778">778</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00893">893</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -762,7 +1083,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Supported spherical harmonic order, or 0 if not found </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00959">959</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01074">1074</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -823,7 +1144,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00884">884</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00999">999</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -876,7 +1197,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00448">448</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00563">563</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -917,7 +1238,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00384">384</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00499">499</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -994,7 +1315,7 @@ Functions</h2></td></tr>
 <dd>
 [3] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D., Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of Spatially Localized Active-Intensity Vectors for Sound-Field Visualization. Journal of the Audio Engineering Society, 67(11), pp.840-854. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00663">663</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00778">778</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1072,7 +1393,7 @@ Functions</h2></td></tr>
 <dd>
 [3] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D., Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of Spatially Localized Active-Intensity Vectors for Sound-Field Visualization. Journal of the Audio Engineering Society, 67(11), pp.840-854. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00597">597</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00712">712</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1114,7 +1435,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Politis, A. and Pulkki, V., 2016. Acoustic intensity, energy-density and diffuseness estimation in a directionally-constrained region. arXiv preprint arXiv:1609.03409 </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00565">565</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00680">680</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1174,7 +1495,134 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01865">1865</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02275">2275</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="ga4d71e06b5d776f81fb81329e0e9931a4" name="ga4d71e06b5d776f81fb81329e0e9931a4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4d71e06b5d776f81fb81329e0e9931a4">&#9670;&#160;</a></span>diffCohMtxMeas()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void diffCohMtxMeas </td>
+          <td>(</td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>H_array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nBins</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>N_sensors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nGrid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>w_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float_complex *&#160;</td>
+          <td class="paramname"><em>M_diffcoh</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculates the diffuse coherence matrices for an arbitrary array. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">H_array</td><td>Array TFs; FLAT: nBins x N_sensors x nGrid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nBins</td><td>Number of frequencies </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">N_sensors</td><td>Number of sensors </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nGrid</td><td>Number of directions </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">w_grid</td><td>Integration weights (set to NULL if not available) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">M_diffcoh</td><td>Diffuse coherence matrix per frequency; FLAT: nBands x N_sensors x N_sensors </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02655">2655</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
+<a id="ga94b5c3aba5f25146603b992b6c50ddfa" name="ga94b5c3aba5f25146603b992b6c50ddfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga94b5c3aba5f25146603b992b6c50ddfa">&#9670;&#160;</a></span>diffCohMtxMeasReal()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void diffCohMtxMeasReal </td>
+          <td>(</td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>H_array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>N_sensors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nGrid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>w_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>M_diffcoh</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Calculates the diffuse coherence matrices for an array that uses a broad-band real-valued basis. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">H_array</td><td>Array TFs; FLAT: N_sensors x nGrid </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">N_sensors</td><td>Number of sensors </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nGrid</td><td>Number of directions </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">w_grid</td><td>Integration weights (set to NULL if not available) </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">M_diffcoh</td><td>Diffuse coherence matrix; N_sensors x N_sensors </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02692">2692</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1266,7 +1714,7 @@ Functions</h2></td></tr>
 <dd>
 [2] Politis, A., Gamper, H. (2017). "Comparing Modelled And Measurement- Based Spherical Harmonic Encoding Filters For Spherical Microphone Arrays. In IEEE Workshop on Applications of Signal Processing to Audio and Acoustics (WASPAA). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02375">2375</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02855">2855</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1342,7 +1790,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Delikaris-Manias, S., Vilkamo, J., &amp; Pulkki, V. (2016). Signal- dependent spatial filtering based on weighted-orthogonal beamformers in the spherical harmonic domain. IEEE/ACM Transactions on Audio, Speech and Language Processing (TASLP), 24(9), 1507-1519. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01652">1652</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01773">1773</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1416,7 +1864,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01804">1804</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01925">1925</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1490,7 +1938,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01756">1756</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01877">1877</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1564,7 +2012,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01586">1586</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01707">1707</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1625,7 +2073,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01544">1544</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01665">1665</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1682,7 +2130,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00333">333</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00448">448</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1743,6 +2191,54 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="ga01bd04a2c511cf4f81bfdb408e92ab73" name="ga01bd04a2c511cf4f81bfdb408e92ab73"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga01bd04a2c511cf4f81bfdb408e92ab73">&#9670;&#160;</a></span>getSHreal_part()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void getSHreal_part </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order_start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order_end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>dirs_rad</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nDirs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float *&#160;</td>
+          <td class="paramname"><em>Y</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00331">331</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+
+</div>
+</div>
 <a id="gabf4d86ed458c9fcdb13065c7e2f4c436" name="gabf4d86ed458c9fcdb13065c7e2f4c436"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#gabf4d86ed458c9fcdb13065c7e2f4c436">&#9670;&#160;</a></span>getSHreal_recur()</h2>
 
@@ -1797,7 +2293,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Rafaely, B. (2015). Fundamentals of spherical array processing (Vol. 8). Berlin: Springer. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00255">255</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00253">253</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1848,7 +2344,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Ivanic, J., Ruedenberg, K. (1998). Rotation Matrices for Real Spherical Harmonics. Direct Determination by Recursion Page: Additions and Corrections. Journal of Physical Chemistry A, 102(45), 9099&ndash;9100. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00479">479</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00594">594</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1889,7 +2385,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00416">416</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00531">531</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -1949,7 +2445,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00859">859</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00974">974</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2009,7 +2505,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00839">839</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l00954">954</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2097,7 +2593,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02245">2245</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02725">2725</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2199,7 +2695,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02297">2297</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02777">2777</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2246,7 +2742,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Spatial aliasing limit estimate, in Hz </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01930">1930</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02340">2340</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2329,7 +2825,7 @@ Functions</h2></td></tr>
 </dl>
 <dl class="section see"><dt>See also</dt><dd>[1] Politis, A., Vilkamo, J., &amp; Pulkki, V. (2015). Sector-based parametric sound field reproduction in the spherical harmonic domain. IEEE Journal of Selected Topics in Signal Processing, 9(5), 852-866. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01940">1940</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02350">2350</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2410,7 +2906,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02168">2168</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02578">2578</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2454,7 +2950,7 @@ Functions</h2></td></tr>
 <dl class="section see"><dt>See also</dt><dd>[1] B. Jo and J.-W. Choi, "Parametric direction-of-arrival estimation
          with three recurrence relations of spherical harmonics," J. Acoust. Soc. Amer.,vol. 145, no. 1, pp. 480&ndash;488, Jan. 2019. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01308">1308</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01429">1429</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2482,7 +2978,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01383">1383</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01504">1504</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2537,7 +3033,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01433">1433</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01554">1554</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2604,7 +3100,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01968">1968</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02378">2378</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2665,7 +3161,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01243">1243</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01364">1364</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2720,7 +3216,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01172">1172</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01293">1293</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2748,7 +3244,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01220">1220</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01341">1341</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2808,7 +3304,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01109">1109</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01230">1230</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2861,7 +3357,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01042">1042</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01163">1163</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2889,7 +3385,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01088">1088</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l01209">1209</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -2957,7 +3453,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02101">2101</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02511">2511</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -3018,7 +3514,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02052">2052</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__sh_8c_source.html#l02462">2462</a> of file <a class="el" href="saf__sh_8c_source.html">saf_sh.c</a>.</p>
 
 </div>
 </div>
@@ -3153,7 +3649,7 @@ Functions</h2></td></tr>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Nov 21 2023 13:24:09 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
+    <li class="footer">Generated on Tue Nov 21 2023 13:40:57 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8 </li>
   </ul>
 </div>
 <script type="text/javascript">

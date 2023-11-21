@@ -11,6 +11,7 @@ var saf__utility__sort_8c =
     [ "cmp_desc_int", "saf__utility__sort_8c.html#a7cf28edc8cf5222e7a2408b7aa27f1c2", null ],
     [ "cmplxPairUp", "group___utilities.html#ga4be4a4a82a31cde4fde08490baedbed0", null ],
     [ "findClosestGridPoints", "group___utilities.html#gace5bd3557985cb87e36811aed231d829", null ],
+    [ "findClosestGridPointsCartesian", "group___utilities.html#gac6dfeac89203bb900d0d54469ec0b51a", null ],
     [ "sortc", "group___utilities.html#gaa4863a8d0f95017d9a02afcc56b14368", null ],
     [ "sortd", "group___utilities.html#ga641bdcb659440ad0ce1384e9bc423742", null ],
     [ "sortf", "group___utilities.html#ga289eb2f7e45d17a787d0f193641c6b50", null ],

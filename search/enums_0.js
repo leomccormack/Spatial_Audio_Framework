@@ -11,5 +11,6 @@ var searchData=
   ['array2sh_5fmicrophone_5farray_5fpresets_8',['ARRAY2SH_MICROPHONE_ARRAY_PRESETS',['../array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94',1,'array2sh.h']]],
   ['array2sh_5fweight_5ftypes_9',['ARRAY2SH_WEIGHT_TYPES',['../array2sh_8h.html#a8603b68eaa432f98f556a3592b8b15ff',1,'array2sh.h']]],
   ['array_5fconstruction_5ftypes_10',['ARRAY_CONSTRUCTION_TYPES',['../group___s_h.html#gaa2eb5bb4fefe6565eddd3f6ca862ba6b',1,'saf_sh.h']]],
-  ['aspect_5fratio_5foptions_11',['ASPECT_RATIO_OPTIONS',['../__common_8h.html#afe9cbbb0149bd11126f2ba070187e024',1,'_common.h']]]
+  ['array_5fsht_5foptions_11',['ARRAY_SHT_OPTIONS',['../group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191',1,'saf_sh.h']]],
+  ['aspect_5fratio_5foptions_12',['ASPECT_RATIO_OPTIONS',['../__common_8h.html#afe9cbbb0149bd11126f2ba070187e024',1,'_common.h']]]
 ];

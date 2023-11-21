@@ -8,11 +8,19 @@ var saf__sh_8h =
       [ "ARRAY_CONSTRUCTION_RIGID", "group___s_h.html#ggaa2eb5bb4fefe6565eddd3f6ca862ba6ba5b24de1a578a08282bebacdf03cefa7d", null ],
       [ "ARRAY_CONSTRUCTION_RIGID_DIRECTIONAL", "group___s_h.html#ggaa2eb5bb4fefe6565eddd3f6ca862ba6ba046ccc1a8e502c8c952bb745def379b0", null ]
     ] ],
+    [ "ARRAY_SHT_OPTIONS", "group___s_h.html#gaf857bc214e1eaf0a18b4edf9a11c2191", [
+      [ "ARRAY_SHT_DEFAULT", "group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191a6288afc89b2e22c96a3b92b1570ce8e1", null ],
+      [ "ARRAY_SHT_REG_LS", "group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191a816e847437ef7dd5649ded0e668c1afd", null ],
+      [ "ARRAY_SHT_REG_LSHD", "group___s_h.html#ggaf857bc214e1eaf0a18b4edf9a11c2191aedef5e00365ef49241a9df6f4323469e", null ]
+    ] ],
     [ "SECTOR_PATTERNS", "group___s_h.html#gab457e2a01928e0357f12b00cdb6035c2", [
       [ "SECTOR_PATTERN_PWD", "group___s_h.html#ggab457e2a01928e0357f12b00cdb6035c2a0ee77a29b6b553c6965108d240f99ff7", null ],
       [ "SECTOR_PATTERN_MAXRE", "group___s_h.html#ggab457e2a01928e0357f12b00cdb6035c2a9024988fa2c043c931936b0e4fae3055", null ],
       [ "SECTOR_PATTERN_CARDIOID", "group___s_h.html#ggab457e2a01928e0357f12b00cdb6035c2aa419a9e82484c4077a49ab1a4bdbe30f", null ]
     ] ],
+    [ "arraySHTfilters", "group___s_h.html#gac52bf7dcee8f87d9e7c77cc88b30d7d7", null ],
+    [ "arraySHTmatrices", "group___s_h.html#gaacd63bc64a935f6cb4e12777985a6c8f", null ],
+    [ "arraySHTmatricesDiffEQ", "group___s_h.html#ga1055c73e4cbb73f210b4b0f0bbd6db0f", null ],
     [ "beamWeightsCardioid2Spherical", "group___s_h.html#ga7ad01934dabcf7a8f8b08bcdd4439fe3", null ],
     [ "beamWeightsDolphChebyshev2Spherical", "group___s_h.html#ga45f95b52193c9d94633463106c86cb63", null ],
     [ "beamWeightsHypercardioid2Spherical", "group___s_h.html#ga9ce9116273f897fe0ecf9b46d580be48", null ],
@@ -27,6 +35,8 @@ var saf__sh_8h =
     [ "computeSectorCoeffsEP", "group___s_h.html#ga383baca216c2fa72fe1a7c5804133203", null ],
     [ "computeVelCoeffsMtx", "group___s_h.html#gacb1a65a8f85a1505d0a96212775b4ae0", null ],
     [ "cylModalCoeffs", "group___s_h.html#ga2c63d4e98e234ed80ba8eca7f939b653", null ],
+    [ "diffCohMtxMeas", "group___s_h.html#ga4d71e06b5d776f81fb81329e0e9931a4", null ],
+    [ "diffCohMtxMeasReal", "group___s_h.html#ga94b5c3aba5f25146603b992b6c50ddfa", null ],
     [ "evaluateSHTfilters", "group___s_h.html#ga2e7f439e15ed96ccf49617ba763ca4b6", null ],
     [ "generateCroPaCLCMVmap", "group___s_h.html#gafa06c99cc4846f8c2148a93db9086e54", null ],
     [ "generateMinNormMap", "group___s_h.html#ga08d3bc0f9e750716e3fb73c1c3aafe6e", null ],

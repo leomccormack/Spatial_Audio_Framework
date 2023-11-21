@@ -1,5 +1,7 @@
 var NAVTREEINDEX13 =
 {
+"structpitch__shifter__data.html#aead8b3fdedbb9d20ecb99d028e99c16d":[0,0,53,7],
+"structpitch__shifter__data.html#afe992592ec7677b9b210145f96593544":[0,0,53,5],
 "structpitch__shifter__data.html#afea10e0fdc390863df987420db153996":[0,0,53,2],
 "structpitch__shifter__data.html#aff3c4612c83aadc3241ffad4599d0163":[0,0,53,0],
 "structpowermap__codec_pars.html":[0,0,54],
@@ -247,7 +249,5 @@ var NAVTREEINDEX13 =
 "test____examples_8c.html":[1,0,3,1,2],
 "test____examples_8c.html#a6115d88bde38a657d83ce065007e93a0":[1,0,3,1,2,3],
 "test____examples_8c.html#a616c7f0183703515b843a14202e629ad":[1,0,3,1,2,4],
-"test____examples_8c.html#a91ddc76de989bca60ca1baf119332152":[1,0,3,1,2,2],
-"test____examples_8c.html#a94e98c02477f75870c18dde3623c51d8":[1,0,3,1,2,0],
-"test____examples_8c.html#ad052f88569abba36f933b2de353494fe":[1,0,3,1,2,5]
+"test____examples_8c.html#a91ddc76de989bca60ca1baf119332152":[1,0,3,1,2,2]
 };
