@@ -450,12 +450,12 @@ static int indirectblockRead(struct READER *reader,
 
   /*	 The number of rows of blocks, nrows, in an indirect block of size
    * iblock_size is given by the following expression: */
-  nrows = (log2i(iblock_size) - log2i(fractalheap->starting_block_size)) + 1;
+  nrows = (log2i((int)iblock_size) - log2i((int)fractalheap->starting_block_size)) + 1;
 
   /* The maximum number of rows of direct blocks, max_dblock_rows, in any
    * indirect block of a fractal heap is given by the following expression: */
-  max_dblock_rows = (log2i(fractalheap->maximum_direct_block_size) -
-                     log2i(fractalheap->starting_block_size)) +
+  max_dblock_rows = (log2i((int)fractalheap->maximum_direct_block_size) -
+                     log2i((int)fractalheap->starting_block_size)) +
                     2;
 
   /* Using the computed values for nrows and max_dblock_rows, along with the
@@ -475,7 +475,7 @@ static int indirectblockRead(struct READER *reader,
     child_direct_block = readValue(reader, reader->superblock.size_of_offsets);
     if (fractalheap->encoded_length > 0) {
       size_filtered = readValue(reader, reader->superblock.size_of_lengths);
-      filter_mask = readValue(reader, 4);
+      filter_mask = (uint32_t)readValue(reader, 4);
     }
     mylog(">> %d %" PRIX64 " %d\n", k, child_direct_block, size);
     if (validAddress(reader, child_direct_block)) {

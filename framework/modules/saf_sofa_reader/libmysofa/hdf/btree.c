@@ -257,9 +257,9 @@ int treeRead(struct READER *reader, struct DATAOBJECT *data) {
     elements *= data->datalayout_chunk[j];
   dy = data->datalayout_chunk[1];
   dz = data->datalayout_chunk[2];
-  sx = data->ds.dimension_size[0];
-  sy = data->ds.dimension_size[1];
-  sz = data->ds.dimension_size[2];
+  sx = (int)data->ds.dimension_size[0];
+  sy = (int)data->ds.dimension_size[1];
+  sz = (int)data->ds.dimension_size[2];
   dzy = dz * dy;
   szy = sz * sy;
   size = data->datalayout_chunk[data->ds.dimensionality];
@@ -327,7 +327,7 @@ int treeRead(struct READER *reader, struct DATAOBJECT *data) {
       case 1:
         for (i = 0; i < olen; i++) {
           b = i / elements;
-          x = i % elements + start[0];
+          x = i % elements + (int)start[0];
           if (x < sx) {
 
             j = x * size + b;
@@ -341,8 +341,8 @@ int treeRead(struct READER *reader, struct DATAOBJECT *data) {
         for (i = 0; i < olen; i++) {
           b = i / elements;
           x = i % elements;
-          y = x % dy + start[1];
-          x = x / dy + start[0];
+          y = x % dy + (int)start[1];
+          x = x / dy + (int)start[0];
           if (y < sy && x < sx) {
             j = ((x * sy + y) * size) + b;
             if (j >= 0 && j < data->data_len) {
@@ -355,9 +355,9 @@ int treeRead(struct READER *reader, struct DATAOBJECT *data) {
         for (i = 0; i < olen; i++) {
           b = i / elements;
           x = i % elements;
-          z = x % dz + start[2];
-          y = (x / dz) % dy + start[1];
-          x = (x / dzy) + start[0];
+          z = x % dz + (int)start[2];
+          y = (x / dz) % dy + (int)start[1];
+          x = (x / dzy) + (int)start[0];
           if (z < sz && y < sy && x < sx) {
             j = (x * szy + y * sz + z) * size + b;
             if (j >= 0 && j < data->data_len) {

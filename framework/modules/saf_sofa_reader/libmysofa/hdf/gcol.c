@@ -66,7 +66,7 @@ static int readGCOL(struct READER *reader) {
       free(gcol);
       return MYSOFA_UNSUPPORTED_FORMAT;
     }
-    gcol->value = readValue(reader, gcol->object_size);
+    gcol->value = readValue(reader, (int)gcol->object_size);
     gcol->address = address;
     mylog(" GCOL object %d size %" PRIu64 " value %08" PRIX64 "\n",
           gcol->heap_object_index, gcol->object_size, gcol->value);

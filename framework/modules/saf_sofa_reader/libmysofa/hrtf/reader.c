@@ -25,7 +25,7 @@ int validAddress(struct READER *reader, uint64_t address) {
 
 int mysofa_read(struct READER *reader, void *buf, size_t n) {
   if (reader->fhd)
-    return fread(buf, 1, n, reader->fhd);
+    return (int)fread(buf, 1, n, reader->fhd);
   else {
     if (reader->memory_pos + n > reader->memory_len) {
       n = reader->memory_len - reader->memory_pos;
@@ -34,7 +34,7 @@ int mysofa_read(struct READER *reader, void *buf, size_t n) {
     memcpy(buf, reader->memory + reader->memory_pos, n);
     reader->memory_pos += n;
 
-    return n;
+    return (int)n;
   }
 }
 

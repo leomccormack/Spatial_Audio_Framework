@@ -34,7 +34,7 @@ extern "C" {
 struct kdtree;
 
 /* create a kd-tree for 3-dimensional data */
-struct kdtree *kd_create();
+struct kdtree *kd_create(void);
 
 /* free the struct kdtree */
 void kd_free(struct kdtree *tree);

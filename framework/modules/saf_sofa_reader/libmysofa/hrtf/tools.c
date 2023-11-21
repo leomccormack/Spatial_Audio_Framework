@@ -125,21 +125,21 @@ void nsearch(const void *key, const char *base, size_t num, size_t size,
     else if (result > 0)
       start = mid + 1;
     else {
-      *lower = mid;
-      *higher = mid;
+      *lower = (int)mid;
+      *higher = (int)mid;
       return;
     }
   }
 
   if (start == num) {
-    *lower = start - 1;
+    *lower = (int)start - 1;
     *higher = -1;
   } else if (start == 0) {
     *lower = -1;
     *higher = 0;
   } else {
-    *lower = start - 1;
-    *higher = start;
+    *lower = (int)start - 1;
+    *higher = (int)start;
   }
 }
 

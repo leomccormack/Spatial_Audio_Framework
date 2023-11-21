@@ -24,7 +24,7 @@ int gunzip(int inlen, char *in, int *outlen, char *out) {
     return err;
 
   err = inflate(&stream, Z_SYNC_FLUSH);
-  *outlen = stream.total_out;
+  *outlen = (int)stream.total_out;
   inflateEnd(&stream);
   if (err && err != Z_STREAM_END) {
     mylog(" gunzip error %d %s\n", err, stream.msg);

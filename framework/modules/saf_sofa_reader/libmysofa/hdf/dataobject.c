@@ -317,7 +317,7 @@ static int readOHDRHeaderMessageDatatype(struct READER *reader,
         if (mysofa_seek(reader, (7 - j) & 7, SEEK_CUR))
           return MYSOFA_READ_ERROR; // LCOV_EXCL_LINE
 
-        c = readValue(reader, 4);
+        c = (int)readValue(reader, 4);
         int dimension = mysofa_getc(reader);
         if (dimension != 0) {
           mylog("COMPOUND v1 with dimension not supported");
@@ -506,7 +506,7 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
       }
       if (data_size > 0x10000000)
         return MYSOFA_INVALID_FORMAT;
-      data->data_len = data_size;
+      data->data_len = (int)data_size;
       data->data = calloc(1, data_size);
       if (!data->data)
         return MYSOFA_NO_MEMORY; // LCOV_EXCL_LINE
@@ -532,7 +532,7 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
     data_address = readValue(reader, reader->superblock.size_of_offsets);
     mylog(" CHUNK %" PRIX64 "\n", data_address);
     for (i = 0; i < dimensionality; i++) {
-      data->datalayout_chunk[i] = readValue(reader, 4);
+      data->datalayout_chunk[i] = (int)readValue(reader, 4);
       mylog(" %d\n", data->datalayout_chunk[i]);
     }
     /* TODO last entry? error in spec: ?*/
@@ -706,7 +706,7 @@ static int readOHDRHeaderMessageFilterPipelineV2(struct READER *reader,
       return MYSOFA_UNSUPPORTED_FORMAT; // LCOV_EXCL_LINE
     /* no name here */
     for (j = 0; j < number_client_data_values; j++) {
-      client_data = readValue(reader, 4);
+      client_data = (uint32_t)readValue(reader, 4);
     }
   }
 
@@ -802,7 +802,7 @@ int readDataVar(struct READER *reader, struct DATAOBJECT *data,
     readValue(reader, 4); /* TODO unclear reference */
     reference = readValue(reader, dt->size - 4);
     mylog(" REFERENCE size %d %" PRIX64 "\n", dt->size, reference);
-    if (!!(err = gcolRead(reader, gcol, reference, &dataobject))) {
+    if (!!(err = (int)gcolRead(reader, gcol, (int)reference, &dataobject))) {
       return MYSOFA_OK; /* ignore error. TODO: why?
        return err; */
     }
