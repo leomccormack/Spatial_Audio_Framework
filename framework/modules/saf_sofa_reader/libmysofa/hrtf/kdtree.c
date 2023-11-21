@@ -26,7 +26,6 @@
  */
 /* single nearest neighbor search written by Tamas Nepusz <tamas@cs.rhul.ac.uk>
  */
-
 #include "kdtree.h"
 
 #include <math.h>

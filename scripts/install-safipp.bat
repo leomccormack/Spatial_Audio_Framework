@@ -11,7 +11,7 @@ ECHO ***************************************************************************
 ECHO.
 ECHO This batch script will build the required saf_ipp_custom library files
 ECHO and copy them into:
-ECHO   - "Spatial_Audio_Framework/dependencies/Win64/lib/saf_mkl_custom.lib" 
+ECHO   - "Spatial_Audio_Framework/dependencies/Win64/lib/saf_ipp_custom.lib" 
 ECHO   - "C:/Windows/System32/saf_ipp_custom.dll".  
 ECHO.
 ECHO NOTE: you will need to run this script with Administrator privileges!
