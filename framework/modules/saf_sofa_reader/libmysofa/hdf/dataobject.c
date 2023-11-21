@@ -261,7 +261,7 @@ static int readOHDRHeaderMessageDatatype(struct READER *reader,
     mylog("    COMPOUND %d %02X\n", dt->size, dt->class_bit_field);
     switch (dt->class_and_version >> 4) {
     case 3:
-      for (i = 0; i < (dt->class_bit_field & 0xffff); i++) {
+      for (i = 0; i < (int)(dt->class_bit_field & 0xffff); i++) {
         int maxsize = 0x1000;
         buffer = malloc(maxsize);
         if (!buffer)
@@ -301,7 +301,7 @@ static int readOHDRHeaderMessageDatatype(struct READER *reader,
       break;
 
     case 1:
-      for (i = 0; i < (dt->class_bit_field & 0xffff); i++) {
+      for (i = 0; i < (int)(dt->class_bit_field & 0xffff); i++) {
         char name[256];
         int res;
         for (j = 0;; j++) {
@@ -512,7 +512,7 @@ static int readOHDRHeaderMessageDataLayout(struct READER *reader,
         return MYSOFA_NO_MEMORY; // LCOV_EXCL_LINE
 
       err = mysofa_read(reader, data->data, data_size);
-      if (err != data_size)
+      if (err != (int)data_size)
         return MYSOFA_READ_ERROR; // LCOV_EXCL_LINE
       if (mysofa_seek(reader, store, SEEK_SET) < 0)
         return errno; // LCOV_EXCL_LINE
@@ -753,6 +753,8 @@ int readDataVar(struct READER *reader, struct DATAOBJECT *data,
   int err;
   struct DATAOBJECT *referenceData;
 
+  UNUSED(*ds);
+
   if (dt->list) {
     if (dt->list - dt->size == 8) {
       readValue(reader, 4); /* TODO unknown? */
@@ -778,7 +780,7 @@ int readDataVar(struct READER *reader, struct DATAOBJECT *data,
     if (buffer == NULL) {
       return MYSOFA_NO_MEMORY; // LCOV_EXCL_LINE
     }
-    if (mysofa_read(reader, buffer, dt->size) != dt->size) {
+    if (mysofa_read(reader, buffer, dt->size) != (int)dt->size) {
       free(buffer);             // LCOV_EXCL_LINE
       return MYSOFA_READ_ERROR; // LCOV_EXCL_LINE
     }
@@ -843,10 +845,10 @@ int readDataDim(struct READER *reader, struct DATAOBJECT *da,
                 struct DATATYPE *dt, struct DATASPACE *ds, int dim) {
   int i, err;
 
-  if (dim >= sizeof(ds->dimension_size) / sizeof(ds->dimension_size[0]))
+  if (dim >= (int)sizeof(ds->dimension_size) / (int)sizeof(ds->dimension_size[0]))
     return MYSOFA_UNSUPPORTED_FORMAT; // LCOV_EXCL_LINE
 
-  for (i = 0; i < ds->dimension_size[dim]; i++) {
+  for (i = 0; i < (int)ds->dimension_size[dim]; i++) {
     if (dim + 1 < ds->dimensionality) {
       if (!!(err = readDataDim(reader, da, dt, ds, dim + 1))) {
         return err; // LCOV_EXCL_LINE
@@ -1077,7 +1079,7 @@ static int readOHDRmessages(struct READER *reader,
   long end;
 
   while (mysofa_tell(reader) <
-         end_of_messages - 4) { /* final gap may has a size of up to 3 */
+         (long)end_of_messages - 4) { /* final gap may has a size of up to 3 */
     uint8_t header_message_type = (uint8_t)mysofa_getc(reader);
     uint16_t header_message_size = (uint16_t)readValue(reader, 2);
     uint8_t header_message_flags = (uint8_t)mysofa_getc(reader);

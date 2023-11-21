@@ -75,6 +75,8 @@ static int readBTLF(struct READER *reader, struct BTREE *btree,
 
   char buf[5];
 
+  UNUSED(*btree);
+
   UNUSED(heap_id);
   UNUSED(hash_of_name);
   UNUSED(creation_order);
@@ -307,7 +309,7 @@ int treeRead(struct READER *reader, struct DATAOBJECT *data) {
         free(output);            // LCOV_EXCL_LINE
         return MYSOFA_NO_MEMORY; // LCOV_EXCL_LINE
       }
-      if (mysofa_read(reader, input, size_of_chunk) != size_of_chunk) {
+      if (mysofa_read(reader, input, size_of_chunk) != (int)size_of_chunk) {
         free(output);                 // LCOV_EXCL_LINE
         free(input);                  // LCOV_EXCL_LINE
         return MYSOFA_INVALID_FORMAT; // LCOV_EXCL_LINE

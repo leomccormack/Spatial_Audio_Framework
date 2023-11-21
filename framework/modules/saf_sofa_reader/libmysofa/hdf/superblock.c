@@ -46,7 +46,7 @@ int superblockRead2or3(struct READER *reader, struct SUPERBLOCK *superblock) {
   if (mysofa_seek(reader, 0L, SEEK_END))
     return errno;
 
-  if (superblock->end_of_file_address != mysofa_tell(reader)) {
+  if (superblock->end_of_file_address != (uint64_t)mysofa_tell(reader)) {
     mylog("file size mismatch\n");
     return MYSOFA_INVALID_FORMAT;
   }
@@ -165,7 +165,7 @@ int superblockRead0or1(struct READER *reader, struct SUPERBLOCK *superblock,
   if (mysofa_seek(reader, 0L, SEEK_END))
     return errno;
 
-  if (superblock->end_of_file_address != mysofa_tell(reader)) {
+  if (superblock->end_of_file_address != (uint64_t)mysofa_tell(reader)) {
     mylog("file size mismatch\n");
   }
   /* end of superblock */

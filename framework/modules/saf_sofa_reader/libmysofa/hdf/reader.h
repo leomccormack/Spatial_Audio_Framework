@@ -170,9 +170,9 @@ void gcolFree(struct GCOL *gcol);
 int treeRead(struct READER *reader, struct DATAOBJECT *data);
 
 struct READER {
-  FILE *fhd; //< file handler if file is used
+  FILE *fhd; // file handler if file is used
 
-  const char *memory; //< memory buffer if memory shall be used
+  const char *memory; // memory buffer if memory shall be used
   uint64_t memory_pos;
   uint64_t memory_len;
 

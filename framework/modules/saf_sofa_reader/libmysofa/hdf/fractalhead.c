@@ -129,7 +129,7 @@ static int directblockRead(struct READER *reader, struct DATAOBJECT *dataobject,
 
       if (!(name = malloc(length + 1)))
         return MYSOFA_NO_MEMORY; // LCOV_EXCL_LINE
-      if (mysofa_read(reader, name, length) != length) {
+      if (mysofa_read(reader, name, length) != (int)length) {
         free(name);               // LCOV_EXCL_LINE
         return MYSOFA_READ_ERROR; // LCOV_EXCL_LINE
       }

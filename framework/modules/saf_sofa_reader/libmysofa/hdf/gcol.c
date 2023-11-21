@@ -46,7 +46,7 @@ static int readGCOL(struct READER *reader) {
   }
   end += collection_size - 8;
 
-  while (mysofa_tell(reader) <= end - 8 - reader->superblock.size_of_lengths) {
+  while (mysofa_tell(reader) <= (long)end - 8 - reader->superblock.size_of_lengths) {
 
     gcol = malloc(sizeof(*gcol));
     if (!gcol)
