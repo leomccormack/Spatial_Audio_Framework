@@ -41,7 +41,7 @@ extern "C" {
 
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
 
-#include "libmysofa/hrtf/mysofa.h"
+#include "libmysofa/mysofa.h"
 
 /** SOFA file reader options */
 typedef enum{
