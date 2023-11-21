@@ -200,16 +200,12 @@
 typedef UNITY_FLOAT_TYPE UNITY_FLOAT;
 
 /* isinf & isnan macros should be provided by math.h */
-#ifndef isinf
 /* The value of Inf - Inf is NaN */
-#define isinf(n) (isnan((n) - (n)) && !isnan(n))
-#endif
+#define UNITY_ISINF(n) (UNITY_ISNAN((n) - (n)) && !UNITY_ISNAN(n))
 
-#ifndef isnan
 /* NaN is the only floating point value that does NOT equal itself.
  * Therefore if n != n, then it is NaN. */
-#define isnan(n) ((n != n) ? 1 : 0)
-#endif
+#define UNITY_ISNAN(n) ((n != n) ? 1 : 0)
 
 #endif
 
