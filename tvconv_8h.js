@@ -1,5 +1,14 @@
 var tvconv_8h =
 [
+    [ "SAF_TVCONV_ERROR_CODES", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5b", [
+      [ "SAF_TVCONV_NOT_INIT", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5bab612eba6b12b8391685f7766c20cd5d1", null ],
+      [ "SAF_TVCONV_SOFA_LOADING", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5bac7a3bb88d91bdc1edca496350d6738d7", null ],
+      [ "SAF_TVCONV_SOFA_OK", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5ba88aa6f36fbde5895dbd68bc1b10353b5", null ],
+      [ "SAF_TVCONV_SOFA_ERROR_INVALID_FILE_OR_FILE_PATH", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5ba0b9bb3a2c42024dfcd6a355154e9936b", null ],
+      [ "SAF_TVCONV_SOFA_ERROR_DIMENSIONS_UNEXPECTED", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5ba57a7f7937ff16ade508086633bf6b8fe", null ],
+      [ "SAF_TVCONV_SOFA_ERROR_FORMAT_UNEXPECTED", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5ba24e85f5f989af67ded05a07934099f2c", null ],
+      [ "SAF_TVCONV_SOFA_ERROR_NETCDF_IN_USE", "tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5ba225ebc6aa74072f082c910fda2c1b5ba", null ]
+    ] ],
     [ "tvconv_checkReInit", "tvconv_8h.html#aea075c3f1f3aefd660ce061c1b6dbf23", null ],
     [ "tvconv_create", "tvconv_8h.html#a71e1d787bf90a0de54bf5937d2393146", null ],
     [ "tvconv_destroy", "tvconv_8h.html#aea4f09722baf04a4a6f5b6ff799aa13a", null ],
@@ -18,6 +27,7 @@ var tvconv_8h =
     [ "tvconv_getNumListenerPositions", "tvconv_8h.html#a9d51c8e30098be730474b3e5761e4bb0", null ],
     [ "tvconv_getNumOutputChannels", "tvconv_8h.html#ae621903787b2cf398da2e0b37d41ea70", null ],
     [ "tvconv_getProcessingDelay", "tvconv_8h.html#a352a73be517044643e2764fb42536069", null ],
+    [ "tvconv_getSofaErrorState", "tvconv_8h.html#ab2a1bc45fdae8e4b390e18294df87388", null ],
     [ "tvconv_getSofaFilePath", "tvconv_8h.html#a6f943d6da137a99d19c8b7939ebe253f", null ],
     [ "tvconv_getSourcePosition", "tvconv_8h.html#a72e569d36e2c8326f50db140a05b097e", null ],
     [ "tvconv_getTargetPosition", "tvconv_8h.html#abe144d4a194613941868502135ab7803", null ],

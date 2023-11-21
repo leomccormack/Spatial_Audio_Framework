@@ -17,6 +17,7 @@ var tvconv_8c =
     [ "tvconv_getNumListenerPositions", "tvconv_8c.html#a9d51c8e30098be730474b3e5761e4bb0", null ],
     [ "tvconv_getNumOutputChannels", "tvconv_8c.html#ae621903787b2cf398da2e0b37d41ea70", null ],
     [ "tvconv_getProcessingDelay", "tvconv_8c.html#a352a73be517044643e2764fb42536069", null ],
+    [ "tvconv_getSofaErrorState", "tvconv_8c.html#ab2a1bc45fdae8e4b390e18294df87388", null ],
     [ "tvconv_getSofaFilePath", "tvconv_8c.html#a6f943d6da137a99d19c8b7939ebe253f", null ],
     [ "tvconv_getSourcePosition", "tvconv_8c.html#a72e569d36e2c8326f50db140a05b097e", null ],
     [ "tvconv_getTargetPosition", "tvconv_8c.html#abe144d4a194613941868502135ab7803", null ],
