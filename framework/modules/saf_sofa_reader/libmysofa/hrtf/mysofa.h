@@ -1,50 +1,20 @@
 /*
- Copyright (c) 2016, Symonics GmbH, Christian Hoene
- All rights reserved.
 
- Redistribution and use in source and binary forms, with or without
- modification, are permitted provided that the following conditions are
- met:
+ Copyright 2016 Christian Hoene, Symonics GmbH
 
-     (1) Redistributions of source code must retain the above copyright
-     notice, this list of conditions and the following disclaimer.
-
-     (2) Redistributions in binary form must reproduce the above copyright
-     notice, this list of conditions and the following disclaimer in
-     the documentation and/or other materials provided with the
-     distribution.
-
-     (3)The name of the author may not be used to
-     endorse or promote products derived from this software without
-     specific prior written permission.
-
- THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
- WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,
- INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
- STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
- IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- POSSIBILITY OF SUCH DAMAGE.
-*/
+ */
 
 #ifndef MYSOFA_H_INCLUDED
 #define MYSOFA_H_INCLUDED
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #if defined(SAF_ENABLE_SOFA_READER_MODULE)
-
-#include "../../saf_utilities/saf_utilities.h"
 #include <stdbool.h>
 #include <stdint.h>
+#include <stddef.h>
 
-#define MYSOFA_EXPORT
 #define MYSOFA_DEFAULT_NEIGH_STEP_ANGLE 0.5f
 #define MYSOFA_DEFAULT_NEIGH_STEP_RADIUS 0.01f
 
@@ -92,15 +62,15 @@ typedef struct MYSOFA_VARIABLE MYSOFA_VARIABLE;
 struct MYSOFA_HRTF {
 
   /* Dimensions defined in AES69
-   M Number of measurements; must be integer greater than zero.
-   R Number of receivers; must be integer greater than zero.
-   E Number of emitters; must be integer greater than zero.
-   N Number of data samples describing one measurement; must be integer greater
-   than zero. S Number of characters in a string; must be integer greater than
-   zero. I 1 Singleton dimension, defines a scalar value. C 3 Coordinate
-   triplet, always three; the coordinate type defines the meaning of this
-   dimension.
-   */
+ M Number of measurements; must be integer greater than zero.
+ R Number of receivers; must be integer greater than zero.
+ E Number of emitters; must be integer greater than zero.
+ N Number of data samples describing one measurement; must be integer greater
+ than zero. S Number of characters in a string; must be integer greater than
+ zero. I 1 Singleton dimension, defines a scalar value. C 3 Coordinate
+ triplet, always three; the coordinate type defines the meaning of this
+ dimension.
+ */
   unsigned _I, C, R, E, N, M;
   /* NOTE! Changed I->_I, since I is reserved (since C99) to denote the imaginary part of complex numbers */
 
@@ -168,6 +138,7 @@ enum {
 };
 
 struct MYSOFA_HRTF *mysofa_load(const char *filename, int *err);
+struct MYSOFA_HRTF *mysofa_load_data(const char *data, size_t size, int *err);
 
 int mysofa_check(struct MYSOFA_HRTF *hrtf);
 char *mysofa_getAttribute(struct MYSOFA_ATTRIBUTE *attr, char *name);
@@ -202,8 +173,8 @@ struct MYSOFA_EASY *mysofa_cache_store(struct MYSOFA_EASY *,
 void mysofa_cache_release(struct MYSOFA_EASY *);
 void mysofa_cache_release_all(void);
 
-void mysofa_c2s(float *values);
-void mysofa_s2c(float *values);
+void mysofa_c2s(float values[3]);
+void mysofa_s2c(float values[3]);
 
 struct MYSOFA_EASY {
   struct MYSOFA_HRTF *hrtf;
@@ -220,6 +191,15 @@ struct MYSOFA_EASY *mysofa_open_advanced(const char *filename, float samplerate,
                                          int *filterlength, int *err, bool norm,
                                          float neighbor_angle_step,
                                          float neighbor_radius_step);
+struct MYSOFA_EASY *mysofa_open_data(const char *data, long size,
+                                     float samplerate, int *filterlength,
+                                     int *err);
+struct MYSOFA_EASY *mysofa_open_data_no_norm(const char *data, long size,
+                                             float samplerate,
+                                             int *filterlength, int *err);
+struct MYSOFA_EASY *mysofa_open_data_advanced(
+    const char *data, long size, float samplerate, int *filterlength, int *err,
+    bool norm, float neighbor_angle_step, float neighbor_radius_step);
 struct MYSOFA_EASY *mysofa_open_cached(const char *filename, float samplerate,
                                        int *filterlength, int *err);
 void mysofa_getfilter_short(struct MYSOFA_EASY *easy, float x, float y, float z,
@@ -235,7 +215,6 @@ void mysofa_close(struct MYSOFA_EASY *easy);
 void mysofa_close_cached(struct MYSOFA_EASY *easy);
 
 void mysofa_getversion(int *major, int *minor, int *patch);
-char *mysofa_strdup(const char *s);
 
 #endif /* SAF_ENABLE_SOFA_READER_MODULE */
 
