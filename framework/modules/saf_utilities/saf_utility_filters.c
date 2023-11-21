@@ -621,7 +621,7 @@ void evalIIRTransferFunctionf
 {
     int ff;
     float w, x, a, b, c, d, h_re, h_im, cosx, sinx;
-    float norm_frq = -2.0 * SAF_PI / fs; // -1 factored in from negated 'n' below
+    float norm_frq = -2.f * SAF_PI / fs; // -1 factored in from negated 'n' below
 
     /*
      * substitute Euler's  z = e^(jwn) = cos(wn) + j*sin(wn)
@@ -663,8 +663,8 @@ void evalIIRTransferFunctionf
         
         if(phase_rad!=NULL) {
             /* complex division */
-            h_re = (a*c + b*d) * dvsr;
-            h_im = (b*c - a*d) * dvsr;
+            h_re = (a*c + b*d) * (float)dvsr;
+            h_im = (b*c - a*d) * (float)dvsr;
             phase_rad[ff] = (float)atan2(h_im, h_re);
         }
     }
@@ -686,7 +686,7 @@ void evalIIRTransferFunction
     int ff;
     float w;
     double x, a, b, c, d, h_re, h_im, cosx, sinx;
-    float norm_frq = -2.0 * SAF_PI / fs; // -1 factored in from negated 'n' below
+    float norm_frq = -2.f * SAF_PI / fs; // -1 factored in from negated 'n' below
     
     /*
      * substitute Euler's  z = e^(jwn) = cos(wn) + j*sin(wn)

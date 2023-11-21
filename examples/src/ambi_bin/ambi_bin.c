@@ -79,7 +79,7 @@ void ambi_bin_create
     pData->nSH =  (pData->order+1)*(pData->order+1);
     
     /* afSTFT and audio buffers */
-    pData->fs = 48e3f;
+    pData->fs = 48000;
     pData->hSTFT = NULL;
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, AMBI_BIN_FRAME_SIZE, sizeof(float));
     pData->binFrameTD = (float**)malloc2d(NUM_EARS, AMBI_BIN_FRAME_SIZE, sizeof(float));

@@ -204,7 +204,7 @@ void diffuseFieldEqualiseHRTFs
                         hrtf_diff[band*NUM_EARS + i] += _weights[j]/(4.f*SAF_PI) * powf(cabsf(hrtfs[band*NUM_EARS*N_dirs + i*N_dirs + j]), 2.0f);
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
-                    hrtf_diff[band*NUM_EARS + i] = sqrtf(SAF_MAX(hrtf_diff[band*NUM_EARS + i], 0.00001));
+                    hrtf_diff[band*NUM_EARS + i] = sqrtf(SAF_MAX(hrtf_diff[band*NUM_EARS + i], 0.00001f));
             for(band=0; band<N_bands; band++)
                 for(i=0; i<NUM_EARS; i++)
                     for(nd=0; nd<N_dirs; nd++)

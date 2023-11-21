@@ -63,7 +63,7 @@ void test__saf_example_ambi_bin(void){
     inSig = malloc1d(signalLength*sizeof(float));
     shSig = (float**)malloc2d(nSH,signalLength,sizeof(float));
     //rand_m1_1(inSig, signalLength); /* Mono white-noise signal */
-    memset(inSig, 0.f, signalLength*sizeof(float));
+    memset(inSig, 0, signalLength*sizeof(float));
     inSig[5000] = 1.f;
     /* Encode to get input spherical harmonic (Ambisonic) signal */
     direction_deg[0] = -90.0f; /* encode hard-right */
