@@ -60,6 +60,7 @@ void ambi_enc_destroy
     if (pData != NULL) {
         free(pData);
         pData = NULL;
+        *phAmbi = NULL;
     }
 }
 

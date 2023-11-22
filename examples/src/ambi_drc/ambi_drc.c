@@ -98,6 +98,7 @@ void ambi_drc_destroy
 #endif
         free(pData);
         pData = NULL;
+        *phAmbi = NULL;
     }
 }
 

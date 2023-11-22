@@ -94,6 +94,7 @@ void tvconv_destroy
         saf_TVConv_destroy(&(pData->hTVConv));
         free(pData);
         pData = NULL;
+        *phTVCnv = NULL;
     }
 }
 

@@ -133,6 +133,7 @@ void sldoa_destroy
         free(pData->progressBarText);
         free(pData);
         pData = NULL;
+        *phSld = NULL;
     }
 }
 

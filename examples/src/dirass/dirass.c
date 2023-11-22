@@ -139,6 +139,7 @@ void dirass_destroy
         free(pData->progressBarText);
         free(pData);
         pData = NULL;
+        *phDir = NULL;
     }
 }
 

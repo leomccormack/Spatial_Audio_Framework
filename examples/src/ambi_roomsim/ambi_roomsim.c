@@ -88,6 +88,7 @@ void ambi_roomsim_destroy
         free(pData->rec_sh_outsigs);
         free(pData);
         pData = NULL;
+        *phAmbi = NULL;
     }
 }
 

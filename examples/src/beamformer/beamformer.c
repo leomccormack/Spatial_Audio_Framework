@@ -64,6 +64,7 @@ void beamformer_destroy
         
         free(pData);
         pData = NULL;
+        *phBeam = NULL;
     }
 }
 
