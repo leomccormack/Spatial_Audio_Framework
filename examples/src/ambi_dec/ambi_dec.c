@@ -162,6 +162,7 @@ void ambi_dec_destroy
         free(pData->progressBarText);
         free(pData);
         pData = NULL;
+        *phAmbi = NULL;
     }
 }
 

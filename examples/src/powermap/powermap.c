@@ -128,6 +128,7 @@ void powermap_destroy
         free(pData->progressBarText);
         free(pData);
         pData = NULL;
+        *phPm = NULL;
     }
 }
 

@@ -167,6 +167,7 @@ void binauraliserNF_destroy
         
         free(pData);
         pData = NULL;
+        *phBin = NULL;
     }
 }
 

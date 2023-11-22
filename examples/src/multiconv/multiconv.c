@@ -68,6 +68,7 @@ void multiconv_destroy
         saf_multiConv_destroy(&(pData->hMultiConv));
         free(pData);
         pData = NULL;
+        *phMCnv = NULL;
     }
 }
 

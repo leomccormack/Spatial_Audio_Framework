@@ -112,6 +112,7 @@ void panner_destroy
         
         free(pData);
         pData = NULL;
+        *phPan = NULL;
     }
 }
 

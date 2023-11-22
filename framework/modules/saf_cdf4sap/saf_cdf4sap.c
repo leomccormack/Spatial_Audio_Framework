@@ -226,6 +226,7 @@ void cdf4sap_destroy
         free(h->G_M);
         free(h);
         h = NULL;
+        *phCdf = NULL;
     }
 }
 
@@ -264,6 +265,7 @@ void cdf4sap_cmplx_destroy
         free(h->G_M);
         free(h);
         h = NULL;
+        *phCdf = NULL;
     }
 }
 

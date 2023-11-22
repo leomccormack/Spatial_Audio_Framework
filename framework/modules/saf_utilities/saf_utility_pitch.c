@@ -192,7 +192,8 @@ void smb_pitchShift_destroy
         free(h->gSynFreq);
         free(h->gSynMagn);
         free(h);
-        h=NULL;
+        h = NULL;
+        *hSmb = NULL;
     }
 }
 

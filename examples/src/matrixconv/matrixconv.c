@@ -70,6 +70,7 @@ void matrixconv_destroy
         saf_matrixConv_destroy(&(pData->hMatrixConv));
         free(pData);
         pData = NULL;
+        *phMCnv = NULL;
     }
 }
 

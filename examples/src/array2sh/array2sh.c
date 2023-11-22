@@ -126,6 +126,7 @@ void array2sh_destroy
         
         free(pData);
         pData = NULL;
+        *phM2sh = NULL;
     }
 }
 

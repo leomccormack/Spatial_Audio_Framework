@@ -77,6 +77,7 @@ void pitch_shifter_destroy
             smb_pitchShift_destroy(&(pData->hSmb));
         free(pData);
         pData = NULL;
+        *phPS = NULL;
     }
 }
 

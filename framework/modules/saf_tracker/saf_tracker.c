@@ -147,6 +147,7 @@ void tracker3d_destroy
 
         free(pData);
         pData = NULL;
+        *phT3d = NULL;
     }
 }
 

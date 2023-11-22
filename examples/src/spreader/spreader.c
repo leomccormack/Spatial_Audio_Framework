@@ -168,6 +168,7 @@ void spreader_destroy
          
         free(pData);
         pData = NULL;
+        *phSpr = NULL;
     }
 }
 

@@ -661,7 +661,8 @@ void saf_rfft_destroy
         }
 
         free(h);
-        h=NULL;
+        h = NULL;
+        *phFFT = NULL;
     }
 }
 
@@ -888,7 +889,8 @@ void saf_fft_destroy
         }
 
         free(h);
-        h=NULL;
+        h = NULL;
+        *phFFT = NULL;
     }
 }
 
