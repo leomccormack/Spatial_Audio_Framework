@@ -156,7 +156,8 @@ void saf_matrixConv_destroy
             free(h->Hpart_f);
         }
         free(h);
-        h=NULL;
+        h = NULL;
+        *phMC = NULL;
     }
 }
 
@@ -363,7 +364,8 @@ void saf_multiConv_destroy
             free(h->Hpart_f);
         }
         free(h);
-        h=NULL;
+        h = NULL;
+        *phMC = NULL;
     }
 }
 
@@ -568,7 +570,8 @@ void saf_TVConv_destroy
         free(h->Hpart_f);
         }
         free(h);
-        h=NULL;
+        h = NULL;
+        *phTVC = NULL;
 }
 
 void saf_TVConv_apply
