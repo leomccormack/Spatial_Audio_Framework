@@ -102,137 +102,9 @@ $(function(){initNavTree('structaf_hybrid.html',''); initResizable(); });
 </div>
 
 <div class="header">
-  <div class="summary">
-<a href="#pub-attribs">Data Fields</a>  </div>
   <div class="headertitle"><div class="title">afHybrid Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
-
-<p>Data structure for the hybrid filtering employed by afSTFTlib.  
- <a href="#details">More...</a></p>
-
-<p><code>#include &lt;<a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>&gt;</code></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Data Fields</h2></td></tr>
-<tr class="memitem:a6ef30bad4b7953c78aeaaa0b4cf897ff" id="r_a6ef30bad4b7953c78aeaaa0b4cf897ff"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6ef30bad4b7953c78aeaaa0b4cf897ff">inChannels</a></td></tr>
-<tr class="separator:a6ef30bad4b7953c78aeaaa0b4cf897ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1bfa8a0f5d66dd931791c9c16811dff9" id="r_a1bfa8a0f5d66dd931791c9c16811dff9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1bfa8a0f5d66dd931791c9c16811dff9">outChannels</a></td></tr>
-<tr class="separator:a1bfa8a0f5d66dd931791c9c16811dff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79973d4655270406e1cc5263c0dd3ebf" id="r_a79973d4655270406e1cc5263c0dd3ebf"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a79973d4655270406e1cc5263c0dd3ebf">hopSize</a></td></tr>
-<tr class="separator:a79973d4655270406e1cc5263c0dd3ebf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53b763e1fca8cbd4e88181fd07c0c8a7" id="r_a53b763e1fca8cbd4e88181fd07c0c8a7"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53b763e1fca8cbd4e88181fd07c0c8a7">hybridCoeffs</a> [3]</td></tr>
-<tr class="separator:a53b763e1fca8cbd4e88181fd07c0c8a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7219642d6d90f1dabae07d1a239ac539" id="r_a7219642d6d90f1dabae07d1a239ac539"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structcomplex_vector.html">complexVector</a> **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7219642d6d90f1dabae07d1a239ac539">analysisBuffer</a></td></tr>
-<tr class="separator:a7219642d6d90f1dabae07d1a239ac539"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6967e73756b3982c7ea7b05ce83f49c" id="r_ab6967e73756b3982c7ea7b05ce83f49c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab6967e73756b3982c7ea7b05ce83f49c">loopPointer</a></td></tr>
-<tr class="separator:ab6967e73756b3982c7ea7b05ce83f49c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Data structure for the hybrid filtering employed by afSTFTlib. </p>
-<p>The purpose of this filtering is to further divide the 4 lowest FFT-bins, to improve the frequency resolution at low-frequencies. For example, 129 bins would become 133 hybrid-bins. </p>
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00130">130</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-</div><h2 class="groupheader">Field Documentation</h2>
-<a id="a7219642d6d90f1dabae07d1a239ac539" name="a7219642d6d90f1dabae07d1a239ac539"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7219642d6d90f1dabae07d1a239ac539">&#9670;&#160;</a></span>analysisBuffer</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structcomplex_vector.html">complexVector</a>** afHybrid::analysisBuffer</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00135">135</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-
-</div>
-</div>
-<a id="a79973d4655270406e1cc5263c0dd3ebf" name="a79973d4655270406e1cc5263c0dd3ebf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79973d4655270406e1cc5263c0dd3ebf">&#9670;&#160;</a></span>hopSize</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int afHybrid::hopSize</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00133">133</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-
-</div>
-</div>
-<a id="a53b763e1fca8cbd4e88181fd07c0c8a7" name="a53b763e1fca8cbd4e88181fd07c0c8a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53b763e1fca8cbd4e88181fd07c0c8a7">&#9670;&#160;</a></span>hybridCoeffs</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">float afHybrid::hybridCoeffs[3]</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00134">134</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-
-</div>
-</div>
-<a id="a6ef30bad4b7953c78aeaaa0b4cf897ff" name="a6ef30bad4b7953c78aeaaa0b4cf897ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6ef30bad4b7953c78aeaaa0b4cf897ff">&#9670;&#160;</a></span>inChannels</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int afHybrid::inChannels</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00131">131</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-
-</div>
-</div>
-<a id="ab6967e73756b3982c7ea7b05ce83f49c" name="ab6967e73756b3982c7ea7b05ce83f49c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab6967e73756b3982c7ea7b05ce83f49c">&#9670;&#160;</a></span>loopPointer</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int afHybrid::loopPointer</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00136">136</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-
-</div>
-</div>
-<a id="a1bfa8a0f5d66dd931791c9c16811dff9" name="a1bfa8a0f5d66dd931791c9c16811dff9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bfa8a0f5d66dd931791c9c16811dff9">&#9670;&#160;</a></span>outChannels</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">int afHybrid::outChannels</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p class="definition">Definition at line <a class="el" href="af_s_t_f_t__internal_8h_source.html#l00132">132</a> of file <a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a>.</p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>framework/resources/afSTFT/<a class="el" href="af_s_t_f_t__internal_8h_source.html">afSTFT_internal.h</a></li>
-</ul>
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- HTML footer for doxygen 1.9.1-->
@@ -240,7 +112,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structaf_hybrid.html">afHybrid</a></li>
-    <li class="footer">Generated on Wed Jan 24 2024 13:52:53 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Wed Jan 24 2024 17:43:06 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 <script type="text/javascript">

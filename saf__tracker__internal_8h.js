@@ -2,8 +2,8 @@ var saf__tracker__internal_8h =
 [
     [ "M6", "struct_m6.html", null ],
     [ "P66", "struct_p66.html", null ],
-    [ "MCS_data", "struct_m_c_s__data.html", "struct_m_c_s__data" ],
-    [ "tracker3d_data", "structtracker3d__data.html", "structtracker3d__data" ],
+    [ "MCS_data", "struct_m_c_s__data.html", null ],
+    [ "tracker3d_data", "structtracker3d__data.html", null ],
     [ "TRACKER3D_MAX_NUM_EVENTS", "saf__tracker__internal_8h.html#a04cbb5786491b1a9c4c475b342f27681", null ],
     [ "TRACKER3D_MAX_NUM_PARTICLES", "saf__tracker__internal_8h.html#aecef957874a32b4fed286f00f872009e", null ],
     [ "TRACKER3D_MAX_NUM_TARGETS", "saf__tracker__internal_8h.html#a8dbe8887104c50851d04312c724dcbf3", null ],

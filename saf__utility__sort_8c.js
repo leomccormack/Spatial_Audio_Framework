@@ -1,8 +1,8 @@
 var saf__utility__sort_8c =
 [
-    [ "saf_sort_int", "structsaf__sort__int.html", "structsaf__sort__int" ],
-    [ "saf_sort_float", "structsaf__sort__float.html", "structsaf__sort__float" ],
-    [ "saf_sort_double", "structsaf__sort__double.html", "structsaf__sort__double" ],
+    [ "saf_sort_int", "structsaf__sort__int.html", null ],
+    [ "saf_sort_float", "structsaf__sort__float.html", null ],
+    [ "saf_sort_double", "structsaf__sort__double.html", null ],
     [ "cmp_asc_double", "saf__utility__sort_8c.html#a86caa6694b6ffc4650e6da760f675d1c", null ],
     [ "cmp_asc_float", "saf__utility__sort_8c.html#aed4954883af1fef7b8b2e02c383067b7", null ],
     [ "cmp_asc_int", "saf__utility__sort_8c.html#a73a673eec23b8ae4a7ed57a7cddf9a12", null ],

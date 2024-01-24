@@ -1,7 +1,7 @@
 var array2sh__internal_8h =
 [
-    [ "array2sh_arrayPars", "structarray2sh__array_pars.html", "structarray2sh__array_pars" ],
-    [ "array2sh_data", "structarray2sh__data.html", "structarray2sh__data" ],
+    [ "array2sh_arrayPars", "structarray2sh__array_pars.html", null ],
+    [ "array2sh_data", "structarray2sh__data.html", null ],
     [ "ARRAY2SH_FRAME_SIZE", "array2sh__internal_8h.html#a11523eea6a325b4920d54ff34bb731dc", null ],
     [ "HOP_SIZE", "array2sh__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "array2sh__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],

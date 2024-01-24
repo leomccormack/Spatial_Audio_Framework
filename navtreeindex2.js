@@ -229,7 +229,6 @@ var NAVTREEINDEX2 =
 "ambi_drc_8h-example.html":[2,2],
 "ambi_enc_8h-example.html":[2,3],
 "ambi_roomsim_8h-example.html":[2,4],
-"annotated.html":[0,0],
 "arch_8h.html":[1,0,2,2,4,0],
 "arch_8h.html#a42506a0d6465a6a8be2b1e00bb8f2755":[1,0,2,2,4,0,2],
 "arch_8h.html#a6923ce3ce39d87288b1d22c504d5b8d3":[1,0,2,2,4,0,3],
@@ -249,5 +248,6 @@ var NAVTREEINDEX2 =
 "array2sh_8c.html#a20dba9c6f798063189f6ae413b8d54aa":[1,0,0,1,5,0,48],
 "array2sh_8c.html#a229c63a20fff0f03b2f63326b0da6ce5":[1,0,0,1,5,0,4],
 "array2sh_8c.html#a27ca865aa27c65d263b4a3af1cb92e58":[1,0,0,1,5,0,57],
-"array2sh_8c.html#a2866c8b24bfc4c6e1fa463f1782b991b":[1,0,0,1,5,0,51]
+"array2sh_8c.html#a2866c8b24bfc4c6e1fa463f1782b991b":[1,0,0,1,5,0,51],
+"array2sh_8c.html#a309e81aa012f4c748b0302c2f70ecc28":[1,0,0,1,5,0,46]
 };
