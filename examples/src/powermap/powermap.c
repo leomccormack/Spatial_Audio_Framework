@@ -87,6 +87,7 @@ void powermap_create
     pData->recalcPmap = 1;
 
     /* set FIFO buffer */
+    pData->fs = 48000.0f;
     pData->FIFO_idx = 0;
     memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*POWERMAP_FRAME_SIZE*sizeof(float));
 }

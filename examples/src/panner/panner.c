@@ -67,6 +67,7 @@ void panner_create
     pData->bFlipRoll = 0;
     
     /* time-frequency transform + buffers */
+    pData->fs = 48000.0f;
     pData->hSTFT = NULL;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, PANNER_FRAME_SIZE, sizeof(float));
     pData->outputFrameTD = (float**)malloc2d(MAX_NUM_OUTPUTS, PANNER_FRAME_SIZE, sizeof(float));

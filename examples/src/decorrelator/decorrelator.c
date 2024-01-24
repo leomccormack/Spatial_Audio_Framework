@@ -40,6 +40,7 @@ void decorrelator_create
     pData->compensateLevel = 0;
     
     /* afSTFT stuff */
+    pData->fs = 48000.0f;
     pData->hSTFT = NULL;
     pData->InputFrameTD = (float**)malloc2d(MAX_NUM_CHANNELS, DECORRELATOR_FRAME_SIZE, sizeof(float));
     pData->OutputFrameTD = (float**)malloc2d(MAX_NUM_CHANNELS, DECORRELATOR_FRAME_SIZE, sizeof(float));

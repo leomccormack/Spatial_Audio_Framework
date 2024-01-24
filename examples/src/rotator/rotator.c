@@ -43,6 +43,7 @@ void rotator_create
     *phRot = (void*)pData;
     
     pData->M_rot_status = M_ROT_RECOMPUTE_QUATERNION;
+    pData->fs = 48000.0f;
   
     /* Default user parameters */
     pData->Q.w = 1.0f;

@@ -50,6 +50,7 @@ void spreader_create
     memset(pData->src_dirs_deg, 0, SPREADER_MAX_NUM_SOURCES*2*sizeof(float));
 
     /* time-frequency transform + buffers */
+    pData->fs = 48000.0f;
     pData->hSTFT = NULL;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, SPREADER_FRAME_SIZE, sizeof(float));
     pData->outframeTD = (float**)malloc2d(MAX_NUM_OUTPUTS, SPREADER_FRAME_SIZE, sizeof(float));

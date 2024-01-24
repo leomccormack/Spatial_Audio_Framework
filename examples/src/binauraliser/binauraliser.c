@@ -58,6 +58,7 @@ void binauraliser_create
 
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
+    pData->fs = 48000.0f;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, BINAURALISER_FRAME_SIZE, sizeof(float));
     pData->outframeTD = (float**)malloc2d(NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));

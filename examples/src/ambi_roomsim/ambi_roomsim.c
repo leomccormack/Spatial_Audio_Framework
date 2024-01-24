@@ -53,6 +53,7 @@ void ambi_roomsim_create
     memset(pData->rec_pos, 0, ROOM_SIM_MAX_NUM_RECEIVERS*3*sizeof(float));
 
     /* Internal */
+    pData->fs = 48000.0f;
     pData->hIms = NULL;
     float src_pos[3]  = {5.2f, 1.5f, 1.4f};
     memcpy(pData->src_pos[0], src_pos, 3*sizeof(float));

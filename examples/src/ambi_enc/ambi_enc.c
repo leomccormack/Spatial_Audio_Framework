@@ -36,6 +36,7 @@ void ambi_enc_create
     int i;
 
     pData->order = 1;
+    pData->fs = 48000.0f;
     
     /* default user parameters */
     loadSourceConfigPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources));

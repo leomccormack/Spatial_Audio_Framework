@@ -70,6 +70,7 @@ void array2sh_create
     pData->enableDiffEQpastAliasing = 1;
     
     /* time-frequency transform + buffers */
+    pData->fs = 48000.0f;
     pData->hSTFT = NULL;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_SENSORS, ARRAY2SH_FRAME_SIZE, sizeof(float));
     pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, ARRAY2SH_FRAME_SIZE, sizeof(float));

@@ -100,6 +100,7 @@ void sldoa_create
     }
 
     /* set FIFO buffer */
+    pData->fs = 48000.0f;
     pData->FIFO_idx = 0;
     memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*SLDOA_FRAME_SIZE*sizeof(float));
 }

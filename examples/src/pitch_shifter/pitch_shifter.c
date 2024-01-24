@@ -54,6 +54,7 @@ void pitch_shifter_create
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
 
     /* set FIFO buffers */
+    pData->sampleRate = 48000.0f;
     pData->FIFO_idx = 0;
     memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
     memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));

@@ -49,6 +49,7 @@ void multiconv_create
     pData->filter_fs = 0;
 
     /* set FIFO buffers */
+    pData->host_fs = 48000.0f;
     pData->FIFO_idx = 0;
     memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
     memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));

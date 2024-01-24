@@ -94,6 +94,7 @@ void dirass_create
     pData->recalcPmap = 1;
 
     /* set FIFO buffers */
+    pData->fs = 48000.0f;
     pData->FIFO_idx = 0;
     memset(pData->inFIFO, 0, MAX_NUM_INPUT_SH_SIGNALS*DIRASS_FRAME_SIZE*sizeof(float));
 }
