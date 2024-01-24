@@ -4,7 +4,7 @@ var searchData=
   ['abs16_1',['ABS16',['../arch_8h.html#aa4082b064c5e68c941c9ba3b297cc149',1,'arch.h']]],
   ['abs32_2',['ABS32',['../arch_8h.html#a42506a0d6465a6a8be2b1e00bb8f2755',1,'arch.h']]],
   ['add_5fdummy_5flimit_3',['ADD_DUMMY_LIMIT',['../saf__vbap__internal_8h.html#aaca2ffe033789c555898e44fab0215a3',1,'saf_vbap_internal.h']]],
-  ['afstft_5fuse_5fsaf_5futilities_4',['afstft_use_saf_utilities',['../af_s_t_f_t__internal_8h.html#ada4ffad6174c77dc350da36b3e6c83b0',1,'AFSTFT_USE_SAF_UTILITIES:&#160;afSTFT_internal.h'],['../af_s_t_f_tlib_8h.html#ada4ffad6174c77dc350da36b3e6c83b0',1,'AFSTFT_USE_SAF_UTILITIES:&#160;afSTFTlib.h']]],
+  ['afstft_5fuse_5fsaf_5futilities_4',['AFSTFT_USE_SAF_UTILITIES',['../af_s_t_f_t__internal_8h.html#ada4ffad6174c77dc350da36b3e6c83b0',1,'AFSTFT_USE_SAF_UTILITIES:&#160;afSTFT_internal.h'],['../af_s_t_f_tlib_8h.html#ada4ffad6174c77dc350da36b3e6c83b0',1,'AFSTFT_USE_SAF_UTILITIES:&#160;afSTFTlib.h']]],
   ['ambi_5fbin_5fframe_5fsize_5',['AMBI_BIN_FRAME_SIZE',['../ambi__bin__internal_8h.html#a21f3364db20349a7ae854bfc9b4ed28e',1,'ambi_bin_internal.h']]],
   ['ambi_5fbin_5fnum_5fdecoding_5fmethods_6',['AMBI_BIN_NUM_DECODING_METHODS',['../ambi__bin_8h.html#a40674ec8821cf76208e7cf49919abc10',1,'ambi_bin.h']]],
   ['ambi_5fbin_5fnum_5fhrir_5fpreproc_5foptions_7',['AMBI_BIN_NUM_HRIR_PREPROC_OPTIONS',['../ambi__bin_8h.html#ac803728f6f4517a17cd1d8aabc3a3073',1,'ambi_bin.h']]],
