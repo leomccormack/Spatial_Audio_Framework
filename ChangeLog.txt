@@ -9,7 +9,11 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
-v1.3.0
+v1.3.1
+ - Various bug fixes and minor optimisations all round
+
+====================================================================================================
+v1.3.0 (3rd April 2022)
  - Added saf_hades module
  - Added binauraliser_nf and tvconv examples
  - Added saf_utility_dvf.h/.c to saf_utilities module
@@ -26,7 +30,7 @@ you will also need to add this suffix to retain previous behaviour.
 
 
 ====================================================================================================
-v1.2.4
+v1.2.4 (19th November 2021)
  - Added libmysofa to the saf_sofa_reader module. The saf_sofa_open() function now uses libmysofa by
    default, unless "SAF_ENABLE_NETCDF" is defined. The libmysofa interface may also be used directly
  - Added zlib to framework/resources, therefore by default the saf_sofa_reader module may be enabled
@@ -43,19 +47,19 @@ However, if you would like to revert to the previous behaviour (using netcd rath
 libmysofa), then you can use the following pre-processing definition: SAF_ENABLE_NETCDF
 
 ====================================================================================================
-v1.2.3
+v1.2.3 (20th August 2021)
  - Bug fix in invertLsMtx2D() and invertLsMtx3D()
  - Added install-safipp.bat script for building a custom Intel IPP dll for SAF for Windows
 
 ====================================================================================================
-v1.2.2
+v1.2.2 (19th August 2021)
  - General documentation improvements, and also switched to a more modern doxygen theme
  - More Intel IPP functions are favoured and called if SAF_USE_INTEL_IPP is defined
  - Added a solo/mute feature for the ambi_enc and binauraliser examples
  - Some more minor optimisations
 
 ====================================================================================================
-v1.2.1
+v1.2.1 (2nd July 2021)
  - Added (optional) AVX and AVX-512 support, when using: SAF_ENABLE_SIMD
  - Added (optional) FFTW support for saf_utility_fft, via the new flag: SAF_USE_FFTW
  - If Intel IPP is enabled (SAF_USE_INTEL_IPP), then the IPP resampler is employed, instead of the
@@ -67,7 +71,7 @@ The install-safipp.sh script now defaults to the new oneAPI install paths. Howev
 install path (e.g. the old one) may also now be specified as an input argument.
 
 ====================================================================================================
-v1.2.0
+v1.2.0 (26th June 2021)
  - All lapack-related saf_utility_veclib functions now include an option to pre-allocate the run-
    time memory
  - All saf_utility_veclib vector-vector operations, when using Apple Accelerate as the chosen
@@ -89,7 +93,7 @@ made).
 The SAF_PRINT_VERSION_LICENSE_STRING macro has been removed; use the SAF_LICENSE_STRING instead.
 
 ====================================================================================================
-v1.1.7
+v1.1.7 (5th June 2021)
  - saf_utility_fft now uses vDSP's DFT implementation, rather than the scrict 2^x FFT 
    implementation, when the performance library is set to SAF_USE_APPLE_ACCELERATE
  - Added the ability to select either the LP64 or ILP64 version of Intel MKL as the performance 
@@ -116,7 +120,7 @@ Removed saf_utility_error.h/.c files. Its functionality has been replaced by the
 saf_print_warning, saf_print_error, and saf_assert macros.
 
 ====================================================================================================
-v1.1.6
+v1.1.6 (21st April 2021)
  - Added a "spreader" example which demonstrates coherent and incoherent source spreading (default 
    is binaural)
  - Added truncationEQ to saf_hoa module
@@ -126,13 +130,13 @@ v1.1.6
  - A number of bug fixes and improvements all round.
 
 ====================================================================================================
-v1.1.5
+v1.1.5 (22nd October 2020)
  - Bug fix in the ACN/FuMa conversion.
  - Some minor Doxygen improvements.
  - Linked repository with zenodo.org to generate DOI for it.
 
 ====================================================================================================
-v1.1.4
+v1.1.4 (9th October 2020)
  - Doxygen-Documentation is now generated via a github-action and hosted here: 
    https://leomccormack.github.io/Spatial_Audio_Framework/
  - Added an improved SOFA reader, saf_sofa_open(), which fully conforms to the SOFA 1.0 FIR standard
@@ -143,14 +147,14 @@ v1.1.4
  - A number of bug fixes and improvements all round.
 
 ====================================================================================================
-v1.1.3beta
+v1.1.3beta (26th August 2020)
  - Added an optional saf_tracker module (GPLv2) for tracking 3-D data points (e.g., direction-of-
    arrival estimates as unit vectors, Cartesian coordinates [x,y,z] etc.).
  - A number of improvements to the image-source simulator in the saf_reverb module.
  - Added CMake support for the safmex wrappers.
 
 ====================================================================================================
-v1.1.2
+v1.1.2 (7th August 2020)
  - Decoupled SAF from its external dependencies
  - Added a extras/safmex folder which contains Matlab MEX wrappers; currently for the: afSTFT, QMF, 
    IIR filterbank, VBAP gain tables, and getSHreal/complex SAF functions
@@ -166,7 +170,7 @@ external dependencies within your own project, then you may now optionally inclu
 #include "saf_externals.h" along with #include "saf.h".
 
 ====================================================================================================
-v1.1.1
+v1.1.1 (21st July 2020)
  - Reworked the afSTFT interface, and optimised its internals
  - Added several more utility functions to saf_utilities, and added a resampler (based on 
    libsamplerate) to resources
@@ -184,7 +188,7 @@ quite self-explanatory, however, one may also refer to the examples (e.g. ambi_b
 updated to use this new interface.
 
 ====================================================================================================
-v1.1.0
+v1.1.0 (4th July 2020)
  - Added comprehensive CMake support
  - Documentation improvements
  - Added more unit tests
@@ -192,5 +196,5 @@ v1.1.0
  - General bug fixes and improvements all round
 
 ====================================================================================================
-v1.0.0
+v1.0.0 (26th May 2020)
  - First official release!
