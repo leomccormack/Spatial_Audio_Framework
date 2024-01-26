@@ -56,8 +56,8 @@ typedef struct _tvconv
 {
     /* FIFO buffers */
     int FIFO_idx;
-    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
-    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];
+    float** inFIFO;
+    float** outFIFO;
 
     /* Internal buffers */
     float** inputFrameTD;

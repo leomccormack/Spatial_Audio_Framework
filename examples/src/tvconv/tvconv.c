@@ -52,8 +52,10 @@ void tvconv_create
     /* set FIFO buffers */
     pData->host_fs = 48000.0f;
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+    pData->inFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, MAX_FRAME_SIZE, sizeof(float));
+    pData->outFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, MAX_FRAME_SIZE, sizeof(float));
+    //memset(FLATTEN2D(pData->inFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+    //memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
     
     /* positions */
     pData->listenerPositions = NULL;
@@ -87,7 +89,8 @@ void tvconv_destroy
                pData->procStatus == PROC_STATUS_ONGOING){
             SAF_SLEEP(10);
         }
-        
+        free(pData->inFIFO);
+        free(pData->outFIFO);
         free(pData->inputFrameTD);
         free(pData->outputFrameTD);
         free(pData->irs);
@@ -181,7 +184,7 @@ void tvconv_process
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
             /* clear outFIFO if codec was not ready */
             pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+            memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
         }
     }
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
@@ -229,8 +232,8 @@ void tvconv_checkReInit(void* const hTVCnv)
 
         /* reset FIFO buffers */
         pData->FIFO_idx = 0;
-        memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
-        memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(FLATTEN2D(pData->inFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 
         pData->reInitFilters = 0;
         pData->codecStatus = CODEC_STATUS_INITIALISED;

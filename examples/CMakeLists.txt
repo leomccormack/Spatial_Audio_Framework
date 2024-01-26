@@ -51,15 +51,6 @@ foreach(current_example RANGE ${num_examples})
         ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}.c
     )
 
-    # Extra source files specific to sldoa
-    if (current_string STREQUAL sldoa)
-        target_sources(${PROJECT_NAME}
-        PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}_database.c
-            ${CMAKE_CURRENT_SOURCE_DIR}/src/${current_string}/${current_string}_database.h
-        )
-    endif()
-
     # Extra source files specific to binauraliserNF
     if (current_string STREQUAL binauraliser_nf)
         target_sources(${PROJECT_NAME}

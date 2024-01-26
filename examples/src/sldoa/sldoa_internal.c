@@ -44,8 +44,7 @@
  */
 
 #include "sldoa.h"
-#include "sldoa_internal.h"
-#include "sldoa_database.h"
+#include "sldoa_internal.h" 
 
 void sldoa_setCodecStatus(void* const hSld, CODEC_STATUS newStatus)
 {
@@ -63,14 +62,16 @@ void sldoa_initAna(void* const hSld)
     sldoa_data *pData = (sldoa_data*)(hSld);
     int i, n, j, k, order, nSectors, nSH, grid_N_vbap_gtable, grid_nGroups, maxOrder;
     float* sec_dirs_deg, *grid_vbap_gtable, *w_SG, *pinv_Y, *grid_vbap_gtable_T;
-    float secPatterns[4][NUM_GRID_DIRS];
+    float** secPatterns;//[4][NUM_GRID_DIRS];
+
+    secPatterns = (float**)calloc2d(4, pData->nGrid, sizeof(float));
 
     maxOrder = pData->new_masterOrder;
     
-    grid_vbap_gtable_T = malloc1d(ORDER2NUMSECTORS(maxOrder) * NUM_GRID_DIRS * sizeof(float));
+    grid_vbap_gtable_T = malloc1d(ORDER2NUMSECTORS(maxOrder) * pData->nGrid * sizeof(float));
     
     for(i=0, order=2; order<=maxOrder; i++,order++){
-        nSectors = ORDER2NUMSECTORS(order);
+        nSectors = SAF_MIN(ORDER2NUMSECTORS(order), MAX_NUM_SECTORS/*max available in sphcovering below*/);
         nSH = (order+1)*(order+1);
         
         /* define sector directions */
@@ -78,30 +79,30 @@ void sldoa_initAna(void* const hSld)
         memcpy(sec_dirs_deg, __HANDLES_SphCovering_dirs_deg[nSectors-1], nSectors*2*sizeof(float));
         
         /* generate VBAP gain table */
-        generateVBAPgainTable3D_srcs((float*)pData->grid_dirs_deg, NUM_GRID_DIRS, sec_dirs_deg, nSectors, 0, 0, 0.0f,
+        generateVBAPgainTable3D_srcs(FLATTEN2D(pData->grid_dirs_deg), pData->nGrid, sec_dirs_deg, nSectors, 0, 0, 0.0f,
                                      &(grid_vbap_gtable), &(grid_N_vbap_gtable), &(grid_nGroups));
         
         /* convert to amplitude preserving gains */
-        VBAPgainTable2InterpTable(grid_vbap_gtable, NUM_GRID_DIRS, nSectors);
+        VBAPgainTable2InterpTable(grid_vbap_gtable, pData->nGrid, nSectors);
         
         /* transpose */
         for(n=0; n<nSectors; n++)
-            for(j=0; j<NUM_GRID_DIRS; j++)
-                grid_vbap_gtable_T[n*NUM_GRID_DIRS+j] = grid_vbap_gtable[j*nSectors+n];
+            for(j=0; j<pData->nGrid; j++)
+                grid_vbap_gtable_T[n*pData->nGrid+j] = grid_vbap_gtable[j*nSectors+n];
         
         /* generate sector coefficients */
         if(pData->secCoeffs[i]!=NULL)
             free(pData->secCoeffs[i]);
         pData->secCoeffs[i] = malloc1d(4 * (nSH*nSectors) * sizeof(float_complex));
         w_SG = malloc1d(4 * (nSH) * sizeof(float));
-        pinv_Y = malloc1d(NUM_GRID_DIRS*nSH*sizeof(float));
+        pinv_Y = malloc1d(pData->nGrid*nSH*sizeof(float));
         for(n=0; n<nSectors; n++){ 
-            utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y[0], NUM_GRID_DIRS, secPatterns[0]);
+            utility_svvmul(&(grid_vbap_gtable_T[n*pData->nGrid]), pData->grid_Y[0], pData->nGrid, secPatterns[0]);
             for(j=0; j<3; j++)
-                utility_svvmul(&(grid_vbap_gtable_T[n*NUM_GRID_DIRS]), pData->grid_Y_dipoles_norm[j], NUM_GRID_DIRS, secPatterns[j+1]);
-            utility_spinv(NULL, &(pData->grid_Y[0][0]), nSH, NUM_GRID_DIRS, pinv_Y);
-            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, nSH, NUM_GRID_DIRS, 1.0f,
-                        &(secPatterns[0][0]), NUM_GRID_DIRS,
+                utility_svvmul(&(grid_vbap_gtable_T[n*pData->nGrid]), pData->grid_Y_dipoles_norm[j], pData->nGrid, secPatterns[j+1]);
+            utility_spinv(NULL, FLATTEN2D(pData->grid_Y), nSH, pData->nGrid, pinv_Y);
+            cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, nSH, pData->nGrid, 1.0f,
+                        &(secPatterns[0][0]), pData->nGrid,
                         pinv_Y, nSH, 0.0f,
                         w_SG, nSH);
             
@@ -119,6 +120,8 @@ void sldoa_initAna(void* const hSld)
     free(grid_vbap_gtable_T);
     
     pData->masterOrder = maxOrder;
+
+    free(secPatterns);
 }
 
 void sldoa_initTFT
@@ -158,7 +161,7 @@ void sldoa_estimateDoA
     memset(doa,0,MAX_NUM_SECTORS*TIME_SLOTS*2*sizeof(float));
     memset(energy,0,MAX_NUM_SECTORS*TIME_SLOTS*sizeof(float));
     analysisOrder = SAF_MAX(SAF_MIN(MAX_SH_ORDER, anaOrder),1);
-    nSectors = ORDER2NUMSECTORS(analysisOrder);
+    nSectors = SAF_MIN(ORDER2NUMSECTORS(analysisOrder), MAX_NUM_SECTORS);
     nSH = (analysisOrder+1)*(analysisOrder+1);
     sec_c = malloc1d(4*nSH*sizeof(float_complex));
     

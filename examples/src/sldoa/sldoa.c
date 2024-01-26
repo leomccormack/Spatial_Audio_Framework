@@ -44,8 +44,7 @@
  */
 
 #include "sldoa.h"
-#include "sldoa_internal.h"
-#include "sldoa_database.h" 
+#include "sldoa_internal.h" 
 
 void sldoa_create
 (
@@ -54,13 +53,13 @@ void sldoa_create
 {
     sldoa_data* pData = (sldoa_data*)malloc1d(sizeof(sldoa_data));
     *phSld = (void*)pData;
-    int i, j, band;
+    int i, band;
 
     /* Default user parameters */
     pData->new_masterOrder = pData->masterOrder = 1;
     for(band=0; band<HYBRID_BANDS; band++){
         pData->analysisOrderPerBand[band] = pData->masterOrder;
-        pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
+        pData->nSectorsPerBand[band] = SAF_MIN(ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]), MAX_NUM_SECTORS);
     }
     pData->minFreq = 500.0f;
     pData->maxFreq = 5e3f;
@@ -81,16 +80,18 @@ void sldoa_create
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
     for(i=0; i<MAX_SH_ORDER-1; i++)
         pData->secCoeffs[i] = NULL;
-    for(i=0; i<64; i++)
-        for(j=0; j<NUM_GRID_DIRS; j++)
-            pData->grid_Y[i][j] = (float)__grid_Y[i][j] * sqrtf(4.0f*SAF_PI);
+
+    /* Grid/basis stuff */
+    pData->nGrid = __Tdesign_degree_70_nPoints;
+    pData->grid_Y = (float**)calloc2d(ORDER2NSH(MAX_SH_ORDER), pData->nGrid, sizeof(float));
+    getRSH(MAX_SH_ORDER, (float*)__Tdesign_degree_70_dirs_deg, pData->nGrid, FLATTEN2D(pData->grid_Y));
+    pData->grid_Y_dipoles_norm = (float**)calloc2d(3, pData->nGrid, sizeof(float));
     for(i=0; i<3; i++)
-        for(j=0; j<NUM_GRID_DIRS; j++)
-            pData->grid_Y_dipoles_norm[i][j] = pData->grid_Y[i+1][j]/sqrtf(3); /* scale to [0..1] */
-    for(i=0; i<NUM_GRID_DIRS; i++)
-        for(j=0; j<2; j++)
-            pData->grid_dirs_deg[i][j] = (float)__grid_dirs_deg[i][j];
-    
+        cblas_scopy(pData->nGrid, pData->grid_Y[i+1], 1, pData->grid_Y_dipoles_norm[i], 1);
+    cblas_sscal(3*pData->nGrid, 1.0f/sqrtf(3.0f), FLATTEN2D(pData->grid_Y_dipoles_norm), 1);
+    pData->grid_dirs_deg = (float**)calloc2d(pData->nGrid, 2, sizeof(float));
+    cblas_scopy(pData->nGrid*2, (float*)__Tdesign_degree_70_dirs_deg, 1, FLATTEN2D(pData->grid_dirs_deg), 1);
+
     /* display */
     for(i=0; i<NUM_DISP_SLOTS; i++){
         pData->azi_deg[i] = malloc1d(HYBRID_BANDS*MAX_NUM_SECTORS * sizeof(float));
@@ -102,7 +103,7 @@ void sldoa_create
     /* set FIFO buffer */
     pData->fs = 48000.0f;
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_SH_SIGNALS*SLDOA_FRAME_SIZE*sizeof(float));
+    pData->inFIFO = (float**)calloc2d(MAX_NUM_SH_SIGNALS, SLDOA_FRAME_SIZE, sizeof(float));
 }
 
 void sldoa_destroy
@@ -132,6 +133,14 @@ void sldoa_destroy
             free(pData->alphaScale[i]);
         }
         free(pData->progressBarText);
+
+        /* Grid/basis stuff */
+        free(pData->grid_Y);
+        free(pData->grid_Y_dipoles_norm);
+        free(pData->grid_dirs_deg);
+
+        free(pData->inFIFO);
+
         free(pData);
         pData = NULL;
         *phSld = NULL;
@@ -455,14 +464,14 @@ void sldoa_setSourcePreset(void* const hSld, int newPresetID)
             break;
     }
     for(band=0; band<HYBRID_BANDS; band++)
-        pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
+        pData->nSectorsPerBand[band] = SAF_MIN(ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]), MAX_NUM_SECTORS);
 }
 
 void sldoa_setAnaOrder(void * const hSld, int newValue, int bandIdx)
 {
     sldoa_data *pData = (sldoa_data*)(hSld);
     pData->analysisOrderPerBand[bandIdx] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
-    pData->nSectorsPerBand[bandIdx] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[bandIdx]);
+    pData->nSectorsPerBand[bandIdx] = SAF_MIN(ORDER2NUMSECTORS(pData->analysisOrderPerBand[bandIdx]), MAX_NUM_SECTORS);
 }
 
 void sldoa_setAnaOrderAllBands(void * const hSld, int newValue)
@@ -472,7 +481,7 @@ void sldoa_setAnaOrderAllBands(void * const hSld, int newValue)
     
     for(band=0; band<HYBRID_BANDS; band++){
         pData->analysisOrderPerBand[band] = SAF_MIN(SAF_MAX(newValue,1), pData->new_masterOrder);
-        pData->nSectorsPerBand[band] = ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]);
+        pData->nSectorsPerBand[band] = SAF_MIN(ORDER2NUMSECTORS(pData->analysisOrderPerBand[band]), MAX_NUM_SECTORS);
     }
 }
 

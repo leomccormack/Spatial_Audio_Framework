@@ -135,7 +135,14 @@ typedef struct _array2sh
     char* progressBarText;          /**< Current (re)initialisation step, string */ 
     int fs;                         /**< sampling rate, hz */
     int new_order;                  /**< new encoding order (current value will be replaced by this after next re-init) */
-    
+
+    /* For diffuse-field equalisation */
+    double_complex* L_diff_fal;
+    double_complex* L_diff;
+    double_complex* E_diff;
+    double_complex* W_diffEQ_tmp;
+    double_complex* W_tmp;
+
     /* flags */
     PROC_STATUS procStatus;         /**< see #PROC_STATUS */
     int reinitSHTmatrixFLAG;        /**< 0: do not reinit; 1: reinit; */

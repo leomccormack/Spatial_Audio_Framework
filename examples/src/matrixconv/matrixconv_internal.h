@@ -50,8 +50,8 @@ typedef struct _matrixconv
 {
     /* FIFO buffers */
     int FIFO_idx;          /**< FIFO buffer index */
-    float inFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE];  /**< Input FIFO buffer */
-    float outFIFO[MAX_NUM_CHANNELS][MAX_FRAME_SIZE]; /**< Output FIFO buffer */
+    float** inFIFO;        /**< Input FIFO buffer */
+    float** outFIFO;       /**< Output FIFO buffer */
 
     /* input/output buffers */
     float** inputFrameTD;  /**< Input buffer; #MAX_NUM_CHANNELS x hostBlockSize_clamped */

@@ -125,5 +125,14 @@ void ambi_drc_setInputOrder(SH_ORDERS inOrder, int* nSH)
         case SH_ORDER_SEVENTH:
             (*nSH) = 64;
             break;
+        case SH_ORDER_EIGHTH:
+            (*nSH) = 81;
+            break;
+        case SH_ORDER_NINTH:
+            (*nSH) = 100;
+            break;
+        case SH_ORDER_TENTH:
+            (*nSH) = 121;
+            break;
     }
 }

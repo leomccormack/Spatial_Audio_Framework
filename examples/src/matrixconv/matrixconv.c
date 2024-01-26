@@ -53,8 +53,8 @@ void matrixconv_create
     /* set FIFO buffers */
     pData->host_fs = 48000.0f;
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+    pData->inFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, MAX_FRAME_SIZE, sizeof(float));
+    pData->outFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, MAX_FRAME_SIZE, sizeof(float));
 }
 
 void matrixconv_destroy
@@ -69,6 +69,8 @@ void matrixconv_destroy
         free(pData->outputFrameTD);
         free(pData->filters);
         saf_matrixConv_destroy(&(pData->hMatrixConv));
+        free(pData->inFIFO);
+        free(pData->outFIFO);
         free(pData);
         pData = NULL;
         *phMCnv = NULL;
@@ -153,7 +155,7 @@ void matrixconv_process
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
             /* clear outFIFO if codec was not ready */
             pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+            memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
         }
     }
 }
@@ -197,8 +199,8 @@ void matrixconv_checkReInit(void* const hMCnv)
 
         /* reset FIFO buffers */
         pData->FIFO_idx = 0;
-        memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
-        memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(FLATTEN2D(pData->inFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 
         pData->reInitFilters = 0;
     }

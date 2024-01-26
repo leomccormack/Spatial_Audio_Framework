@@ -86,6 +86,9 @@ extern const float __Eigenmike64_coords_rad[64][2];
  * Default sensor array coordinates */
 extern const float __default_SENSORcoords64_rad[64][2];
 /**
+ * Default sensor array coordinates */
+extern const float __default_SENSORcoords128_deg[128][2];
+/**
  * Max spherical harmonic order for the custom hydrophone array made at Aalto
  * University */
 extern const int __Aalto_Hydrophone_maxOrder;

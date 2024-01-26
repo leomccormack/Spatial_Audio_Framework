@@ -260,13 +260,13 @@ void getSHreal_recur
 {
     int n, m, i, dir, index_n;
     float Nn0, Nnm;
-    float sleg_n[8], sleg_n_1[8], sleg_n_2[8], scos_incl, sfactorials_n[15];
+    float sleg_n[11], sleg_n_1[11], sleg_n_2[11], scos_incl, sfactorials_n[21];
     float* leg_n, *leg_n_1, *leg_n_2, *cos_incl, *factorials_n;
 
     if(nDirs<1)
         return;
 
-    if(N<=7 && nDirs == 1){
+    if(N<=10 && nDirs == 1){
         /* Single direction optimisation for up to 7th order */
         leg_n = sleg_n;
         leg_n_1 = sleg_n_1;
@@ -319,7 +319,7 @@ void getSHreal_recur
         utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
     }
 
-    if(N>7 || nDirs > 1){
+    if(N>10 || nDirs > 1){
         free(factorials_n);
         free(leg_n);
         free(leg_n_1);
@@ -346,7 +346,6 @@ void getSHreal_part
     float *fcos_incl;
     float* leg_n, *leg_n_1, *leg_n_2, *factorials_n;
 
-
     if(nDirs<1)
         return;
     
@@ -355,14 +354,11 @@ void getSHreal_part
     norm_real = malloc1d((2*order_end+1)*sizeof(double));
     p_nm = malloc1d((order_end+1)*nDirs * sizeof(double));
     cos_incl = malloc1d(nDirs * sizeof(double));
-
     fcos_incl = malloc1d(nDirs * sizeof(float));
     factorials_n = malloc1d((2*order_end+1)*sizeof(float));
     leg_n = malloc1d((order_end+1)*nDirs * sizeof(float));
     leg_n_1 = malloc1d((order_end+1)*nDirs * sizeof(float));
     leg_n_2 = malloc1d((order_end+1)*nDirs * sizeof(float));
-
-
 
     index_n = 0;
 
@@ -370,64 +366,59 @@ void getSHreal_part
     for (i = 0; i < 2*order_end+1; i++)
         factorials_n[i] = (float)factorial(i); 
 
-
     for(n=0; n<=order_end; n++){
         if(n < order_start){
-            for(m=0; m<=2*n+1; m++){
-                for(dir=0; dir<nDirs; dir++){
+            for(m=0; m<=2*n+1; m++)
+                for(dir=0; dir<nDirs; dir++)
                     Y[(index_n+m)*nDirs+dir] = 0.f;
+        }
+        else {
+            if (n==0) {
+                for (dir = 0; dir<nDirs; dir++)
+                    Y[dir] = 1.0f/SQRT4PI;
+            }
+            else {
+                /* cos(inclination) = sin(elevation) */
+                for (dir = 0; dir<nDirs; dir++){
+                    cos_incl[dir] = cos(dirs_rad[dir*2+1]);
+                    fcos_incl[dir] = (float) cos_incl[dir];
+                }
+
+                if (n==order_start || n==order_start+1) {
+                    /* vector of unnormalised associated Legendre functions of current order */
+                    unnorm_legendreP(n, cos_incl, nDirs, p_nm); /* includes Condon-Shortley phase term */
+
+                    for(dir=0; dir<nDirs; dir++){
+                        /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
+                        if (n != 0){
+                            powm = -1;
+                            for(m = 0; m<n+1; m++){
+                                powm = -powm;
+                                leg_n[m*nDirs+dir] = powm * (float)p_nm[abs(m)*nDirs+dir];
+                            }
+                        }
+                        else
+                            leg_n[dir] = (float)p_nm[dir];
+                    }
+                }
+                else
+                    unnorm_legendreP_recur(n, fcos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase term */
+                utility_svvcopy(leg_n_1, (order_end+1)*nDirs, leg_n_2);  // should be n copies only
+                utility_svvcopy(leg_n,   (order_end+1)*nDirs, leg_n_1);
+
+                Nn0 = sqrtf(2.0f*(float)n+1.0f);
+                for (dir = 0; dir<nDirs; dir++){
+                    for (m = 0; m<n+1; m++) {
+                        if (m==0)
+                            Y[(index_n+n)*nDirs+dir] = Nn0/SQRT4PI * leg_n[m*nDirs+dir];
+                        else {
+                            Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
+                            Y[(index_n+n-m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
+                            Y[(index_n+n+m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
+                        }
+                    }
                 }
             }
-        } else {
-        
-        if (n==0) {
-            for (dir = 0; dir<nDirs; dir++)
-                Y[dir] = 1.0f/SQRT4PI;
-        } else {
-        
-        
-        /* cos(inclination) = sin(elevation) */
-        for (dir = 0; dir<nDirs; dir++){
-            cos_incl[dir] = cos(dirs_rad[dir*2+1]);
-            fcos_incl[dir] = (float) cos_incl[dir];
-        }
-        
-        if (n==order_start || n==order_start+1) {
-
-        /* vector of unnormalised associated Legendre functions of current order */
-        unnorm_legendreP(n, cos_incl, nDirs, p_nm); /* includes Condon-Shortley phase term */
-        
-        for(dir=0; dir<nDirs; dir++){
-            /* cancel the Condon-Shortley phase from the definition of the Legendre functions to result in signless real SH */
-            if (n != 0){
-                powm = -1;
-                for(m = 0; m<n+1; m++){
-                    powm = -powm;
-                    leg_n[m*nDirs+dir] = powm * (float)p_nm[abs(m)*nDirs+dir];
-                }
-            } else
-                leg_n[dir] = (float)p_nm[dir];
-        }
-        } else {
-            unnorm_legendreP_recur(n, fcos_incl, nDirs, leg_n_1, leg_n_2, leg_n); /* does NOT include Condon-Shortley phase term */
-        }
-        utility_svvcopy(leg_n_1, (order_end+1)*nDirs, leg_n_2);  // should be n copies only
-        utility_svvcopy(leg_n,   (order_end+1)*nDirs, leg_n_1);
-        
-
-        Nn0 = sqrtf(2.0f*(float)n+1.0f);
-        for (dir = 0; dir<nDirs; dir++){
-            for (m = 0; m<n+1; m++) {
-                if (m==0)
-                    Y[(index_n+n)*nDirs+dir] = Nn0/SQRT4PI * leg_n[m*nDirs+dir];
-                else {
-                    Nnm = Nn0* sqrtf( 2.0f * factorials_n[n-m]/factorials_n[n+m] );
-                    Y[(index_n+n-m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * sinf((float)m * (dirs_rad[dir*2]));
-                    Y[(index_n+n+m)*nDirs+dir] = Nnm/SQRT4PI * leg_n[m*nDirs+dir] * cosf((float)m * (dirs_rad[dir*2]));
-                }
-            }
-        }
-        }
         }
         
         /* increment */
@@ -600,12 +591,12 @@ void getSHrotMtxReal
 {
     int i, j, M, l, m, n, d, bandIdx, denom;
     float u, v, w;
-    float R_1[3][3], _R_lm1[64*64], _R_l[64*64];
+    float R_1[3][3], _R_lm1[121*121], _R_l[121*121];
     float* R_lm1, *R_l;
 
     /* Prep */
     M = (L+1) * (L+1);
-    if(L<=7){
+    if(L<=10){
         R_lm1 = _R_lm1;
         R_l = _R_l;
     }
@@ -671,7 +662,7 @@ void getSHrotMtxReal
     }
 
     /* clean-up */
-    if(L>7){
+    if(L>10){
         free(R_lm1);
         free(R_l);
     }

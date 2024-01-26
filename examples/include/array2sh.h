@@ -192,7 +192,7 @@ typedef enum {
 }ARRAY2SH_EVAL_STATUS;
 
 /** Maximum number of sensors supported */
-#define ARRAY2SH_MAX_NUM_SENSORS ( 64 )
+#define ARRAY2SH_MAX_NUM_SENSORS ( MAX_NUM_CHANNELS )
 
 /** Minimum gain value used for regularised inverse of modal coeffs, dB */
 #define ARRAY2SH_MAX_GAIN_MIN_VALUE ( 0.0f )

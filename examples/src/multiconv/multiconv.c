@@ -51,8 +51,10 @@ void multiconv_create
     /* set FIFO buffers */
     pData->host_fs = 48000.0f;
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+    pData->inFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, MAX_FRAME_SIZE, sizeof(float));
+    pData->outFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, MAX_FRAME_SIZE, sizeof(float));
+//    memset(FLATTEN2D(pData->inFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+//    memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 }
 
 void multiconv_destroy
@@ -67,6 +69,8 @@ void multiconv_destroy
         free(pData->outputFrameTD);
         free(pData->filters);
         saf_multiConv_destroy(&(pData->hMultiConv));
+        free(pData->inFIFO);
+        free(pData->outFIFO);
         free(pData);
         pData = NULL;
         *phMCnv = NULL;
@@ -110,7 +114,7 @@ void multiconv_process
     multiconv_checkReInit(hMCnv);
 
     /* prep */
-    numChannels = pData->nChannels;
+    numChannels = SAF_MIN(pData->nChannels, pData->nfilters);
 
     for(s=0; s<nSamples; s++){
         /* Load input signals into inFIFO buffer */
@@ -149,7 +153,7 @@ void multiconv_process
         else if(pData->FIFO_idx >= pData->hostBlockSize_clamped){
             /* clear outFIFO if codec was not ready */
             pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+            memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
         }
     }
 }
@@ -186,8 +190,8 @@ void multiconv_checkReInit(void* const hMCnv)
 
         /* reset FIFO buffers */
         pData->FIFO_idx = 0;
-        memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
-        memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(FLATTEN2D(pData->inFIFO),  0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
+        memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*MAX_FRAME_SIZE*sizeof(float));
 
         pData->reInitFilters = 0;
     }

@@ -364,7 +364,6 @@ void array2sh_calculate_sht_matrix
                         pData->W[band], MAX_NUM_SENSORS);
         }
         free(diag_bN_inv_R);
-        
     }
      
     pData->order = order;
@@ -387,11 +386,6 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
     double_complex* dM_diffcoh_s;
     const double_complex calpha = cmplx(1.0, 0.0); const double_complex cbeta  = cmplx(0.0, 0.0);
     double kr[HYBRID_BANDS];
-    double_complex L_diff_fal[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    double_complex L_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    double_complex E_diff[MAX_NUM_SH_SIGNALS][MAX_NUM_SENSORS];
-    double_complex W_diffEQ[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
-    double_complex W_tmp[MAX_NUM_SH_SIGNALS][MAX_NUM_SH_SIGNALS];
     double* dM_diffcoh; 
     
     if(arraySpecs->arrayType==ARRAY_CYLINDRICAL)
@@ -435,7 +429,7 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
             }
             break;
     }
-    
+
     /* determine band index for the spatial aliasing limit */
     f_alias = sphArrayAliasLim(arraySpecs->r, pData->c, pData->order);
     idxf_alias = 1;
@@ -446,25 +440,25 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
             idxf_alias = band;
         }
     }
-    
+
     /* baseline */
     for(i=0; i<arraySpecs->Q; i++)
         for(j=0; j<arraySpecs->Q; j++)
             dM_diffcoh_s[i*(arraySpecs->Q)+j] = cmplx(dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS) + j*(HYBRID_BANDS) + (idxf_alias)], 0.0);
     for(i=0; i<nSH; i++)
         for(j=0; j<arraySpecs->Q; j++)
-            W_tmp[i][j]= cmplx((double)crealf(pData->W[idxf_alias][i][j]), (double)cimagf(pData->W[idxf_alias][i][j]));
+            pData->W_tmp[i*MAX_NUM_SENSORS+j]= cmplx((double)crealf(pData->W[idxf_alias][i][j]), (double)cimagf(pData->W[idxf_alias][i][j]));
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), (arraySpecs->Q), &calpha,
-                W_tmp, MAX_NUM_SENSORS,
+                pData->W_tmp, MAX_NUM_SENSORS,
                 dM_diffcoh_s, (arraySpecs->Q), &cbeta,
-                E_diff, MAX_NUM_SENSORS);
+                pData->E_diff, MAX_NUM_SENSORS);
     cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, (arraySpecs->Q), &calpha,
-                E_diff, MAX_NUM_SENSORS,
-                W_tmp, MAX_NUM_SENSORS, &cbeta,
-                L_diff_fal, MAX_NUM_SH_SIGNALS);
+                pData->E_diff, MAX_NUM_SENSORS,
+                pData->W_tmp, MAX_NUM_SENSORS, &cbeta,
+                pData->L_diff_fal, MAX_NUM_SH_SIGNALS);
     for(i=0; i<nSH; i++)
-        L_diff_fal[i][i] = crmul(L_diff_fal[i][i], 1.0/(4.0*SAF_PId)); /* only care about the diagonal entries */
-    
+        pData->L_diff_fal[i*MAX_NUM_SH_SIGNALS+i] = crmul(pData->L_diff_fal[i*MAX_NUM_SH_SIGNALS+i], 1.0/(4.0*SAF_PId)); /* only care about the diagonal entries */
+
     /* diffuse-field equalise bands above aliasing. */
     for(band = SAF_MAX(idxf_alias,0)+1; band<HYBRID_BANDS; band++){
         for(i=0; i<arraySpecs->Q; i++)
@@ -472,25 +466,25 @@ void array2sh_apply_diff_EQ(void* const hA2sh)
                 dM_diffcoh_s[i*(arraySpecs->Q)+j] = cmplx(dM_diffcoh[i*(arraySpecs->Q)* (HYBRID_BANDS) + j*(HYBRID_BANDS) + (band)], 0.0);
         for(i=0; i<nSH; i++)
             for(j=0; j<arraySpecs->Q; j++)
-                W_tmp[i][j]= cmplx((double)crealf(pData->W[band][i][j]), (double)cimagf(pData->W[band][i][j]));
+                pData->W_tmp[i*MAX_NUM_SENSORS+j]= cmplx((double)crealf(pData->W[band][i][j]), (double)cimagf(pData->W[band][i][j]));
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), (arraySpecs->Q), &calpha,
-                    W_tmp, MAX_NUM_SENSORS,
+                    pData->W_tmp, MAX_NUM_SENSORS,
                     dM_diffcoh_s, (arraySpecs->Q), &cbeta,
-                    E_diff, MAX_NUM_SENSORS);
+                    pData->E_diff, MAX_NUM_SENSORS);
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, nSH, (arraySpecs->Q), &calpha,
-                    E_diff, MAX_NUM_SENSORS,
-                    W_tmp, MAX_NUM_SENSORS, &cbeta,
-                    L_diff, MAX_NUM_SH_SIGNALS);
+                    pData->E_diff, MAX_NUM_SENSORS,
+                    pData->W_tmp, MAX_NUM_SENSORS, &cbeta,
+                    pData->L_diff, MAX_NUM_SH_SIGNALS);
         for(i=0; i<nSH; i++)
             for(j=0; j<nSH; j++)
-                L_diff[i][j] = i==j? csqrt(cradd(ccdiv(L_diff_fal[i][j], crmul(L_diff[i][j], 1.0/(4.0*SAF_PId))), 2.23e-10)): cmplx(0.0,0.0);
+                pData->L_diff[i*MAX_NUM_SH_SIGNALS+j] = i==j? csqrt(cradd(ccdiv(pData->L_diff_fal[i*MAX_NUM_SH_SIGNALS+j], crmul(pData->L_diff[i*MAX_NUM_SH_SIGNALS+j], 1.0/(4.0*SAF_PId))), 2.23e-10)): cmplx(0.0,0.0);
         cblas_zgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, (arraySpecs->Q), nSH, &calpha,
-                    L_diff, MAX_NUM_SH_SIGNALS,
-                    W_tmp, MAX_NUM_SENSORS, &cbeta,
-                    W_diffEQ, MAX_NUM_SENSORS);
+                    pData->L_diff, MAX_NUM_SH_SIGNALS,
+                    pData->W_tmp, MAX_NUM_SENSORS, &cbeta,
+                    pData->W_diffEQ_tmp, MAX_NUM_SENSORS);
         for(i=0; i<nSH; i++)
             for(j=0; j<arraySpecs->Q; j++)
-                pData->W[band][i][j] = cmplxf((float)creal(W_diffEQ[i][j]), (float)cimag(W_diffEQ[i][j]));
+                pData->W[band][i][j] = cmplxf((float)creal(pData->W_diffEQ_tmp[i*MAX_NUM_SENSORS+j]), (float)cimag(pData->W_diffEQ_tmp[i*MAX_NUM_SENSORS+j]));
     }
     
     pData->evalStatus = EVAL_STATUS_NOT_EVALUATED;
@@ -639,14 +633,14 @@ void array2sh_initArray
         default:
         case MICROPHONE_ARRAY_PRESET_DEFAULT:
             (*arrayOrder) = 1;
-            Q = 4; /* number of mics */
-            pars->r = 0.042f; /* array radius */
-            pars->R = 0.042f; /* radius of the sensors (incase they protrude from the surface of the array), (only for rigid arrays) */
-            pars->arrayType = ARRAY_SPHERICAL;    /* spherical or cylindrical */
-            pars->weightType = WEIGHT_RIGID_OMNI; /* open or rigid, and directivity of the sensors (only for open arrays) */
+            Q = 4;
+            pars->r = 0.02f;
+            pars->R = 0.02f;
+            pars->arrayType = ARRAY_SPHERICAL;
+            pars->weightType = WEIGHT_OPEN_CARD;
             for(ch=0; ch<Q; ch++){
                 for(i=0; i<2; i++){
-                    pars->sensorCoords_rad[ch][i] = __default_SENSORcoords64_rad[ch][i]; /* spherical coordinates of the sensors, in radians */
+                    pars->sensorCoords_rad[ch][i] = __Sound_field_SPS200_coords_rad[ch][i];
                     pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
                 }
             }
@@ -782,8 +776,8 @@ void array2sh_initArray
     /* Fill remaining slots with default coords */
     for(; ch<MAX_NUM_SENSORS_IN_PRESET; ch++){
         for(i=0; i<2; i++){
-            pars->sensorCoords_rad[ch][i] = __default_SENSORcoords64_rad[ch][i];
-            pars->sensorCoords_deg[ch][i] = pars->sensorCoords_rad[ch][i] * (180.0f/SAF_PI);
+            pars->sensorCoords_deg[ch][i] = __default_SENSORcoords128_deg[ch][i];
+            pars->sensorCoords_rad[ch][i] = pars->sensorCoords_deg[ch][i] * (SAF_PI/180.0f);
         }
     }
     

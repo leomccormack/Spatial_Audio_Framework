@@ -86,6 +86,13 @@ void array2sh_create
     pData->reinitSHTmatrixFLAG = 1;
     pData->new_order = pData->order;
     pData->bN = NULL;
+
+    /* For diffuse-field equalisation */
+    pData->L_diff_fal = malloc1d(MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(double_complex));
+    pData->L_diff = malloc1d(MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(double_complex));
+    pData->E_diff = malloc1d(MAX_NUM_SH_SIGNALS*MAX_NUM_SENSORS*sizeof(double_complex));  
+    pData->W_diffEQ_tmp = malloc1d(MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(double_complex));
+    pData->W_tmp = malloc1d(MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*sizeof(double_complex));
     
     /* display related stuff */
     pData->bN_modal_dB = (float**)calloc2d(HYBRID_BANDS, MAX_SH_ORDER + 1, sizeof(float));
@@ -114,6 +121,13 @@ void array2sh_destroy
         free(pData->inputframeTF);
         free(pData->SHframeTF);
         array2sh_destroyArray(&(pData->arraySpecs));
+
+        /* For diffuse-field equalisation */
+        free(pData->L_diff_fal);
+        free(pData->L_diff);
+        free(pData->E_diff);
+        free(pData->W_diffEQ_tmp);
+        free(pData->W_tmp);
         
         /* Display stuff */
         free(pData->bN_modal_dB);
@@ -236,7 +250,7 @@ void array2sh_process
 
         /* account for normalisation scheme */
         switch(norm){
-            case NORM_N3D:  /* already N3D, do nothing */ break;  
+            case NORM_N3D:  /* already N3D, do nothing */ break;
             case NORM_SN3D: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, ARRAY2SH_FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_SN3D); break;
             case NORM_FUMA: convertHOANormConvention(FLATTEN2D(pData->SHframeTD), order, ARRAY2SH_FRAME_SIZE, HOA_NORM_N3D, HOA_NORM_FUMA); break;
         }

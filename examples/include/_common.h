@@ -42,12 +42,14 @@ typedef enum {
     SH_ORDER_FOURTH,    /**< Fourth-order (25 channels) */
     SH_ORDER_FIFTH,     /**< Fifth-order (36 channels) */
     SH_ORDER_SIXTH,     /**< Sixth-order (49 channels) */
-    SH_ORDER_SEVENTH    /**< Seventh-order (64 channels) */
-    
+    SH_ORDER_SEVENTH,   /**< Seventh-order (64 channels) */
+    SH_ORDER_EIGHTH,    /**< Eighth-order (81 channels) */
+    SH_ORDER_NINTH,     /**< Ninth-order (100 channels) */
+    SH_ORDER_TENTH      /**< Tenth-order (121 channels) */
 } SH_ORDERS;
     
 /** Maximum supported Ambisonic order */
-#define MAX_SH_ORDER ( 7 )
+#define MAX_SH_ORDER ( 10 )
     
 /**
  * Available Ambisonic channel ordering conventions
@@ -225,7 +227,7 @@ typedef enum {
 #define PROGRESSBARTEXT_CHAR_LENGTH ( 256 )
 
 /** Maximum number of input/output channels supported */
-#define MAX_NUM_CHANNELS ( 64 )
+#define MAX_NUM_CHANNELS ( 128 )
 
 /** Maximum number of input channels supported */
 #define MAX_NUM_INPUTS ( MAX_NUM_CHANNELS )
@@ -234,7 +236,7 @@ typedef enum {
 #define MAX_NUM_OUTPUTS ( MAX_NUM_CHANNELS )
 
 /** Maximum number of spherical harmonic components/signals supported */
-#define MAX_NUM_SH_SIGNALS ( (MAX_SH_ORDER + 1)*(MAX_SH_ORDER + 1) )
+#define MAX_NUM_SH_SIGNALS ( MAX_NUM_CHANNELS )
 
 
 #ifdef __cplusplus

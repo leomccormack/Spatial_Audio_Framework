@@ -56,8 +56,10 @@ void pitch_shifter_create
     /* set FIFO buffers */
     pData->sampleRate = 48000.0f;
     pData->FIFO_idx = 0;
-    memset(pData->inFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
-    memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
+    pData->inFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, PITCH_SHIFTER_FRAME_SIZE, sizeof(float));
+    pData->outFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, PITCH_SHIFTER_FRAME_SIZE, sizeof(float));
+    //memset(FLATTEN2D(pData->inFIFO), 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
+    //memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
 }
 
 void pitch_shifter_destroy
@@ -76,6 +78,8 @@ void pitch_shifter_destroy
 
         if (pData->hSmb != NULL)
             smb_pitchShift_destroy(&(pData->hSmb));
+        free(pData->inFIFO);
+        free(pData->outFIFO);
         free(pData);
         pData = NULL;
         *phPS = NULL;
@@ -206,7 +210,7 @@ void pitch_shifter_process
         else if(pData->FIFO_idx >= PITCH_SHIFTER_FRAME_SIZE){
             /* clear outFIFO if codec was not ready */
             pData->FIFO_idx = 0;
-            memset(pData->outFIFO, 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
+            memset(FLATTEN2D(pData->outFIFO), 0, MAX_NUM_CHANNELS*PITCH_SHIFTER_FRAME_SIZE*sizeof(float));
         }
     }
 

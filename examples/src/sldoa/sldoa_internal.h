@@ -46,8 +46,7 @@
 #ifndef __SLDOA_INTERNAL_H_INCLUDED__
 #define __SLDOA_INTERNAL_H_INCLUDED__
 
-#include "sldoa.h"         /* Include header for this example */
-#include "sldoa_database.h"/* Database header for this example */
+#include "sldoa.h"         /* Include header for this example */ 
 #include "saf.h"           /* Main include header for SAF */
 #include "saf_externals.h" /* To also include SAF dependencies (cblas etc.) */
 
@@ -70,7 +69,7 @@ extern "C" {
 #define HOP_SIZE ( 128 )                   /**< STFT hop size */
 #define HYBRID_BANDS ( HOP_SIZE + 5 )      /**< hybrid mode incurs an additional 5 bands  */
 #define TIME_SLOTS ( SLDOA_FRAME_SIZE / HOP_SIZE )          /**< Processing relies on fdHop = 16 */
-#define MAX_NUM_SECTORS ( ORDER2NUMSECTORS(MAX_SH_ORDER) )  /**< maximum number of sectors */
+#define MAX_NUM_SECTORS ( 64 )             /**< maximum number of sectors, TODO: expand beyond 64 (which is the max possible in the spherecovering grids we currently use) */
 #define NUM_DISP_SLOTS ( 2 )               /**< Number of display slots; needs to be at least 2. On slower systems that skip frames, consider adding more slots.  */
 
 /* Checks: */
@@ -86,8 +85,8 @@ extern "C" {
 typedef struct _sldoa
 {
     /* FIFO buffers */
-    int FIFO_idx;                    /**< FIFO buffer index */
-    float inFIFO[MAX_NUM_SH_SIGNALS][SLDOA_FRAME_SIZE]; /**< FIFO buffer */
+    int FIFO_idx;                   /**< FIFO buffer index */
+    float** inFIFO;                 /**< FIFO buffer */
 
     /* TFT */
     float** SHframeTD;              /**< time-domain SH input frame; #MAX_NUM_SH_SIGNALS x #SLDOA_FRAME_SIZE */
@@ -103,9 +102,10 @@ typedef struct _sldoa
     char* progressBarText;          /**< Current (re)initialisation step, string */
     
     /* internal */
-    float grid_Y[64][NUM_GRID_DIRS];                 /**< SH basis */
-    float grid_Y_dipoles_norm[3][NUM_GRID_DIRS];     /**< SH basis */
-    float grid_dirs_deg[NUM_GRID_DIRS][2];           /**< Grid directions, in degrees */
+    int nGrid;                      /**< Number of grid directions */
+    float** grid_Y;                 /**< SH basis */
+    float** grid_Y_dipoles_norm;    /**< SH basis */
+    float** grid_dirs_deg;          /**< Grid directions, in degrees */
     float_complex* secCoeffs[MAX_SH_ORDER-1];        /**< Sector beamforming weights/coefficients */
     float doa_rad[HYBRID_BANDS][MAX_NUM_SECTORS][2]; /**< Current DoA estimates per band and sector, in radians */
     float energy [HYBRID_BANDS][MAX_NUM_SECTORS];    /**< Current Sector energies */

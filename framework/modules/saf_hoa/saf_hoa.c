@@ -159,13 +159,13 @@ void getRSH_recur
 {
     int n, m, i, dir, index_n;
     float Nn0, Nnm;
-    float sleg_n[8], sleg_n_1[8], sleg_n_2[8], ssin_el, sfactorials_n[15];
+    float sleg_n[11], sleg_n_1[11], sleg_n_2[11], ssin_el, sfactorials_n[21];
     float* leg_n, *leg_n_1, *leg_n_2, *sin_el, *factorials_n;
 
     if(nDirs<1)
         return;
 
-    if(N<=7 && nDirs == 1){
+    if(N<=10 && nDirs == 1){
         /* Single direction optimisation for up to 7th order */
         leg_n = sleg_n;
         leg_n_1 = sleg_n_1;
@@ -218,7 +218,7 @@ void getRSH_recur
         utility_svvcopy(leg_n,   (N+1)*nDirs, leg_n_1);
     }
     
-    if(N>7 || nDirs > 1){
+    if(N>10 || nDirs > 1){
         free(factorials_n);
         free(leg_n);
         free(leg_n_1);

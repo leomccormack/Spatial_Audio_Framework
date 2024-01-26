@@ -55,8 +55,8 @@ typedef struct _pitch_shifter
 {
     /* FIFO buffers */
     int FIFO_idx;                   /**< FIFO buffer index */
-    float inFIFO[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];  /**< Input FIFO buffer */
-    float outFIFO[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE]; /**< Output FIFO buffer */
+    float** inFIFO;                 /**< Input FIFO buffer */
+    float** outFIFO;                /**< Output FIFO buffer */
 
     /* internal */
     void* hSmb;                     /**< pitch-shifter handle */

@@ -28,10 +28,10 @@
 #include "saf_externals.h"
 
 /**
- * Precomputed factorials for up to !15 (i.e. the "getSH" functions will employ
- * these up to 7th order) */
-static const long double factorials_15[15] =
-{1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10};
+ * Precomputed factorials for up to !21 (i.e. the "getSH" functions will employ
+ * these up to 10th order) */
+static const long double factorials_21[21] =
+{1.0, 1.0, 2.0, 6.0, 24.0, 120.0, 720.0, 5040.0, 40320.0, 362880.0, 3628800.0, 39916800.0, 479001600.0, 6.2270208e9, 8.71782891e10, 1.307674368000000e12, 2.092278988800000e13, 3.556874280960000e14, 6.402373705728000e15, 1.216451004088320e17, 2.432902008176640e18};
 
 /** Helper function for findCombinations() */
 static void combinationUtil(int* arr, int* data, int start, int end, int index, int r, int** comb, int* nComb) {
@@ -177,8 +177,8 @@ long double factorial(int n)
 {
     int i;
     long double ff;
-    if(n<15)
-        return factorials_15[n];
+    if(n<21)
+        return factorials_21[n];
     else{
         ff = 1.0;
         for(i = 1; i<=n; i++)
