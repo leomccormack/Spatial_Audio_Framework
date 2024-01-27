@@ -387,6 +387,9 @@ void ambi_bin_initCodec
             for(j=0; j<nSH; j++)
                 pars->M_dec[band][i][j] = decMtx[band*NUM_EARS*nSH + i*nSH + j];
     free(decMtx);
+
+    /* rotation matrix will need to be updated too */
+    pData->recalc_M_rotFLAG = 1;
     
     pData->order = order;
 
