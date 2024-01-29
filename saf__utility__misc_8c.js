@@ -22,5 +22,5 @@ var saf__utility__misc_8c =
     [ "randperm", "group___utilities.html#ga67b59e17207ee35a30f8b252db525559", null ],
     [ "sumf", "group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598", null ],
     [ "unique_i", "group___utilities.html#ga426cf3884b949ed5d8debc6a941b814a", null ],
-    [ "factorials_15", "saf__utility__misc_8c.html#ae987dfa48ca149a577ffb2ba6ac5e662", null ]
+    [ "factorials_21", "saf__utility__misc_8c.html#ac41304d462936dd1bb808c6998c6630e", null ]
 ];

@@ -262,13 +262,13 @@ $(function(){initNavTree('saf__hoa_8c_source.html',''); initResizable(); });
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>{</div>
 <div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordtype">int</span> n, m, i, dir, index_n;</div>
 <div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keywordtype">float</span> Nn0, Nnm;</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="keywordtype">float</span> sleg_n[8], sleg_n_1[8], sleg_n_2[8], ssin_el, sfactorials_n[15];</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>    <span class="keywordtype">float</span> sleg_n[11], sleg_n_1[11], sleg_n_2[11], ssin_el, sfactorials_n[21];</div>
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keywordtype">float</span>* leg_n, *leg_n_1, *leg_n_2, *sin_el, *factorials_n;</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>    <span class="keywordflow">if</span>(nDirs&lt;1)</div>
 <div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        <span class="keywordflow">return</span>;</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordflow">if</span>(N&lt;=7 &amp;&amp; nDirs == 1){</div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keywordflow">if</span>(N&lt;=10 &amp;&amp; nDirs == 1){</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="comment">/* Single direction optimisation for up to 7th order */</span></div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        leg_n = sleg_n;</div>
 <div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        leg_n_1 = sleg_n_1;</div>
@@ -321,7 +321,7 @@ $(function(){initNavTree('saf__hoa_8c_source.html',''); initResizable(); });
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        <a class="code hl_function" href="group___utilities.html#ga64608bbabb1b7bfd135fbb982a4d1e2c">utility_svvcopy</a>(leg_n,   (N+1)*nDirs, leg_n_1);</div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    }</div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    </div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="keywordflow">if</span>(N&gt;7 || nDirs &gt; 1){</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="keywordflow">if</span>(N&gt;10 || nDirs &gt; 1){</div>
 <div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        free(factorials_n);</div>
 <div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        free(leg_n);</div>
 <div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        free(leg_n_1);</div>
@@ -751,7 +751,7 @@ $(function(){initNavTree('saf__hoa_8c_source.html',''); initResizable(); });
 <div class="ttc" id="agroup___s_h_html_ga1ff15ddf9e257b1f185421568ef349dd"><div class="ttname"><a href="group___s_h.html#ga1ff15ddf9e257b1f185421568ef349dd">unnorm_legendreP</a></div><div class="ttdeci">void unnorm_legendreP(int n, double *x, int lenX, double *y)</div><div class="ttdoc">Calculates unnormalised Legendre polynomials up to order N, for all values in vector x [1].</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8c_source.html#l00053">saf_sh.c:54</a></div></div>
 <div class="ttc" id="agroup___s_h_html_ga2bac5e4831e0699171545c1d38558d7e"><div class="ttname"><a href="group___s_h.html#ga2bac5e4831e0699171545c1d38558d7e">ORDER2NSH</a></div><div class="ttdeci">#define ORDER2NSH(order)</div><div class="ttdoc">Converts spherical harmonic order to number of spherical harmonic components i.e: (order+1)^2.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8h_source.html#l00051">saf_sh.h:51</a></div></div>
 <div class="ttc" id="agroup___s_h_html_ga3851842c7f6c520c3f645f0ae686443c"><div class="ttname"><a href="group___s_h.html#ga3851842c7f6c520c3f645f0ae686443c">unnorm_legendreP_recur</a></div><div class="ttdeci">void unnorm_legendreP_recur(int n, float *x, int lenX, float *Pnm_minus1, float *Pnm_minus2, float *Pnm)</div><div class="ttdoc">Calculates unnormalised Legendre polynomials up to order N, for all values in vector x.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8c_source.html#l00129">saf_sh.c:130</a></div></div>
-<div class="ttc" id="agroup___s_h_html_ga6c331fd73b56845ab0ecbf4b0d5fc640"><div class="ttname"><a href="group___s_h.html#ga6c331fd73b56845ab0ecbf4b0d5fc640">sphModalCoeffs</a></div><div class="ttdeci">void sphModalCoeffs(int order, double *kr, int nBands, ARRAY_CONSTRUCTION_TYPES arrayType, double dirCoeff, double_complex *b_N)</div><div class="ttdoc">Calculates the modal coefficients for open/rigid spherical arrays.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8c_source.html#l02378">saf_sh.c:2379</a></div></div>
+<div class="ttc" id="agroup___s_h_html_ga6c331fd73b56845ab0ecbf4b0d5fc640"><div class="ttname"><a href="group___s_h.html#ga6c331fd73b56845ab0ecbf4b0d5fc640">sphModalCoeffs</a></div><div class="ttdeci">void sphModalCoeffs(int order, double *kr, int nBands, ARRAY_CONSTRUCTION_TYPES arrayType, double dirCoeff, double_complex *b_N)</div><div class="ttdoc">Calculates the modal coefficients for open/rigid spherical arrays.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8c_source.html#l02369">saf_sh.c:2370</a></div></div>
 <div class="ttc" id="agroup___s_h_html_gadab8bc47f1068e8edd58e5d5c93a3fa4"><div class="ttname"><a href="group___s_h.html#gadab8bc47f1068e8edd58e5d5c93a3fa4">getSHreal</a></div><div class="ttdeci">void getSHreal(int order, float *dirs_rad, int nDirs, float *Y)</div><div class="ttdoc">Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8c_source.html#l00190">saf_sh.c:191</a></div></div>
 <div class="ttc" id="agroup___s_h_html_ggaa2eb5bb4fefe6565eddd3f6ca862ba6ba5b24de1a578a08282bebacdf03cefa7d"><div class="ttname"><a href="group___s_h.html#ggaa2eb5bb4fefe6565eddd3f6ca862ba6ba5b24de1a578a08282bebacdf03cefa7d">ARRAY_CONSTRUCTION_RIGID</a></div><div class="ttdeci">@ ARRAY_CONSTRUCTION_RIGID</div><div class="ttdoc">Rigid baffle, omni-directional sensors.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8h_source.html#l00069">saf_sh.h:68</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga0fb1cec5cac527df5a9956ee3d137c5c"><div class="ttname"><a href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a></div><div class="ttdeci">#define SAF_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition</b> <a href="saf__utilities_8h_source.html#l00070">saf_utilities.h:70</a></div></div>
@@ -786,7 +786,7 @@ $(function(){initNavTree('saf__hoa_8c_source.html',''); initResizable(); });
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_99016b584a5af87cdf49f1484dd80da6.html">saf_hoa</a></li><li class="navelem"><a class="el" href="saf__hoa_8c.html">saf_hoa.c</a></li>
-    <li class="footer">Generated on Wed Jan 24 2024 17:43:03 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Mon Jan 29 2024 11:00:37 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 <script type="text/javascript">

@@ -82,7 +82,10 @@ var __common_8h =
       [ "SH_ORDER_FOURTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dba0ed9942b7af065333586bdf2d6ebfdb6", null ],
       [ "SH_ORDER_FIFTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dba44077a927023fb6e3f9292e4ef85fcf8", null ],
       [ "SH_ORDER_SIXTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dba94b1d22d39ff296d66afd25f34fe2696", null ],
-      [ "SH_ORDER_SEVENTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dbafa111a3945c298311fe5dfc3c1e0a89b", null ]
+      [ "SH_ORDER_SEVENTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dbafa111a3945c298311fe5dfc3c1e0a89b", null ],
+      [ "SH_ORDER_EIGHTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dba535e898f78d6b49e4bc44b8f9ea3eaa3", null ],
+      [ "SH_ORDER_NINTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dba57a43d24bd80324321f0b99eb8ff0536", null ],
+      [ "SH_ORDER_TENTH", "__common_8h.html#accad30b1b7667d4eedc40c116206a5dba6a49687f8d2d75a4a551958284790b6c", null ]
     ] ],
     [ "SOURCE_CONFIG_PRESETS", "__common_8h.html#a7ea45ad31bea000c76c733ace2441204", [
       [ "SOURCE_CONFIG_PRESET_DEFAULT", "__common_8h.html#a7ea45ad31bea000c76c733ace2441204aefc230b1658d9c6bafa94f67c73691c2", null ],

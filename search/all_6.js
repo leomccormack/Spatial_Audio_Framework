@@ -2,7 +2,7 @@ var searchData=
 [
   ['faces_0',['faces',['../structvoronoi__data.html#a895d5272485efe4854f3ca1908494af4',1,'voronoi_data']]],
   ['factorial_1',['factorial',['../group___utilities.html#ga9e753ee3390aba5fed74f311a3540a67',1,'factorial(int n):&#160;saf_utility_misc.c'],['../group___utilities.html#ga9e753ee3390aba5fed74f311a3540a67',1,'factorial(int n):&#160;saf_utility_misc.c']]],
-  ['factorials_5f15_2',['factorials_15',['../saf__utility__misc_8c.html#ae987dfa48ca149a577ffb2ba6ac5e662',1,'saf_utility_misc.c']]],
+  ['factorials_5f21_2',['factorials_21',['../saf__utility__misc_8c.html#ac41304d462936dd1bb808c6998c6630e',1,'saf_utility_misc.c']]],
   ['faf_5fiirfb_5fdata_3',['faf_IIRFB_data',['../structfaf___i_i_r_f_b__data.html',1,'']]],
   ['faf_5fiirfilterbank_5fapply_4',['faf_IIRFilterbank_apply',['../group___utilities.html#gafa740d1a0519f90812b163acef93a7c6',1,'faf_IIRFilterbank_apply(void *hFaF, float *inSig, float **outBands, int nSamples):&#160;saf_utility_filters.c'],['../group___utilities.html#gafa740d1a0519f90812b163acef93a7c6',1,'faf_IIRFilterbank_apply(void *hFaF, float *inSig, float **outBands, int nSamples):&#160;saf_utility_filters.c']]],
   ['faf_5fiirfilterbank_5fcreate_5',['faf_IIRFilterbank_create',['../group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96',1,'faf_IIRFilterbank_create(void **phFaF, int order, float *fc, int nCutoffFreq, float sampleRate, int maxNumSamples):&#160;saf_utility_filters.c'],['../group___utilities.html#ga5a253ff21a7e40ccd012b101cb745c96',1,'faf_IIRFilterbank_create(void **phFaF, int order, float *fc, int nCutoffFreqs, float sampleRate, int maxNumSamples):&#160;saf_utility_filters.c']]],

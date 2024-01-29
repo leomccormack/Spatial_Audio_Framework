@@ -1272,6 +1272,9 @@ Variables</h2></td></tr>
 <tr class="memitem:gaf5b487202d1f56ccb60d8a34579b4053" id="r_gaf5b487202d1f56ccb60d8a34579b4053"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf5b487202d1f56ccb60d8a34579b4053">__default_LScoords64_rad</a> [64][2]</td></tr>
 <tr class="memdesc:gaf5b487202d1f56ccb60d8a34579b4053"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Loudspeaker directions [azimuth, Elevation] in RADIANS!  <br /></td></tr>
 <tr class="separator:gaf5b487202d1f56ccb60d8a34579b4053"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga5aeb3e18ba4c34e89a467a722ff8b8d0" id="r_ga5aeb3e18ba4c34e89a467a722ff8b8d0"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga5aeb3e18ba4c34e89a467a722ff8b8d0">__default_LScoords128_deg</a> [128][2]</td></tr>
+<tr class="memdesc:ga5aeb3e18ba4c34e89a467a722ff8b8d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Loudspeaker directions [azimuth, Elevation] - to replace above!  <br /></td></tr>
+<tr class="separator:ga5aeb3e18ba4c34e89a467a722ff8b8d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6402ff95e29839d1bb415d35e98ebb2c" id="r_ga6402ff95e29839d1bb415d35e98ebb2c"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga6402ff95e29839d1bb415d35e98ebb2c">__Tdesign_degree_1_nPoints</a></td></tr>
 <tr class="memdesc:ga6402ff95e29839d1bb415d35e98ebb2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of directions in a minimum Tdesign of degree: 1.  <br /></td></tr>
 <tr class="separator:ga6402ff95e29839d1bb415d35e98ebb2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1890,6 +1893,9 @@ Variables</h2></td></tr>
 <tr class="memitem:ga7456743cc8398e2481e28407a2821adf" id="r_ga7456743cc8398e2481e28407a2821adf"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7456743cc8398e2481e28407a2821adf">__default_SENSORcoords64_rad</a> [64][2]</td></tr>
 <tr class="memdesc:ga7456743cc8398e2481e28407a2821adf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default sensor array coordinates.  <br /></td></tr>
 <tr class="separator:ga7456743cc8398e2481e28407a2821adf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3365872efdbfa65b9c7b71742785afe8" id="r_ga3365872efdbfa65b9c7b71742785afe8"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga3365872efdbfa65b9c7b71742785afe8">__default_SENSORcoords128_deg</a> [128][2]</td></tr>
+<tr class="memdesc:ga3365872efdbfa65b9c7b71742785afe8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default sensor array coordinates.  <br /></td></tr>
+<tr class="separator:ga3365872efdbfa65b9c7b71742785afe8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga567c723646b55508c165528a11ad2d39" id="r_ga567c723646b55508c165528a11ad2d39"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga567c723646b55508c165528a11ad2d39">__Aalto_Hydrophone_maxOrder</a></td></tr>
 <tr class="memdesc:ga567c723646b55508c165528a11ad2d39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Max spherical harmonic order for the custom hydrophone array made at Aalto University.  <br /></td></tr>
 <tr class="separator:ga567c723646b55508c165528a11ad2d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -14384,7 +14390,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the custom hydrophone array made at Aalto University. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00325">325</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00455">455</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14514,7 +14520,33 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the Core Sound TetraMic. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00327">327</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00457">457</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+
+</div>
+</div>
+<a id="ga5aeb3e18ba4c34e89a467a722ff8b8d0" name="ga5aeb3e18ba4c34e89a467a722ff8b8d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga5aeb3e18ba4c34e89a467a722ff8b8d0">&#9670;&#160;</a></span>__default_LScoords128_deg</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float __default_LScoords128_deg[128][2]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default Loudspeaker directions [azimuth, Elevation] - to replace above! </p>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00483">483</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14541,6 +14573,32 @@ Example Usage</h2>
 <p>Default Loudspeaker directions [azimuth, Elevation] in RADIANS! </p>
 
 <p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00417">417</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+
+</div>
+</div>
+<a id="ga3365872efdbfa65b9c7b71742785afe8" name="ga3365872efdbfa65b9c7b71742785afe8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga3365872efdbfa65b9c7b71742785afe8">&#9670;&#160;</a></span>__default_SENSORcoords128_deg</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float __default_SENSORcoords128_deg[128][2]</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">extern</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Default sensor array coordinates. </p>
+
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00325">325</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14645,7 +14703,7 @@ Example Usage</h2>
 
 <p>Sensor array frequency ranges for each SH order, for the DTU mic (should only be used as a rough estimate) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00340">340</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00470">470</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14671,7 +14729,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the custom 52-sensor array built at the Technical University of Denmark (DTU) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00332">332</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00462">462</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14723,7 +14781,7 @@ Example Usage</h2>
 
 <p>Sensor array frequency ranges for each SH order, for the Eigenmike32 (should only be used as a rough estimate) </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00337">337</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00467">467</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14749,7 +14807,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the Eigenmike32. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00330">330</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00460">460</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14801,7 +14859,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the Eigenmike64. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00331">331</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00461">461</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14828,7 +14886,7 @@ Example Usage</h2>
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 0. </p>
 <dl class="section see"><dt>See also</dt><dd>3LD - Library for Loudspeaker Layout Design; release 2, 2006/03/15 Copyright (c) 2006 Florian Hollerweger (floholl_AT_sbox.tugraz.at) and (c) 2002 Darren Weber. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32129">32129</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32259">32259</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14854,7 +14912,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 0. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32128">32128</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32258">32258</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14880,7 +14938,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 10. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l35069">35069</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l35199">35199</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14906,7 +14964,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 10. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l35068">35068</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l35198">35198</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14932,7 +14990,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 11. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l36075">36075</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l36205">36205</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14958,7 +15016,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 11. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l36074">36074</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l36204">36204</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -14984,7 +15042,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 12. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l37291">37291</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l37421">37421</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15010,7 +15068,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 12. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l37290">37290</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l37420">37420</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15036,7 +15094,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 13. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l38737">38737</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l38867">38867</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15062,7 +15120,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 13. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l38736">38736</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l38866">38866</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15088,7 +15146,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 14. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l40433">40433</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l40563">40563</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15114,7 +15172,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 14. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l40432">40432</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l40562">40562</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15140,7 +15198,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 15. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l42399">42399</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l42529">42529</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15166,7 +15224,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 15. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l42398">42398</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l42528">42528</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15192,7 +15250,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l44655">44655</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l44785">44785</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15218,7 +15276,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l44654">44654</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l44784">44784</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15244,7 +15302,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32145">32145</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32275">32275</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15270,7 +15328,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32144">32144</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32274">32274</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15296,7 +15354,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32181">32181</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32311">32311</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15322,7 +15380,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32180">32180</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32310">32310</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15348,7 +15406,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32227">32227</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32357">32357</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15374,7 +15432,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32226">32226</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32356">32356</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15400,7 +15458,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 4. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32323">32323</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32453">32453</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15426,7 +15484,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 4. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32322">32322</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32452">32452</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15452,7 +15510,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32489">32489</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32619">32619</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15478,7 +15536,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32488">32488</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32618">32618</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15504,7 +15562,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 6. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32745">32745</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32875">32875</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15530,7 +15588,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 6. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32744">32744</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32874">32874</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15556,7 +15614,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 7. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33111">33111</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33241">33241</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15582,7 +15640,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 7. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33110">33110</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33240">33240</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15608,7 +15666,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33607">33607</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33737">33737</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15634,7 +15692,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33606">33606</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l33736">33736</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15660,7 +15718,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for ico geosphere, degree: 9. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l34253">34253</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l34383">34383</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15686,7 +15744,7 @@ Example Usage</h2>
 
 <p>Number of directions in a ico geosphere of degree: 9. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l34252">34252</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l34382">34382</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15714,10 +15772,10 @@ Example Usage</h2>
 <p>Access as, e.g. </p><div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> degree = 10; <span class="comment">// between 0..16</span></div>
 <div class="line"><span class="keywordtype">float</span>* geo_dirs_degree_10 = <a class="code hl_variable" href="#gad5c89b8d12c5d9d3dd077932124defee">__HANDLES_geosphere_ico_dirs_deg</a>[degree];</div>
 <div class="line"><span class="keywordtype">int</span> num_dirs_degree_10 = <a class="code hl_variable" href="#ga2c6734653136564982445e0e64e40c90">__geosphere_ico_nPoints</a>[degree];</div>
-<div class="ttc" id="agroup___utilities_html_ga2c6734653136564982445e0e64e40c90"><div class="ttname"><a href="#ga2c6734653136564982445e0e64e40c90">__geosphere_ico_nPoints</a></div><div class="ttdeci">const int __geosphere_ico_nPoints[17]</div><div class="ttdoc">3LD geosphere number of points (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53358">saf_utility_loudspeaker_presets.c:53358</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gad5c89b8d12c5d9d3dd077932124defee"><div class="ttname"><a href="#gad5c89b8d12c5d9d3dd077932124defee">__HANDLES_geosphere_ico_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_geosphere_ico_dirs_deg[17]</div><div class="ttdoc">3LD geosphere HANDLES (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53318">saf_utility_loudspeaker_presets.c:53318</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga2c6734653136564982445e0e64e40c90"><div class="ttname"><a href="#ga2c6734653136564982445e0e64e40c90">__geosphere_ico_nPoints</a></div><div class="ttdeci">const int __geosphere_ico_nPoints[17]</div><div class="ttdoc">3LD geosphere number of points (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53488">saf_utility_loudspeaker_presets.c:53488</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gad5c89b8d12c5d9d3dd077932124defee"><div class="ttname"><a href="#gad5c89b8d12c5d9d3dd077932124defee">__HANDLES_geosphere_ico_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_geosphere_ico_dirs_deg[17]</div><div class="ttdoc">3LD geosphere HANDLES (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53448">saf_utility_loudspeaker_presets.c:53448</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53358">53358</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53488">53488</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15744,7 +15802,7 @@ Example Usage</h2>
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 0. </p>
 <dl class="section see"><dt>See also</dt><dd>3LD - Library for Loudspeaker Layout Design; release 2, 2006/03/15 Copyright (c) 2006 Florian Hollerweger (floholl_AT_sbox.tugraz.at) and (c) 2002 Darren Weber. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47221">47221</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47351">47351</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15770,7 +15828,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 0. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47220">47220</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47350">47350</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15796,7 +15854,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 10. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48433">48433</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48563">48563</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15822,7 +15880,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 10. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48432">48432</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48562">48562</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15848,7 +15906,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 11. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48839">48839</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48969">48969</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15874,7 +15932,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 11. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48838">48838</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48968">48968</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15900,7 +15958,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 12. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l49329">49329</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l49459">49459</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15926,7 +15984,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 12. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l49328">49328</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l49458">49458</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15952,7 +16010,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 13. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l49911">49911</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l50041">50041</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -15978,7 +16036,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 13. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l49910">49910</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l50040">50040</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16004,7 +16062,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 14. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l50593">50593</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l50723">50723</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16030,7 +16088,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 14. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l50592">50592</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l50722">50722</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16056,7 +16114,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 15. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l51383">51383</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l51513">51513</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16082,7 +16140,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 15. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l51382">51382</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l51512">51512</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16108,7 +16166,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l52289">52289</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l52419">52419</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16134,7 +16192,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l52288">52288</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l52418">52418</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16160,7 +16218,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47231">47231</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47361">47361</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16186,7 +16244,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47230">47230</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47360">47360</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16212,7 +16270,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47249">47249</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47379">47379</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16238,7 +16296,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47248">47248</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47378">47378</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16264,7 +16322,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47271">47271</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47401">47401</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16290,7 +16348,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47270">47270</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47400">47400</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16316,7 +16374,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 4. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47313">47313</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47443">47443</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16342,7 +16400,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 4. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47312">47312</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47442">47442</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16368,7 +16426,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47383">47383</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47513">47513</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16394,7 +16452,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47382">47382</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47512">47512</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16420,7 +16478,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 6. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47489">47489</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47619">47619</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16446,7 +16504,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 6. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47488">47488</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47618">47618</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16472,7 +16530,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 7. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47639">47639</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47769">47769</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16498,7 +16556,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 7. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47638">47638</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47768">47768</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16524,7 +16582,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47841">47841</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47971">47971</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16550,7 +16608,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47840">47840</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l47970">47970</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16576,7 +16634,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for oct geosphere, degree: 9. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48103">48103</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48233">48233</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16602,7 +16660,7 @@ Example Usage</h2>
 
 <p>Number of directions in a oct geosphere of degree: 9. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48102">48102</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l48232">48232</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16630,10 +16688,10 @@ Example Usage</h2>
 <p>Access as, e.g. </p><div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> degree = 10; <span class="comment">// between 0..16</span></div>
 <div class="line"><span class="keywordtype">float</span>* geo_dirs_degree_10 = <a class="code hl_variable" href="#gab8c53e95a58146b737a7a962eeedb085">__HANDLES_geosphere_oct_dirs_deg</a>[degree];</div>
 <div class="line"><span class="keywordtype">int</span> num_dirs_degree_10 = <a class="code hl_variable" href="#ga404b3cfa434f2c7144ef0f304dd05c09">__geosphere_oct_nPoints</a>[degree];</div>
-<div class="ttc" id="agroup___utilities_html_ga404b3cfa434f2c7144ef0f304dd05c09"><div class="ttname"><a href="#ga404b3cfa434f2c7144ef0f304dd05c09">__geosphere_oct_nPoints</a></div><div class="ttdeci">const int __geosphere_oct_nPoints[17]</div><div class="ttdoc">3LD geosphere number of points (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53362">saf_utility_loudspeaker_presets.c:53362</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gab8c53e95a58146b737a7a962eeedb085"><div class="ttname"><a href="#gab8c53e95a58146b737a7a962eeedb085">__HANDLES_geosphere_oct_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_geosphere_oct_dirs_deg[17]</div><div class="ttdoc">3LD geosphere HANDLES (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53338">saf_utility_loudspeaker_presets.c:53338</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga404b3cfa434f2c7144ef0f304dd05c09"><div class="ttname"><a href="#ga404b3cfa434f2c7144ef0f304dd05c09">__geosphere_oct_nPoints</a></div><div class="ttdeci">const int __geosphere_oct_nPoints[17]</div><div class="ttdoc">3LD geosphere number of points (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53492">saf_utility_loudspeaker_presets.c:53492</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gab8c53e95a58146b737a7a962eeedb085"><div class="ttname"><a href="#gab8c53e95a58146b737a7a962eeedb085">__HANDLES_geosphere_oct_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_geosphere_oct_dirs_deg[17]</div><div class="ttdoc">3LD geosphere HANDLES (freq = [0 0], [1 0],..., [16 0])</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l53468">saf_utility_loudspeaker_presets.c:53468</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53362">53362</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53492">53492</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16662,7 +16720,7 @@ Example Usage</h2>
 <div class="line"><span class="keywordtype">float</span>* geo_dirs_degree_10 = <a class="code hl_variable" href="#gad5c89b8d12c5d9d3dd077932124defee">__HANDLES_geosphere_ico_dirs_deg</a>[degree];</div>
 <div class="line"><span class="keywordtype">int</span> num_dirs_degree_10 = <a class="code hl_variable" href="#ga2c6734653136564982445e0e64e40c90">__geosphere_ico_nPoints</a>[degree];</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53318">53318</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53448">53448</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16691,7 +16749,7 @@ Example Usage</h2>
 <div class="line"><span class="keywordtype">float</span>* geo_dirs_degree_10 = <a class="code hl_variable" href="#gab8c53e95a58146b737a7a962eeedb085">__HANDLES_geosphere_oct_dirs_deg</a>[degree];</div>
 <div class="line"><span class="keywordtype">int</span> num_dirs_degree_10 = <a class="code hl_variable" href="#ga404b3cfa434f2c7144ef0f304dd05c09">__geosphere_oct_nPoints</a>[degree];</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53338">53338</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l53468">53468</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16718,9 +16776,9 @@ Example Usage</h2>
 <p>Sphere covering handles ( between 4..64 points only) </p>
 <p>Access as, e.g. </p><div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> numPoints = 44; <span class="comment">// between 4..64 points</span></div>
 <div class="line"><span class="keywordtype">float</span>* sphCov_dirs_deg = <a class="code hl_variable" href="#ga10bd65d1a35e4d1d64d3a5fadbd85a79">__HANDLES_SphCovering_dirs_deg</a> [numPoints-1];</div>
-<div class="ttc" id="agroup___utilities_html_ga10bd65d1a35e4d1d64d3a5fadbd85a79"><div class="ttname"><a href="#ga10bd65d1a35e4d1d64d3a5fadbd85a79">__HANDLES_SphCovering_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_SphCovering_dirs_deg[64]</div><div class="ttdoc">Sphere covering handles ( between 4..64 points only)</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l32061">saf_utility_loudspeaker_presets.c:32061</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga10bd65d1a35e4d1d64d3a5fadbd85a79"><div class="ttname"><a href="#ga10bd65d1a35e4d1d64d3a5fadbd85a79">__HANDLES_SphCovering_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_SphCovering_dirs_deg[64]</div><div class="ttdoc">Sphere covering handles ( between 4..64 points only)</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l32191">saf_utility_loudspeaker_presets.c:32191</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32061">32061</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32191">32191</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -16748,10 +16806,10 @@ Example Usage</h2>
 <p>Access as, e.g. </p><div class="fragment"><div class="line"><span class="keyword">const</span> <span class="keywordtype">int</span> tdesign_degree = 7;</div>
 <div class="line"><span class="keywordtype">float</span>* tdesign_dirs_deg = <a class="code hl_variable" href="#ga21a5a32a4a26c439b015001a4ab413ba">__HANDLES_Tdesign_dirs_deg</a> [tdesign_degree-1];</div>
 <div class="line"><span class="keywordtype">int</span> num_Tdesign_dirs = <a class="code hl_variable" href="#gab6aae2dc53ab4c6423e466d20543f001">__Tdesign_nPoints_per_degree</a>  [tdesign_degree-1];</div>
-<div class="ttc" id="agroup___utilities_html_ga21a5a32a4a26c439b015001a4ab413ba"><div class="ttname"><a href="#ga21a5a32a4a26c439b015001a4ab413ba">__HANDLES_Tdesign_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_Tdesign_dirs_deg[21]</div><div class="ttdoc">minimum T-design HANDLES (up to degree 21 only).</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l29780">saf_utility_loudspeaker_presets.c:29780</a></div></div>
-<div class="ttc" id="agroup___utilities_html_gab6aae2dc53ab4c6423e466d20543f001"><div class="ttname"><a href="#gab6aae2dc53ab4c6423e466d20543f001">__Tdesign_nPoints_per_degree</a></div><div class="ttdeci">const int __Tdesign_nPoints_per_degree[21]</div><div class="ttdoc">Number of points in each t-design (up to degree 21 only).</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l29776">saf_utility_loudspeaker_presets.c:29776</a></div></div>
+<div class="ttc" id="agroup___utilities_html_ga21a5a32a4a26c439b015001a4ab413ba"><div class="ttname"><a href="#ga21a5a32a4a26c439b015001a4ab413ba">__HANDLES_Tdesign_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_Tdesign_dirs_deg[21]</div><div class="ttdoc">minimum T-design HANDLES (up to degree 21 only).</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l29910">saf_utility_loudspeaker_presets.c:29910</a></div></div>
+<div class="ttc" id="agroup___utilities_html_gab6aae2dc53ab4c6423e466d20543f001"><div class="ttname"><a href="#gab6aae2dc53ab4c6423e466d20543f001">__Tdesign_nPoints_per_degree</a></div><div class="ttdeci">const int __Tdesign_nPoints_per_degree[21]</div><div class="ttdoc">Number of points in each t-design (up to degree 21 only).</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l29906">saf_utility_loudspeaker_presets.c:29906</a></div></div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29780">29780</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29910">29910</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17141,7 +17199,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the Sennheiser Ambeo. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00326">326</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00456">456</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17193,7 +17251,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the Sound-field SPS200. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00328">328</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00458">458</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17219,7 +17277,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 10 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29861">29861</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29991">29991</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17245,7 +17303,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 11 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29874">29874</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30004">30004</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17271,7 +17329,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 12 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29888">29888</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30018">30018</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17297,7 +17355,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 13 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29903">29903</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30033">30033</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17323,7 +17381,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 14 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29919">29919</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30049">30049</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17349,7 +17407,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 15 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29936">29936</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30066">30066</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17375,7 +17433,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 16 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29954">29954</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30084">30084</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17401,7 +17459,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 17 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29973">29973</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30103">30103</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17427,7 +17485,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 18 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29993">29993</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30123">30123</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17453,7 +17511,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 19 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30014">30014</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30144">30144</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17479,7 +17537,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 20 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30036">30036</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30166">30166</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17505,7 +17563,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 21 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30059">30059</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30189">30189</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17531,7 +17589,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 22 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30083">30083</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30213">30213</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17557,7 +17615,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 23 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30108">30108</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30238">30238</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17583,7 +17641,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 24 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30134">30134</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30264">30264</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17609,7 +17667,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 25 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30161">30161</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30291">30291</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17635,7 +17693,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 26 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30189">30189</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30319">30319</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17661,7 +17719,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 27 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30218">30218</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30348">30348</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17687,7 +17745,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 28 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30248">30248</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30378">30378</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17713,7 +17771,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 29 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30279">30279</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30409">30409</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17739,7 +17797,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 30 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30311">30311</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30441">30441</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17765,7 +17823,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 31 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30344">30344</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30474">30474</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17791,7 +17849,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 32 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30378">30378</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30508">30508</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17817,7 +17875,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 33 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30413">30413</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30543">30543</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17843,7 +17901,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 34 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30449">30449</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30579">30579</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17869,7 +17927,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 35 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30486">30486</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30616">30616</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17895,7 +17953,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 36 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30524">30524</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30654">30654</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17921,7 +17979,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 37 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30563">30563</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30693">30693</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17947,7 +18005,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 38 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30603">30603</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30733">30733</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17973,7 +18031,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 39 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30644">30644</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30774">30774</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -17999,7 +18057,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 40 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30686">30686</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30816">30816</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18025,7 +18083,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 41 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30729">30729</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30859">30859</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18051,7 +18109,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 42 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30773">30773</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30903">30903</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18077,7 +18135,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 43 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30818">30818</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30948">30948</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18103,7 +18161,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 44 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30864">30864</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30994">30994</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18129,7 +18187,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 45 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30911">30911</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31041">31041</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18155,7 +18213,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 46 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l30959">30959</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31089">31089</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18181,7 +18239,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 47 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31008">31008</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31138">31138</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18207,7 +18265,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 48 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31058">31058</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31188">31188</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18233,7 +18291,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 49 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31109">31109</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31239">31239</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18260,7 +18318,7 @@ Example Usage</h2>
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 4 dirs. </p>
 <dl class="section see"><dt>See also</dt><dd>Belger, M. (1989). JH Conway, NJA Sloane. Sphere packings, lattices and groups. Springer Verlag New York&ndash;Berlin&ndash;Heidelberg&ndash;London&ndash;Paris Tokyo 1988, 663 pages, 112 illustrations, DM 178.00, ISBN 0&ndash;387&ndash;96617 &ndash;X. Crystal Research and Technology, 24(1), 90&ndash;90. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29804">29804</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29934">29934</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18286,7 +18344,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 50 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31161">31161</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31291">31291</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18312,7 +18370,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 51 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31214">31214</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31344">31344</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18338,7 +18396,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 52 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31268">31268</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31398">31398</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18364,7 +18422,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 53 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31323">31323</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31453">31453</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18390,7 +18448,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 54 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31379">31379</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31509">31509</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18416,7 +18474,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 55 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31436">31436</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31566">31566</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18442,7 +18500,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 56 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31494">31494</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31624">31624</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18468,7 +18526,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 57 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31553">31553</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31683">31683</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18494,7 +18552,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 58 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31613">31613</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31743">31743</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18520,7 +18578,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 59 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31674">31674</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31804">31804</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18546,7 +18604,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 5 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29811">29811</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29941">29941</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18572,7 +18630,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 60 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31736">31736</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31866">31866</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18598,7 +18656,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 61 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31799">31799</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31929">31929</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18624,7 +18682,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 62 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31863">31863</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31993">31993</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18650,7 +18708,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 63 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31928">31928</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32058">32058</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18676,7 +18734,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 64 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l31994">31994</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l32124">32124</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18702,7 +18760,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 6 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29819">29819</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29949">29949</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18728,7 +18786,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 7 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29828">29828</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29958">29958</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18754,7 +18812,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 8 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29838">29838</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29968">29968</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18780,7 +18838,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for sphere covering: 9 dirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29849">29849</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29979">29979</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18832,7 +18890,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 100. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l16857">16857</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l16987">16987</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18858,7 +18916,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 100. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l16856">16856</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l16986">16986</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18884,7 +18942,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 10. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00689">689</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00819">819</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18910,7 +18968,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 10. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00688">688</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00818">818</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18936,7 +18994,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 11. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00753">753</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00883">883</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18962,7 +19020,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 11. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00752">752</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00882">882</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -18988,7 +19046,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 124. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l21960">21960</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l22090">22090</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19014,7 +19072,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 124. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l21959">21959</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l22089">22089</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19040,7 +19098,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 12. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00827">827</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00957">957</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19066,7 +19124,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 12. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00826">826</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00956">956</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19092,7 +19150,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 13. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00915">915</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01045">1045</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19118,7 +19176,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 13. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00914">914</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01044">1044</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19144,7 +19202,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 14. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01013">1013</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01143">1143</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19170,7 +19228,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 14. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01012">1012</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01142">1142</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19196,7 +19254,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 15. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01125">1125</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01255">1255</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19222,7 +19280,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 15. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01124">1124</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01254">1254</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19248,7 +19306,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01249">1249</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01379">1379</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19274,7 +19332,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01248">1248</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01378">1378</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19300,7 +19358,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 17. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01397">1397</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01527">1527</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19326,7 +19384,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 17. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01396">1396</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01526">1526</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19352,7 +19410,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 18. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01557">1557</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01687">1687</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19378,7 +19436,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 18. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01556">1556</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01686">1686</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19404,7 +19462,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 19. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01741">1741</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01871">1871</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19430,7 +19488,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 19. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01740">1740</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01870">1870</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19457,7 +19515,7 @@ Example Usage</h2>
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 1. </p>
 <dl class="section see"><dt>See also</dt><dd>McLaren's Improved Snub Cube and Other New Spherical Designs in Three Dimensions", R. H. Hardin and N. J. A. Sloane, Discrete and Computational Geometry, 15 (1996), pp. 429-441. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00485">485</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00615">615</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19483,7 +19541,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00484">484</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00614">614</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19509,7 +19567,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 20. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01949">1949</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02079">2079</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19535,7 +19593,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 20. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l01948">1948</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02078">2078</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19561,7 +19619,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 21. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02169">2169</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02299">2299</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19587,7 +19645,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 21. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02168">2168</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02298">2298</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19613,7 +19671,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00491">491</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00621">621</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19639,7 +19697,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00490">490</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00620">620</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19666,7 +19724,7 @@ Example Usage</h2>
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 30. </p>
 <dl class="section see"><dt>See also</dt><dd>Gra"f, M., &amp; Potts, D. (2011). On the computation of spherical designs by a new optimization approach based on fast spherical Fourier transforms. Numerische Mathematik, 119(4), 699-724. Taken from: github.com/chris-hld/spaudiopy/blob/master/spaudiopy/n_designs_1_124.mat </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02413">2413</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02543">2543</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19692,7 +19750,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 30. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02412">2412</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02542">2542</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19718,7 +19776,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00499">499</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00629">629</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19744,7 +19802,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00498">498</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00628">628</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19770,7 +19828,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 40. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02897">2897</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l03027">3027</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19796,7 +19854,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 40. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l02896">2896</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l03026">3026</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19822,7 +19880,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 4. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00509">509</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00639">639</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19848,7 +19906,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 4. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00508">508</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00638">638</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19874,7 +19932,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 50. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l03741">3741</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l03871">3871</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19900,7 +19958,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 50. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l03740">3740</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l03870">3870</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19926,7 +19984,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00525">525</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00655">655</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19952,7 +20010,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 5. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00524">524</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00654">654</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -19978,7 +20036,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 60. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l05041">5041</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l05171">5171</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20004,7 +20062,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 60. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l05040">5040</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l05170">5170</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20030,7 +20088,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 6. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00541">541</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00671">671</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20056,7 +20114,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 6. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00540">540</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00670">670</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20082,7 +20140,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 70. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l06906">6906</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l07036">7036</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20108,7 +20166,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 70. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l06905">6905</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l07035">7035</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20134,7 +20192,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 7. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00569">569</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00699">699</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20160,7 +20218,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 7. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00568">568</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00698">698</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20186,7 +20244,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 80. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l09431">9431</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l09561">9561</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20212,7 +20270,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 80. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l09430">9430</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l09560">9560</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20238,7 +20296,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00597">597</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00727">727</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20264,7 +20322,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 8. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00596">596</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00726">726</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20290,7 +20348,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 90. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l12712">12712</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l12842">12842</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20316,7 +20374,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 90. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l12711">12711</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l12841">12841</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20342,7 +20400,7 @@ Example Usage</h2>
 
 <p>Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 9. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00637">637</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00767">767</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20368,7 +20426,7 @@ Example Usage</h2>
 
 <p>Number of directions in a minimum Tdesign of degree: 9. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00636">636</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l00766">766</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20397,7 +20455,7 @@ Example Usage</h2>
 <div class="line"><span class="keywordtype">float</span>* tdesign_dirs_deg = <a class="code hl_variable" href="#ga21a5a32a4a26c439b015001a4ab413ba">__HANDLES_Tdesign_dirs_deg</a> [tdesign_degree-1];</div>
 <div class="line"><span class="keywordtype">int</span> num_Tdesign_dirs = <a class="code hl_variable" href="#gab6aae2dc53ab4c6423e466d20543f001">__Tdesign_nPoints_per_degree</a>  [tdesign_degree-1];</div>
 </div><!-- fragment --> 
-<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29776">29776</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html#l29906">29906</a> of file <a class="el" href="saf__utility__loudspeaker__presets_8c_source.html">saf_utility_loudspeaker_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20478,7 +20536,7 @@ Example Usage</h2>
 <p>For more information on determining the usable frequency range per spherical harmonic order, for a given microphone array, the reader is directed to [1].</p>
 <dl class="section see"><dt>See also</dt><dd>[1] Moreau, S., Daniel, J., &amp; Bertet, S. (2006, May). 3D sound field recording with higher order ambisonics&ndash;objective measurements and validation of a 4th order spherical microphone. In 120th Convention of the AES (pp. 20-23). </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00334">334</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00464">464</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20530,7 +20588,7 @@ Example Usage</h2>
 
 <p>Max spherical harmonic order for the Zylia mic. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00329">329</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__utility__sensorarray__presets_8c_source.html#l00459">459</a> of file <a class="el" href="saf__utility__sensorarray__presets_8c_source.html">saf_utility_sensorarray_presets.c</a>.</p>
 
 </div>
 </div>
@@ -20540,7 +20598,7 @@ Example Usage</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Jan 24 2024 17:43:06 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Mon Jan 29 2024 11:00:40 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 <script type="text/javascript">

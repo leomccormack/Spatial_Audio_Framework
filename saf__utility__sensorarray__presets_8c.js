@@ -4,6 +4,7 @@ var saf__utility__sensorarray__presets_8c =
     [ "__Aalto_Hydrophone_maxOrder", "group___utilities.html#ga567c723646b55508c165528a11ad2d39", null ],
     [ "__Core_Sound_TetraMic_coords_rad", "group___utilities.html#gace87fb1d35a3a6c65367f33265c4cc94", null ],
     [ "__Core_Sound_TetraMic_maxOrder", "group___utilities.html#ga8a2ab5f41ac5e39d7b06dc503e0d0984", null ],
+    [ "__default_SENSORcoords128_deg", "group___utilities.html#ga3365872efdbfa65b9c7b71742785afe8", null ],
     [ "__default_SENSORcoords64_rad", "group___utilities.html#ga7456743cc8398e2481e28407a2821adf", null ],
     [ "__DTU_mic_coords_rad", "group___utilities.html#gada0dad120c0346680655ce794c280d20", null ],
     [ "__DTU_mic_freqRange", "group___utilities.html#gae236acb1964154d15b307096066a5b5e", null ],

@@ -81,14 +81,12 @@ var searchData=
   ['safmex_5ftracker3d_2ec_78',['safmex_tracker3d.c',['../safmex__tracker3d_8c.html',1,'']]],
   ['sldoa_2ec_79',['sldoa.c',['../sldoa_8c.html',1,'']]],
   ['sldoa_2eh_80',['sldoa.h',['../sldoa_8h.html',1,'']]],
-  ['sldoa_5fdatabase_2ec_81',['sldoa_database.c',['../sldoa__database_8c.html',1,'']]],
-  ['sldoa_5fdatabase_2eh_82',['sldoa_database.h',['../sldoa__database_8h.html',1,'']]],
-  ['sldoa_5finternal_2ec_83',['sldoa_internal.c',['../sldoa__internal_8c.html',1,'']]],
-  ['sldoa_5finternal_2eh_84',['sldoa_internal.h',['../sldoa__internal_8h.html',1,'']]],
-  ['speex_5fresampler_2eh_85',['speex_resampler.h',['../speex__resampler_8h.html',1,'']]],
-  ['speexdsp_5ftypes_2eh_86',['speexdsp_types.h',['../speexdsp__types_8h.html',1,'']]],
-  ['spreader_2ec_87',['spreader.c',['../spreader_8c.html',1,'']]],
-  ['spreader_2eh_88',['spreader.h',['../spreader_8h.html',1,'']]],
-  ['spreader_5finternal_2ec_89',['spreader_internal.c',['../spreader__internal_8c.html',1,'']]],
-  ['spreader_5finternal_2eh_90',['spreader_internal.h',['../spreader__internal_8h.html',1,'']]]
+  ['sldoa_5finternal_2ec_81',['sldoa_internal.c',['../sldoa__internal_8c.html',1,'']]],
+  ['sldoa_5finternal_2eh_82',['sldoa_internal.h',['../sldoa__internal_8h.html',1,'']]],
+  ['speex_5fresampler_2eh_83',['speex_resampler.h',['../speex__resampler_8h.html',1,'']]],
+  ['speexdsp_5ftypes_2eh_84',['speexdsp_types.h',['../speexdsp__types_8h.html',1,'']]],
+  ['spreader_2ec_85',['spreader.c',['../spreader_8c.html',1,'']]],
+  ['spreader_2eh_86',['spreader.h',['../spreader_8h.html',1,'']]],
+  ['spreader_5finternal_2ec_87',['spreader_internal.c',['../spreader__internal_8c.html',1,'']]],
+  ['spreader_5finternal_2eh_88',['spreader_internal.h',['../spreader__internal_8h.html',1,'']]]
 ];

@@ -45,19 +45,19 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "__common_8h.html",
-"ambi__bin_8h.html#a1c44e4164f30673afce6d1cd45028bd0",
-"ambi__drc_8h.html#a358912104c07e14477f0e890642e7991",
-"array2sh_8c.html#a3e48a8830790b526bc95bb79eebf2143",
-"binauraliser_8c.html#a178ea6e4bebb440f14be25458a04eae4",
-"dir_74cf0f11bf866827284c076127524f17.html",
-"globals_r.html",
-"group___utilities.html#ga286d05d06c6243093549564391d70190",
-"group___utilities.html#ga99201b23cc9a0af7cee9b88d5a3d9fc8",
-"group___utilities.html#gga45a9a071190527868f18d35a8f54362faf344b1e5cdbae06206820ab524add14c",
-"panner_8h.html#a352159d64b728f626b4d84c575dddde8",
-"resample_8c.html#a3429e48263931bd5367fe179e2a1c15a",
-"saf__utility__dvf_8c.html",
-"spreader_8h.html#a947a06057588bcdae52f924c22e31634"
+"ambi__bin_8h.html#a11e3e1a08ba3a65a269e13fc117d8f40",
+"ambi__drc_8h.html#a270abfce1987b5324d2cf007dd6f429b",
+"array2sh_8c.html#a27ca865aa27c65d263b4a3af1cb92e58",
+"binauraliser_8c.html#a097a72d5a21abfc0760b5f52a2035dd9",
+"dir_6c7646edab85eb27cefda7b4e9fd2cc5.html",
+"globals_o.html",
+"group___utilities.html#ga27ba81ead144d6909ec8125afe91e91f",
+"group___utilities.html#ga96f961db1b60c15b1397c3e6baca2bce",
+"group___utilities.html#gga45a9a071190527868f18d35a8f54362fa790c886a8bf1c27bc35b10664045c981",
+"panner_8h.html#a1b5f4e14bad22ffa2f30e77f11760878",
+"powermap__internal_8h_source.html",
+"saf__utility__bessel_8h.html",
+"spreader_8h.html#a7d787e391c17a4be57bc97e68a3b9b72afd8457841269a7a6caaaaf6ef739075f"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

@@ -14,6 +14,7 @@ var saf__utility__loudspeaker__presets_8h =
     [ "__Aalto_LR_dirs_deg", "group___utilities.html#ga984d7d0d676198120d1ad0d0d707c2ed", null ],
     [ "__Aalto_MCC_dirs_deg", "group___utilities.html#ga2d0a5227d3a0b31acf42ce342a9833f9", null ],
     [ "__Aalto_MCCsubset_dirs_deg", "group___utilities.html#ga6175e54cea37a16549c49574caee30a1", null ],
+    [ "__default_LScoords128_deg", "group___utilities.html#ga5aeb3e18ba4c34e89a467a722ff8b8d0", null ],
     [ "__default_LScoords64_rad", "group___utilities.html#gaf5b487202d1f56ccb60d8a34579b4053", null ],
     [ "__DTU_AVIL_dirs_deg", "group___utilities.html#ga987a119825ac0393647f5b99fdaaceba", null ],
     [ "__geosphere_ico_0_0_dirs_deg", "group___utilities.html#ga57db563fb644142e82bbe9975666d532", null ],

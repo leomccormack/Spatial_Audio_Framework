@@ -113,7 +113,6 @@ $(function(){initNavTree('sldoa__internal_8h.html',''); initResizable(); });
 <p>A spatially-localised active-intensity (SLAI) based direction-of- arrival estimator (SLDoA)  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;<a class="el" href="sldoa_8h_source.html">sldoa.h</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="sldoa__database_8h_source.html">sldoa_database.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf_8h_source.html">saf.h</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="saf__externals_8h_source.html">saf_externals.h</a>&quot;</code><br />
 </div>
@@ -143,8 +142,8 @@ Macros</h2></td></tr>
 <tr class="memitem:a22876a93fc8b37d1750bb2e1ac0285fc" id="r_a22876a93fc8b37d1750bb2e1ac0285fc"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a22876a93fc8b37d1750bb2e1ac0285fc">TIME_SLOTS</a>&#160;&#160;&#160;( <a class="el" href="#a448296ea469d98e8a909c87b7c9540b6">SLDOA_FRAME_SIZE</a> / <a class="el" href="ambi__bin__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f">HOP_SIZE</a> )</td></tr>
 <tr class="memdesc:a22876a93fc8b37d1750bb2e1ac0285fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Processing relies on fdHop = 16.  <br /></td></tr>
 <tr class="separator:a22876a93fc8b37d1750bb2e1ac0285fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42ede7482c3bf97670afc6a3cdf91d01" id="r_a42ede7482c3bf97670afc6a3cdf91d01"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42ede7482c3bf97670afc6a3cdf91d01">MAX_NUM_SECTORS</a>&#160;&#160;&#160;( <a class="el" href="#af888063929a3c703293088439659bd25">ORDER2NUMSECTORS</a>(<a class="el" href="__common_8h.html#a002c45c5943ae5594a44385576bd5f46">MAX_SH_ORDER</a>) )</td></tr>
-<tr class="memdesc:a42ede7482c3bf97670afc6a3cdf91d01"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum number of sectors  <br /></td></tr>
+<tr class="memitem:a42ede7482c3bf97670afc6a3cdf91d01" id="r_a42ede7482c3bf97670afc6a3cdf91d01"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42ede7482c3bf97670afc6a3cdf91d01">MAX_NUM_SECTORS</a>&#160;&#160;&#160;( 64 )</td></tr>
+<tr class="memdesc:a42ede7482c3bf97670afc6a3cdf91d01"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum number of sectors, TODO: expand beyond 64 (which is the max possible in the spherecovering grids we currently use)  <br /></td></tr>
 <tr class="separator:a42ede7482c3bf97670afc6a3cdf91d01"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adda7fe1f613b848cb3b86ea4c7678b24" id="r_adda7fe1f613b848cb3b86ea4c7678b24"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adda7fe1f613b848cb3b86ea4c7678b24">NUM_DISP_SLOTS</a>&#160;&#160;&#160;( 2 )</td></tr>
 <tr class="memdesc:adda7fe1f613b848cb3b86ea4c7678b24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of display slots; needs to be at least 2.  <br /></td></tr>
@@ -194,7 +193,7 @@ Functions</h2></td></tr>
 
 <p>STFT hop size. </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00070">70</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00069">69</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -213,7 +212,7 @@ Functions</h2></td></tr>
 <p>hybrid mode incurs an additional 5 bands <br  />
  </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00071">71</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00070">70</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -224,14 +223,14 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">#define MAX_NUM_SECTORS&#160;&#160;&#160;( <a class="el" href="#af888063929a3c703293088439659bd25">ORDER2NUMSECTORS</a>(<a class="el" href="__common_8h.html#a002c45c5943ae5594a44385576bd5f46">MAX_SH_ORDER</a>) )</td>
+          <td class="memname">#define MAX_NUM_SECTORS&#160;&#160;&#160;( 64 )</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>maximum number of sectors </p>
+<p>maximum number of sectors, TODO: expand beyond 64 (which is the max possible in the spherecovering grids we currently use) </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00073">73</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00072">72</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -251,7 +250,7 @@ Functions</h2></td></tr>
 <p>On slower systems that skip frames, consider adding more slots. <br  />
  </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00074">74</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00073">73</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -272,7 +271,7 @@ Functions</h2></td></tr>
 
 <p>Macro to convert SH order to number of sectors. </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00069">69</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00068">68</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -290,7 +289,7 @@ Functions</h2></td></tr>
 
 <p>Framesize, in time-domain samples. </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00066">66</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00065">65</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -308,7 +307,7 @@ Functions</h2></td></tr>
 
 <p>Processing relies on fdHop = 16. </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00072">72</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8h_source.html#l00071">71</a> of file <a class="el" href="sldoa__internal_8h_source.html">sldoa_internal.h</a>.</p>
 
 </div>
 </div>
@@ -363,7 +362,7 @@ Functions</h2></td></tr>
 <dd>
 [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D., Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of Spatially Localized Active-Intensity Vectors for Sound-Field Visualization. Journal of the Audio Engineering Society, 67(11), pp.840-854. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00142">142</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00145">145</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
 
 </div>
 </div>
@@ -388,7 +387,7 @@ Functions</h2></td></tr>
 <dd>
 [2] McCormack, L., Delikaris-Manias, S., Politis, A., Pavlidi, D., Farina, A., Pinardi, D. and Pulkki, V., 2019. Applications of Spatially Localized Active-Intensity Vectors for Sound-Field Visualization. Journal of the Audio Engineering Society, 67(11), pp.840-854. </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00061">61</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00060">60</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
 
 </div>
 </div>
@@ -411,7 +410,7 @@ Functions</h2></td></tr>
 <dl class="section note"><dt>Note</dt><dd>Call this function before <a class="el" href="#a5284ed6fcf8055bbb42e94d1366e4fe3" title="Intialises the codec variables, based on current global/user parameters.">sldoa_initAna()</a></dd></dl>
 <p>Input Arguments: hSld - sldoa handle </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00124">124</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00127">127</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
 
 </div>
 </div>
@@ -436,7 +435,7 @@ Functions</h2></td></tr>
 
 <p>Sets codec status (see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> enum) </p>
 
-<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00050">50</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="sldoa__internal_8c_source.html#l00049">49</a> of file <a class="el" href="sldoa__internal_8c_source.html">sldoa_internal.c</a>.</p>
 
 </div>
 </div>
@@ -447,7 +446,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_08bbbb82667a4ac8fe65316a1e051e8a.html">sldoa</a></li><li class="navelem"><a class="el" href="sldoa__internal_8h.html">sldoa_internal.h</a></li>
-    <li class="footer">Generated on Wed Jan 24 2024 17:43:05 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Mon Jan 29 2024 11:00:39 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 <script type="text/javascript">
