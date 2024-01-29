@@ -160,27 +160,6 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
     
     message(STATUS "Using OpenBLAS. Linking against: ${OPENBLAS_LIBRARY}; ${LAPACKE_LIBRARY}")
 
-elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_OPEN_BLAS=1)
-
-    # find and link libraries
-    if (NOT DEFINED OPENBLAS_LIBRARY)
-        find_library(OPENBLAS_LIBRARY openblas HINTS /usr/lib/x86_64-linux-gnu /usr/lib/arm-linux-gnueabihf)
-    endif()
-    target_link_libraries(${PROJECT_NAME} PUBLIC ${OPENBLAS_LIBRARY})
-
-    # Add header search paths if they are defined
-    if(DEFINED OPENBLAS_HEADER_PATH)
-        target_include_directories(${PROJECT_NAME} PUBLIC ${OPENBLAS_HEADER_PATH})
-    endif()
-
-    # Disable this particular warning... We know, but it's OK.
-    if(UNIX)
-        target_compile_options(${PROJECT_NAME} PRIVATE -Wno-incompatible-pointer-types)
-    endif()
-    
-    message(STATUS "Using OpenBLAS. Linking against: ${OPENBLAS_LIBRARY}")
-
 elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
     message(STATUS "Using ATLAS...")
     message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")

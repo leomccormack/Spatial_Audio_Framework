@@ -78,7 +78,6 @@ extern "C" {
 #if (defined(SAF_USE_INTEL_MKL_LP64) + \
      defined(SAF_USE_INTEL_MKL_ILP64) + \
      defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
-     defined(SAF_USE_OPEN_BLAS) + \
      defined(SAF_USE_ATLAS) + \
      defined(SAF_USE_GSL) + \
      defined(SAF_USE_APPLE_ACCELERATE)) != 1
@@ -144,28 +143,6 @@ extern "C" {
  */
 # include "cblas.h"
 # include "lapacke.h"
-
-#elif defined(SAF_USE_OPEN_BLAS)
-/*
- * Using OpenBLAS and the included LAPACK interface
- * (A decent option for both x86 and ARM based architectures)
- *
- * This option provides implementations of the CBLAS/LAPACK functions which have
- * decent performance. However, unlike Intel MKL or Apple Accelerate, it does
- * not offer an optimised DFT/FFT or any other linear algebra functions outside
- * of these standards. Therefore, consider also using Intel's IPP library or
- * FFTW for the DFT/FFT with: "SAF_USE_INTEL_IPP" or "SAF_USE_FFTW"
- *
- * Note that "SAF_USE_INTEL_IPP" also offers support for certain linear algebra
- * operations not covered by the CBLAS/LAPACK standards, which SAF can leverage.
- *
- * Alternatively, SSE/AVX/AVX-512 fallback implementations for certain linear
- * algebra operations may be enabled with: "SAF_ENABLE_SIMD"
- *
- * More information regarding these additional options can be found below.
- */
-# include "cblas.h"
-# include "lapack.h"
 
 #elif defined(SAF_USE_ATLAS)
 /*
@@ -334,8 +311,6 @@ extern "C" {
 # define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Intel MKL (ILP64)"
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 # define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "OpenBLAS with LAPACKE"
-#elif defined(SAF_USE_OPEN_BLAS)
-# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "OpenBLAS"
 #elif defined(SAF_USE_ATLAS)
 # define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "ATLAS"
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
