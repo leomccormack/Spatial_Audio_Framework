@@ -118,6 +118,11 @@ typedef struct _spreader
     float_complex* Qmix_cmplx;         /**< Identity; FLAT: Q x Q */
     float* Cr;                         /**< Residual covariance; FLAT: Q x Q */
     float_complex* Cr_cmplx;           /**< Residual covariance; FLAT: Q x Q */
+    
+    // Hotfix:
+    float_complex* _tmpFrame, *_H_tmp, *_Cy;
+    float_complex* _E_dir, *_V, *_D;
+    float_complex* _Cproto;
  
     /* flags/status */
     CODEC_STATUS codecStatus;          /**< see #CODEC_STATUS */
