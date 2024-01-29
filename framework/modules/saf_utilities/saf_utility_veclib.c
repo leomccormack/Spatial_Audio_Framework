@@ -57,6 +57,8 @@
 # define SAF_VECLIB_USE_LAPACKE_INTERFACE        /**< LAPACK interface */
 #elif defined(SAF_USE_OPEN_BLAS_AND_LAPACKE)
 # define SAF_VECLIB_USE_LAPACKE_INTERFACE        /**< LAPACK interface */
+#elif defined(SAF_USE_OPEN_BLAS)
+# define SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE /**< LAPACK interface */
 #elif defined(SAF_USE_ATLAS)
 # define SAF_VECLIB_USE_CLAPACK_INTERFACE        /**< LAPACK interface */
 #elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
