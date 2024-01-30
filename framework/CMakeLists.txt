@@ -147,6 +147,9 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_OPEN_BLAS_AND_LAPACKE")
 
     # Add header search paths if they are defined
     if(DEFINED OPENBLAS_HEADER_PATH)
+        if(MSVC)
+            add_compile_definitions(HAVE_LAPACK_CONFIG_H)
+        endif()
         target_include_directories(${PROJECT_NAME} PUBLIC ${OPENBLAS_HEADER_PATH})
     endif()
     if(DEFINED LAPACKE_HEADER_PATH)
