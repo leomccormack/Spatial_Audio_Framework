@@ -538,11 +538,9 @@ void getBinDecoder_MAGLS
     int i, j, nSH, band, band_cutoff;
     float cutoff, minVal;
     float* Y_tmp;
-    float_complex* W, *Y_na, *Yna_pinv, *H_mod, *B_magls;
+    float_complex* W, *Y_na, *hrtfs_ls, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;
     const float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);
-    float phi_delta_l = .0f, phi_delta_r = .0f;
-    float phi_l = .0f, phi_r = .0f, phi_lprev = .0f, phi_rprev = .0f;
-    
+
     nSH = ORDER2NSH(order);
 
     /* integration weights */
@@ -553,7 +551,7 @@ void getBinDecoder_MAGLS
     else
         for(i=0; i<N_dirs; i++)
             W[i*N_dirs+i] = cmplxf(1.0f/(float)N_dirs, 0.0f);
-    
+
     /* SH */
     Y_tmp = malloc1d(nSH*N_dirs*sizeof(float));
     Y_na = malloc1d(nSH*N_dirs*sizeof(float_complex));
@@ -561,7 +559,7 @@ void getBinDecoder_MAGLS
     for(i=0; i<nSH*N_dirs; i++)
         Y_na[i] = cmplxf(Y_tmp[i], 0.0f);
     free(Y_tmp);
-    
+
     /* find band index for cutoff frequency */
     cutoff = 1.5e3f;
     minVal = 2.23e10f;
@@ -571,77 +569,56 @@ void getBinDecoder_MAGLS
             band_cutoff = band;
         }
     }
-    saf_assert(band_cutoff>0, "Frequency vector is wrong!");
-    
+
     /* calculate decoding matrix per band */
-    Yna_pinv = malloc1d(nSH * N_dirs*sizeof(float_complex));
-    B_magls = malloc1d(nSH * NUM_EARS * sizeof(float_complex));
-    H_mod = malloc1d(NUM_EARS*N_dirs*sizeof(float_complex));
-
-    utility_cpinv(NULL, Y_na, nSH, N_dirs, Yna_pinv);
-
-    /* Linear Decoding part*/
-    for (band=0; band<=band_cutoff; band++){
-
-        cblas_cgemm(CblasRowMajor, CblasTrans, CblasTrans, nSH, NUM_EARS, N_dirs, &calpha,
-                    Yna_pinv, nSH,
-                    &hrtfs[band*NUM_EARS*N_dirs], N_dirs, &cbeta,
-                    B_magls, NUM_EARS);
-
-        if(band<=(band_cutoff/3))  // try to stay low enough before we run into SHT errors
-        {
-            /* extract phase delta from spatial average after transform*/
-            phi_lprev = phi_l;
-            phi_rprev = phi_r;
-            phi_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0]));
-            phi_r = atan2f(cimagf(B_magls[1]), crealf(B_magls[1]));
-            if(band==1)
-            {
-                phi_delta_l = phi_l - phi_lprev;
-                phi_delta_r = phi_r - phi_rprev;
-            }
-            if(band>1)
-            {
-                if((phi_l-phi_lprev)>0.f) phi_l -= 2*SAF_PI;
-                if((phi_r-phi_rprev)>0.f) phi_r -= 2*SAF_PI;
-                phi_delta_l = 0.5f*phi_delta_l + 0.5f*(phi_l - phi_lprev);
-                phi_delta_r = 0.5f*phi_delta_l + 0.5f*(phi_r - phi_rprev);
-            }
+    Yna_W = malloc1d(nSH * N_dirs*sizeof(float_complex));
+    Yna_W_Yna = malloc1d(nSH * nSH * sizeof(float_complex));
+    Yna_W_H = malloc1d(nSH * 2 * sizeof(float_complex));
+    B_magls = malloc1d(nSH * 2 * sizeof(float_complex));
+    hrtfs_ls = malloc1d(2*N_dirs*sizeof(float_complex));
+    H_mod = malloc1d(2*N_dirs*sizeof(float_complex));
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, N_dirs, N_dirs, &calpha,
+                Y_na, N_dirs,
+                W, N_dirs, &cbeta,
+                Yna_W, N_dirs);
+    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, N_dirs, &calpha,
+                Yna_W, N_dirs,
+                Y_na, N_dirs, &cbeta,
+                Yna_W_Yna, nSH);
+    for (band=0; band<N_bands; band++){
+        if(band<=band_cutoff){
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &calpha,
+                        Yna_W, N_dirs,
+                        &hrtfs[band*2*N_dirs], N_dirs, &cbeta,
+                        Yna_W_H, 2);
+            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
+        }
+        else{
+            /* Remove itd from high frequency HRTFs */
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, N_dirs, nSH, &calpha,
+                        &decMtx[(band-1)*2*nSH] , nSH,
+                        Y_na, N_dirs, &cbeta,
+                        H_mod, N_dirs);
+            for(i=0; i<2*N_dirs; i++)
+                H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*2*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])))));
+            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &calpha,
+                        Yna_W, N_dirs,
+                        H_mod, N_dirs, &cbeta,
+                        Yna_W_H, 2);
+            utility_cglslv(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);
         }
 
         for(i=0; i<nSH; i++)
-            for(j=0; j<NUM_EARS; j++)
-                decMtx[band*NUM_EARS*nSH + j*nSH + i] = conjf(B_magls[i*NUM_EARS+j]);
-    } 
-
-    for (band=band_cutoff; band<N_bands; band++){
-        /* Remove itd from high frequency HRTFs */
-        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, N_dirs, nSH, &calpha,
-                    &decMtx[(band-1)*NUM_EARS*nSH], nSH,
-                    Y_na, N_dirs, &cbeta,
-                    H_mod, N_dirs);
-                    
-
-        for(i=0; i<N_dirs; i++) {
-            /* Phase continuation */
-            H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 0*N_dirs + i]), 0.0f),
-                              cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])) + phi_delta_l)));
-            H_mod[i+N_dirs] = ccmulf(cmplxf(cabsf(hrtfs[band*NUM_EARS*N_dirs + 1*N_dirs + i]), 0.0f),
-                              cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i+N_dirs]), crealf(H_mod[i+N_dirs])) + phi_delta_r)));
-        }
-
-        cblas_cgemm(CblasRowMajor, CblasTrans, CblasTrans, nSH, NUM_EARS, N_dirs, &calpha,
-                    Yna_pinv, nSH,
-                    H_mod, N_dirs, &cbeta,
-                    B_magls, NUM_EARS);
-
-        for(i=0; i<nSH; i++)
-            for(j=0; j<NUM_EARS; j++)
-                decMtx[band*NUM_EARS*nSH + j*nSH + i] = B_magls[i*NUM_EARS+j]; /* ^T */
+            for(j=0; j<2; j++)
+                decMtx[band*2*nSH + j*nSH + i] = conjf(B_magls[i*2+j]); /* ^H */
     }
+
     free(W);
     free(Y_na);
-    free(Yna_pinv);
+    free(Yna_W);
+    free(Yna_W_Yna);
+    free(Yna_W_H);
     free(B_magls);
+    free(hrtfs_ls);
     free(H_mod);
 }
