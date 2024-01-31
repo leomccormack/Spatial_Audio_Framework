@@ -646,113 +646,90 @@ $(function(){initNavTree('saf__hoa__internal_8c_source.html',''); initResizable(
 <div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>    <span class="keywordtype">int</span> i, j, nSH, band, band_cutoff;</div>
 <div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>    <span class="keywordtype">float</span> cutoff, minVal;</div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>    <span class="keywordtype">float</span>* Y_tmp;</div>
-<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>    float_complex* W, *Y_na, *Yna_pinv, *H_mod, *B_magls;</div>
+<div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>    float_complex* W, *Y_na, *hrtfs_ls, *Yna_W, *Yna_W_Yna, *Yna_W_H, *H_mod, *B_magls;</div>
 <div class="line"><a id="l00542" name="l00542"></a><span class="lineno">  542</span>    <span class="keyword">const</span> float_complex calpha = cmplxf(1.0f, 0.0f), cbeta = cmplxf(0.0f, 0.0f);</div>
-<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span>    <span class="keywordtype">float</span> phi_delta_l = .0f, phi_delta_r = .0f;</div>
-<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    <span class="keywordtype">float</span> phi_l = .0f, phi_r = .0f, phi_lprev = .0f, phi_rprev = .0f;</div>
-<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>    </div>
-<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    nSH = <a class="code hl_define" href="group___s_h.html#ga2bac5e4831e0699171545c1d38558d7e">ORDER2NSH</a>(order);</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span> </div>
-<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>    <span class="comment">/* integration weights */</span></div>
-<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>    W = <a class="code hl_function" href="md__malloc_8c.html#a2e1c70e8084771a2def99ca25cf20682">calloc1d</a>(N_dirs*N_dirs, <span class="keyword">sizeof</span>(float_complex));</div>
-<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>    <span class="keywordflow">if</span>(weights!=NULL)</div>
-<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>        <span class="keywordflow">for</span>(i=0; i&lt;N_dirs; i++)</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>            W[i*N_dirs+i] = cmplxf(weights[i], 0.0f);</div>
-<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>    <span class="keywordflow">else</span></div>
-<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>        <span class="keywordflow">for</span>(i=0; i&lt;N_dirs; i++)</div>
-<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>            W[i*N_dirs+i] = cmplxf(1.0f/(<span class="keywordtype">float</span>)N_dirs, 0.0f);</div>
-<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    </div>
-<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>    <span class="comment">/* SH */</span></div>
-<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>    Y_tmp = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH*N_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
-<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>    Y_na = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH*N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
-<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>    <a class="code hl_function" href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179">getRSH</a>(order, hrtf_dirs_deg, N_dirs, Y_tmp);</div>
-<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>    <span class="keywordflow">for</span>(i=0; i&lt;nSH*N_dirs; i++)</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>        Y_na[i] = cmplxf(Y_tmp[i], 0.0f);</div>
-<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>    free(Y_tmp);</div>
-<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>    </div>
-<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>    <span class="comment">/* find band index for cutoff frequency */</span></div>
-<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>    cutoff = 1.5e3f;</div>
-<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    minVal = 2.23e10f;</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>    <span class="keywordflow">for</span>(band=0, band_cutoff=0; band&lt;N_bands; band++){</div>
-<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>        <span class="keywordflow">if</span>(minVal&gt;fabsf(freqVector[band]-cutoff)){</div>
-<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>            minVal = fabsf(freqVector[band]-cutoff);</div>
-<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>            band_cutoff = band;</div>
-<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span>        }</div>
-<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    }</div>
-<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    <a class="code hl_define" href="group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215">saf_assert</a>(band_cutoff&gt;0, <span class="stringliteral">&quot;Frequency vector is wrong!&quot;</span>);</div>
-<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>    </div>
-<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    <span class="comment">/* calculate decoding matrix per band */</span></div>
-<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    Yna_pinv = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH * N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
-<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>    B_magls = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH * <a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a> * <span class="keyword">sizeof</span>(float_complex));</div>
-<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>    H_mod = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
-<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span> </div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>    <a class="code hl_function" href="group___utilities.html#ga75a5928c5eb152542620b6f3ae327e23">utility_cpinv</a>(NULL, Y_na, nSH, N_dirs, Yna_pinv);</div>
-<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span> </div>
-<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>    <span class="comment">/* Linear Decoding part*/</span></div>
-<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>    <span class="keywordflow">for</span> (band=0; band&lt;=band_cutoff; band++){</div>
-<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span> </div>
-<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>        cblas_cgemm(CblasRowMajor, CblasTrans, CblasTrans, nSH, <a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>, N_dirs, &amp;calpha,</div>
-<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>                    Yna_pinv, nSH,</div>
-<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>                    &amp;hrtfs[band*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_dirs], N_dirs, &amp;cbeta,</div>
-<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>                    B_magls, <a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>);</div>
-<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span> </div>
-<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>        <span class="keywordflow">if</span>(band&lt;=(band_cutoff/3))  <span class="comment">// try to stay low enough before we run into SHT errors</span></div>
-<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>        {</div>
-<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>            <span class="comment">/* extract phase delta from spatial average after transform*/</span></div>
-<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>            phi_lprev = phi_l;</div>
-<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>            phi_rprev = phi_r;</div>
-<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>            phi_l = atan2f(cimagf(B_magls[0]), crealf(B_magls[0]));</div>
-<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>            phi_r = atan2f(cimagf(B_magls[1]), crealf(B_magls[1]));</div>
-<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>            <span class="keywordflow">if</span>(band==1)</div>
-<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>            {</div>
-<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                phi_delta_l = phi_l - phi_lprev;</div>
-<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>                phi_delta_r = phi_r - phi_rprev;</div>
-<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>            }</div>
-<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>            <span class="keywordflow">if</span>(band&gt;1)</div>
-<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>            {</div>
-<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>                <span class="keywordflow">if</span>((phi_l-phi_lprev)&gt;0.f) phi_l -= 2*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>;</div>
-<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                <span class="keywordflow">if</span>((phi_r-phi_rprev)&gt;0.f) phi_r -= 2*<a class="code hl_define" href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a>;</div>
-<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>                phi_delta_l = 0.5f*phi_delta_l + 0.5f*(phi_l - phi_lprev);</div>
-<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>                phi_delta_r = 0.5f*phi_delta_l + 0.5f*(phi_r - phi_rprev);</div>
-<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>            }</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>        }</div>
-<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span> </div>
-<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>        <span class="keywordflow">for</span>(i=0; i&lt;nSH; i++)</div>
-<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>            <span class="keywordflow">for</span>(j=0; j&lt;<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>; j++)</div>
-<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>                decMtx[band*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*nSH + j*nSH + i] = conjf(B_magls[i*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>+j]);</div>
-<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span>    } </div>
-<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span> </div>
-<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>    <span class="keywordflow">for</span> (band=band_cutoff; band&lt;N_bands; band++){</div>
-<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>        <span class="comment">/* Remove itd from high frequency HRTFs */</span></div>
-<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>        cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, <a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>, N_dirs, nSH, &amp;calpha,</div>
-<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>                    &amp;decMtx[(band-1)*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*nSH], nSH,</div>
-<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>                    Y_na, N_dirs, &amp;cbeta,</div>
-<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>                    H_mod, N_dirs);</div>
-<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>                    </div>
-<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span> </div>
-<div class="line"><a id="l00625" name="l00625"></a><span class="lineno">  625</span>        <span class="keywordflow">for</span>(i=0; i&lt;N_dirs; i++) {</div>
-<div class="line"><a id="l00626" name="l00626"></a><span class="lineno">  626</span>            <span class="comment">/* Phase continuation */</span></div>
-<div class="line"><a id="l00627" name="l00627"></a><span class="lineno">  627</span>            H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_dirs + 0*N_dirs + i]), 0.0f),</div>
-<div class="line"><a id="l00628" name="l00628"></a><span class="lineno">  628</span>                              cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])) + phi_delta_l)));</div>
-<div class="line"><a id="l00629" name="l00629"></a><span class="lineno">  629</span>            H_mod[i+N_dirs] = ccmulf(cmplxf(cabsf(hrtfs[band*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*N_dirs + 1*N_dirs + i]), 0.0f),</div>
-<div class="line"><a id="l00630" name="l00630"></a><span class="lineno">  630</span>                              cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i+N_dirs]), crealf(H_mod[i+N_dirs])) + phi_delta_r)));</div>
-<div class="line"><a id="l00631" name="l00631"></a><span class="lineno">  631</span>        }</div>
-<div class="line"><a id="l00632" name="l00632"></a><span class="lineno">  632</span> </div>
-<div class="line"><a id="l00633" name="l00633"></a><span class="lineno">  633</span>        cblas_cgemm(CblasRowMajor, CblasTrans, CblasTrans, nSH, <a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>, N_dirs, &amp;calpha,</div>
-<div class="line"><a id="l00634" name="l00634"></a><span class="lineno">  634</span>                    Yna_pinv, nSH,</div>
-<div class="line"><a id="l00635" name="l00635"></a><span class="lineno">  635</span>                    H_mod, N_dirs, &amp;cbeta,</div>
-<div class="line"><a id="l00636" name="l00636"></a><span class="lineno">  636</span>                    B_magls, <a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>);</div>
-<div class="line"><a id="l00637" name="l00637"></a><span class="lineno">  637</span> </div>
-<div class="line"><a id="l00638" name="l00638"></a><span class="lineno">  638</span>        <span class="keywordflow">for</span>(i=0; i&lt;nSH; i++)</div>
-<div class="line"><a id="l00639" name="l00639"></a><span class="lineno">  639</span>            <span class="keywordflow">for</span>(j=0; j&lt;<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>; j++)</div>
-<div class="line"><a id="l00640" name="l00640"></a><span class="lineno">  640</span>                decMtx[band*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>*nSH + j*nSH + i] = B_magls[i*<a class="code hl_define" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>+j]; <span class="comment">/* ^T */</span></div>
-<div class="line"><a id="l00641" name="l00641"></a><span class="lineno">  641</span>    }</div>
-<div class="line"><a id="l00642" name="l00642"></a><span class="lineno">  642</span>    free(W);</div>
-<div class="line"><a id="l00643" name="l00643"></a><span class="lineno">  643</span>    free(Y_na);</div>
-<div class="line"><a id="l00644" name="l00644"></a><span class="lineno">  644</span>    free(Yna_pinv);</div>
-<div class="line"><a id="l00645" name="l00645"></a><span class="lineno">  645</span>    free(B_magls);</div>
-<div class="line"><a id="l00646" name="l00646"></a><span class="lineno">  646</span>    free(H_mod);</div>
-<div class="line"><a id="l00647" name="l00647"></a><span class="lineno">  647</span>}</div>
+<div class="line"><a id="l00543" name="l00543"></a><span class="lineno">  543</span> </div>
+<div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>    nSH = <a class="code hl_define" href="group___s_h.html#ga2bac5e4831e0699171545c1d38558d7e">ORDER2NSH</a>(order);</div>
+<div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span> </div>
+<div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    <span class="comment">/* integration weights */</span></div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>    W = <a class="code hl_function" href="md__malloc_8c.html#a2e1c70e8084771a2def99ca25cf20682">calloc1d</a>(N_dirs*N_dirs, <span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>    <span class="keywordflow">if</span>(weights!=NULL)</div>
+<div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>        <span class="keywordflow">for</span>(i=0; i&lt;N_dirs; i++)</div>
+<div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span>            W[i*N_dirs+i] = cmplxf(weights[i], 0.0f);</div>
+<div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>    <span class="keywordflow">else</span></div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        <span class="keywordflow">for</span>(i=0; i&lt;N_dirs; i++)</div>
+<div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>            W[i*N_dirs+i] = cmplxf(1.0f/(<span class="keywordtype">float</span>)N_dirs, 0.0f);</div>
+<div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span> </div>
+<div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>    <span class="comment">/* SH */</span></div>
+<div class="line"><a id="l00556" name="l00556"></a><span class="lineno">  556</span>    Y_tmp = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH*N_dirs*<span class="keyword">sizeof</span>(<span class="keywordtype">float</span>));</div>
+<div class="line"><a id="l00557" name="l00557"></a><span class="lineno">  557</span>    Y_na = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH*N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00558" name="l00558"></a><span class="lineno">  558</span>    <a class="code hl_function" href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179">getRSH</a>(order, hrtf_dirs_deg, N_dirs, Y_tmp);</div>
+<div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span>    <span class="keywordflow">for</span>(i=0; i&lt;nSH*N_dirs; i++)</div>
+<div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>        Y_na[i] = cmplxf(Y_tmp[i], 0.0f);</div>
+<div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>    free(Y_tmp);</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span> </div>
+<div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>    <span class="comment">/* find band index for cutoff frequency */</span></div>
+<div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>    cutoff = 1.5e3f;</div>
+<div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>    minVal = 2.23e10f;</div>
+<div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span>    <span class="keywordflow">for</span>(band=0, band_cutoff=0; band&lt;N_bands; band++){</div>
+<div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>        <span class="keywordflow">if</span>(minVal&gt;fabsf(freqVector[band]-cutoff)){</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>            minVal = fabsf(freqVector[band]-cutoff);</div>
+<div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>            band_cutoff = band;</div>
+<div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        }</div>
+<div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>    }</div>
+<div class="line"><a id="l00572" name="l00572"></a><span class="lineno">  572</span> </div>
+<div class="line"><a id="l00573" name="l00573"></a><span class="lineno">  573</span>    <span class="comment">/* calculate decoding matrix per band */</span></div>
+<div class="line"><a id="l00574" name="l00574"></a><span class="lineno">  574</span>    Yna_W = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH * N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00575" name="l00575"></a><span class="lineno">  575</span>    Yna_W_Yna = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH * nSH * <span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00576" name="l00576"></a><span class="lineno">  576</span>    Yna_W_H = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH * 2 * <span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00577" name="l00577"></a><span class="lineno">  577</span>    B_magls = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(nSH * 2 * <span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>    hrtfs_ls = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(2*N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>    H_mod = <a class="code hl_function" href="md__malloc_8c.html#a2475120c8e9e9ee964c408ba67b0d56d">malloc1d</a>(2*N_dirs*<span class="keyword">sizeof</span>(float_complex));</div>
+<div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, N_dirs, N_dirs, &amp;calpha,</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                Y_na, N_dirs,</div>
+<div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>                W, N_dirs, &amp;cbeta,</div>
+<div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>                Yna_W, N_dirs);</div>
+<div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>    cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, nSH, N_dirs, &amp;calpha,</div>
+<div class="line"><a id="l00585" name="l00585"></a><span class="lineno">  585</span>                Yna_W, N_dirs,</div>
+<div class="line"><a id="l00586" name="l00586"></a><span class="lineno">  586</span>                Y_na, N_dirs, &amp;cbeta,</div>
+<div class="line"><a id="l00587" name="l00587"></a><span class="lineno">  587</span>                Yna_W_Yna, nSH);</div>
+<div class="line"><a id="l00588" name="l00588"></a><span class="lineno">  588</span>    <span class="keywordflow">for</span> (band=0; band&lt;N_bands; band++){</div>
+<div class="line"><a id="l00589" name="l00589"></a><span class="lineno">  589</span>        <span class="keywordflow">if</span>(band&lt;=band_cutoff){</div>
+<div class="line"><a id="l00590" name="l00590"></a><span class="lineno">  590</span>            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &amp;calpha,</div>
+<div class="line"><a id="l00591" name="l00591"></a><span class="lineno">  591</span>                        Yna_W, N_dirs,</div>
+<div class="line"><a id="l00592" name="l00592"></a><span class="lineno">  592</span>                        &amp;hrtfs[band*2*N_dirs], N_dirs, &amp;cbeta,</div>
+<div class="line"><a id="l00593" name="l00593"></a><span class="lineno">  593</span>                        Yna_W_H, 2);</div>
+<div class="line"><a id="l00594" name="l00594"></a><span class="lineno">  594</span>            <a class="code hl_function" href="group___utilities.html#ga1a6952cd39e4eb6b2ee4c6ccc9235efa">utility_cglslv</a>(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);</div>
+<div class="line"><a id="l00595" name="l00595"></a><span class="lineno">  595</span>        }</div>
+<div class="line"><a id="l00596" name="l00596"></a><span class="lineno">  596</span>        <span class="keywordflow">else</span>{</div>
+<div class="line"><a id="l00597" name="l00597"></a><span class="lineno">  597</span>            <span class="comment">/* Remove itd from high frequency HRTFs */</span></div>
+<div class="line"><a id="l00598" name="l00598"></a><span class="lineno">  598</span>            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, N_dirs, nSH, &amp;calpha,</div>
+<div class="line"><a id="l00599" name="l00599"></a><span class="lineno">  599</span>                        &amp;decMtx[(band-1)*2*nSH] , nSH,</div>
+<div class="line"><a id="l00600" name="l00600"></a><span class="lineno">  600</span>                        Y_na, N_dirs, &amp;cbeta,</div>
+<div class="line"><a id="l00601" name="l00601"></a><span class="lineno">  601</span>                        H_mod, N_dirs);</div>
+<div class="line"><a id="l00602" name="l00602"></a><span class="lineno">  602</span>            <span class="keywordflow">for</span>(i=0; i&lt;2*N_dirs; i++)</div>
+<div class="line"><a id="l00603" name="l00603"></a><span class="lineno">  603</span>                H_mod[i] = ccmulf(cmplxf(cabsf(hrtfs[band*2*N_dirs + i]), 0.0f), cexpf(cmplxf(0.0f, atan2f(cimagf(H_mod[i]), crealf(H_mod[i])))));</div>
+<div class="line"><a id="l00604" name="l00604"></a><span class="lineno">  604</span>            cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasConjTrans, nSH, 2, N_dirs, &amp;calpha,</div>
+<div class="line"><a id="l00605" name="l00605"></a><span class="lineno">  605</span>                        Yna_W, N_dirs,</div>
+<div class="line"><a id="l00606" name="l00606"></a><span class="lineno">  606</span>                        H_mod, N_dirs, &amp;cbeta,</div>
+<div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>                        Yna_W_H, 2);</div>
+<div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>            <a class="code hl_function" href="group___utilities.html#ga1a6952cd39e4eb6b2ee4c6ccc9235efa">utility_cglslv</a>(NULL, Yna_W_Yna, nSH, Yna_W_H, 2, B_magls);</div>
+<div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>        }</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span> </div>
+<div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>        <span class="keywordflow">for</span>(i=0; i&lt;nSH; i++)</div>
+<div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>            <span class="keywordflow">for</span>(j=0; j&lt;2; j++)</div>
+<div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>                decMtx[band*2*nSH + j*nSH + i] = conjf(B_magls[i*2+j]); <span class="comment">/* ^H */</span></div>
+<div class="line"><a id="l00614" name="l00614"></a><span class="lineno">  614</span>    }</div>
+<div class="line"><a id="l00615" name="l00615"></a><span class="lineno">  615</span> </div>
+<div class="line"><a id="l00616" name="l00616"></a><span class="lineno">  616</span>    free(W);</div>
+<div class="line"><a id="l00617" name="l00617"></a><span class="lineno">  617</span>    free(Y_na);</div>
+<div class="line"><a id="l00618" name="l00618"></a><span class="lineno">  618</span>    free(Yna_W);</div>
+<div class="line"><a id="l00619" name="l00619"></a><span class="lineno">  619</span>    free(Yna_W_Yna);</div>
+<div class="line"><a id="l00620" name="l00620"></a><span class="lineno">  620</span>    free(Yna_W_H);</div>
+<div class="line"><a id="l00621" name="l00621"></a><span class="lineno">  621</span>    free(B_magls);</div>
+<div class="line"><a id="l00622" name="l00622"></a><span class="lineno">  622</span>    free(hrtfs_ls);</div>
+<div class="line"><a id="l00623" name="l00623"></a><span class="lineno">  623</span>    free(H_mod);</div>
+<div class="line"><a id="l00624" name="l00624"></a><span class="lineno">  624</span>}</div>
 </div>
 <div class="ttc" id="agroup___h_o_a_html_gac2804e1b897727e3ed1cd0d6dc74d179"><div class="ttname"><a href="group___h_o_a.html#gac2804e1b897727e3ed1cd0d6dc74d179">getRSH</a></div><div class="ttdeci">void getRSH(int N, float *dirs_deg, int nDirs, float *Y)</div><div class="ttdoc">Computes real-valued spherical harmonics [1] for each given direction on the unit sphere.</div><div class="ttdef"><b>Definition</b> <a href="saf__hoa_8c_source.html#l00118">saf_hoa.c:119</a></div></div>
 <div class="ttc" id="agroup___s_h_html_ga2bac5e4831e0699171545c1d38558d7e"><div class="ttname"><a href="group___s_h.html#ga2bac5e4831e0699171545c1d38558d7e">ORDER2NSH</a></div><div class="ttdeci">#define ORDER2NSH(order)</div><div class="ttdoc">Converts spherical harmonic order to number of spherical harmonic components i.e: (order+1)^2.</div><div class="ttdef"><b>Definition</b> <a href="saf__sh_8h_source.html#l00051">saf_sh.h:51</a></div></div>
@@ -761,11 +738,9 @@ $(function(){initNavTree('saf__hoa__internal_8c_source.html',''); initResizable(
 <div class="ttc" id="agroup___utilities_html_ga0fb1cec5cac527df5a9956ee3d137c5c"><div class="ttname"><a href="group___utilities.html#ga0fb1cec5cac527df5a9956ee3d137c5c">SAF_PI</a></div><div class="ttdeci">#define SAF_PI</div><div class="ttdoc">pi constant (single precision)</div><div class="ttdef"><b>Definition</b> <a href="saf__utilities_8h_source.html#l00070">saf_utilities.h:70</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga1a6952cd39e4eb6b2ee4c6ccc9235efa"><div class="ttname"><a href="group___utilities.html#ga1a6952cd39e4eb6b2ee4c6ccc9235efa">utility_cglslv</a></div><div class="ttdeci">void utility_cglslv(void *const hWork, const float_complex *A, const int dim, float_complex *B, int nCol, float_complex *X)</div><div class="ttdoc">General linear solver: single precision complex, i.e.</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__veclib_8c_source.html#l02937">saf_utility_veclib.c:2938</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga21a5a32a4a26c439b015001a4ab413ba"><div class="ttname"><a href="group___utilities.html#ga21a5a32a4a26c439b015001a4ab413ba">__HANDLES_Tdesign_dirs_deg</a></div><div class="ttdeci">const float * __HANDLES_Tdesign_dirs_deg[21]</div><div class="ttdoc">minimum T-design HANDLES (up to degree 21 only).</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l29910">saf_utility_loudspeaker_presets.c:29910</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga39b45c9e65aebd2a8ef72c3081baea84"><div class="ttname"><a href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a></div><div class="ttdeci">#define NUM_EARS</div><div class="ttdoc">2 (true for most humans)</div><div class="ttdef"><b>Definition</b> <a href="saf__utilities_8h_source.html#l00052">saf_utilities.h:52</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga4bc9fb7cc785506dc196d48c04ded6ea"><div class="ttname"><a href="group___utilities.html#ga4bc9fb7cc785506dc196d48c04ded6ea">utility_ssvd</a></div><div class="ttdeci">void utility_ssvd(void *const hWork, const float *A, const int dim1, const int dim2, float *U, float *S, float *V, float *sing)</div><div class="ttdoc">Singular value decomposition: single precision, i.e.</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__veclib_8c_source.html#l01644">saf_utility_veclib.c:1645</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga6f8869ec1f803458438bba6b91ea4936"><div class="ttname"><a href="group___utilities.html#ga6f8869ec1f803458438bba6b91ea4936">__Tdesign_degree_30_dirs_deg</a></div><div class="ttdeci">const float __Tdesign_degree_30_dirs_deg[480][2]</div><div class="ttdoc">Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 30.</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l02543">saf_utility_loudspeaker_presets.c:2543</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga70df1cd84a7dbfd06839a39cb27476d4"><div class="ttname"><a href="group___utilities.html#ga70df1cd84a7dbfd06839a39cb27476d4">__Tdesign_degree_100_dirs_deg</a></div><div class="ttdeci">const float __Tdesign_degree_100_dirs_deg[5100][2]</div><div class="ttdoc">Directions [azimuth, Elevation] in degrees, for minimum Tdesign degree: 100.</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l16987">saf_utility_loudspeaker_presets.c:16987</a></div></div>
-<div class="ttc" id="agroup___utilities_html_ga75a5928c5eb152542620b6f3ae327e23"><div class="ttname"><a href="group___utilities.html#ga75a5928c5eb152542620b6f3ae327e23">utility_cpinv</a></div><div class="ttdeci">void utility_cpinv(void *const hWork, const float_complex *inM, const int dim1, const int dim2, float_complex *outM)</div><div class="ttdoc">General matrix pseudo-inverse (the svd way): single precision complex, i.e.</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__veclib_8c_source.html#l03695">saf_utility_veclib.c:3696</a></div></div>
 <div class="ttc" id="agroup___utilities_html_ga8f9630332cc11a6cb17128033f07ffdf"><div class="ttname"><a href="group___utilities.html#ga8f9630332cc11a6cb17128033f07ffdf">SAF_MIN</a></div><div class="ttdeci">#define SAF_MIN(a, b)</div><div class="ttdoc">Returns the minimum of the two values.</div><div class="ttdef"><b>Definition</b> <a href="saf__utilities_8h_source.html#l00055">saf_utilities.h:55</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gab6aae2dc53ab4c6423e466d20543f001"><div class="ttname"><a href="group___utilities.html#gab6aae2dc53ab4c6423e466d20543f001">__Tdesign_nPoints_per_degree</a></div><div class="ttdeci">const int __Tdesign_nPoints_per_degree[21]</div><div class="ttdoc">Number of points in each t-design (up to degree 21 only).</div><div class="ttdef"><b>Definition</b> <a href="saf__utility__loudspeaker__presets_8c_source.html#l29906">saf_utility_loudspeaker_presets.c:29906</a></div></div>
 <div class="ttc" id="agroup___utilities_html_gae1b62759b810eae84b243da1ded29871"><div class="ttname"><a href="group___utilities.html#gae1b62759b810eae84b243da1ded29871">SQRT4PI</a></div><div class="ttdeci">#define SQRT4PI</div><div class="ttdoc">sqrt(4pi) (single precision)</div><div class="ttdef"><b>Definition</b> <a href="saf__utilities_8h_source.html#l00089">saf_utilities.h:89</a></div></div>
@@ -789,7 +764,7 @@ $(function(){initNavTree('saf__hoa__internal_8c_source.html',''); initResizable(
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_99016b584a5af87cdf49f1484dd80da6.html">saf_hoa</a></li><li class="navelem"><a class="el" href="saf__hoa__internal_8c.html">saf_hoa_internal.c</a></li>
-    <li class="footer">Generated on Mon Jan 29 2024 16:10:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Wed Jan 31 2024 13:27:50 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 <script type="text/javascript">
