@@ -9,7 +9,11 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
-v1.3.1
+v1.3.2
+ - Reverted a change made to the getBinDecoder_MAGLS() function in the previous release
+
+====================================================================================================
+v1.3.1 (29th January 2024)
  - Added support for up to 10th order (or 128 channels) input/output for all relevant examples
  - Various bug fixes and minor optimisations all round
 

@@ -93,7 +93,7 @@
 
 #define SAF_VERSION_MAJOR 1        /**< Major version */
 #define SAF_VERSION_MINOR 3        /**< Minor version */
-#define SAF_VERSION_PATCH 1        /**< Patch version */
+#define SAF_VERSION_PATCH 2        /**< Patch version */
 #define SAF_VERSION_SPECIAL ""     /**< Append text ("alpha", "beta", "") */
 #define MKSTRING_(s) #s            /**< Stringify */
 #define MKSTRING(s) MKSTRING_(s)   /**< Stringify */
