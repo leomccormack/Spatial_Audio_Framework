@@ -2,7 +2,7 @@ name: CMake Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, develop ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
+        os: [ubuntu-latest, macOS-latest, windows-latest]
 
     steps:
     - uses: actions/checkout@v2
@@ -27,7 +27,11 @@ jobs:
       if: ${{ contains( runner.os, 'Linux' ) }}
       run: |
         sudo apt-get update && sudo apt-get install libhdf5-dev libnetcdf-dev libnetcdff-dev liblapack3 liblapack-dev libopenblas-base libopenblas-dev liblapacke-dev
-
+    - name: Fetch OpenBLAS (Windows)
+      if: ${{ contains( runner.os, 'Windows' ) }}
+      run: |
+        curl https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26-x64.zip -L -o tmp.zip
+        7z x ./tmp.zip -oOpenBLAS
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
@@ -38,9 +42,6 @@ jobs:
       # access regardless of the host operating system
       shell: bash
       working-directory: ${{runner.workspace}}/build
-      # Note the current convention is to use the -S and -B options here to specify source 
-      # and build directories, but this is only available with CMake 3.13 and higher.  
-      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
       if: ${{ contains( runner.os, 'Linux' ) }}
       run: |
         cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_OPEN_BLAS_AND_LAPACKE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1 -DSAF_ENABLE_HADES_MODULE=1
@@ -51,6 +52,13 @@ jobs:
       if: ${{ contains( runner.os, 'macOS' ) }}
       run: |
         cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_APPLE_ACCELERATE -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1 -DSAF_ENABLE_HADES_MODULE=1
+    
+    - name: Configure CMake (Windows)
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      if: ${{ contains( runner.os, 'Windows' ) }}
+      run: |
+        cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DSAF_PERFORMANCE_LIB=SAF_USE_OPEN_BLAS_AND_LAPACKE -DOPENBLAS_LIBRARY=$GITHUB_WORKSPACE/OpenBLAS/lib/libopenblas.lib -DLAPACKE_LIBRARY=$GITHUB_WORKSPACE/OpenBLAS/lib/libopenblas.lib -DOPENBLAS_HEADER_PATH=$GITHUB_WORKSPACE/OpenBLAS/include/ -DSAF_ENABLE_TRACKER_MODULE=1 -DSAF_ENABLE_SOFA_READER_MODULE=1 -DSAF_ENABLE_HADES_MODULE=1
 
     - name: Build
       working-directory: ${{runner.workspace}}/build
@@ -61,5 +69,6 @@ jobs:
     - name: Test
       working-directory: ${{runner.workspace}}/build
       shell: bash
+      if: ${{ contains( runner.os, 'Linux' ) || contains( runner.os, 'macOS' )}}
       # Execute tests
       run: ./test/saf_test
