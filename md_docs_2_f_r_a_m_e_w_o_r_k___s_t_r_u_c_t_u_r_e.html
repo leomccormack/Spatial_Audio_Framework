@@ -127,9 +127,11 @@ Modules</h1>
 <p>The framework also includes the following optional modules:</p><ul>
 <li><b>saf_sofa_reader</b> - a simple SOFA file reader (<b>ISC</b>).</li>
 <li><b>saf_tracker</b> - a particle-filtering based tracker (<b>GPLv2</b>).</li>
+<li><b>saf_hades</b> - for binaural rendering of Hearing-Assistive/Augmented-reality Devices (HADES) (<b>GPLv2</b> License).</li>
 </ul>
 <p>To enable optional framework modules, simply add the relevant pre-processor definition: </p><div class="fragment"><div class="line">SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader</div>
 <div class="line">SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker</div>
+<div class="line">SAF_ENABLE_HADES_MODULE        # to enable saf_hades</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md3"></a>
 Resources</h1>
 <p>The <b>saf_utilities</b> module also inherits and offers use of the following third-party <b>resources</b>:</p><ul>
@@ -137,6 +139,8 @@ Resources</h1>
 <li><a href="https://github.com/leomccormack/md_malloc"><b>md_malloc</b></a> - a utility for allocating contiguous multi-dimensional arrays (<b>MIT</b>).</li>
 <li><a href="https://github.com/leomccormack/convhull_3d"><b>convhull_3d</b></a> - for building 3-D convex hulls (<b>MIT</b>).</li>
 <li><a href="https://github.com/mborgerding/kissfft"><b>kissFFT</b></a> - the default FFT implementation for when no optimised alternative is linked (<b>BSD-3-Clause</b>).</li>
+<li><a href="https://github.com/xiph/speex"><b>speex_resampler</b></a> - a popular and efficient resampler taken from the Speex project (<b>BSD-3-Clause</b>).</li>
+<li><a href="https://github.com/madler/zlib"><b>zlib</b></a> - a massively spiffy yet delicately unobtrusive compression library (<a href="https://en.wikipedia.org/wiki/Zlib_License"><b>custom permissive license</b></a>)</li>
 </ul>
 <h1><a class="anchor" id="autotoc_md4"></a>
 Dependencies</h1>
@@ -206,7 +210,7 @@ Adding a module to the framework</h2>
 <div class="line"><span class="preprocessor">#endif </span><span class="comment">/* SAF_ENABLE_SOFA_READER_MODULE */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md9"></a>
 Coding style</h2>
-<p>All code should be written in C and compile under C99 compliant compilers and the ancient MSVC compiler. Note that complex number wrappers (<b><a class="el" href="saf__utility__complex_8h.html" title="Contains wrappers for handling complex numbers across both C99-compliant compilers and Microsoft Visu...">saf_utilities/saf_utility_complex.h</a></b>) have been provided to make this latter requirement a bit easier, but we can also help port C99-only code to be MSVC compliant if needed.</p>
+<p>All code should be written in C89.</p>
 <p>As for coding-style, there are no strict requirements, only suggestions. In general, taking an existing SAF module and using it as a basis for developing a new module is probably the easiest way to go. However, suggested coding styles are also listed below:</p><ul>
 <li>Indentations should be 4 spaces in length - no tabs please!</li>
 <li>Comments are preferred with the /* comment */ syntax, rather than //</li>
@@ -242,7 +246,7 @@ Licensing</h2>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Wed Jan 31 2024 14:11:01 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
+    <li class="footer">Generated on Fri Feb 2 2024 09:01:02 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.10.0 </li>
   </ul>
 </div>
 <script type="text/javascript">
