@@ -29,11 +29,13 @@ The framework comprises the following core modules (**ISC**):
 The framework also includes the following optional modules:
 * **saf_sofa_reader** - a simple SOFA file reader (**ISC**).
 * **saf_tracker** - a particle-filtering based tracker (**GPLv2**).
+* **saf_hades** - for binaural rendering of Hearing-Assistive/Augmented-reality Devices (HADES)  (**GPLv2** License).
 
 To enable optional framework modules, simply add the relevant pre-processor definition:
 ```
 SAF_ENABLE_SOFA_READER_MODULE  # to enable saf_sofa_reader
 SAF_ENABLE_TRACKER_MODULE      # to enable saf_tracker
+SAF_ENABLE_HADES_MODULE        # to enable saf_hades
 ```
 
 ## Resources
@@ -43,6 +45,8 @@ The **saf_utilities** module also inherits and offers use of the following third
 * [**md_malloc**](https://github.com/leomccormack/md_malloc) - a utility for allocating contiguous multi-dimensional arrays (**MIT**).
 * [**convhull_3d**](https://github.com/leomccormack/convhull_3d) - for building 3-D convex hulls (**MIT**).
 * [**kissFFT**](https://github.com/mborgerding/kissfft) - the default FFT implementation for when no optimised alternative is linked (**BSD-3-Clause**).
+* [**speex_resampler**](https://github.com/xiph/speex) - a popular and efficient resampler taken from the Speex project (**BSD-3-Clause**).
+* [**zlib**](https://github.com/madler/zlib) - a massively spiffy yet delicately unobtrusive compression library ([**custom permissive license**](https://en.wikipedia.org/wiki/Zlib_License))
 
 ## Dependencies
 
@@ -136,7 +140,7 @@ Optional modules are also included by **framework/include/saf.h** in a similar m
 
 ### Coding style
 
-All code should be written in C and compile under C99 compliant compilers and the ancient MSVC compiler. Note that complex number wrappers (**saf_utilities/saf_utility_complex.h**) have been provided to make this latter requirement a bit easier, but we can also help port C99-only code to be MSVC compliant if needed. 
+All code should be written in C89.
 
 As for coding-style, there are no strict requirements, only suggestions. In general, taking an existing SAF module and using it as a basis for developing a new module is probably the easiest way to go. However, suggested coding styles are also listed below:
 * Indentations should be 4 spaces in length - no tabs please!

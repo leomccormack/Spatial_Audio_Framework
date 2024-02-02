@@ -9,7 +9,7 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
-v1.3.2
+v1.3.2 (2nd February 2024)
  - Reverted a change made to the getBinDecoder_MAGLS() function in the previous release
 
 ====================================================================================================

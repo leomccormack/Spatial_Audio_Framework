@@ -7,9 +7,11 @@
 
 # About
 
-The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. Originally intended as a resource for researchers in the field, the framework has gradually grown into a rather large and well-documented codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio (e.g. Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.). The framework also makes use of highly optimised linear algebra libraries (such as Intel MKL, Apple Accelerate, OpenBLAS) as well as SIMD intrinsics (SSE, AVX, AVX-512). Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects. These examples have also been integrated into VST audio plug-ins under the [**SPARTA**](https://github.com/leomccormack/SPARTA) banner, which demonstrate how the framework may be used for practical real-time applications.
+The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. Originally intended as a resource for researchers in the field, the framework has gradually grown into a large codebase comprising a number of distinct [**modules**](framework/modules); with each module targeting a specific sub-field of spatial audio, such as: Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.. The framework also makes use of highly optimised linear algebra libraries (such as: Intel MKL, Apple Accelerate, OpenBLAS) as well as x86 SIMD intrinsics (SSE, AVX, AVX-512). 
 
-Owing to its modular design, expanding the framework is relatively straightforward, and contributions from researchers and developers of spatial audio technologies is actively encouraged! :-) 
+Several [**examples**](examples/include) are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects. These examples have also been realised as VST/LV2 audio plug-ins under the [**SPARTA**](https://github.com/leomccormack/SPARTA) banner.
+
+Owing to its modular design, expanding the framework is relatively straightforward, and contributions from researchers and developers of spatial audio technologies is encouraged! :-) 
 
 # Prerequisites
 
@@ -211,4 +213,4 @@ This software is dual-licensed. By default, this software is provided permissive
 
 For full licensing terms see [LICENSE.md](LICENSE.md).
 
-Note that while we do not impose any copyleft licensing philosophies for the ISC licensed modules, we still appreciate it when improvements and/or bug fixes are also merged into this public repository where possible :-)
+Note that, while we do not force any copyleft philosophies onto the permissively licensed modules, we would still appreciate it if improvements and/or bug fixes are also merged into this public repository where possible :-)
