@@ -78,8 +78,8 @@ jobs:
       
     - name: Test (Windows)
       if: ${{ contains( runner.os, 'Windows' ) }}
-      working-directory: ${{runner.workspace}}/build/$BUILD_TYPE
+      working-directory: ${{runner.workspace}}/build
       shell: bash
       run: |
-        ls -lh
-        ./saf_test.exe
+        ls -lh ./test/Release/
+        ./test/Release/saf_test.exe
