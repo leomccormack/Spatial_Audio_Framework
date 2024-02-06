@@ -69,15 +69,16 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
-    - name: Copy binaries (Windows)
-      working-directory: ${{runner.workspace}}/build
-      shell: bash
-      if: ${{ contains( runner.os, 'Windows' ) }}
-      run: |
-        cp ./test/$BUILD_TYPE/saf_test.exe ./test/saf_test
-
-    - name: Test
+    - name: Test (Unix)
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # Execute tests
       run: ./test/saf_test
+      
+    - name: Test (Windows)
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      if: ${{ contains( runner.os, 'Windows' ) }}
+      run: |
+        ls -lh ./test/$BUILD_TYPE/
+        ./test/$BUILD_TYPE/saf_test.exe
