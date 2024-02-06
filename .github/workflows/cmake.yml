@@ -72,6 +72,7 @@ jobs:
     - name: Test (Unix)
       working-directory: ${{runner.workspace}}/build
       shell: bash
+      if: ${{ contains( runner.os, 'Linux' ) || contains( runner.os, 'macOS' )}}
       # Execute tests
       run: ./test/saf_test
       
