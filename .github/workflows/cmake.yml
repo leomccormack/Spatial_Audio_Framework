@@ -32,6 +32,9 @@ jobs:
       run: |
         curl https://github.com/OpenMathLib/OpenBLAS/releases/download/v0.3.26/OpenBLAS-0.3.26-x64.zip -L -o tmp.zip
         7z x ./tmp.zip -oOpenBLAS
+        cp ./OpenBLAS/lib/libopenblas.lib $GITHUB_WORKSPACE
+        cp ./OpenBLAS/bin/libopenblas.dll $GITHUB_WORKSPACE
+        echo "$GITHUB_WORKSPACE" >> $GITHUB_PATH
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
       # We'll use this as our working directory for all subsequent commands
@@ -66,9 +69,15 @@ jobs:
       # Execute the build.  You can specify a specific target with "--target <NAME>"
       run: cmake --build . --config $BUILD_TYPE
 
+    - name: Copy binaries (Windows)
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      if: ${{ contains( runner.os, 'Windows' ) }}
+      run: |
+        cp ./test/$BUILD_TYPE/saf_test.exe ./test/saf_test
+
     - name: Test
       working-directory: ${{runner.workspace}}/build
       shell: bash
-      if: ${{ contains( runner.os, 'Linux' ) || contains( runner.os, 'macOS' )}}
       # Execute tests
       run: ./test/saf_test
