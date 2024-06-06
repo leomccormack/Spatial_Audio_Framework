@@ -131,6 +131,12 @@ void loadLoudspeakerArrayPreset
             /* fall through */
         case LOUDSPEAKER_ARRAY_PRESET_DEFAULT:
             /* fall through */
+        case LOUDSPEAKER_ARRAY_PRESET_STEREO:
+            nCH = 2;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __stereo_dirs_deg[ch][i];
+            break;
         case LOUDSPEAKER_ARRAY_PRESET_5PX:
             nCH = 5;
             for(ch=0; ch<nCH; ch++)
