@@ -1,6 +1,6 @@
 var af_s_t_f_tlib_8c =
 [
-    [ "afSTFT_data", "structaf_s_t_f_t__data.html", null ],
+    [ "afSTFT_data", "structaf_s_t_f_t__data.html", "structaf_s_t_f_t__data" ],
     [ "afAnalyse", "af_s_t_f_tlib_8c.html#ac050d7bf5bbaaf5d930b01691a689e5b", null ],
     [ "afSTFT_backward", "af_s_t_f_tlib_8c.html#af0acd3e0495bbe8f3241592aa5b0b744", null ],
     [ "afSTFT_backward_flat", "af_s_t_f_tlib_8c.html#a142ac81c06277d7b2cc63434cbfb7389", null ],

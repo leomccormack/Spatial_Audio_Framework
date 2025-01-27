@@ -1,6 +1,6 @@
 var saf__hades__synthesis_8h =
 [
-    [ "hades_binaural_config", "structhades__binaural__config.html", null ],
+    [ "hades_binaural_config", "structhades__binaural__config.html", "structhades__binaural__config" ],
     [ "hades_radial_editor_handle", "saf__hades__synthesis_8h.html#a667fa651224901a85ee81b494cef8411", null ],
     [ "hades_synthesis_handle", "saf__hades__synthesis_8h.html#a6bbb16d86e5365bd090bfccda1ec959d", null ],
     [ "HADES_BEAMFORMER_TYPE", "saf__hades__synthesis_8h.html#a6f5acbf7bb0e83995a91b06054b7119c", [

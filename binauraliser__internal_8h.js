@@ -1,6 +1,6 @@
 var binauraliser__internal_8h =
 [
-    [ "binauraliser_data", "structbinauraliser__data.html", null ],
+    [ "binauraliser_data", "structbinauraliser__data.html", "structbinauraliser__data" ],
     [ "BINAURALISER_FRAME_SIZE", "binauraliser__internal_8h.html#acfb8ae0edd8b754289a2a0faa1947100", null ],
     [ "HOP_SIZE", "binauraliser__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "binauraliser__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],

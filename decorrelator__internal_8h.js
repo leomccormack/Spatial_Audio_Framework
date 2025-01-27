@@ -1,6 +1,6 @@
 var decorrelator__internal_8h =
 [
-    [ "decorrelator_data", "structdecorrelator__data.html", null ],
+    [ "decorrelator_data", "structdecorrelator__data.html", "structdecorrelator__data" ],
     [ "DECORRELATOR_FRAME_SIZE", "decorrelator__internal_8h.html#ad18deb1077268143b98514d9a29c4a0b", null ],
     [ "HOP_SIZE", "decorrelator__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "decorrelator__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],

@@ -177,7 +177,7 @@ var searchData=
   ['powermap_5fsetpowermapmode_174',['powermap_setPowermapMode',['../powermap_8h.html#a9630f2daf09697b312363d6c05c04ee7',1,'powermap_setPowermapMode(void *const hPm, int newMode):&#160;powermap.c'],['../powermap_8c.html#a9630f2daf09697b312363d6c05c04ee7',1,'powermap_setPowermapMode(void *const hPm, int newMode):&#160;powermap.c']]],
   ['powermap_5fsetsourcepreset_175',['powermap_setSourcePreset',['../powermap_8h.html#a585f89e6e72b0c5e4c4d2ae6751c9f44',1,'powermap_setSourcePreset(void *const hPm, int newPresetID):&#160;powermap.c'],['../powermap_8c.html#a585f89e6e72b0c5e4c4d2ae6751c9f44',1,'powermap_setSourcePreset(void *const hPm, int newPresetID):&#160;powermap.c']]],
   ['preproc_176',['preProc',['../structambi__bin__data.html#ab28d5af70ddd1adf64401429489a9b9b',1,'ambi_bin_data']]],
-  ['prerequisites_177',['Prerequisites',['../index.html#autotoc_md96',1,'']]],
+  ['prerequisites_177',['Prerequisites',['../md__r_e_a_d_m_e.html#autotoc_md96',1,'']]],
   ['preset_178',['preset',['../structarray2sh__data.html#ae6f46050c658320109b909383c54bc99',1,'array2sh_data']]],
   ['prev_5fbeamweights_179',['prev_beamWeights',['../structbeamformer__data.html#a4a449da2e1fd009eb980db620037eab1',1,'beamformer_data']]],
   ['prev_5fenergy_180',['prev_energy',['../structdirass__codec_pars.html#a4b010aa6eca07963c7a2515c536453a4',1,'dirass_codecPars']]],

@@ -12,7 +12,7 @@ var searchData=
   ['latticedecorrelator_5freset_9',['latticeDecorrelator_reset',['../group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4',1,'latticeDecorrelator_reset(void *hDecor):&#160;saf_utility_decor.c'],['../group___utilities.html#ga870b79ef933c671c8b85e96bc8da09c4',1,'latticeDecorrelator_reset(void *hDecor):&#160;saf_utility_decor.c']]],
   ['lhrir_10',['lHRIR',['../structhades__binaural__config.html#a9f8a0e1e7d2efdf1c357436ea0558eb2',1,'hades_binaural_config']]],
   ['libraries_20supported_20by_20saf_11',['Performance Libraries Supported by SAF',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html',1,'']]],
-  ['license_12',['License',['../saf_8h.html#autotoc_md72',1,'Core modules (ISC License)'],['../structsaf__sofa__container.html#af03f642f1001e3e58e17197a2ebc6e42',1,'saf_sofa_container::License'],['../index.html#autotoc_md106',1,'License']]],
+  ['license_12',['License',['../saf_8h.html#autotoc_md72',1,'Core modules (ISC License)'],['../structsaf__sofa__container.html#af03f642f1001e3e58e17197a2ebc6e42',1,'saf_sofa_container::License'],['../md__r_e_a_d_m_e.html#autotoc_md106',1,'License']]],
   ['licensing_13',['Licensing',['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html#autotoc_md11',1,'']]],
   ['linux_20macosx_20users_14',['Linux/MacOSX users',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md14',1,'']]],
   ['list_15',['Test List',['../test.html',1,'']]],

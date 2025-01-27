@@ -1,6 +1,6 @@
 var spreader__internal_8h =
 [
-    [ "spreader_data", "structspreader__data.html", null ],
+    [ "spreader_data", "structspreader__data.html", "structspreader__data" ],
     [ "HOP_SIZE", "spreader__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "spreader__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],
     [ "MAX_SPREAD_FREQ", "spreader__internal_8h.html#a73d503e6beaa732a0d0baf8efb1ca766", null ],

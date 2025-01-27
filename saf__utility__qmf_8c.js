@@ -1,6 +1,6 @@
 var saf__utility__qmf_8c =
 [
-    [ "qmf_data", "structqmf__data.html", null ],
+    [ "qmf_data", "structqmf__data.html", "structqmf__data" ],
     [ "QMF_HYBRID_FILTER_LENGTH", "saf__utility__qmf_8c.html#ae5d32f7ccf287235cd56c96ac7c8470f", null ],
     [ "QMF_MAX_HOP_SIZE", "saf__utility__qmf_8c.html#a51b0175286e48e283b03fbaa3c74089b", null ],
     [ "QMF_NBANDS_2_SUBDIVIDE", "saf__utility__qmf_8c.html#a8d627c0d05bcc28f241ded37257f0e78", null ],

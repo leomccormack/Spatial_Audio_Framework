@@ -1,6 +1,6 @@
 var panner__internal_8h =
 [
-    [ "panner_data", "structpanner__data.html", null ],
+    [ "panner_data", "structpanner__data.html", "structpanner__data" ],
     [ "FORCE_3D_LAYOUT", "panner__internal_8h.html#a92da7bb104924e6d83ea68fc4c9ec2c2", null ],
     [ "HOP_SIZE", "panner__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "panner__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],

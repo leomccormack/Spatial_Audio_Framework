@@ -1,6 +1,6 @@
 var ambi__drc__internal_8h =
 [
-    [ "ambi_drc_data", "structambi__drc__data.html", null ],
+    [ "ambi_drc_data", "structambi__drc__data.html", "structambi__drc__data" ],
     [ "AMBI_DRC_FRAME_SIZE", "ambi__drc__internal_8h.html#a028be41e0e6cad75356ff9992f70fe18", null ],
     [ "HOP_SIZE", "ambi__drc__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "ambi__drc__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],

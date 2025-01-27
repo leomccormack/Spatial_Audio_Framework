@@ -1,7 +1,7 @@
 var powermap__internal_8h =
 [
-    [ "powermap_codecPars", "structpowermap__codec_pars.html", null ],
-    [ "powermap_data", "structpowermap__data.html", null ],
+    [ "powermap_codecPars", "structpowermap__codec_pars.html", "structpowermap__codec_pars" ],
+    [ "powermap_data", "structpowermap__data.html", "structpowermap__data" ],
     [ "HOP_SIZE", "powermap__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "powermap__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],
     [ "MAX_COV_AVG_COEFF", "powermap__internal_8h.html#a8331bbb9099de06df780540f1e53ce21", null ],

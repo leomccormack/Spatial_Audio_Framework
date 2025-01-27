@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['w_0',['w',['../structdirass__codec_pars.html#a69cf3f451932f3ccef3d7aae9a42ebcf',1,'dirass_codecPars::w'],['../structquaternion__data.html#af1832fdcc56fb0092abc715d7c670153',1,'quaternion_data::w']]],
-  ['w_1',['W',['../structarray2sh__data.html#af55361b7317b6a0b7e6bcb058dee17cd',1,'array2sh_data::W'],['../structhades__analysis__data.html#a7699165eef03400d7dd19754375b1431',1,'hades_analysis_data::W'],['../structhades__synthesis__data.html#ab147cdee6cde8d9ab1d21a914548fd66',1,'hades_synthesis_data::W'],['../struct_m_c_s__data.html#a3c98571614b4a338966db244410a8537',1,'MCS_data::W']]],
+  ['w_0',['W',['../structarray2sh__data.html#af55361b7317b6a0b7e6bcb058dee17cd',1,'array2sh_data::W'],['../structhades__analysis__data.html#a7699165eef03400d7dd19754375b1431',1,'hades_analysis_data::W'],['../structhades__synthesis__data.html#ab147cdee6cde8d9ab1d21a914548fd66',1,'hades_synthesis_data::W'],['../struct_m_c_s__data.html#a3c98571614b4a338966db244410a8537',1,'MCS_data::W']]],
+  ['w_1',['w',['../structdirass__codec_pars.html#a69cf3f451932f3ccef3d7aae9a42ebcf',1,'dirass_codecPars::w'],['../structquaternion__data.html#af1832fdcc56fb0092abc715d7c670153',1,'quaternion_data::w']]],
   ['w0_2',['W0',['../struct_m_c_s__data.html#aa9c16427de31bdaa7b55b8aad86b907e',1,'MCS_data::W0'],['../structtracker3d__data.html#a117ad702ac0226c06e68481b36650b61',1,'tracker3d_data::W0']]],
   ['w_5favg_5fcoeff_3',['W_avg_coeff',['../structtracker3d__config.html#af1c2cef508f119730a8d357feb1ce380',1,'tracker3d_config']]],
   ['w_5fdiffeq_4',['W_diffEQ',['../structarray2sh__data.html#a9da26cdbf2ce6d0b018f5dd42ac0a276',1,'array2sh_data']]],
@@ -26,7 +26,7 @@ var searchData=
   ['windowing_5ffunction_5frectangular_23',['WINDOWING_FUNCTION_RECTANGULAR',['../group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a1b887d46d91b1e9b70abd3fab25f4a94',1,'saf_utility_filters.h']]],
   ['windowing_5ffunction_5ftypes_24',['WINDOWING_FUNCTION_TYPES',['../group___utilities.html#ga11cf92ddf3389349c5dd4d7ccab6c619',1,'saf_utility_filters.h']]],
   ['windows_20users_25',['Windows users',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md15',1,'']]],
-  ['with_20cmake_26',['Building with CMake',['../index.html#autotoc_md100',1,'']]],
+  ['with_20cmake_26',['Building with CMake',['../md__r_e_a_d_m_e.html#autotoc_md100',1,'']]],
   ['wxyzcoeffs_27',['wxyzCoeffs',['../saf__sh_8c.html#af820c3e3d132463710c6a56317a6266f',1,'saf_sh.c']]],
   ['wz12_5fhpf_28',['Wz12_hpf',['../structdirass__data.html#a3b2e2b15fe2f9032f01cc4169674464b',1,'dirass_data']]],
   ['wz12_5flpf_29',['Wz12_lpf',['../structdirass__data.html#a62011ff7aafec5f7d213dfbeca0ba7d6',1,'dirass_data']]],

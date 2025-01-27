@@ -1,7 +1,7 @@
 var ambi__dec__internal_8h =
 [
-    [ "ambi_dec_codecPars", "structambi__dec__codec_pars.html", null ],
-    [ "ambi_dec_data", "structambi__dec__data.html", null ],
+    [ "ambi_dec_codecPars", "structambi__dec__codec_pars.html", "structambi__dec__codec_pars" ],
+    [ "ambi_dec_data", "structambi__dec__data.html", "structambi__dec__data" ],
     [ "AMBI_DEC_FRAME_SIZE", "ambi__dec__internal_8h.html#a1c74e644dfbdc905068f679b91e2999d", null ],
     [ "HOP_SIZE", "ambi__dec__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "ambi__dec__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],

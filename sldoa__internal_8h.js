@@ -1,6 +1,6 @@
 var sldoa__internal_8h =
 [
-    [ "sldoa_data", "structsldoa__data.html", null ],
+    [ "sldoa_data", "structsldoa__data.html", "structsldoa__data" ],
     [ "HOP_SIZE", "sldoa__internal_8h.html#a541bb1ef35ab4a13ad7d96e73c0a412f", null ],
     [ "HYBRID_BANDS", "sldoa__internal_8h.html#a8b686c1291e75b81f91064272c45aed5", null ],
     [ "MAX_NUM_SECTORS", "sldoa__internal_8h.html#a42ede7482c3bf97670afc6a3cdf91d01", null ],

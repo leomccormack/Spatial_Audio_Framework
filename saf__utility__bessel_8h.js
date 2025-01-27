@@ -12,12 +12,12 @@ var saf__utility__bessel_8h =
     [ "bessel_yn", "group___utilities.html#gac2bdaf1ccfff8caf927a7a62bacc70bf", null ],
     [ "bessel_Yn_ALL", "group___utilities.html#ga0edbb7af8347a63a3f0812730b33801a", null ],
     [ "bessel_yn_ALL", "group___utilities.html#ga2a267dcf877798281883dd0d8e432640", null ],
-    [ "hankel_hn1", "group___utilities.html#ga54642bbb8f177dfd4cac273da84366f7", null ],
     [ "hankel_Hn1", "group___utilities.html#gac5212dd2d7d1c3e5428e0f58161fd618", null ],
+    [ "hankel_hn1", "group___utilities.html#ga54642bbb8f177dfd4cac273da84366f7", null ],
     [ "hankel_Hn1_ALL", "group___utilities.html#ga2c6390d23dd7a189fbe61fa77297a9a8", null ],
     [ "hankel_hn1_ALL", "group___utilities.html#ga54b2f622dfde5b839883f4c8af525b54", null ],
-    [ "hankel_hn2", "group___utilities.html#ga1414c3554749f5b592540f7e6f2d061a", null ],
     [ "hankel_Hn2", "group___utilities.html#ga8767d46052f8be003ab60001d161fad3", null ],
+    [ "hankel_hn2", "group___utilities.html#ga1414c3554749f5b592540f7e6f2d061a", null ],
     [ "hankel_Hn2_ALL", "group___utilities.html#gabfddf17be89a4b4452ff009b3524f019", null ],
     [ "hankel_hn2_ALL", "group___utilities.html#ga19629e8a4b0c6216ba7e08bb9fab3118", null ]
 ];

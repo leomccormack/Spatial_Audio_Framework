@@ -1,11 +1,11 @@
 var saf__reverb__internal_8h =
 [
-    [ "ims_pos_xyz", "structims__pos__xyz.html", null ],
-    [ "ims_src_obj", "structims__src__obj.html", null ],
-    [ "ims_rec_obj", "structims__rec__obj.html", null ],
-    [ "echogram_data", "structechogram__data.html", null ],
-    [ "ims_core_workspace", "structims__core__workspace.html", null ],
-    [ "ims_scene_data", "structims__scene__data.html", null ],
+    [ "ims_pos_xyz", "structims__pos__xyz.html", "structims__pos__xyz" ],
+    [ "ims_src_obj", "structims__src__obj.html", "structims__src__obj" ],
+    [ "ims_rec_obj", "structims__rec__obj.html", "structims__rec__obj" ],
+    [ "echogram_data", "structechogram__data.html", "structechogram__data" ],
+    [ "ims_core_workspace", "structims__core__workspace.html", "structims__core__workspace" ],
+    [ "ims_scene_data", "structims__scene__data.html", "structims__scene__data" ],
     [ "IMS_CIRC_BUFFER_LENGTH", "saf__reverb__internal_8h.html#a8afcb44b4156c40c709d48a780987ce2", null ],
     [ "IMS_CIRC_BUFFER_LENGTH_MASK", "saf__reverb__internal_8h.html#a8f6e4e700d927e99ae26e084734d2f00", null ],
     [ "IMS_EG_CURRENT", "saf__reverb__internal_8h.html#a863b45dffd3b4e1e0dc68baa508eca02", null ],

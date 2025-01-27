@@ -1,6 +1,6 @@
 var saf__utility__filters_8c =
 [
-    [ "faf_IIRFB_data", "structfaf___i_i_r_f_b__data.html", null ],
+    [ "faf_IIRFB_data", "structfaf___i_i_r_f_b__data.html", "structfaf___i_i_r_f_b__data" ],
     [ "applyBiQuadFilter", "group___utilities.html#ga9290c7f68051107c7b115100c0acd950", null ],
     [ "applyIIR", "group___utilities.html#ga5c96001ab50d85797358b3d17a8bd05c", null ],
     [ "applyIIR_1", "saf__utility__filters_8c.html#a66bdbde87d34e5b3b4d1582b094014aa", null ],

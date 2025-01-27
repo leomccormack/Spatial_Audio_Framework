@@ -51,8 +51,8 @@ var searchData=
   ['evp_48',['evp',['../structtracker3d__data.html#ac19c7f527bdec4495ca695862fe71b4d',1,'tracker3d_data']]],
   ['evta_49',['evta',['../structtracker3d__data.html#a9482100277ff2457ae5c259b86376864',1,'tracker3d_data']]],
   ['example_20usage_50',['Example Usage',['..//github/workspace/examples/include/ambi_bin.h#autotoc_md21',1,'Example Usage'],['..//github/workspace/examples/include/array2sh.h#autotoc_md32',1,'Example Usage'],['../group___utilities.html#autotoc_md91',1,'Example Usage'],['../test.html#_test000044',1,'Example Usage']]],
-  ['examples_51',['Examples',['../index.html#autotoc_md102',1,'']]],
+  ['examples_51',['Examples',['../md__r_e_a_d_m_e.html#autotoc_md102',1,'']]],
   ['externals_52',['Optional externals',['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html#autotoc_md5',1,'']]],
   ['extractverticesfromobjfile_53',['extractVerticesFromObjFile',['../convhull__3d_8c.html#ac01a7e59609267790aadf112cdb09644',1,'extractVerticesFromObjFile(char *const obj_filename, ch_vertex **out_vertices, int *out_nVert):&#160;convhull_3d.c'],['../convhull__3d_8h.html#ac01a7e59609267790aadf112cdb09644',1,'extractVerticesFromObjFile(char *const obj_filename, ch_vertex **out_vertices, int *out_nVert):&#160;convhull_3d.c']]],
-  ['extras_54',['Extras',['../index.html#autotoc_md103',1,'']]]
+  ['extras_54',['Extras',['../md__r_e_a_d_m_e.html#autotoc_md103',1,'']]]
 ];
