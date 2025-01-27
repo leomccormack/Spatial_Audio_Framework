@@ -244,7 +244,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
             }
         }
         else{
-            saf_print_warning("Too many grid points to calculate grid weights. i.e., we're not assuming that the HRTF measurement grid was uniform.");
+            saf_print_warning("Too many grid points to calculate grid weights. Assuming that the HRTF measurement grid was uniform.");
             free(pData->weights);
             pData->weights = NULL;
         }
