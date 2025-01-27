@@ -270,7 +270,7 @@ void ambi_bin_initCodec
                 }
             }
             else{
-                saf_print_warning("Too many grid points");
+                saf_print_warning("Too many grid points to calculate grid weights. Assuming that the HRTF measurement grid was uniform.");
                 free(pars->weights);
                 pars->weights = NULL;
             }
