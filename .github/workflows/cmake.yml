@@ -26,7 +26,7 @@ jobs:
     - name: Fetch SAF dependencies
       if: ${{ contains( runner.os, 'Linux' ) }}
       run: |
-        sudo apt-get update && sudo apt-get install libhdf5-dev libnetcdf-dev libnetcdff-dev liblapack3 liblapack-dev libopenblas-base libopenblas-dev liblapacke-dev
+        sudo apt-get update && sudo apt-get install libhdf5-dev libnetcdf-dev libnetcdff-dev liblapack3 liblapack-dev libopenblas-dev liblapacke-dev
     - name: Fetch OpenBLAS (Windows)
       if: ${{ contains( runner.os, 'Windows' ) }}
       run: |
