@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['saf_0',['Performance Libraries Supported by SAF',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html',1,'']]],
+  ['saf_0',['SAF',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html',1,'Performance Libraries Supported by SAF'],['../index.html',1,'SAF']]],
   ['saf_2eh_1',['saf.h',['../saf_8h.html',1,'']]],
   ['saf_5fassert_2',['saf_assert',['../group___utilities.html#ga0ebdaa72f19e4e545aa1f3305badf215',1,'saf_utilities.h']]],
   ['saf_5fcassert_3',['SAF_CASSERT',['../group___utilities.html#ga74f8bcd39c712a7fd5099353a84f780b',1,'saf_utility_misc.h']]],
@@ -439,7 +439,7 @@ var searchData=
   ['str_436',['str',['../structtracker3d__data.html#aa2bc7a3647bb7a452b350b256842bad0',1,'tracker3d_data']]],
   ['streambalance_437',['streamBalance',['../structhades__synthesis__data.html#afe611824e6564c306bd4b4112d080e1d',1,'hades_synthesis_data']]],
   ['structure_438',['Framework Structure',['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html',1,'']]],
-  ['structure_439',['structure',['../md_extras_2safmex_2_s_a_f_m_e_x.html#autotoc_md63',1,'Folder structure'],['../md__r_e_a_d_m_e.html#autotoc_md97',1,'Framework structure'],['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html#autotoc_md7',1,'Module structure']]],
+  ['structure_439',['structure',['../md_extras_2safmex_2_s_a_f_m_e_x.html#autotoc_md63',1,'Folder structure'],['../index.html#autotoc_md97',1,'Framework structure'],['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html#autotoc_md7',1,'Module structure']]],
   ['style_440',['Coding style',['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html#autotoc_md9',1,'']]],
   ['sumf_441',['sumf',['../group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598',1,'sumf(float *values, int nValues):&#160;saf_utility_misc.c'],['../group___utilities.html#gaa2dbc701d05112cccb1a2d7fdc998598',1,'sumf(float *values, int nValues):&#160;saf_utility_misc.c']]],
   ['supported_20by_20saf_442',['Performance Libraries Supported by SAF',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html',1,'']]],

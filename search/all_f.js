@@ -4,7 +4,7 @@ var searchData=
   ['optional_20dependencies_1',['Optional dependencies',['../saf__externals_8h.html#autotoc_md88',1,'']]],
   ['optional_20externals_2',['Optional externals',['../md_docs_2_f_r_a_m_e_w_o_r_k___s_t_r_u_c_t_u_r_e.html#autotoc_md5',1,'']]],
   ['optional_20modules_3',['Optional modules',['../saf_8h.html#autotoc_md73',1,'']]],
-  ['options_4',['options',['../md__r_e_a_d_m_e.html#autotoc_md98',1,'Additional options'],['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md16',1,'Other options']]],
+  ['options_4',['options',['../index.html#autotoc_md98',1,'Additional options'],['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md16',1,'Other options']]],
   ['or_20saf_5fuse_5fintel_5fmkl_5filp64_5',['SAF_USE_INTEL_MKL_LP64 or SAF_USE_INTEL_MKL_ILP64',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md13',1,'']]],
   ['order_6',['order',['../structambi__bin__data.html#ae5f428fc9f3729900584c0b6baf8a510',1,'ambi_bin_data::order'],['../structambi__enc__data.html#add4fc7e833fc652cd2a1c7a80dacf999',1,'ambi_enc_data::order'],['../structarray2sh__data.html#aed90bca3a4aa7097049c41204744929e',1,'array2sh_data::order'],['../structechogram__data.html#a385dd2466f42fdc88a6a5637c7387b6f',1,'echogram_data::order']]],
   ['order2nsh_7',['ORDER2NSH',['../group___s_h.html#ga2bac5e4831e0699171545c1d38558d7e',1,'saf_sh.h']]],
