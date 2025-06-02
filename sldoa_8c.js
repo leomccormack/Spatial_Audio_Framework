@@ -17,7 +17,7 @@ var sldoa_8c =
     [ "sldoa_getNormType", "sldoa_8c.html#aa976a30293d06480f11995f451757f06", null ],
     [ "sldoa_getNSHrequired", "sldoa_8c.html#ad4602a76da35358f079bd4f89abe3b64", null ],
     [ "sldoa_getNumberOfBands", "sldoa_8c.html#a0f7d61f4036adc0a266516ae9a9f68e6", null ],
-    [ "sldoa_getProcessingDelay", "sldoa_8c.html#ac38f29a71150e3aeb3483c5b9cbd36f9", null ],
+    [ "sldoa_getProcessingDelay", "sldoa_8c.html#a0fceee95929d2fce5482ceb3ed666cfb", null ],
     [ "sldoa_getProgressBar0_1", "sldoa_8c.html#ab1cab6cea30d6cc7367b4e374a2de1dc", null ],
     [ "sldoa_getProgressBarText", "sldoa_8c.html#aec0b5d1a1e5ef7ddceb3a9b9aac9fa07", null ],
     [ "sldoa_getSamplingRate", "sldoa_8c.html#af34c1968eebe9909ee63c69b16008fa4", null ],

@@ -13,7 +13,6 @@ var structbeamformer__data =
     [ "outputFrameTD", "structbeamformer__data.html#a28ec6513d331a544aa1c8dca67c84cad", null ],
     [ "outputFrameTD_fadeIn", "structbeamformer__data.html#a18413f23e363a67e8e9a7d385d02d60b", null ],
     [ "prev_beamWeights", "structbeamformer__data.html#a4a449da2e1fd009eb980db620037eab1", null ],
-    [ "prev_SHFrameTD", "structbeamformer__data.html#a8214c4299fa7807d692ae12d22931fde", null ],
     [ "recalc_beamWeights", "structbeamformer__data.html#a35929482fa85df3cf340ed97b6c4fa4d", null ],
     [ "SHFrameTD", "structbeamformer__data.html#ae61c86cdeadb24a586abbc3a5784f96f", null ],
     [ "tempFrame", "structbeamformer__data.html#a2482baf0de21ac00de7c806a412aa4e0", null ],

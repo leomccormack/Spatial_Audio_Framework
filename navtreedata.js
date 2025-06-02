@@ -48,7 +48,7 @@ var NAVTREEINDEX =
 "ambi__bin_8h.html#a11e3e1a08ba3a65a269e13fc117d8f40",
 "ambi__drc_8h.html#a171a9d682332fd6da4e89945eb8e3ee8",
 "array2sh_8c.html#a0d1d1909c7ec9fc3910dc5589b473218",
-"binauraliser_8c.html#a020fbb57c8274c603556153ddac0a640",
+"binauraliser_8c.html#a0628549e0203c0f65bb8737526e88be6",
 "dir_4d5d96da7aef0c547de2935de820c5da.html",
 "globals_k.html",
 "group___utilities.html#ga258f2fd95d9a460c7805b77134042d74",

@@ -16,7 +16,6 @@ var structrotator__data =
     [ "outputFrameTD", "structrotator__data.html#ae22e29a9c4ed053efad0e52586e6533f", null ],
     [ "outputFrameTD_fadeIn", "structrotator__data.html#a4ad54ec8b0f39280bf5b339ae20eb6bd", null ],
     [ "pitch", "structrotator__data.html#a1f0885e0facd71fee0caf1b0945fec3c", null ],
-    [ "prev_inputFrameTD", "structrotator__data.html#a4e3c65f7b6ba613bf947b5215d045688", null ],
     [ "prev_M_rot", "structrotator__data.html#ad7b0a3f90dfd5dd96c5acd1af59c5065", null ],
     [ "Q", "structrotator__data.html#ab48fab07eb9f0c560e105525a793a72d", null ],
     [ "roll", "structrotator__data.html#a7f02f823c20e3618bbe78c9e041fcfb0", null ],

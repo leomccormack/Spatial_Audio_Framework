@@ -12,7 +12,6 @@ var structambi__enc__data =
     [ "order", "structambi__enc__data.html#add4fc7e833fc652cd2a1c7a80dacf999", null ],
     [ "outputFrameTD", "structambi__enc__data.html#a93d0192183e60dd543bce54cbd490f84", null ],
     [ "outputFrameTD_fadeIn", "structambi__enc__data.html#aed2c3e1b66c75d53b1936c7ba577323e", null ],
-    [ "prev_inputFrameTD", "structambi__enc__data.html#ab9cf7ddb20aab1667bf18dba0cc90969", null ],
     [ "prev_Y", "structambi__enc__data.html#ab4480f1b104f98e3cc2dc06b1df498c5", null ],
     [ "recalc_SH_FLAG", "structambi__enc__data.html#adf86d6e6f67ef2a365f39ce3ddea187f", null ],
     [ "src_dirs_deg", "structambi__enc__data.html#af4f8d524db51747a2b3d548cc9972df5", null ],

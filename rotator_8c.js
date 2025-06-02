@@ -12,7 +12,7 @@ var rotator_8c =
     [ "rotator_getNSHrequired", "rotator_8c.html#a2126966c16714f2476854ee26ca43094", null ],
     [ "rotator_getOrder", "rotator_8c.html#a7a7ec4b2471b4ae43404105efb0ace88", null ],
     [ "rotator_getPitch", "rotator_8c.html#a676f4e3bc48afe1e0de01c55acfcd5d1", null ],
-    [ "rotator_getProcessingDelay", "rotator_8c.html#a47d967cfb51ef10af70fb7e8a62e6277", null ],
+    [ "rotator_getProcessingDelay", "rotator_8c.html#a4ffbda45b16dd1bb685f729a884bcfc6", null ],
     [ "rotator_getQuaternionW", "rotator_8c.html#a5a1dc1a513786007a86c547323307959", null ],
     [ "rotator_getQuaternionX", "rotator_8c.html#acee21d400b00fc4785c56ac7090d8dc4", null ],
     [ "rotator_getQuaternionY", "rotator_8c.html#a352a3ef01030dfae64770e09b715f592", null ],

@@ -8,7 +8,7 @@ var decorrelator_8c =
     [ "decorrelator_getFrameSize", "decorrelator_8c.html#a4daa531efd0b146f2e5d33a9cca8d698", null ],
     [ "decorrelator_getLevelCompensationFlag", "decorrelator_8c.html#a18dcee0a2a3df6897afb39a3e0bd3e78", null ],
     [ "decorrelator_getNumberOfChannels", "decorrelator_8c.html#ad07d15e64889124b5e2f765694e35917", null ],
-    [ "decorrelator_getProcessingDelay", "decorrelator_8c.html#af137a6a5019e2320a0152bf384d8560c", null ],
+    [ "decorrelator_getProcessingDelay", "decorrelator_8c.html#a57317c24e1ad2bf2263a10ee6cfbf0cf", null ],
     [ "decorrelator_getProgressBar0_1", "decorrelator_8c.html#a7c5c72473d24ef3d9f489cd5f245a6c2", null ],
     [ "decorrelator_getProgressBarText", "decorrelator_8c.html#a9732513a9eeb3085f42f46f0f78d1444", null ],
     [ "decorrelator_getTransientBypassFlag", "decorrelator_8c.html#a64c35ad69067eceeac1fff92114d3524", null ],

@@ -23,7 +23,7 @@ var powermap_8c =
     [ "powermap_getPowermapEQAllBands", "powermap_8c.html#a4242fafd5c1050f48be8fd47739ef981", null ],
     [ "powermap_getPowermapEQHandle", "powermap_8c.html#ad557c9c789b8f53e1778d2e9a0e588d3", null ],
     [ "powermap_getPowermapMode", "powermap_8c.html#a0edf6e2b787be184bb6de30e3995a28e", null ],
-    [ "powermap_getProcessingDelay", "powermap_8c.html#a089be2627e57b8a3c5bddf53513c90b4", null ],
+    [ "powermap_getProcessingDelay", "powermap_8c.html#ae01db224946571687dcf6518427d5689", null ],
     [ "powermap_getProgressBar0_1", "powermap_8c.html#a1c22bbd78affe0f2de2437664c9c5baa", null ],
     [ "powermap_getProgressBarText", "powermap_8c.html#ab395ca53ff7faa45f6e31bc846ba5e49", null ],
     [ "powermap_getSamplingRate", "powermap_8c.html#ae2f5d399d7845b6debc44cec6c181de8", null ],
