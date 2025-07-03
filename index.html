@@ -119,7 +119,7 @@ $(function(){initNavTree('index.html',''); initResizable(true); });
 </ul>
 <h1><a class="anchor" id="autotoc_md95"></a>
 About</h1>
-<p>The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. Originally intended as a resource for researchers in the field, the framework has gradually grown into a large codebase comprising a number of distinct <a href="framework/modules"><b>modules</b></a>; with each module targeting a specific sub-field of spatial audio, such as: Ambisonics encoding/decoding, spherical array processing, amplitude-panning, HRIR processing, room simulation, etc.. The framework also makes use of highly optimised linear algebra libraries (such as: Intel MKL, Apple Accelerate, OpenBLAS) as well as x86 SIMD intrinsics (SSE, AVX, AVX-512).</p>
+<p>The Spatial_Audio_Framework (SAF) is an open-source and cross-platform framework for developing spatial audio related algorithms and software in C/C++. Originally intended as a resource for researchers in the field, the framework has gradually grown into a large codebase comprising a number of distinct <a href="framework/modules"><b>modules</b></a>. Each module targets a specific sub-field of spatial audio, such as: Ambisonics encoding/decoding, spherical array processing, amplitude-panning (VBAP), HRIR processing, room simulation, etc. The framework also makes use of highly optimised linear algebra libraries (such as: Intel MKL, Apple Accelerate, OpenBLAS) as well as x86 SIMD intrinsics (SSE, AVX, AVX-512).</p>
 <p>Several <a href="examples/include"><b>examples</b></a> are also included in the repository, which serve to demonstrate the functionality of the framework and may also act as a starting point for new projects. These examples have also been realised as VST/LV2 audio plug-ins under the <a href="https://github.com/leomccormack/SPARTA"><b>SPARTA</b></a> banner.</p>
 <p>Owing to its modular design, expanding the framework is relatively straightforward, and contributions from researchers and developers of spatial audio technologies is encouraged! :-)</p>
 <h1><a class="anchor" id="autotoc_md96"></a>
@@ -158,8 +158,8 @@ Framework structure</h2>
 <div class="line">SAF_ENABLE_HADES_MODULE        # to enable saf_hades</div>
 </div><!-- fragment --><h3><a class="anchor" id="autotoc_md98"></a>
 Additional options</h3>
-<p>The framework can be configured further, with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP # To use Intel IPP for performing the DFT/FFT and resampling</div>
-<div class="line">SAF_USE_FFTW      # To use the FFTW library for performing the DFT/FFT </div>
+<p>The framework can be configured further with the following options: </p><div class="fragment"><div class="line">SAF_USE_INTEL_IPP # To use Intel IPP for performing the DFT/FFTs and resampling</div>
+<div class="line">SAF_USE_FFTW      # To use the FFTW library for performing the DFT/FFTs </div>
 <div class="line">SAF_ENABLE_SIMD   # To enable SIMD (SSE3, AVX2 and/or AVX512) intrinsics for certain vector operations</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md99"></a>
 Using the framework</h1>
@@ -283,7 +283,7 @@ License</h1>
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Mon Jun 2 2025 17:19:38 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Thu Jul 3 2025 17:46:05 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
