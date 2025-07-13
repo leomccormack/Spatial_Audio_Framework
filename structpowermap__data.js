@@ -14,6 +14,7 @@ var structpowermap__data =
     [ "HFOVoption", "structpowermap__data.html#aabc8a2200eeb4a3eecbc5fb92ee5f164", null ],
     [ "hSTFT", "structpowermap__data.html#af9fe2be48a10af0a1b527dc82121cf49", null ],
     [ "inFIFO", "structpowermap__data.html#a49d3cb9c846b0e5bb6e3278b1d139a90", null ],
+    [ "isFirstInit", "structpowermap__data.html#ac3202d8ecc87f9d96556471b9a0cb768", null ],
     [ "masterOrder", "structpowermap__data.html#ac70daf336e7de3f919b69d331da6e4f1", null ],
     [ "new_masterOrder", "structpowermap__data.html#aa21bbb178a236a4e1ef385b6afd7bdf9", null ],
     [ "norm", "structpowermap__data.html#ad649395d98f3aeab519df9e4aeb2c153", null ],
