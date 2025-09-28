@@ -138,9 +138,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:ada2a1c33e45717a57f918bbdd42592e8" id="r_ada2a1c33e45717a57f918bbdd42592e8"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada2a1c33e45717a57f918bbdd42592e8">fs</a></td></tr>
 <tr class="memdesc:ada2a1c33e45717a57f918bbdd42592e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Host sampling rate.  <br /></td></tr>
 <tr class="separator:ada2a1c33e45717a57f918bbdd42592e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf86d6e6f67ef2a365f39ce3ddea187f" id="r_adf86d6e6f67ef2a365f39ce3ddea187f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf86d6e6f67ef2a365f39ce3ddea187f">recalc_SH_FLAG</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
-<tr class="memdesc:adf86d6e6f67ef2a365f39ce3ddea187f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags, 1: recalc SH weights, 0: do not.  <br /></td></tr>
-<tr class="separator:adf86d6e6f67ef2a365f39ce3ddea187f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b1c86a6189a49675ffb6294fb6318c" id="r_af2b1c86a6189a49675ffb6294fb6318c"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af2b1c86a6189a49675ffb6294fb6318c">recalc_SH_FLAG</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
+<tr class="memdesc:af2b1c86a6189a49675ffb6294fb6318c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flags, 1: recalc SH weights, 0: do not.  <br /></td></tr>
+<tr class="separator:af2b1c86a6189a49675ffb6294fb6318c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0dd9c791920137e9f20b99a2de3a4398" id="r_a0dd9c791920137e9f20b99a2de3a4398"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0dd9c791920137e9f20b99a2de3a4398">Y</a> [<a class="el" href="__common_8h.html#ac547d62eef0f07c08865cf3d2aab3286">MAX_NUM_SH_SIGNALS</a>][<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
 <tr class="memdesc:a0dd9c791920137e9f20b99a2de3a4398"><td class="mdescLeft">&#160;</td><td class="mdescRight">SH weights.  <br /></td></tr>
 <tr class="separator:a0dd9c791920137e9f20b99a2de3a4398"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -153,30 +153,30 @@ Data Fields</h2></td></tr>
 <tr class="memitem:afb3ca988d72c14d9c9ea9f00c8dd63d8" id="r_afb3ca988d72c14d9c9ea9f00c8dd63d8"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afb3ca988d72c14d9c9ea9f00c8dd63d8">interpolator_fadeOut</a> [<a class="el" href="ambi__enc__internal_8h.html#af7d0ea358f19e523591eaa2a0613d0c6">AMBI_ENC_FRAME_SIZE</a>]</td></tr>
 <tr class="memdesc:afb3ca988d72c14d9c9ea9f00c8dd63d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Linear Interpolator (fade-out)  <br /></td></tr>
 <tr class="separator:afb3ca988d72c14d9c9ea9f00c8dd63d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f94b2637575ae985f72322df2d042d6" id="r_a2f94b2637575ae985f72322df2d042d6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2f94b2637575ae985f72322df2d042d6">new_nSources</a></td></tr>
-<tr class="memdesc:a2f94b2637575ae985f72322df2d042d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">New number of input signals (current value will be replaced by this after next re-init)  <br /></td></tr>
-<tr class="separator:a2f94b2637575ae985f72322df2d042d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab7872b556288edbb534f04f2f4ecd1c6" id="r_ab7872b556288edbb534f04f2f4ecd1c6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab7872b556288edbb534f04f2f4ecd1c6">nSources</a></td></tr>
-<tr class="memdesc:ab7872b556288edbb534f04f2f4ecd1c6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of input signals.  <br /></td></tr>
-<tr class="separator:ab7872b556288edbb534f04f2f4ecd1c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4f8d524db51747a2b3d548cc9972df5" id="r_af4f8d524db51747a2b3d548cc9972df5"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4f8d524db51747a2b3d548cc9972df5">src_dirs_deg</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
-<tr class="memdesc:af4f8d524db51747a2b3d548cc9972df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source directions, in degrees.  <br /></td></tr>
-<tr class="separator:af4f8d524db51747a2b3d548cc9972df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5a75ae303f12fecfb4cf0125e1d67211" id="r_a5a75ae303f12fecfb4cf0125e1d67211"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892">CH_ORDER</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a75ae303f12fecfb4cf0125e1d67211">chOrdering</a></td></tr>
-<tr class="memdesc:a5a75ae303f12fecfb4cf0125e1d67211"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ambisonic channel order convention (see <a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892" title="Available Ambisonic channel ordering conventions.">CH_ORDER</a>)  <br /></td></tr>
-<tr class="separator:a5a75ae303f12fecfb4cf0125e1d67211"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1b149519111c5a07cec823b9ee4ca1d" id="r_ac1b149519111c5a07cec823b9ee4ca1d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be">NORM_TYPES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac1b149519111c5a07cec823b9ee4ca1d">norm</a></td></tr>
-<tr class="memdesc:ac1b149519111c5a07cec823b9ee4ca1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ambisonic normalisation convention (see <a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be" title="Available Ambisonic normalisation conventions.">NORM_TYPES</a>)  <br /></td></tr>
-<tr class="separator:ac1b149519111c5a07cec823b9ee4ca1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add4fc7e833fc652cd2a1c7a80dacf999" id="r_add4fc7e833fc652cd2a1c7a80dacf999"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#accad30b1b7667d4eedc40c116206a5db">SH_ORDERS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#add4fc7e833fc652cd2a1c7a80dacf999">order</a></td></tr>
-<tr class="memdesc:add4fc7e833fc652cd2a1c7a80dacf999"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current SH encoding order.  <br /></td></tr>
-<tr class="separator:add4fc7e833fc652cd2a1c7a80dacf999"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a13b9f66c91b8f2759a358b383cd28457" id="r_a13b9f66c91b8f2759a358b383cd28457"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a13b9f66c91b8f2759a358b383cd28457">enablePostScaling</a></td></tr>
-<tr class="memdesc:a13b9f66c91b8f2759a358b383cd28457"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag 1: output signals scaled by 1/sqrt(nSources), 0: disabled.  <br /></td></tr>
-<tr class="separator:a13b9f66c91b8f2759a358b383cd28457"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac86ed03454e32be807536a5e3c7d0cf5" id="r_ac86ed03454e32be807536a5e3c7d0cf5"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac86ed03454e32be807536a5e3c7d0cf5">src_gains</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
-<tr class="memdesc:ac86ed03454e32be807536a5e3c7d0cf5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gains applied per source.  <br /></td></tr>
-<tr class="separator:ac86ed03454e32be807536a5e3c7d0cf5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa04cd271470ffe6d42ce9cb566f5157e" id="r_aa04cd271470ffe6d42ce9cb566f5157e"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa04cd271470ffe6d42ce9cb566f5157e">new_nSources</a></td></tr>
+<tr class="memdesc:aa04cd271470ffe6d42ce9cb566f5157e"><td class="mdescLeft">&#160;</td><td class="mdescRight">New number of input signals (current value will be replaced by this after next re-init)  <br /></td></tr>
+<tr class="separator:aa04cd271470ffe6d42ce9cb566f5157e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ef23fa8cef2472950aab4f7cab6b1fb" id="r_a5ef23fa8cef2472950aab4f7cab6b1fb"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5ef23fa8cef2472950aab4f7cab6b1fb">nSources</a></td></tr>
+<tr class="memdesc:a5ef23fa8cef2472950aab4f7cab6b1fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of input signals.  <br /></td></tr>
+<tr class="separator:a5ef23fa8cef2472950aab4f7cab6b1fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa286ece1444a43824caafbfe171f415d" id="r_aa286ece1444a43824caafbfe171f415d"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa286ece1444a43824caafbfe171f415d">src_dirs_deg</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
+<tr class="memdesc:aa286ece1444a43824caafbfe171f415d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Source directions, in degrees.  <br /></td></tr>
+<tr class="separator:aa286ece1444a43824caafbfe171f415d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a865c74d86dc5b0bc79b5d7bf95c5423f" id="r_a865c74d86dc5b0bc79b5d7bf95c5423f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892">_Atomic_CH_ORDER</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a865c74d86dc5b0bc79b5d7bf95c5423f">chOrdering</a></td></tr>
+<tr class="memdesc:a865c74d86dc5b0bc79b5d7bf95c5423f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ambisonic channel order convention (see <a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892" title="Available Ambisonic channel ordering conventions.">CH_ORDER</a>)  <br /></td></tr>
+<tr class="separator:a865c74d86dc5b0bc79b5d7bf95c5423f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3428839cc26a8bc6ef3750261750ceb0" id="r_a3428839cc26a8bc6ef3750261750ceb0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be">_Atomic_NORM_TYPES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3428839cc26a8bc6ef3750261750ceb0">norm</a></td></tr>
+<tr class="memdesc:a3428839cc26a8bc6ef3750261750ceb0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ambisonic normalisation convention (see <a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be" title="Available Ambisonic normalisation conventions.">NORM_TYPES</a>)  <br /></td></tr>
+<tr class="separator:a3428839cc26a8bc6ef3750261750ceb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87fd167c20f24153bc1ab938ce1fcd59" id="r_a87fd167c20f24153bc1ab938ce1fcd59"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#accad30b1b7667d4eedc40c116206a5db">_Atomic_SH_ORDERS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87fd167c20f24153bc1ab938ce1fcd59">order</a></td></tr>
+<tr class="memdesc:a87fd167c20f24153bc1ab938ce1fcd59"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current SH encoding order.  <br /></td></tr>
+<tr class="separator:a87fd167c20f24153bc1ab938ce1fcd59"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d3ec3a54794a2181f4632d87098461f" id="r_a1d3ec3a54794a2181f4632d87098461f"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d3ec3a54794a2181f4632d87098461f">enablePostScaling</a></td></tr>
+<tr class="memdesc:a1d3ec3a54794a2181f4632d87098461f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag 1: output signals scaled by 1/sqrt(nSources), 0: disabled.  <br /></td></tr>
+<tr class="separator:a1d3ec3a54794a2181f4632d87098461f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d14090ab81c098aa9d7ff28e48f0d05" id="r_a4d14090ab81c098aa9d7ff28e48f0d05"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d14090ab81c098aa9d7ff28e48f0d05">src_gains</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
+<tr class="memdesc:a4d14090ab81c098aa9d7ff28e48f0d05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gains applied per source.  <br /></td></tr>
+<tr class="separator:a4d14090ab81c098aa9d7ff28e48f0d05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main structure for ambi_enc. </p>
@@ -184,14 +184,14 @@ Data Fields</h2></td></tr>
 
 <p class="definition">Definition at line <a class="el" href="ambi__enc__internal_8h_source.html#l00057">57</a> of file <a class="el" href="ambi__enc__internal_8h_source.html">ambi_enc_internal.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="a5a75ae303f12fecfb4cf0125e1d67211" name="a5a75ae303f12fecfb4cf0125e1d67211"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5a75ae303f12fecfb4cf0125e1d67211">&#9670;&#160;</a></span>chOrdering</h2>
+<a id="a865c74d86dc5b0bc79b5d7bf95c5423f" name="a865c74d86dc5b0bc79b5d7bf95c5423f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a865c74d86dc5b0bc79b5d7bf95c5423f">&#9670;&#160;</a></span>chOrdering</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892">CH_ORDER</a> ambi_enc_data::chOrdering</td>
+          <td class="memname"><a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892">_Atomic_CH_ORDER</a> ambi_enc_data::chOrdering</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -202,14 +202,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a13b9f66c91b8f2759a358b383cd28457" name="a13b9f66c91b8f2759a358b383cd28457"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a13b9f66c91b8f2759a358b383cd28457">&#9670;&#160;</a></span>enablePostScaling</h2>
+<a id="a1d3ec3a54794a2181f4632d87098461f" name="a1d3ec3a54794a2181f4632d87098461f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d3ec3a54794a2181f4632d87098461f">&#9670;&#160;</a></span>enablePostScaling</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ambi_enc_data::enablePostScaling</td>
+          <td class="memname">_Atomic_INT32 ambi_enc_data::enablePostScaling</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -292,14 +292,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a2f94b2637575ae985f72322df2d042d6" name="a2f94b2637575ae985f72322df2d042d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2f94b2637575ae985f72322df2d042d6">&#9670;&#160;</a></span>new_nSources</h2>
+<a id="aa04cd271470ffe6d42ce9cb566f5157e" name="aa04cd271470ffe6d42ce9cb566f5157e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa04cd271470ffe6d42ce9cb566f5157e">&#9670;&#160;</a></span>new_nSources</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ambi_enc_data::new_nSources</td>
+          <td class="memname">_Atomic_INT32 ambi_enc_data::new_nSources</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -310,14 +310,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ac1b149519111c5a07cec823b9ee4ca1d" name="ac1b149519111c5a07cec823b9ee4ca1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1b149519111c5a07cec823b9ee4ca1d">&#9670;&#160;</a></span>norm</h2>
+<a id="a3428839cc26a8bc6ef3750261750ceb0" name="a3428839cc26a8bc6ef3750261750ceb0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3428839cc26a8bc6ef3750261750ceb0">&#9670;&#160;</a></span>norm</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be">NORM_TYPES</a> ambi_enc_data::norm</td>
+          <td class="memname"><a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be">_Atomic_NORM_TYPES</a> ambi_enc_data::norm</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -328,14 +328,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ab7872b556288edbb534f04f2f4ecd1c6" name="ab7872b556288edbb534f04f2f4ecd1c6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7872b556288edbb534f04f2f4ecd1c6">&#9670;&#160;</a></span>nSources</h2>
+<a id="a5ef23fa8cef2472950aab4f7cab6b1fb" name="a5ef23fa8cef2472950aab4f7cab6b1fb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ef23fa8cef2472950aab4f7cab6b1fb">&#9670;&#160;</a></span>nSources</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ambi_enc_data::nSources</td>
+          <td class="memname">_Atomic_INT32 ambi_enc_data::nSources</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -346,14 +346,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="add4fc7e833fc652cd2a1c7a80dacf999" name="add4fc7e833fc652cd2a1c7a80dacf999"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#add4fc7e833fc652cd2a1c7a80dacf999">&#9670;&#160;</a></span>order</h2>
+<a id="a87fd167c20f24153bc1ab938ce1fcd59" name="a87fd167c20f24153bc1ab938ce1fcd59"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87fd167c20f24153bc1ab938ce1fcd59">&#9670;&#160;</a></span>order</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="__common_8h.html#accad30b1b7667d4eedc40c116206a5db">SH_ORDERS</a> ambi_enc_data::order</td>
+          <td class="memname"><a class="el" href="__common_8h.html#accad30b1b7667d4eedc40c116206a5db">_Atomic_SH_ORDERS</a> ambi_enc_data::order</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -418,14 +418,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="adf86d6e6f67ef2a365f39ce3ddea187f" name="adf86d6e6f67ef2a365f39ce3ddea187f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf86d6e6f67ef2a365f39ce3ddea187f">&#9670;&#160;</a></span>recalc_SH_FLAG</h2>
+<a id="af2b1c86a6189a49675ffb6294fb6318c" name="af2b1c86a6189a49675ffb6294fb6318c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2b1c86a6189a49675ffb6294fb6318c">&#9670;&#160;</a></span>recalc_SH_FLAG</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int ambi_enc_data::recalc_SH_FLAG[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
+          <td class="memname">_Atomic_INT32 ambi_enc_data::recalc_SH_FLAG[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -436,14 +436,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="af4f8d524db51747a2b3d548cc9972df5" name="af4f8d524db51747a2b3d548cc9972df5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4f8d524db51747a2b3d548cc9972df5">&#9670;&#160;</a></span>src_dirs_deg</h2>
+<a id="aa286ece1444a43824caafbfe171f415d" name="aa286ece1444a43824caafbfe171f415d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa286ece1444a43824caafbfe171f415d">&#9670;&#160;</a></span>src_dirs_deg</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float ambi_enc_data::src_dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
+          <td class="memname">_Atomic_FLOAT32 ambi_enc_data::src_dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -454,14 +454,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ac86ed03454e32be807536a5e3c7d0cf5" name="ac86ed03454e32be807536a5e3c7d0cf5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac86ed03454e32be807536a5e3c7d0cf5">&#9670;&#160;</a></span>src_gains</h2>
+<a id="a4d14090ab81c098aa9d7ff28e48f0d05" name="a4d14090ab81c098aa9d7ff28e48f0d05"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d14090ab81c098aa9d7ff28e48f0d05">&#9670;&#160;</a></span>src_gains</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float ambi_enc_data::src_gains[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
+          <td class="memname">_Atomic_FLOAT32 ambi_enc_data::src_gains[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -536,7 +536,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structambi__enc__data.html">ambi_enc_data</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

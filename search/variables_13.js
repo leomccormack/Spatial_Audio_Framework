@@ -6,7 +6,7 @@ var searchData=
   ['tempframe_3',['tempFrame',['../structambi__enc__data.html#a058e8df50c008dd844a1c97c4cf044e6',1,'ambi_enc_data::tempFrame'],['../structbeamformer__data.html#a2482baf0de21ac00de7c806a412aa4e0',1,'beamformer_data::tempFrame'],['../structrotator__data.html#afcc92bf5115d8944d3f5f4e2ad9332bf',1,'rotator_data::tempFrame']]],
   ['tempframe_5ffadeout_4',['tempFrame_fadeOut',['../structambi__enc__data.html#a5bb4b4b8f3c5cc348f9a0e411155a926',1,'ambi_enc_data::tempFrame_fadeOut'],['../structbeamformer__data.html#a578b0fc1254b6f631967ea875dce677c',1,'beamformer_data::tempFrame_fadeOut'],['../structrotator__data.html#a08298c863e47a88834431cde2ecc198f',1,'rotator_data::tempFrame_fadeOut']]],
   ['temphopframetd_5',['tempHopFrameTD',['../structaf_s_t_f_t__data.html#a59f7e13b4873db69169310d8aee0ae93',1,'afSTFT_data']]],
-  ['theshold_6',['theshold',['../structambi__drc__data.html#aa07f3633b76ecbe3479d152a6f228db6',1,'ambi_drc_data']]],
+  ['theshold_6',['theshold',['../structambi__drc__data.html#a99ff2468c2ead012cb8b00c1c1e46706',1,'ambi_drc_data']]],
   ['time_7',['time',['../structechogram__data.html#aa3e47738686d936495b480726791a7d5',1,'echogram_data']]],
   ['timeslots_8',['timeSlots',['../structhades__analysis__data.html#abe906e642e1c13dff7ce7d7b01f96014',1,'hades_analysis_data::timeSlots'],['../structhades__synthesis__data.html#a4995098eefa1ab0dbd28f0b04a021639',1,'hades_synthesis_data::timeSlots'],['../structhades__signal__container__data.html#a245b312ee242a0b420f8bcb10819099d',1,'hades_signal_container_data::timeSlots']]],
   ['title_9',['Title',['../structsaf__sofa__container.html#a5eefa5a3a35711295d8bbdbf73f2476d',1,'saf_sofa_container']]],
@@ -16,6 +16,6 @@ var searchData=
   ['tmp_5fframe_13',['tmp_frame',['../structims__scene__data.html#a89732a128e2fbef414612dffc871dbb6',1,'ims_scene_data']]],
   ['tpars_14',['tpars',['../structtracker3d__data.html#a433399c26cfe401c43e91d67e1d67213',1,'tracker3d_data']]],
   ['transientframetf_15',['transientFrameTF',['../structdecorrelator__data.html#ac368aabcf6feaef8ff224402e735c51b',1,'decorrelator_data']]],
-  ['transitionfreq_16',['transitionFreq',['../structambi__dec__data.html#a514de4202c6ded1a20e64add79eb0b30',1,'ambi_dec_data']]],
+  ['transitionfreq_16',['transitionFreq',['../structambi__dec__data.html#a45d8ddace7f8dafa857bd933fa34a3d0',1,'ambi_dec_data']]],
   ['type_17',['type',['../structims__rec__obj.html#a404bfd0fff4c81e0a0d7db9035ae6fd0',1,'ims_rec_obj']]]
 ];

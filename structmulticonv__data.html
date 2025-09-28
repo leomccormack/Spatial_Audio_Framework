@@ -147,41 +147,41 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a926dd5112104d2e1b5e6dd1885e8051d" id="r_a926dd5112104d2e1b5e6dd1885e8051d"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a926dd5112104d2e1b5e6dd1885e8051d">filters</a></td></tr>
 <tr class="memdesc:a926dd5112104d2e1b5e6dd1885e8051d"><td class="mdescLeft">&#160;</td><td class="mdescRight">FLAT: nfilters x filter_length.  <br /></td></tr>
 <tr class="separator:a926dd5112104d2e1b5e6dd1885e8051d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0cba299312d0809039a3571ea054fd39" id="r_a0cba299312d0809039a3571ea054fd39"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0cba299312d0809039a3571ea054fd39">nfilters</a></td></tr>
-<tr class="memdesc:a0cba299312d0809039a3571ea054fd39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of FIR filters.  <br /></td></tr>
-<tr class="separator:a0cba299312d0809039a3571ea054fd39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3be57d9840219fd3cc31d6681832b2e4" id="r_a3be57d9840219fd3cc31d6681832b2e4"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3be57d9840219fd3cc31d6681832b2e4">filter_length</a></td></tr>
-<tr class="memdesc:a3be57d9840219fd3cc31d6681832b2e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the filters (input_wav_length/nInputChannels)  <br /></td></tr>
-<tr class="separator:a3be57d9840219fd3cc31d6681832b2e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ddaa5d09a7dfb7aab6272227af60229" id="r_a4ddaa5d09a7dfb7aab6272227af60229"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ddaa5d09a7dfb7aab6272227af60229">nfilters</a></td></tr>
+<tr class="memdesc:a4ddaa5d09a7dfb7aab6272227af60229"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of FIR filters.  <br /></td></tr>
+<tr class="separator:a4ddaa5d09a7dfb7aab6272227af60229"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a271a8bbfadf047771f3ca750f99bbb97" id="r_a271a8bbfadf047771f3ca750f99bbb97"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a271a8bbfadf047771f3ca750f99bbb97">filter_length</a></td></tr>
+<tr class="memdesc:a271a8bbfadf047771f3ca750f99bbb97"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the filters (input_wav_length/nInputChannels)  <br /></td></tr>
+<tr class="separator:a271a8bbfadf047771f3ca750f99bbb97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51bbdfa1114d7c15e4a60682dfe26045" id="r_a51bbdfa1114d7c15e4a60682dfe26045"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a51bbdfa1114d7c15e4a60682dfe26045">filter_fs</a></td></tr>
 <tr class="memdesc:a51bbdfa1114d7c15e4a60682dfe26045"><td class="mdescLeft">&#160;</td><td class="mdescRight">current samplerate of the filters  <br /></td></tr>
 <tr class="separator:a51bbdfa1114d7c15e4a60682dfe26045"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4661dd90d8ba0b17c3de91142f637d5a" id="r_a4661dd90d8ba0b17c3de91142f637d5a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4661dd90d8ba0b17c3de91142f637d5a">host_fs</a></td></tr>
 <tr class="memdesc:a4661dd90d8ba0b17c3de91142f637d5a"><td class="mdescLeft">&#160;</td><td class="mdescRight">current samplerate of the host  <br /></td></tr>
 <tr class="separator:a4661dd90d8ba0b17c3de91142f637d5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afabde05d680a84a43546da22cdda880d" id="r_afabde05d680a84a43546da22cdda880d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afabde05d680a84a43546da22cdda880d">reInitFilters</a></td></tr>
-<tr class="memdesc:afabde05d680a84a43546da22cdda880d"><td class="mdescLeft">&#160;</td><td class="mdescRight">FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress.  <br /></td></tr>
-<tr class="separator:afabde05d680a84a43546da22cdda880d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3672629df5bc4b6892daf13e46b9a56f" id="r_a3672629df5bc4b6892daf13e46b9a56f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3672629df5bc4b6892daf13e46b9a56f">nChannels</a></td></tr>
-<tr class="memdesc:a3672629df5bc4b6892daf13e46b9a56f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of input/output channels.  <br /></td></tr>
-<tr class="separator:a3672629df5bc4b6892daf13e46b9a56f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9fdaf1fb4fa93bbab9fcf41ba657e3b" id="r_ac9fdaf1fb4fa93bbab9fcf41ba657e3b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac9fdaf1fb4fa93bbab9fcf41ba657e3b">enablePartitionedConv</a></td></tr>
-<tr class="memdesc:ac9fdaf1fb4fa93bbab9fcf41ba657e3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: enable partitioned convolution, 0: regular convolution (fft over the length of the filter)  <br /></td></tr>
-<tr class="separator:ac9fdaf1fb4fa93bbab9fcf41ba657e3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af80073d41e4caef1222e1ab3d23ab286" id="r_af80073d41e4caef1222e1ab3d23ab286"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af80073d41e4caef1222e1ab3d23ab286">reInitFilters</a></td></tr>
+<tr class="memdesc:af80073d41e4caef1222e1ab3d23ab286"><td class="mdescLeft">&#160;</td><td class="mdescRight">FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress.  <br /></td></tr>
+<tr class="separator:af80073d41e4caef1222e1ab3d23ab286"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa84a6f7a9aeb6a5f47f89b49defdebcf" id="r_aa84a6f7a9aeb6a5f47f89b49defdebcf"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa84a6f7a9aeb6a5f47f89b49defdebcf">nChannels</a></td></tr>
+<tr class="memdesc:aa84a6f7a9aeb6a5f47f89b49defdebcf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of input/output channels.  <br /></td></tr>
+<tr class="separator:aa84a6f7a9aeb6a5f47f89b49defdebcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cd7edc44a1241fc45289eca00f80bbe" id="r_a1cd7edc44a1241fc45289eca00f80bbe"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1cd7edc44a1241fc45289eca00f80bbe">enablePartitionedConv</a></td></tr>
+<tr class="memdesc:a1cd7edc44a1241fc45289eca00f80bbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: enable partitioned convolution, 0: regular convolution (fft over the length of the filter)  <br /></td></tr>
+<tr class="separator:a1cd7edc44a1241fc45289eca00f80bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main structure for multiconv. </p>
 
 <p class="definition">Definition at line <a class="el" href="multiconv__internal_8h_source.html#l00048">48</a> of file <a class="el" href="multiconv__internal_8h_source.html">multiconv_internal.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="ac9fdaf1fb4fa93bbab9fcf41ba657e3b" name="ac9fdaf1fb4fa93bbab9fcf41ba657e3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac9fdaf1fb4fa93bbab9fcf41ba657e3b">&#9670;&#160;</a></span>enablePartitionedConv</h2>
+<a id="a1cd7edc44a1241fc45289eca00f80bbe" name="a1cd7edc44a1241fc45289eca00f80bbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cd7edc44a1241fc45289eca00f80bbe">&#9670;&#160;</a></span>enablePartitionedConv</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int multiconv_data::enablePartitionedConv</td>
+          <td class="memname">_Atomic_INT32 multiconv_data::enablePartitionedConv</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -228,14 +228,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a3be57d9840219fd3cc31d6681832b2e4" name="a3be57d9840219fd3cc31d6681832b2e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3be57d9840219fd3cc31d6681832b2e4">&#9670;&#160;</a></span>filter_length</h2>
+<a id="a271a8bbfadf047771f3ca750f99bbb97" name="a271a8bbfadf047771f3ca750f99bbb97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a271a8bbfadf047771f3ca750f99bbb97">&#9670;&#160;</a></span>filter_length</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int multiconv_data::filter_length</td>
+          <td class="memname">_Atomic_INT32 multiconv_data::filter_length</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -372,14 +372,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a3672629df5bc4b6892daf13e46b9a56f" name="a3672629df5bc4b6892daf13e46b9a56f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3672629df5bc4b6892daf13e46b9a56f">&#9670;&#160;</a></span>nChannels</h2>
+<a id="aa84a6f7a9aeb6a5f47f89b49defdebcf" name="aa84a6f7a9aeb6a5f47f89b49defdebcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa84a6f7a9aeb6a5f47f89b49defdebcf">&#9670;&#160;</a></span>nChannels</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int multiconv_data::nChannels</td>
+          <td class="memname">_Atomic_INT32 multiconv_data::nChannels</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -390,14 +390,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a0cba299312d0809039a3571ea054fd39" name="a0cba299312d0809039a3571ea054fd39"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0cba299312d0809039a3571ea054fd39">&#9670;&#160;</a></span>nfilters</h2>
+<a id="a4ddaa5d09a7dfb7aab6272227af60229" name="a4ddaa5d09a7dfb7aab6272227af60229"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ddaa5d09a7dfb7aab6272227af60229">&#9670;&#160;</a></span>nfilters</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int multiconv_data::nfilters</td>
+          <td class="memname">_Atomic_INT32 multiconv_data::nfilters</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -444,14 +444,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="afabde05d680a84a43546da22cdda880d" name="afabde05d680a84a43546da22cdda880d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afabde05d680a84a43546da22cdda880d">&#9670;&#160;</a></span>reInitFilters</h2>
+<a id="af80073d41e4caef1222e1ab3d23ab286" name="af80073d41e4caef1222e1ab3d23ab286"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af80073d41e4caef1222e1ab3d23ab286">&#9670;&#160;</a></span>reInitFilters</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int multiconv_data::reInitFilters</td>
+          <td class="memname">_Atomic_INT32 multiconv_data::reInitFilters</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -472,7 +472,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structmulticonv__data.html">multiconv_data</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

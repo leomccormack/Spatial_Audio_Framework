@@ -17,5 +17,5 @@ var searchData=
   ['kiss_5ffftr_2ec_14',['kiss_fftr.c',['../kiss__fftr_8c.html',1,'']]],
   ['kiss_5ffftr_2eh_15',['kiss_fftr.h',['../kiss__fftr_8h.html',1,'']]],
   ['kiss_5ffftr_5fstate_16',['kiss_fftr_state',['../structkiss__fftr__state.html',1,'']]],
-  ['knee_17',['knee',['../structambi__drc__data.html#a5cb76a928446f712a8bd8ac9607acd32',1,'ambi_drc_data']]]
+  ['knee_17',['knee',['../structambi__drc__data.html#a8034e113b5d6519d92e0c666028c80f0',1,'ambi_drc_data']]]
 ];

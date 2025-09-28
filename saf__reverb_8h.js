@@ -11,8 +11,8 @@ var saf__reverb_8h =
     [ "ims_shoebox_removeReceiver", "group___reverb.html#gab98cb870c1cd865adc6306a16fbbc63c", null ],
     [ "ims_shoebox_removeSource", "group___reverb.html#ga45b72cf3e6e5400973ea5403e9c60f03", null ],
     [ "ims_shoebox_renderRIRs", "group___reverb.html#gab454a1a24911b3911d6d8638e3ac3c1a", null ],
-    [ "ims_shoebox_setRoomDimensions", "group___reverb.html#ga0d98415908e422f55d7dd178b7070712", null ],
-    [ "ims_shoebox_setWallAbsCoeffs", "group___reverb.html#gaf2f60c1f14656e38eb62cfa6a293af2a", null ],
-    [ "ims_shoebox_updateReceiver", "group___reverb.html#ga99199a545b7b4293d991756d91b0c082", null ],
-    [ "ims_shoebox_updateSource", "group___reverb.html#ga7ddefce78e70aedafb37278084aef38a", null ]
+    [ "ims_shoebox_setRoomDimensions", "group___reverb.html#gaf3ac376d28961ec6c0801527e90e090d", null ],
+    [ "ims_shoebox_setWallAbsCoeffs", "group___reverb.html#ga7f9b1bafa571ea3b3af87da58b6879d8", null ],
+    [ "ims_shoebox_updateReceiver", "group___reverb.html#ga4b22ac31598536db8e3e889e365323a0", null ],
+    [ "ims_shoebox_updateSource", "group___reverb.html#gae01ea723ea3d520d4b66015506d59054", null ]
 ];

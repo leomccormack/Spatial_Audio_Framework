@@ -166,24 +166,24 @@ Functions</h2></td></tr>
 <tr class="memitem:ga6d063c79c4718703ea53adbd206f8329" id="r_ga6d063c79c4718703ea53adbd206f8329"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga6d063c79c4718703ea53adbd206f8329">ims_shoebox_applyEchogramTD</a> (void *hIms, long receiverID, int nSamples, int fractionalDelaysFLAG)</td></tr>
 <tr class="memdesc:ga6d063c79c4718703ea53adbd206f8329"><td class="mdescLeft">&#160;</td><td class="mdescRight">Applies the currently computed echograms in the time-domain, for all sources, for one specified receiver.  <br /></td></tr>
 <tr class="separator:ga6d063c79c4718703ea53adbd206f8329"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga0d98415908e422f55d7dd178b7070712" id="r_ga0d98415908e422f55d7dd178b7070712"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga0d98415908e422f55d7dd178b7070712">ims_shoebox_setRoomDimensions</a> (void *hIms, float new_roomDimensions[3])</td></tr>
-<tr class="memdesc:ga0d98415908e422f55d7dd178b7070712"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets new room dimensions.  <br /></td></tr>
-<tr class="separator:ga0d98415908e422f55d7dd178b7070712"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gaf2f60c1f14656e38eb62cfa6a293af2a" id="r_gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf2f60c1f14656e38eb62cfa6a293af2a">ims_shoebox_setWallAbsCoeffs</a> (void *hIms, float *abs_wall)</td></tr>
-<tr class="memdesc:gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets new wall absorption coefficients per wall and per band.  <br /></td></tr>
-<tr class="separator:gaf2f60c1f14656e38eb62cfa6a293af2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf3ac376d28961ec6c0801527e90e090d" id="r_gaf3ac376d28961ec6c0801527e90e090d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gaf3ac376d28961ec6c0801527e90e090d">ims_shoebox_setRoomDimensions</a> (void *hIms, _Atomic_FLOAT32 new_roomDimensions[3])</td></tr>
+<tr class="memdesc:gaf3ac376d28961ec6c0801527e90e090d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets new room dimensions.  <br /></td></tr>
+<tr class="separator:gaf3ac376d28961ec6c0801527e90e090d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7f9b1bafa571ea3b3af87da58b6879d8" id="r_ga7f9b1bafa571ea3b3af87da58b6879d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7f9b1bafa571ea3b3af87da58b6879d8">ims_shoebox_setWallAbsCoeffs</a> (void *hIms, _Atomic_FLOAT32 *abs_wall)</td></tr>
+<tr class="memdesc:ga7f9b1bafa571ea3b3af87da58b6879d8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets new wall absorption coefficients per wall and per band.  <br /></td></tr>
+<tr class="separator:ga7f9b1bafa571ea3b3af87da58b6879d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga59f818fd730d0510affdefef5573e0ab" id="r_ga59f818fd730d0510affdefef5573e0ab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga59f818fd730d0510affdefef5573e0ab">ims_shoebox_addSource</a> (void *hIms, float position_xyz[3], float **pSrc_sig)</td></tr>
 <tr class="memdesc:ga59f818fd730d0510affdefef5573e0ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a source object to the simulator, and returns a unique ID corresponding to it.  <br /></td></tr>
 <tr class="separator:ga59f818fd730d0510affdefef5573e0ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga59f53cd055df23a1aec877407f883ca9" id="r_ga59f53cd055df23a1aec877407f883ca9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga59f53cd055df23a1aec877407f883ca9">ims_shoebox_addReceiverSH</a> (void *hIms, int sh_order, float position_xyz[3], float ***pSH_sigs)</td></tr>
 <tr class="memdesc:ga59f53cd055df23a1aec877407f883ca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a spherical harmonic (SH) receiver object to the simulator of a given order, and returns a unique ID corresponding to it.  <br /></td></tr>
 <tr class="separator:ga59f53cd055df23a1aec877407f883ca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga7ddefce78e70aedafb37278084aef38a" id="r_ga7ddefce78e70aedafb37278084aef38a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga7ddefce78e70aedafb37278084aef38a">ims_shoebox_updateSource</a> (void *hIms, int sourceID, float position_xyz[3])</td></tr>
-<tr class="memdesc:ga7ddefce78e70aedafb37278084aef38a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the position of a specific source in the simulation.  <br /></td></tr>
-<tr class="separator:ga7ddefce78e70aedafb37278084aef38a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ga99199a545b7b4293d991756d91b0c082" id="r_ga99199a545b7b4293d991756d91b0c082"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga99199a545b7b4293d991756d91b0c082">ims_shoebox_updateReceiver</a> (void *hIms, int receiverID, float position_xyz[3])</td></tr>
-<tr class="memdesc:ga99199a545b7b4293d991756d91b0c082"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the position of a specific receiver in the simulation.  <br /></td></tr>
-<tr class="separator:ga99199a545b7b4293d991756d91b0c082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gae01ea723ea3d520d4b66015506d59054" id="r_gae01ea723ea3d520d4b66015506d59054"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#gae01ea723ea3d520d4b66015506d59054">ims_shoebox_updateSource</a> (void *hIms, int sourceID, _Atomic_FLOAT32 position_xyz[3])</td></tr>
+<tr class="memdesc:gae01ea723ea3d520d4b66015506d59054"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the position of a specific source in the simulation.  <br /></td></tr>
+<tr class="separator:gae01ea723ea3d520d4b66015506d59054"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4b22ac31598536db8e3e889e365323a0" id="r_ga4b22ac31598536db8e3e889e365323a0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga4b22ac31598536db8e3e889e365323a0">ims_shoebox_updateReceiver</a> (void *hIms, int receiverID, _Atomic_FLOAT32 position_xyz[3])</td></tr>
+<tr class="memdesc:ga4b22ac31598536db8e3e889e365323a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the position of a specific receiver in the simulation.  <br /></td></tr>
+<tr class="separator:ga4b22ac31598536db8e3e889e365323a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga45b72cf3e6e5400973ea5403e9c60f03" id="r_ga45b72cf3e6e5400973ea5403e9c60f03"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ga45b72cf3e6e5400973ea5403e9c60f03">ims_shoebox_removeSource</a> (void *hIms, int sourceID)</td></tr>
 <tr class="memdesc:ga45b72cf3e6e5400973ea5403e9c60f03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a specific source from the simulation.  <br /></td></tr>
 <tr class="separator:ga45b72cf3e6e5400973ea5403e9c60f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -208,7 +208,7 @@ Functions</h2></td></tr>
 
 <p>Maximum number of receivers supported by an instance of the IMS simulator. </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__reverb_8h_source.html#l00055">55</a> of file <a class="el" href="saf__reverb_8h_source.html">saf_reverb.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__reverb_8h_source.html#l00057">57</a> of file <a class="el" href="saf__reverb_8h_source.html">saf_reverb.h</a>.</p>
 
 </div>
 </div>
@@ -227,7 +227,7 @@ Functions</h2></td></tr>
 <p>TODO: Arbitrary array receiver option; Directional source option; finish <a class="el" href="#gab454a1a24911b3911d6d8638e3ac3c1a" title="Renders room impulse responses for all active source/receiver combinations.">ims_shoebox_renderRIRs()</a> function;. </p>
 <p>Maximum number of sources supported by an instance of the IMS simulator </p>
 
-<p class="definition">Definition at line <a class="el" href="saf__reverb_8h_source.html#l00052">52</a> of file <a class="el" href="saf__reverb_8h_source.html">saf_reverb.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="saf__reverb_8h_source.html#l00054">54</a> of file <a class="el" href="saf__reverb_8h_source.html">saf_reverb.h</a>.</p>
 
 </div>
 </div>
@@ -600,8 +600,8 @@ The echograms are only updated if needed, so it is OK to call this function as m
 
 </div>
 </div>
-<a id="ga0d98415908e422f55d7dd178b7070712" name="ga0d98415908e422f55d7dd178b7070712"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga0d98415908e422f55d7dd178b7070712">&#9670;&#160;</a></span>ims_shoebox_setRoomDimensions()</h2>
+<a id="gaf3ac376d28961ec6c0801527e90e090d" name="gaf3ac376d28961ec6c0801527e90e090d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gaf3ac376d28961ec6c0801527e90e090d">&#9670;&#160;</a></span>ims_shoebox_setRoomDimensions()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -614,7 +614,7 @@ The echograms are only updated if needed, so it is OK to call this function as m
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>new_roomDimensions</em></span>[3]&#160;)</td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>new_roomDimensions</em></span>[3]&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -625,8 +625,8 @@ The echograms are only updated if needed, so it is OK to call this function as m
 
 </div>
 </div>
-<a id="gaf2f60c1f14656e38eb62cfa6a293af2a" name="gaf2f60c1f14656e38eb62cfa6a293af2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#gaf2f60c1f14656e38eb62cfa6a293af2a">&#9670;&#160;</a></span>ims_shoebox_setWallAbsCoeffs()</h2>
+<a id="ga7f9b1bafa571ea3b3af87da58b6879d8" name="ga7f9b1bafa571ea3b3af87da58b6879d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga7f9b1bafa571ea3b3af87da58b6879d8">&#9670;&#160;</a></span>ims_shoebox_setWallAbsCoeffs()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -639,7 +639,7 @@ The echograms are only updated if needed, so it is OK to call this function as m
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float *</td>          <td class="paramname"><span class="paramname"><em>abs_wall</em></span>&#160;)</td>
+          <td class="paramtype">_Atomic_FLOAT32 *</td>          <td class="paramname"><span class="paramname"><em>abs_wall</em></span>&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -650,8 +650,8 @@ The echograms are only updated if needed, so it is OK to call this function as m
 
 </div>
 </div>
-<a id="ga99199a545b7b4293d991756d91b0c082" name="ga99199a545b7b4293d991756d91b0c082"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga99199a545b7b4293d991756d91b0c082">&#9670;&#160;</a></span>ims_shoebox_updateReceiver()</h2>
+<a id="ga4b22ac31598536db8e3e889e365323a0" name="ga4b22ac31598536db8e3e889e365323a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ga4b22ac31598536db8e3e889e365323a0">&#9670;&#160;</a></span>ims_shoebox_updateReceiver()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -669,7 +669,7 @@ The echograms are only updated if needed, so it is OK to call this function as m
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>position_xyz</em></span>[3]&#160;)</td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>position_xyz</em></span>[3]&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -680,8 +680,8 @@ The echograms are only updated if needed, so it is OK to call this function as m
 
 </div>
 </div>
-<a id="ga7ddefce78e70aedafb37278084aef38a" name="ga7ddefce78e70aedafb37278084aef38a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ga7ddefce78e70aedafb37278084aef38a">&#9670;&#160;</a></span>ims_shoebox_updateSource()</h2>
+<a id="gae01ea723ea3d520d4b66015506d59054" name="gae01ea723ea3d520d4b66015506d59054"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#gae01ea723ea3d520d4b66015506d59054">&#9670;&#160;</a></span>ims_shoebox_updateSource()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -699,7 +699,7 @@ The echograms are only updated if needed, so it is OK to call this function as m
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>position_xyz</em></span>[3]&#160;)</td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>position_xyz</em></span>[3]&#160;)</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -716,7 +716,7 @@ The echograms are only updated if needed, so it is OK to call this function as m
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

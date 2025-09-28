@@ -1,14 +1,14 @@
 var searchData=
 [
   ['ones_5fdummy_0',['ones_dummy',['../structechogram__data.html#ae034dc785a893ba458714bd789f538dd',1,'echogram_data']]],
-  ['order_1',['order',['../structambi__bin__data.html#ae5f428fc9f3729900584c0b6baf8a510',1,'ambi_bin_data::order'],['../structambi__enc__data.html#add4fc7e833fc652cd2a1c7a80dacf999',1,'ambi_enc_data::order'],['../structarray2sh__data.html#aed90bca3a4aa7097049c41204744929e',1,'array2sh_data::order'],['../structechogram__data.html#a385dd2466f42fdc88a6a5637c7387b6f',1,'echogram_data::order']]],
-  ['orderperband_2',['orderPerBand',['../structambi__dec__data.html#ad22300a6cec21994fdc36afaa660034a',1,'ambi_dec_data']]],
+  ['order_1',['order',['../structambi__bin__data.html#ae83f02b21270f77976ba93e1a734155b',1,'ambi_bin_data::order'],['../structambi__enc__data.html#a87fd167c20f24153bc1ab938ce1fcd59',1,'ambi_enc_data::order'],['../structarray2sh__data.html#adac27af15efd7b8fb41216f7982bf89b',1,'array2sh_data::order'],['../structechogram__data.html#a385dd2466f42fdc88a6a5637c7387b6f',1,'echogram_data::order']]],
+  ['orderperband_2',['orderPerBand',['../structambi__dec__data.html#a550073d34638d9ca21fd5df025ec621b',1,'ambi_dec_data']]],
   ['organisation_3',['Organisation',['../structsaf__sofa__container.html#a02ceea409aea8d12eb341f82fe82c71a',1,'saf_sofa_container']]],
   ['origin_4',['Origin',['../structsaf__sofa__container.html#a0c50f498f51f15a35a06783f014d3a29',1,'saf_sofa_container']]],
-  ['osamp_5foption_5',['osamp_option',['../structpitch__shifter__data.html#ab986e954e64b5af04345587eb710e44f',1,'pitch_shifter_data']]],
+  ['osamp_5foption_5',['osamp_option',['../structpitch__shifter__data.html#aac31224bc5ef7f7be2ebd3da12b0f6e2',1,'pitch_shifter_data']]],
   ['outfifo_6',['outFIFO',['../structmatrixconv__data.html#a9a180b649946817a4dfbae591f4c033c',1,'matrixconv_data::outFIFO'],['../structmulticonv__data.html#a153e0683598df628b55d871f37aa0048',1,'multiconv_data::outFIFO'],['../structpitch__shifter__data.html#ab7f6b8a056fe4055807b2ed05c5b3a51',1,'pitch_shifter_data::outFIFO']]],
   ['outframetd_7',['outframeTD',['../structbinauraliser__data.html#af79bc0d89bb020912ee16a89046d311e',1,'binauraliser_data::outframeTD'],['../structbinauraliser_n_f__data.html#ade0315dd24dad23afbd5d64ae06bd283',1,'binauraliserNF_data::outframeTD'],['../structspreader__data.html#a8667f7fd2a7fb59f71550f6cb02bd236',1,'spreader_data::outframeTD']]],
-  ['outgain_8',['outGain',['../structambi__drc__data.html#abf90e36297511d764aed2e5302202143',1,'ambi_drc_data']]],
+  ['outgain_8',['outGain',['../structambi__drc__data.html#ad83af23a19fc829ed02a008b176355ac',1,'ambi_drc_data']]],
   ['output_5fndims_9',['output_nDims',['../structpanner__data.html#a706c371f9af3fcaeb8878f80c2e93cd9',1,'panner_data']]],
   ['outputframe_10',['outputFrame',['../structpitch__shifter__data.html#a0adf693737632f6d5971e12cb19bd0b2',1,'pitch_shifter_data']]],
   ['outputframetd_11',['OutputFrameTD',['../structdecorrelator__data.html#acd5f6c446a5bb12b0bad2c0bbb673a67',1,'decorrelator_data']]],

@@ -110,6 +110,7 @@ $(function(){initNavTree('ambi__dec__internal_8h.html',''); initResizable(true);
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">ambi_dec_internal.h File Reference</div></div>
 </div><!--header-->
@@ -156,6 +157,13 @@ Macros</h2></td></tr>
 <tr class="memdesc:af4b08f8c6f0bddb3ceade14ec2bcc252"><td class="mdescLeft">&#160;</td><td class="mdescRight">One for low-frequencies and another for high-frequencies.  <br /></td></tr>
 <tr class="separator:af4b08f8c6f0bddb3ceade14ec2bcc252"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a6edd0900d5ec8ed4b8b94f5c4ad94ae1" id="r_a6edd0900d5ec8ed4b8b94f5c4ad94ae1"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="ambi__dec_8h.html#aa1dcfd48d0a01f5e7a29b5439144ece6">AMBI_DEC_DECODING_METHODS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6edd0900d5ec8ed4b8b94f5c4ad94ae1">_Atomic_AMBI_DEC_DECODING_METHODS</a></td></tr>
+<tr class="separator:a6edd0900d5ec8ed4b8b94f5c4ad94ae1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53002fc7a782883cc1714af003898a91" id="r_a53002fc7a782883cc1714af003898a91"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="ambi__dec_8h.html#a79fef4c5385cebb53c65d4d95fd4a10d">AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a53002fc7a782883cc1714af003898a91">_Atomic_AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH</a></td></tr>
+<tr class="separator:a53002fc7a782883cc1714af003898a91"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a326fe6ca4fa61f4d9fdc2e656c21c76e" id="r_a326fe6ca4fa61f4d9fdc2e656c21c76e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a326fe6ca4fa61f4d9fdc2e656c21c76e">ambi_dec_setCodecStatus</a> (void *const hCmp, <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a> newStatus)</td></tr>
@@ -164,9 +172,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a9853b9a53dbac9fbe01b54fc06af5d17" id="r_a9853b9a53dbac9fbe01b54fc06af5d17"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9853b9a53dbac9fbe01b54fc06af5d17">ambi_dec_interpHRTFs</a> (void *const hAmbi, float azimuth_deg, float elevation_deg, float_complex h_intrp[<a class="el" href="ambi__bin__internal_8h.html#a8b686c1291e75b81f91064272c45aed5">HYBRID_BANDS</a>][<a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>])</td></tr>
 <tr class="memdesc:a9853b9a53dbac9fbe01b54fc06af5d17"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolates between the 3 nearest HRTFs using amplitude-preserving VBAP gains.  <br /></td></tr>
 <tr class="separator:a9853b9a53dbac9fbe01b54fc06af5d17"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d1624fe9f14e384194c4e4dfb950a9f" id="r_a2d1624fe9f14e384194c4e4dfb950a9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2d1624fe9f14e384194c4e4dfb950a9f">loadLoudspeakerArrayPreset</a> (<a class="el" href="__common_8h.html#a12a56921e43594c15c86a9fa62b023f7">LOUDSPEAKER_ARRAY_PRESETS</a> preset, float dirs_deg[<a class="el" href="#aa1acc61ccffefcd6530c30fa9cd736da">MAX_NUM_LOUDSPEAKERS</a>][2], int *nCH, int *nDims)</td></tr>
-<tr class="memdesc:a2d1624fe9f14e384194c4e4dfb950a9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the loudspeaker directions for a specified loudspeaker array preset.  <br /></td></tr>
-<tr class="separator:a2d1624fe9f14e384194c4e4dfb950a9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a306478f332e3babca03911db301a03b9" id="r_a306478f332e3babca03911db301a03b9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a306478f332e3babca03911db301a03b9">loadLoudspeakerArrayPreset</a> (<a class="el" href="__common_8h.html#a12a56921e43594c15c86a9fa62b023f7">LOUDSPEAKER_ARRAY_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="#aa1acc61ccffefcd6530c30fa9cd736da">MAX_NUM_LOUDSPEAKERS</a>][2], _Atomic_INT32 *nCH, int *nDims)</td></tr>
+<tr class="memdesc:a306478f332e3babca03911db301a03b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the loudspeaker directions for a specified loudspeaker array preset.  <br /></td></tr>
+<tr class="separator:a306478f332e3babca03911db301a03b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A frequency-dependent Ambisonic decoder for reproducing Ambisonic sound scenes over loudspeakers. </p>
@@ -308,6 +316,39 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a6edd0900d5ec8ed4b8b94f5c4ad94ae1" name="a6edd0900d5ec8ed4b8b94f5c4ad94ae1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6edd0900d5ec8ed4b8b94f5c4ad94ae1">&#9670;&#160;</a></span>_Atomic_AMBI_DEC_DECODING_METHODS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="ambi__dec_8h.html#aa1dcfd48d0a01f5e7a29b5439144ece6">AMBI_DEC_DECODING_METHODS</a> <a class="el" href="ambi__dec_8h.html#aa1dcfd48d0a01f5e7a29b5439144ece6">_Atomic_AMBI_DEC_DECODING_METHODS</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00084">84</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+
+</div>
+</div>
+<a id="a53002fc7a782883cc1714af003898a91" name="a53002fc7a782883cc1714af003898a91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53002fc7a782883cc1714af003898a91">&#9670;&#160;</a></span>_Atomic_AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="ambi__dec_8h.html#a79fef4c5385cebb53c65d4d95fd4a10d">AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH</a> <a class="el" href="ambi__dec_8h.html#a79fef4c5385cebb53c65d4d95fd4a10d">_Atomic_AMBI_DEC_DIFFUSE_FIELD_EQ_APPROACH</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00085">85</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+
+</div>
+</div>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a9853b9a53dbac9fbe01b54fc06af5d17" name="a9853b9a53dbac9fbe01b54fc06af5d17"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9853b9a53dbac9fbe01b54fc06af5d17">&#9670;&#160;</a></span>ambi_dec_interpHRTFs()</h2>
@@ -379,8 +420,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2d1624fe9f14e384194c4e4dfb950a9f" name="a2d1624fe9f14e384194c4e4dfb950a9f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2d1624fe9f14e384194c4e4dfb950a9f">&#9670;&#160;</a></span>loadLoudspeakerArrayPreset()</h2>
+<a id="a306478f332e3babca03911db301a03b9" name="a306478f332e3babca03911db301a03b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a306478f332e3babca03911db301a03b9">&#9670;&#160;</a></span>loadLoudspeakerArrayPreset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -393,12 +434,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_LOUDSPEAKERS][2], </td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_LOUDSPEAKERS][2], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>nCH</em></span>, </td>
+          <td class="paramtype">_Atomic_INT32 *</td>          <td class="paramname"><span class="paramname"><em>nCH</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -431,7 +472,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_b4092ce66456cdf78d489666b375f9fd.html">ambi_dec</a></li><li class="navelem"><a class="el" href="ambi__dec__internal_8h.html">ambi_dec_internal.h</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:20 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:51 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

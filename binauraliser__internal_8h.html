@@ -110,6 +110,7 @@ $(function(){initNavTree('binauraliser__internal_8h.html',''); initResizable(tru
   <div class="summary">
 <a href="#nested-classes">Data Structures</a> &#124;
 <a href="#define-members">Macros</a> &#124;
+<a href="#typedef-members">Typedefs</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">binauraliser_internal.h File Reference</div></div>
 </div><!--header-->
@@ -144,6 +145,11 @@ Macros</h2></td></tr>
 <tr class="memdesc:a22876a93fc8b37d1750bb2e1ac0285fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of STFT timeslots.  <br /></td></tr>
 <tr class="separator:a22876a93fc8b37d1750bb2e1ac0285fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a6593bee4d410be6bdce0deb9b30b5189" id="r_a6593bee4d410be6bdce0deb9b30b5189"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6593bee4d410be6bdce0deb9b30b5189">_Atomic_INTERP_MODES</a></td></tr>
+<tr class="separator:a6593bee4d410be6bdce0deb9b30b5189"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a1c04e19d86b15b703649c4df555d9a92" id="r_a1c04e19d86b15b703649c4df555d9a92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c04e19d86b15b703649c4df555d9a92">binauraliser_setCodecStatus</a> (void *const hBin, <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a> newStatus)</td></tr>
@@ -158,9 +164,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a25a37e00a6f41938884c304447b1503e" id="r_a25a37e00a6f41938884c304447b1503e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25a37e00a6f41938884c304447b1503e">binauraliser_initTFT</a> (void *const hBin)</td></tr>
 <tr class="memdesc:a25a37e00a6f41938884c304447b1503e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise the filterbank used by binauraliser.  <br /></td></tr>
 <tr class="separator:a25a37e00a6f41938884c304447b1503e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a225532166854be33e683fbcdce893b6a" id="r_a225532166854be33e683fbcdce893b6a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a225532166854be33e683fbcdce893b6a">binauraliser_loadPreset</a> (<a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset, float dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], int *newNCH, int *nDims)</td></tr>
-<tr class="memdesc:a225532166854be33e683fbcdce893b6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the source directions for a specified source config preset.  <br /></td></tr>
-<tr class="separator:a225532166854be33e683fbcdce893b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d3a47fce8ec82a5cdbf15e5297c952" id="r_a17d3a47fce8ec82a5cdbf15e5297c952"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17d3a47fce8ec82a5cdbf15e5297c952">binauraliser_loadPreset</a> (<a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], _Atomic_INT32 *newNCH, int *nDims)</td></tr>
+<tr class="memdesc:a17d3a47fce8ec82a5cdbf15e5297c952"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the source directions for a specified source config preset.  <br /></td></tr>
+<tr class="separator:a17d3a47fce8ec82a5cdbf15e5297c952"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency domain. </p>
@@ -240,6 +246,23 @@ Functions</h2></td></tr>
 <p>Number of STFT timeslots. </p>
 
 <p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00057">57</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Typedef Documentation</h2>
+<a id="a6593bee4d410be6bdce0deb9b30b5189" name="a6593bee4d410be6bdce0deb9b30b5189"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6593bee4d410be6bdce0deb9b30b5189">&#9670;&#160;</a></span>_Atomic_INTERP_MODES</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a> <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">_Atomic_INTERP_MODES</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00067">67</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -339,8 +362,8 @@ Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a225532166854be33e683fbcdce893b6a" name="a225532166854be33e683fbcdce893b6a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a225532166854be33e683fbcdce893b6a">&#9670;&#160;</a></span>binauraliser_loadPreset()</h2>
+<a id="a17d3a47fce8ec82a5cdbf15e5297c952" name="a17d3a47fce8ec82a5cdbf15e5297c952"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d3a47fce8ec82a5cdbf15e5297c952">&#9670;&#160;</a></span>binauraliser_loadPreset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -353,12 +376,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_INPUTS][2], </td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_INPUTS][2], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>newNCH</em></span>, </td>
+          <td class="paramtype">_Atomic_INT32 *</td>          <td class="paramname"><span class="paramname"><em>newNCH</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -416,7 +439,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_6c7646edab85eb27cefda7b4e9fd2cc5.html">binauraliser</a></li><li class="navelem"><a class="el" href="binauraliser__internal_8h.html">binauraliser_internal.h</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:20 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:51 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

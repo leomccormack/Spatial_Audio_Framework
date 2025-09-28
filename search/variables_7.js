@@ -1,7 +1,7 @@
 var searchData=
 [
   ['g_5fsrc_0',['G_src',['../structpanner__data.html#aa6b6ec1ef052dafd54d61cb5ff957faa',1,'panner_data']]],
-  ['gain_5fdb_1',['gain_dB',['../structarray2sh__data.html#a88f94d7d9c04fdcf87bbd6a94dd1af46',1,'array2sh_data']]],
+  ['gain_5fdb_1',['gain_dB',['../structarray2sh__data.html#a13f7c209ca45436e6f69eef01523a58b',1,'array2sh_data']]],
   ['gains_5fdiff_2',['gains_diff',['../structhades__param__container__data.html#acc538f3adb16851c30e9ed570be5d0bd',1,'hades_param_container_data']]],
   ['gains_5fdir_3',['gains_dir',['../structhades__param__container__data.html#aeeecbaab9abed4afeeeb48fe56ef2ccd',1,'hades_param_container_data']]],
   ['gains_5fidx_4',['gains_idx',['../structhades__param__container__data.html#a25ddbd98e18a2c74d8d511c60e3a1f9c',1,'hades_param_container_data']]],
@@ -10,5 +10,5 @@ var searchData=
   ['grid_5fndirs_7',['grid_nDirs',['../structdirass__codec_pars.html#a93cc882c0dd4f499207fa33b757980b4',1,'dirass_codecPars::grid_nDirs'],['../structpowermap__codec_pars.html#ab1d6a22da02509dcc22e5b398b6ba94b',1,'powermap_codecPars::grid_nDirs']]],
   ['grid_5fy_8',['grid_Y',['../structsldoa__data.html#adee28f7cb55be976f2b65c5a8dba09a2',1,'sldoa_data']]],
   ['grid_5fy_5fdipoles_5fnorm_9',['grid_Y_dipoles_norm',['../structsldoa__data.html#a82d4e409c38c65250d9f7b0ae302eca6',1,'sldoa_data']]],
-  ['gridoption_10',['gridOption',['../structdirass__data.html#a9d8b4b9ae8fd7f0653e2ab5fb374bd77',1,'dirass_data']]]
+  ['gridoption_10',['gridOption',['../structdirass__data.html#a73262097fd09b123a983a66e77e14deb',1,'dirass_data']]]
 ];

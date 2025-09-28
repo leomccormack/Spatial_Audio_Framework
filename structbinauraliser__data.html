@@ -132,9 +132,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a35b979455aa047a94886f9733d0659aa" id="r_a35b979455aa047a94886f9733d0659aa"><td class="memItemLeft" align="right" valign="top">float_complex ***&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a35b979455aa047a94886f9733d0659aa">outputframeTF</a></td></tr>
 <tr class="memdesc:a35b979455aa047a94886f9733d0659aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">time-frequency domain input frame; <a class="el" href="ambi__bin__internal_8h.html#a8b686c1291e75b81f91064272c45aed5" title="Number of frequency bands.">HYBRID_BANDS</a> x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x <a class="el" href="ambi__bin__internal_8h.html#a22876a93fc8b37d1750bb2e1ac0285fc" title="Number of STFT timeslots.">TIME_SLOTS</a>  <br /></td></tr>
 <tr class="separator:a35b979455aa047a94886f9733d0659aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a164016d93ff837617703720a2c64484c" id="r_a164016d93ff837617703720a2c64484c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a164016d93ff837617703720a2c64484c">fs</a></td></tr>
-<tr class="memdesc:a164016d93ff837617703720a2c64484c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Host sampling rate, in Hz.  <br /></td></tr>
-<tr class="separator:a164016d93ff837617703720a2c64484c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8076ba9b944e34dafb2eedeae66308fd" id="r_a8076ba9b944e34dafb2eedeae66308fd"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8076ba9b944e34dafb2eedeae66308fd">fs</a></td></tr>
+<tr class="memdesc:a8076ba9b944e34dafb2eedeae66308fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Host sampling rate, in Hz.  <br /></td></tr>
+<tr class="separator:a8076ba9b944e34dafb2eedeae66308fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa444d5184fe1b9d664e4c6fa948e7a4" id="r_afa444d5184fe1b9d664e4c6fa948e7a4"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afa444d5184fe1b9d664e4c6fa948e7a4">freqVector</a> [<a class="el" href="binauraliser__internal_8h.html#a8b686c1291e75b81f91064272c45aed5">HYBRID_BANDS</a>]</td></tr>
 <tr class="memdesc:afa444d5184fe1b9d664e4c6fa948e7a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frequency vector (filterbank centre frequencies)  <br /></td></tr>
 <tr class="separator:afa444d5184fe1b9d664e4c6fa948e7a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -150,23 +150,23 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a7317973d00af967c8b27b552d32c2603" id="r_a7317973d00af967c8b27b552d32c2603"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7317973d00af967c8b27b552d32c2603">hrir_dirs_deg</a></td></tr>
 <tr class="memdesc:a7317973d00af967c8b27b552d32c2603"><td class="mdescLeft">&#160;</td><td class="mdescRight">directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2  <br /></td></tr>
 <tr class="separator:a7317973d00af967c8b27b552d32c2603"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a484d2463f3b1f2c84f5afcdcc4755c4a" id="r_a484d2463f3b1f2c84f5afcdcc4755c4a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a484d2463f3b1f2c84f5afcdcc4755c4a">N_hrir_dirs</a></td></tr>
-<tr class="memdesc:a484d2463f3b1f2c84f5afcdcc4755c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of HRIR directions in the current sofa file  <br /></td></tr>
-<tr class="separator:a484d2463f3b1f2c84f5afcdcc4755c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab85a642a830f5b80aeb89247312d9691" id="r_ab85a642a830f5b80aeb89247312d9691"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab85a642a830f5b80aeb89247312d9691">hrir_loaded_len</a></td></tr>
-<tr class="memdesc:ab85a642a830f5b80aeb89247312d9691"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the loaded HRIRs, in samples  <br /></td></tr>
-<tr class="separator:ab85a642a830f5b80aeb89247312d9691"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0940e2f511292053c6f7a821aefada7c" id="r_a0940e2f511292053c6f7a821aefada7c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0940e2f511292053c6f7a821aefada7c">hrir_runtime_len</a></td></tr>
-<tr class="memdesc:a0940e2f511292053c6f7a821aefada7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the HRIRs being used for processing (after any resampling), in samples  <br /></td></tr>
-<tr class="separator:a0940e2f511292053c6f7a821aefada7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae26b562f3456eb51ff8d164e18c238c3" id="r_ae26b562f3456eb51ff8d164e18c238c3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae26b562f3456eb51ff8d164e18c238c3">hrir_loaded_fs</a></td></tr>
-<tr class="memdesc:ae26b562f3456eb51ff8d164e18c238c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the loaded HRIRs  <br /></td></tr>
-<tr class="separator:ae26b562f3456eb51ff8d164e18c238c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e0ea3bc7601d93e5a19ae94c7580018" id="r_a6e0ea3bc7601d93e5a19ae94c7580018"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6e0ea3bc7601d93e5a19ae94c7580018">hrir_runtime_fs</a></td></tr>
-<tr class="memdesc:a6e0ea3bc7601d93e5a19ae94c7580018"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the HRIRs being used for processing (after any resampling)  <br /></td></tr>
-<tr class="separator:a6e0ea3bc7601d93e5a19ae94c7580018"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3da26459ec8e91c0e310c59b64fc517" id="r_ae3da26459ec8e91c0e310c59b64fc517"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3da26459ec8e91c0e310c59b64fc517">N_hrir_dirs</a></td></tr>
+<tr class="memdesc:ae3da26459ec8e91c0e310c59b64fc517"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of HRIR directions in the current sofa file  <br /></td></tr>
+<tr class="separator:ae3da26459ec8e91c0e310c59b64fc517"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa32d53f50b64d57832e49ff1cdec4549" id="r_aa32d53f50b64d57832e49ff1cdec4549"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa32d53f50b64d57832e49ff1cdec4549">hrir_loaded_len</a></td></tr>
+<tr class="memdesc:aa32d53f50b64d57832e49ff1cdec4549"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the loaded HRIRs, in samples  <br /></td></tr>
+<tr class="separator:aa32d53f50b64d57832e49ff1cdec4549"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7c9faec5670fb26bc3f9a9cf08a7f29" id="r_ae7c9faec5670fb26bc3f9a9cf08a7f29"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7c9faec5670fb26bc3f9a9cf08a7f29">hrir_runtime_len</a></td></tr>
+<tr class="memdesc:ae7c9faec5670fb26bc3f9a9cf08a7f29"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the HRIRs being used for processing (after any resampling), in samples  <br /></td></tr>
+<tr class="separator:ae7c9faec5670fb26bc3f9a9cf08a7f29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0993bca5ef18077ead2e3bb3aa6a629c" id="r_a0993bca5ef18077ead2e3bb3aa6a629c"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0993bca5ef18077ead2e3bb3aa6a629c">hrir_loaded_fs</a></td></tr>
+<tr class="memdesc:a0993bca5ef18077ead2e3bb3aa6a629c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the loaded HRIRs  <br /></td></tr>
+<tr class="separator:a0993bca5ef18077ead2e3bb3aa6a629c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dd850f9b007a6ca6cb86ec696d56142" id="r_a4dd850f9b007a6ca6cb86ec696d56142"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4dd850f9b007a6ca6cb86ec696d56142">hrir_runtime_fs</a></td></tr>
+<tr class="memdesc:a4dd850f9b007a6ca6cb86ec696d56142"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the HRIRs being used for processing (after any resampling)  <br /></td></tr>
+<tr class="separator:a4dd850f9b007a6ca6cb86ec696d56142"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81b8fac03ca7b0b38023cbf4f6d245f4" id="r_a81b8fac03ca7b0b38023cbf4f6d245f4"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81b8fac03ca7b0b38023cbf4f6d245f4">weights</a></td></tr>
-<tr class="memdesc:a81b8fac03ca7b0b38023cbf4f6d245f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration weights for the HRIR measurement grid.  <br /></td></tr>
+<tr class="memdesc:a81b8fac03ca7b0b38023cbf4f6d245f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Integration weights for the HRIR measurement grid; N_hrir_dirs x 1.  <br /></td></tr>
 <tr class="separator:a81b8fac03ca7b0b38023cbf4f6d245f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba6b1d59a56476f00905ce88b4f90ddb" id="r_aba6b1d59a56476f00905ce88b4f90ddb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba6b1d59a56476f00905ce88b4f90ddb">hrtf_vbapTableRes</a> [2]</td></tr>
 <tr class="memdesc:aba6b1d59a56476f00905ce88b4f90ddb"><td class="mdescLeft">&#160;</td><td class="mdescRight">[0] azimuth, and [1] elevation grid resolution, in degrees  <br /></td></tr>
@@ -192,27 +192,27 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a6c51f84929258eee9f74d56a5d2aa536" id="r_a6c51f84929258eee9f74d56a5d2aa536"><td class="memItemLeft" align="right" valign="top">float_complex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6c51f84929258eee9f74d56a5d2aa536">hrtf_interp</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][<a class="el" href="binauraliser__internal_8h.html#a8b686c1291e75b81f91064272c45aed5">HYBRID_BANDS</a>][<a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84">NUM_EARS</a>]</td></tr>
 <tr class="memdesc:a6c51f84929258eee9f74d56a5d2aa536"><td class="mdescLeft">&#160;</td><td class="mdescRight">Interpolated HRTFs.  <br /></td></tr>
 <tr class="separator:a6c51f84929258eee9f74d56a5d2aa536"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc1265db8488512f2b1fea40ebe40b72" id="r_abc1265db8488512f2b1fea40ebe40b72"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abc1265db8488512f2b1fea40ebe40b72">codecStatus</a></td></tr>
-<tr class="memdesc:abc1265db8488512f2b1fea40ebe40b72"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a>  <br /></td></tr>
-<tr class="separator:abc1265db8488512f2b1fea40ebe40b72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61e92f41aaa58c0e8bc6f333e5d7bc31" id="r_a61e92f41aaa58c0e8bc6f333e5d7bc31"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a61e92f41aaa58c0e8bc6f333e5d7bc31">progressBar0_1</a></td></tr>
-<tr class="memdesc:a61e92f41aaa58c0e8bc6f333e5d7bc31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current (re)initialisation progress, between [0..1].  <br /></td></tr>
-<tr class="separator:a61e92f41aaa58c0e8bc6f333e5d7bc31"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee5cb1fb91aa86cbaaf3e1e2f6009e00" id="r_aee5cb1fb91aa86cbaaf3e1e2f6009e00"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">_Atomic_CODEC_STATUS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aee5cb1fb91aa86cbaaf3e1e2f6009e00">codecStatus</a></td></tr>
+<tr class="memdesc:aee5cb1fb91aa86cbaaf3e1e2f6009e00"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a>  <br /></td></tr>
+<tr class="separator:aee5cb1fb91aa86cbaaf3e1e2f6009e00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada418fc7994d257a7d9f11fe9b124818" id="r_ada418fc7994d257a7d9f11fe9b124818"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ada418fc7994d257a7d9f11fe9b124818">progressBar0_1</a></td></tr>
+<tr class="memdesc:ada418fc7994d257a7d9f11fe9b124818"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current (re)initialisation progress, between [0..1].  <br /></td></tr>
+<tr class="separator:ada418fc7994d257a7d9f11fe9b124818"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe14d1fcc5f95f94426f50d9f5c2f5ba" id="r_abe14d1fcc5f95f94426f50d9f5c2f5ba"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#abe14d1fcc5f95f94426f50d9f5c2f5ba">progressBarText</a></td></tr>
 <tr class="memdesc:abe14d1fcc5f95f94426f50d9f5c2f5ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current (re)initialisation step, string.  <br /></td></tr>
 <tr class="separator:abe14d1fcc5f95f94426f50d9f5c2f5ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d9e97dcdcbd08ab1b544bfd84fbf46b" id="r_a1d9e97dcdcbd08ab1b544bfd84fbf46b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec">PROC_STATUS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d9e97dcdcbd08ab1b544bfd84fbf46b">procStatus</a></td></tr>
-<tr class="memdesc:a1d9e97dcdcbd08ab1b544bfd84fbf46b"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec" title="Current status of the processing loop.">PROC_STATUS</a>  <br /></td></tr>
-<tr class="separator:a1d9e97dcdcbd08ab1b544bfd84fbf46b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae00dde27d04f7e101f729a93a6bb5442" id="r_ae00dde27d04f7e101f729a93a6bb5442"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae00dde27d04f7e101f729a93a6bb5442">recalc_hrtf_interpFLAG</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
-<tr class="memdesc:ae00dde27d04f7e101f729a93a6bb5442"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: re-calculate/interpolate the HRTF, 0: do not  <br /></td></tr>
-<tr class="separator:ae00dde27d04f7e101f729a93a6bb5442"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7567dbba2db662ff57a49446ade15e60" id="r_a7567dbba2db662ff57a49446ade15e60"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7567dbba2db662ff57a49446ade15e60">reInitHRTFsAndGainTables</a></td></tr>
-<tr class="memdesc:a7567dbba2db662ff57a49446ade15e60"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: reinitialise the HRTFs and interpolation tables, 0: do not  <br /></td></tr>
-<tr class="separator:a7567dbba2db662ff57a49446ade15e60"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c9f0204218ebf7b24a6837ee1106dcb" id="r_a2c9f0204218ebf7b24a6837ee1106dcb"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2c9f0204218ebf7b24a6837ee1106dcb">recalc_M_rotFLAG</a></td></tr>
-<tr class="memdesc:a2c9f0204218ebf7b24a6837ee1106dcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: re-calculate the rotation matrix, 0: do not  <br /></td></tr>
-<tr class="separator:a2c9f0204218ebf7b24a6837ee1106dcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad61cbe144d9ec97d17cec0070a85bc23" id="r_ad61cbe144d9ec97d17cec0070a85bc23"><td class="memItemLeft" align="right" valign="top"><a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec">_Atomic_PROC_STATUS</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad61cbe144d9ec97d17cec0070a85bc23">procStatus</a></td></tr>
+<tr class="memdesc:ad61cbe144d9ec97d17cec0070a85bc23"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec" title="Current status of the processing loop.">PROC_STATUS</a>  <br /></td></tr>
+<tr class="separator:ad61cbe144d9ec97d17cec0070a85bc23"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac42f48c3e2a25941f1929842da93c3a5" id="r_ac42f48c3e2a25941f1929842da93c3a5"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac42f48c3e2a25941f1929842da93c3a5">recalc_hrtf_interpFLAG</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
+<tr class="memdesc:ac42f48c3e2a25941f1929842da93c3a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: re-calculate/interpolate the HRTF, 0: do not  <br /></td></tr>
+<tr class="separator:ac42f48c3e2a25941f1929842da93c3a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1729f89c41e038766fbdf93abab0d9cc" id="r_a1729f89c41e038766fbdf93abab0d9cc"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1729f89c41e038766fbdf93abab0d9cc">reInitHRTFsAndGainTables</a></td></tr>
+<tr class="memdesc:a1729f89c41e038766fbdf93abab0d9cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: reinitialise the HRTFs and interpolation tables, 0: do not  <br /></td></tr>
+<tr class="separator:a1729f89c41e038766fbdf93abab0d9cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25842061b850760a3b58aa4a57769571" id="r_a25842061b850760a3b58aa4a57769571"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a25842061b850760a3b58aa4a57769571">recalc_M_rotFLAG</a></td></tr>
+<tr class="memdesc:a25842061b850760a3b58aa4a57769571"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: re-calculate the rotation matrix, 0: do not  <br /></td></tr>
+<tr class="separator:a25842061b850760a3b58aa4a57769571"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5270df69fa4165205e11392e4c80a064" id="r_a5270df69fa4165205e11392e4c80a064"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5270df69fa4165205e11392e4c80a064">src_dirs_rot_deg</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
 <tr class="memdesc:a5270df69fa4165205e11392e4c80a064"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intermediate rotated source directions, in degrees.  <br /></td></tr>
 <tr class="separator:a5270df69fa4165205e11392e4c80a064"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -225,163 +225,163 @@ Data Fields</h2></td></tr>
 <tr class="memitem:af4608b582c7914ec38596d079f1df5de" id="r_af4608b582c7914ec38596d079f1df5de"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af4608b582c7914ec38596d079f1df5de">nTriangles</a></td></tr>
 <tr class="memdesc:af4608b582c7914ec38596d079f1df5de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of triangles in the convex hull of the spherical arrangement of HRIR directions/points.  <br /></td></tr>
 <tr class="separator:af4608b582c7914ec38596d079f1df5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad112a563e576d341702252b07a22763b" id="r_ad112a563e576d341702252b07a22763b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad112a563e576d341702252b07a22763b">new_nSources</a></td></tr>
-<tr class="memdesc:ad112a563e576d341702252b07a22763b"><td class="mdescLeft">&#160;</td><td class="mdescRight">New number of input/source signals (current value will be replaced by this after next re-init)  <br /></td></tr>
-<tr class="separator:ad112a563e576d341702252b07a22763b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a408d8def8f2ca0065d46d8854f4a3186" id="r_a408d8def8f2ca0065d46d8854f4a3186"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a408d8def8f2ca0065d46d8854f4a3186">nSources</a></td></tr>
-<tr class="memdesc:a408d8def8f2ca0065d46d8854f4a3186"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of input/source signals.  <br /></td></tr>
-<tr class="separator:a408d8def8f2ca0065d46d8854f4a3186"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac46547229c06decab219cc382814c2a9" id="r_ac46547229c06decab219cc382814c2a9"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac46547229c06decab219cc382814c2a9">src_dirs_deg</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
-<tr class="memdesc:ac46547229c06decab219cc382814c2a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current source/panning directions, in degrees.  <br /></td></tr>
-<tr class="separator:ac46547229c06decab219cc382814c2a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af51c656ba6df7215a920efa1828ca7a1" id="r_af51c656ba6df7215a920efa1828ca7a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af51c656ba6df7215a920efa1828ca7a1">interpMode</a></td></tr>
-<tr class="memdesc:af51c656ba6df7215a920efa1828ca7a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8" title="Available interpolation modes.">INTERP_MODES</a>  <br /></td></tr>
-<tr class="separator:af51c656ba6df7215a920efa1828ca7a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6bd299ac45fdaac254b04b8bc27656f" id="r_ae6bd299ac45fdaac254b04b8bc27656f"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae6bd299ac45fdaac254b04b8bc27656f">useDefaultHRIRsFLAG</a></td></tr>
-<tr class="memdesc:ae6bd299ac45fdaac254b04b8bc27656f"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: use default HRIRs in database, 0: use those from SOFA file  <br /></td></tr>
-<tr class="separator:ae6bd299ac45fdaac254b04b8bc27656f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad744cda338d054ad277069862e5cc3de" id="r_ad744cda338d054ad277069862e5cc3de"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad744cda338d054ad277069862e5cc3de">enableHRIRsDiffuseEQ</a></td></tr>
-<tr class="memdesc:ad744cda338d054ad277069862e5cc3de"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to diffuse-field equalisation to the currently loaded HRTFs  <br /></td></tr>
-<tr class="separator:ad744cda338d054ad277069862e5cc3de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09b89460fb2149f88a68327041886939" id="r_a09b89460fb2149f88a68327041886939"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a09b89460fb2149f88a68327041886939">enableRotation</a></td></tr>
-<tr class="memdesc:a09b89460fb2149f88a68327041886939"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: enable rotation, 0: disable  <br /></td></tr>
-<tr class="separator:a09b89460fb2149f88a68327041886939"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade5db229760f12e02eb4e9dd42de2f9a" id="r_ade5db229760f12e02eb4e9dd42de2f9a"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ade5db229760f12e02eb4e9dd42de2f9a">yaw</a></td></tr>
-<tr class="memdesc:ade5db229760f12e02eb4e9dd42de2f9a"><td class="mdescLeft">&#160;</td><td class="mdescRight">yaw (Euler) rotation angle, in degrees  <br /></td></tr>
-<tr class="separator:ade5db229760f12e02eb4e9dd42de2f9a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d21774ab70a136d207afe79b0aee6ed" id="r_a1d21774ab70a136d207afe79b0aee6ed"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d21774ab70a136d207afe79b0aee6ed">roll</a></td></tr>
-<tr class="memdesc:a1d21774ab70a136d207afe79b0aee6ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">roll (Euler) rotation angle, in degrees  <br /></td></tr>
-<tr class="separator:a1d21774ab70a136d207afe79b0aee6ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7cbf1fbf608e5361cef8a0baf42daa2f" id="r_a7cbf1fbf608e5361cef8a0baf42daa2f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cbf1fbf608e5361cef8a0baf42daa2f">pitch</a></td></tr>
-<tr class="memdesc:a7cbf1fbf608e5361cef8a0baf42daa2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">pitch (Euler) rotation angle, in degrees  <br /></td></tr>
-<tr class="separator:a7cbf1fbf608e5361cef8a0baf42daa2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2395393add95682daea28738ab9b4182" id="r_a2395393add95682daea28738ab9b4182"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2395393add95682daea28738ab9b4182">bFlipYaw</a></td></tr>
-<tr class="memdesc:a2395393add95682daea28738ab9b4182"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to flip the sign of the yaw rotation angle  <br /></td></tr>
-<tr class="separator:a2395393add95682daea28738ab9b4182"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af49cb3ec7228abe3f05dc9a8615fbb68" id="r_af49cb3ec7228abe3f05dc9a8615fbb68"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af49cb3ec7228abe3f05dc9a8615fbb68">bFlipPitch</a></td></tr>
-<tr class="memdesc:af49cb3ec7228abe3f05dc9a8615fbb68"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to flip the sign of the pitch rotation angle  <br /></td></tr>
-<tr class="separator:af49cb3ec7228abe3f05dc9a8615fbb68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeadb76dcbc65d1c036b10bad9b36971d" id="r_aeadb76dcbc65d1c036b10bad9b36971d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aeadb76dcbc65d1c036b10bad9b36971d">bFlipRoll</a></td></tr>
-<tr class="memdesc:aeadb76dcbc65d1c036b10bad9b36971d"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to flip the sign of the roll rotation angle  <br /></td></tr>
-<tr class="separator:aeadb76dcbc65d1c036b10bad9b36971d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81cee1c58a9c79169bde814af57753ac" id="r_a81cee1c58a9c79169bde814af57753ac"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a81cee1c58a9c79169bde814af57753ac">useRollPitchYawFlag</a></td></tr>
-<tr class="memdesc:a81cee1c58a9c79169bde814af57753ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">rotation order flag, 1: r-p-y, 0: y-p-r  <br /></td></tr>
-<tr class="separator:a81cee1c58a9c79169bde814af57753ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cb8e387ab468efb4374ab148dd45f7b" id="r_a8cb8e387ab468efb4374ab148dd45f7b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8cb8e387ab468efb4374ab148dd45f7b">src_gains</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
-<tr class="memdesc:a8cb8e387ab468efb4374ab148dd45f7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gains applied per source.  <br /></td></tr>
-<tr class="separator:a8cb8e387ab468efb4374ab148dd45f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc3b33cbe9d219cfd924987195e299e8" id="r_afc3b33cbe9d219cfd924987195e299e8"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc3b33cbe9d219cfd924987195e299e8">new_nSources</a></td></tr>
+<tr class="memdesc:afc3b33cbe9d219cfd924987195e299e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">New number of input/source signals (current value will be replaced by this after next re-init)  <br /></td></tr>
+<tr class="separator:afc3b33cbe9d219cfd924987195e299e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aff67ad0017c339b097c2be8e5a1b672d" id="r_aff67ad0017c339b097c2be8e5a1b672d"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aff67ad0017c339b097c2be8e5a1b672d">nSources</a></td></tr>
+<tr class="memdesc:aff67ad0017c339b097c2be8e5a1b672d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current number of input/source signals.  <br /></td></tr>
+<tr class="separator:aff67ad0017c339b097c2be8e5a1b672d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a5607751a663c71fb981433daf5261a" id="r_a7a5607751a663c71fb981433daf5261a"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7a5607751a663c71fb981433daf5261a">src_dirs_deg</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
+<tr class="memdesc:a7a5607751a663c71fb981433daf5261a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current source/panning directions, in degrees.  <br /></td></tr>
+<tr class="separator:a7a5607751a663c71fb981433daf5261a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a72aa67ff41eb59020fcb47a867183103" id="r_a72aa67ff41eb59020fcb47a867183103"><td class="memItemLeft" align="right" valign="top"><a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">_Atomic_INTERP_MODES</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a72aa67ff41eb59020fcb47a867183103">interpMode</a></td></tr>
+<tr class="memdesc:a72aa67ff41eb59020fcb47a867183103"><td class="mdescLeft">&#160;</td><td class="mdescRight">see <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8" title="Available interpolation modes.">INTERP_MODES</a>  <br /></td></tr>
+<tr class="separator:a72aa67ff41eb59020fcb47a867183103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea81d504a07d9bea12c7129f6d426f16" id="r_aea81d504a07d9bea12c7129f6d426f16"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea81d504a07d9bea12c7129f6d426f16">useDefaultHRIRsFLAG</a></td></tr>
+<tr class="memdesc:aea81d504a07d9bea12c7129f6d426f16"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: use default HRIRs in database, 0: use those from SOFA file  <br /></td></tr>
+<tr class="separator:aea81d504a07d9bea12c7129f6d426f16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48417b1d390c2bbb78d6cf99fa82906c" id="r_a48417b1d390c2bbb78d6cf99fa82906c"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a48417b1d390c2bbb78d6cf99fa82906c">enableHRIRsDiffuseEQ</a></td></tr>
+<tr class="memdesc:a48417b1d390c2bbb78d6cf99fa82906c"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to diffuse-field equalisation to the currently loaded HRTFs  <br /></td></tr>
+<tr class="separator:a48417b1d390c2bbb78d6cf99fa82906c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab85c92228686146fd37f3f3bf7dd2600" id="r_ab85c92228686146fd37f3f3bf7dd2600"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab85c92228686146fd37f3f3bf7dd2600">enableRotation</a></td></tr>
+<tr class="memdesc:ab85c92228686146fd37f3f3bf7dd2600"><td class="mdescLeft">&#160;</td><td class="mdescRight">1: enable rotation, 0: disable  <br /></td></tr>
+<tr class="separator:ab85c92228686146fd37f3f3bf7dd2600"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a210f3c2a34f939a4712a893a6b07aa16" id="r_a210f3c2a34f939a4712a893a6b07aa16"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a210f3c2a34f939a4712a893a6b07aa16">yaw</a></td></tr>
+<tr class="memdesc:a210f3c2a34f939a4712a893a6b07aa16"><td class="mdescLeft">&#160;</td><td class="mdescRight">yaw (Euler) rotation angle, in degrees  <br /></td></tr>
+<tr class="separator:a210f3c2a34f939a4712a893a6b07aa16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab75efbe97e0437e816f4464f886736b3" id="r_ab75efbe97e0437e816f4464f886736b3"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab75efbe97e0437e816f4464f886736b3">roll</a></td></tr>
+<tr class="memdesc:ab75efbe97e0437e816f4464f886736b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">roll (Euler) rotation angle, in degrees  <br /></td></tr>
+<tr class="separator:ab75efbe97e0437e816f4464f886736b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf5ede825e60096dcb56519db98042a6" id="r_aaf5ede825e60096dcb56519db98042a6"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaf5ede825e60096dcb56519db98042a6">pitch</a></td></tr>
+<tr class="memdesc:aaf5ede825e60096dcb56519db98042a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">pitch (Euler) rotation angle, in degrees  <br /></td></tr>
+<tr class="separator:aaf5ede825e60096dcb56519db98042a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8d72c1c938705da42dc9a0a649926c07" id="r_a8d72c1c938705da42dc9a0a649926c07"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8d72c1c938705da42dc9a0a649926c07">bFlipYaw</a></td></tr>
+<tr class="memdesc:a8d72c1c938705da42dc9a0a649926c07"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to flip the sign of the yaw rotation angle  <br /></td></tr>
+<tr class="separator:a8d72c1c938705da42dc9a0a649926c07"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a488179f941654ab6035399f6daae4ec9" id="r_a488179f941654ab6035399f6daae4ec9"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a488179f941654ab6035399f6daae4ec9">bFlipPitch</a></td></tr>
+<tr class="memdesc:a488179f941654ab6035399f6daae4ec9"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to flip the sign of the pitch rotation angle  <br /></td></tr>
+<tr class="separator:a488179f941654ab6035399f6daae4ec9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae3591522f845b1d40c4d5382df22facf" id="r_ae3591522f845b1d40c4d5382df22facf"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae3591522f845b1d40c4d5382df22facf">bFlipRoll</a></td></tr>
+<tr class="memdesc:ae3591522f845b1d40c4d5382df22facf"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag to flip the sign of the roll rotation angle  <br /></td></tr>
+<tr class="separator:ae3591522f845b1d40c4d5382df22facf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4985da1c74b4d6f05702bf7ea30cbc08" id="r_a4985da1c74b4d6f05702bf7ea30cbc08"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4985da1c74b4d6f05702bf7ea30cbc08">useRollPitchYawFlag</a></td></tr>
+<tr class="memdesc:a4985da1c74b4d6f05702bf7ea30cbc08"><td class="mdescLeft">&#160;</td><td class="mdescRight">rotation order flag, 1: r-p-y, 0: y-p-r  <br /></td></tr>
+<tr class="separator:a4985da1c74b4d6f05702bf7ea30cbc08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2493ec02642fbd723205f775c7b31bca" id="r_a2493ec02642fbd723205f775c7b31bca"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2493ec02642fbd723205f775c7b31bca">src_gains</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td></tr>
+<tr class="memdesc:a2493ec02642fbd723205f775c7b31bca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gains applied per source.  <br /></td></tr>
+<tr class="separator:a2493ec02642fbd723205f775c7b31bca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main structure for binauraliser. </p>
 <p>Contains variables for audio buffers, afSTFT, HRTFs, internal variables, flags, user parameters. Note: if this is modified, identically modify _binauraliserNF struct. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00073">73</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00079">79</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="af49cb3ec7228abe3f05dc9a8615fbb68" name="af49cb3ec7228abe3f05dc9a8615fbb68"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af49cb3ec7228abe3f05dc9a8615fbb68">&#9670;&#160;</a></span>bFlipPitch</h2>
+<a id="a488179f941654ab6035399f6daae4ec9" name="a488179f941654ab6035399f6daae4ec9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a488179f941654ab6035399f6daae4ec9">&#9670;&#160;</a></span>bFlipPitch</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::bFlipPitch</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::bFlipPitch</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>flag to flip the sign of the pitch rotation angle </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00134">134</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00140">140</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="aeadb76dcbc65d1c036b10bad9b36971d" name="aeadb76dcbc65d1c036b10bad9b36971d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeadb76dcbc65d1c036b10bad9b36971d">&#9670;&#160;</a></span>bFlipRoll</h2>
+<a id="ae3591522f845b1d40c4d5382df22facf" name="ae3591522f845b1d40c4d5382df22facf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3591522f845b1d40c4d5382df22facf">&#9670;&#160;</a></span>bFlipRoll</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::bFlipRoll</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::bFlipRoll</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>flag to flip the sign of the roll rotation angle </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00135">135</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00141">141</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a2395393add95682daea28738ab9b4182" name="a2395393add95682daea28738ab9b4182"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2395393add95682daea28738ab9b4182">&#9670;&#160;</a></span>bFlipYaw</h2>
+<a id="a8d72c1c938705da42dc9a0a649926c07" name="a8d72c1c938705da42dc9a0a649926c07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8d72c1c938705da42dc9a0a649926c07">&#9670;&#160;</a></span>bFlipYaw</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::bFlipYaw</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::bFlipYaw</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>flag to flip the sign of the yaw rotation angle </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00133">133</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00139">139</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="abc1265db8488512f2b1fea40ebe40b72" name="abc1265db8488512f2b1fea40ebe40b72"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abc1265db8488512f2b1fea40ebe40b72">&#9670;&#160;</a></span>codecStatus</h2>
+<a id="aee5cb1fb91aa86cbaaf3e1e2f6009e00" name="aee5cb1fb91aa86cbaaf3e1e2f6009e00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aee5cb1fb91aa86cbaaf3e1e2f6009e00">&#9670;&#160;</a></span>codecStatus</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">CODEC_STATUS</a> binauraliser_data::codecStatus</td>
+          <td class="memname"><a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9">_Atomic_CODEC_STATUS</a> binauraliser_data::codecStatus</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00108">108</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00114">114</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ad744cda338d054ad277069862e5cc3de" name="ad744cda338d054ad277069862e5cc3de"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad744cda338d054ad277069862e5cc3de">&#9670;&#160;</a></span>enableHRIRsDiffuseEQ</h2>
+<a id="a48417b1d390c2bbb78d6cf99fa82906c" name="a48417b1d390c2bbb78d6cf99fa82906c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a48417b1d390c2bbb78d6cf99fa82906c">&#9670;&#160;</a></span>enableHRIRsDiffuseEQ</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::enableHRIRsDiffuseEQ</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::enableHRIRsDiffuseEQ</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>flag to diffuse-field equalisation to the currently loaded HRTFs </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00128">128</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00134">134</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a09b89460fb2149f88a68327041886939" name="a09b89460fb2149f88a68327041886939"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a09b89460fb2149f88a68327041886939">&#9670;&#160;</a></span>enableRotation</h2>
+<a id="ab85c92228686146fd37f3f3bf7dd2600" name="ab85c92228686146fd37f3f3bf7dd2600"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab85c92228686146fd37f3f3bf7dd2600">&#9670;&#160;</a></span>enableRotation</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::enableRotation</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::enableRotation</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>1: enable rotation, 0: disable </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00129">129</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00135">135</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -399,25 +399,25 @@ Data Fields</h2></td></tr>
 
 <p>Frequency vector (filterbank centre frequencies) </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00081">81</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00087">87</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a164016d93ff837617703720a2c64484c" name="a164016d93ff837617703720a2c64484c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a164016d93ff837617703720a2c64484c">&#9670;&#160;</a></span>fs</h2>
+<a id="a8076ba9b944e34dafb2eedeae66308fd" name="a8076ba9b944e34dafb2eedeae66308fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8076ba9b944e34dafb2eedeae66308fd">&#9670;&#160;</a></span>fs</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::fs</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::fs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Host sampling rate, in Hz. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00080">80</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00086">86</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -435,79 +435,79 @@ Data Fields</h2></td></tr>
 
 <p>directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00087">87</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00093">93</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ae26b562f3456eb51ff8d164e18c238c3" name="ae26b562f3456eb51ff8d164e18c238c3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae26b562f3456eb51ff8d164e18c238c3">&#9670;&#160;</a></span>hrir_loaded_fs</h2>
+<a id="a0993bca5ef18077ead2e3bb3aa6a629c" name="a0993bca5ef18077ead2e3bb3aa6a629c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0993bca5ef18077ead2e3bb3aa6a629c">&#9670;&#160;</a></span>hrir_loaded_fs</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::hrir_loaded_fs</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::hrir_loaded_fs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>sampling rate of the loaded HRIRs </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00091">91</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00097">97</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ab85a642a830f5b80aeb89247312d9691" name="ab85a642a830f5b80aeb89247312d9691"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab85a642a830f5b80aeb89247312d9691">&#9670;&#160;</a></span>hrir_loaded_len</h2>
+<a id="aa32d53f50b64d57832e49ff1cdec4549" name="aa32d53f50b64d57832e49ff1cdec4549"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa32d53f50b64d57832e49ff1cdec4549">&#9670;&#160;</a></span>hrir_loaded_len</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::hrir_loaded_len</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::hrir_loaded_len</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>length of the loaded HRIRs, in samples </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00089">89</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00095">95</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a6e0ea3bc7601d93e5a19ae94c7580018" name="a6e0ea3bc7601d93e5a19ae94c7580018"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e0ea3bc7601d93e5a19ae94c7580018">&#9670;&#160;</a></span>hrir_runtime_fs</h2>
+<a id="a4dd850f9b007a6ca6cb86ec696d56142" name="a4dd850f9b007a6ca6cb86ec696d56142"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dd850f9b007a6ca6cb86ec696d56142">&#9670;&#160;</a></span>hrir_runtime_fs</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::hrir_runtime_fs</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::hrir_runtime_fs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>sampling rate of the HRIRs being used for processing (after any resampling) </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00092">92</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00098">98</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a0940e2f511292053c6f7a821aefada7c" name="a0940e2f511292053c6f7a821aefada7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0940e2f511292053c6f7a821aefada7c">&#9670;&#160;</a></span>hrir_runtime_len</h2>
+<a id="ae7c9faec5670fb26bc3f9a9cf08a7f29" name="ae7c9faec5670fb26bc3f9a9cf08a7f29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7c9faec5670fb26bc3f9a9cf08a7f29">&#9670;&#160;</a></span>hrir_runtime_len</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::hrir_runtime_len</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::hrir_runtime_len</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>length of the HRIRs being used for processing (after any resampling), in samples </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00090">90</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00096">96</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -525,7 +525,7 @@ Data Fields</h2></td></tr>
 
 <p>time domain HRIRs; FLAT: N_hrir_dirs x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x hrir_len </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00086">86</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00092">92</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -543,7 +543,7 @@ Data Fields</h2></td></tr>
 
 <p>hrtf filterbank coefficients; nBands x nCH x N_hrirs </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00103">103</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00109">109</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -561,7 +561,7 @@ Data Fields</h2></td></tr>
 
 <p>magnitudes of the hrtf filterbank coefficients; nBands x nCH x N_hrirs </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00104">104</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00110">110</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -579,7 +579,7 @@ Data Fields</h2></td></tr>
 
 <p>Interpolated HRTFs. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00105">105</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00111">111</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -597,7 +597,7 @@ Data Fields</h2></td></tr>
 
 <p>N_hrtf_vbap_gtable x 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00099">99</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00105">105</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -615,7 +615,7 @@ Data Fields</h2></td></tr>
 
 <p>N_hrtf_vbap_gtable x 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00098">98</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00104">104</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -633,7 +633,7 @@ Data Fields</h2></td></tr>
 
 <p>[0] azimuth, and [1] elevation grid resolution, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00096">96</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00102">102</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -651,7 +651,7 @@ Data Fields</h2></td></tr>
 
 <p>afSTFT handle </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00082">82</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00088">88</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -669,7 +669,7 @@ Data Fields</h2></td></tr>
 
 <p>time-domain input frame; <a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d" title="Maximum number of input channels supported.">MAX_NUM_INPUTS</a> x <a class="el" href="binauraliser__internal_8h.html#acfb8ae0edd8b754289a2a0faa1947100" title="Framesize, in time-domain samples.">BINAURALISER_FRAME_SIZE</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00076">76</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00082">82</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -687,25 +687,25 @@ Data Fields</h2></td></tr>
 
 <p>time-frequency domain input frame; <a class="el" href="ambi__bin__internal_8h.html#a8b686c1291e75b81f91064272c45aed5" title="Number of frequency bands.">HYBRID_BANDS</a> x <a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d" title="Maximum number of input channels supported.">MAX_NUM_INPUTS</a> x <a class="el" href="ambi__bin__internal_8h.html#a22876a93fc8b37d1750bb2e1ac0285fc" title="Number of STFT timeslots.">TIME_SLOTS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00078">78</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00084">84</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="af51c656ba6df7215a920efa1828ca7a1" name="af51c656ba6df7215a920efa1828ca7a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af51c656ba6df7215a920efa1828ca7a1">&#9670;&#160;</a></span>interpMode</h2>
+<a id="a72aa67ff41eb59020fcb47a867183103" name="a72aa67ff41eb59020fcb47a867183103"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a72aa67ff41eb59020fcb47a867183103">&#9670;&#160;</a></span>interpMode</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">INTERP_MODES</a> binauraliser_data::interpMode</td>
+          <td class="memname"><a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8">_Atomic_INTERP_MODES</a> binauraliser_data::interpMode</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>see <a class="el" href="binauraliser_8h.html#a5421d617c5a14c37e48ec2a679436ec8" title="Available interpolation modes.">INTERP_MODES</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00126">126</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00132">132</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -723,25 +723,25 @@ Data Fields</h2></td></tr>
 
 <p>interaural-time differences for each HRIR (in seconds); nBands x 1 </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00102">102</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00108">108</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a484d2463f3b1f2c84f5afcdcc4755c4a" name="a484d2463f3b1f2c84f5afcdcc4755c4a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a484d2463f3b1f2c84f5afcdcc4755c4a">&#9670;&#160;</a></span>N_hrir_dirs</h2>
+<a id="ae3da26459ec8e91c0e310c59b64fc517" name="ae3da26459ec8e91c0e310c59b64fc517"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae3da26459ec8e91c0e310c59b64fc517">&#9670;&#160;</a></span>N_hrir_dirs</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::N_hrir_dirs</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::N_hrir_dirs</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>number of HRIR directions in the current sofa file </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00088">88</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00094">94</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -759,43 +759,43 @@ Data Fields</h2></td></tr>
 
 <p>Number of interpolation weights/directions. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00097">97</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00103">103</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ad112a563e576d341702252b07a22763b" name="ad112a563e576d341702252b07a22763b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad112a563e576d341702252b07a22763b">&#9670;&#160;</a></span>new_nSources</h2>
+<a id="afc3b33cbe9d219cfd924987195e299e8" name="afc3b33cbe9d219cfd924987195e299e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc3b33cbe9d219cfd924987195e299e8">&#9670;&#160;</a></span>new_nSources</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::new_nSources</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::new_nSources</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>New number of input/source signals (current value will be replaced by this after next re-init) </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00121">121</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00127">127</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a408d8def8f2ca0065d46d8854f4a3186" name="a408d8def8f2ca0065d46d8854f4a3186"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a408d8def8f2ca0065d46d8854f4a3186">&#9670;&#160;</a></span>nSources</h2>
+<a id="aff67ad0017c339b097c2be8e5a1b672d" name="aff67ad0017c339b097c2be8e5a1b672d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff67ad0017c339b097c2be8e5a1b672d">&#9670;&#160;</a></span>nSources</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::nSources</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::nSources</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Current number of input/source signals. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00124">124</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00130">130</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -813,7 +813,7 @@ Data Fields</h2></td></tr>
 
 <p>Number of triangles in the convex hull of the spherical arrangement of HRIR directions/points. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00120">120</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00126">126</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -831,7 +831,7 @@ Data Fields</h2></td></tr>
 
 <p>time-domain output frame; <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x <a class="el" href="binauraliser__internal_8h.html#acfb8ae0edd8b754289a2a0faa1947100" title="Framesize, in time-domain samples.">BINAURALISER_FRAME_SIZE</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00077">77</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00083">83</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -849,61 +849,61 @@ Data Fields</h2></td></tr>
 
 <p>time-frequency domain input frame; <a class="el" href="ambi__bin__internal_8h.html#a8b686c1291e75b81f91064272c45aed5" title="Number of frequency bands.">HYBRID_BANDS</a> x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x <a class="el" href="ambi__bin__internal_8h.html#a22876a93fc8b37d1750bb2e1ac0285fc" title="Number of STFT timeslots.">TIME_SLOTS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00079">79</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00085">85</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a7cbf1fbf608e5361cef8a0baf42daa2f" name="a7cbf1fbf608e5361cef8a0baf42daa2f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7cbf1fbf608e5361cef8a0baf42daa2f">&#9670;&#160;</a></span>pitch</h2>
+<a id="aaf5ede825e60096dcb56519db98042a6" name="aaf5ede825e60096dcb56519db98042a6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf5ede825e60096dcb56519db98042a6">&#9670;&#160;</a></span>pitch</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float binauraliser_data::pitch</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::pitch</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>pitch (Euler) rotation angle, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00132">132</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00138">138</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a1d9e97dcdcbd08ab1b544bfd84fbf46b" name="a1d9e97dcdcbd08ab1b544bfd84fbf46b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d9e97dcdcbd08ab1b544bfd84fbf46b">&#9670;&#160;</a></span>procStatus</h2>
+<a id="ad61cbe144d9ec97d17cec0070a85bc23" name="ad61cbe144d9ec97d17cec0070a85bc23"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad61cbe144d9ec97d17cec0070a85bc23">&#9670;&#160;</a></span>procStatus</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec">PROC_STATUS</a> binauraliser_data::procStatus</td>
+          <td class="memname"><a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec">_Atomic_PROC_STATUS</a> binauraliser_data::procStatus</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>see <a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec" title="Current status of the processing loop.">PROC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00111">111</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00117">117</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a61e92f41aaa58c0e8bc6f333e5d7bc31" name="a61e92f41aaa58c0e8bc6f333e5d7bc31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a61e92f41aaa58c0e8bc6f333e5d7bc31">&#9670;&#160;</a></span>progressBar0_1</h2>
+<a id="ada418fc7994d257a7d9f11fe9b124818" name="ada418fc7994d257a7d9f11fe9b124818"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada418fc7994d257a7d9f11fe9b124818">&#9670;&#160;</a></span>progressBar0_1</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float binauraliser_data::progressBar0_1</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::progressBar0_1</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Current (re)initialisation progress, between [0..1]. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00109">109</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00115">115</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -921,79 +921,79 @@ Data Fields</h2></td></tr>
 
 <p>Current (re)initialisation step, string. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00110">110</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00116">116</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ae00dde27d04f7e101f729a93a6bb5442" name="ae00dde27d04f7e101f729a93a6bb5442"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae00dde27d04f7e101f729a93a6bb5442">&#9670;&#160;</a></span>recalc_hrtf_interpFLAG</h2>
+<a id="ac42f48c3e2a25941f1929842da93c3a5" name="ac42f48c3e2a25941f1929842da93c3a5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac42f48c3e2a25941f1929842da93c3a5">&#9670;&#160;</a></span>recalc_hrtf_interpFLAG</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::recalc_hrtf_interpFLAG[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::recalc_hrtf_interpFLAG[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>1: re-calculate/interpolate the HRTF, 0: do not </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00112">112</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00118">118</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a2c9f0204218ebf7b24a6837ee1106dcb" name="a2c9f0204218ebf7b24a6837ee1106dcb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c9f0204218ebf7b24a6837ee1106dcb">&#9670;&#160;</a></span>recalc_M_rotFLAG</h2>
+<a id="a25842061b850760a3b58aa4a57769571" name="a25842061b850760a3b58aa4a57769571"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25842061b850760a3b58aa4a57769571">&#9670;&#160;</a></span>recalc_M_rotFLAG</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::recalc_M_rotFLAG</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::recalc_M_rotFLAG</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>1: re-calculate the rotation matrix, 0: do not </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00114">114</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00120">120</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a7567dbba2db662ff57a49446ade15e60" name="a7567dbba2db662ff57a49446ade15e60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7567dbba2db662ff57a49446ade15e60">&#9670;&#160;</a></span>reInitHRTFsAndGainTables</h2>
+<a id="a1729f89c41e038766fbdf93abab0d9cc" name="a1729f89c41e038766fbdf93abab0d9cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1729f89c41e038766fbdf93abab0d9cc">&#9670;&#160;</a></span>reInitHRTFsAndGainTables</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::reInitHRTFsAndGainTables</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::reInitHRTFsAndGainTables</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>1: reinitialise the HRTFs and interpolation tables, 0: do not </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00113">113</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00119">119</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a1d21774ab70a136d207afe79b0aee6ed" name="a1d21774ab70a136d207afe79b0aee6ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1d21774ab70a136d207afe79b0aee6ed">&#9670;&#160;</a></span>roll</h2>
+<a id="ab75efbe97e0437e816f4464f886736b3" name="ab75efbe97e0437e816f4464f886736b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab75efbe97e0437e816f4464f886736b3">&#9670;&#160;</a></span>roll</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float binauraliser_data::roll</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::roll</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>roll (Euler) rotation angle, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00131">131</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00137">137</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1011,25 +1011,25 @@ Data Fields</h2></td></tr>
 
 <p>absolute/relevative file path for a sofa file </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00085">85</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00091">91</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ac46547229c06decab219cc382814c2a9" name="ac46547229c06decab219cc382814c2a9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac46547229c06decab219cc382814c2a9">&#9670;&#160;</a></span>src_dirs_deg</h2>
+<a id="a7a5607751a663c71fb981433daf5261a" name="a7a5607751a663c71fb981433daf5261a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7a5607751a663c71fb981433daf5261a">&#9670;&#160;</a></span>src_dirs_deg</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float binauraliser_data::src_dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::src_dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Current source/panning directions, in degrees. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00125">125</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00131">131</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1047,7 +1047,7 @@ Data Fields</h2></td></tr>
 
 <p>Intermediate rotated source directions, in degrees. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00117">117</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00123">123</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1065,7 +1065,7 @@ Data Fields</h2></td></tr>
 
 <p>Intermediate rotated source directions, as unit-length Cartesian coordinates. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00118">118</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00124">124</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1083,61 +1083,61 @@ Data Fields</h2></td></tr>
 
 <p>Intermediate source directions, as unit-length Cartesian coordinates. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00119">119</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00125">125</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a8cb8e387ab468efb4374ab148dd45f7b" name="a8cb8e387ab468efb4374ab148dd45f7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8cb8e387ab468efb4374ab148dd45f7b">&#9670;&#160;</a></span>src_gains</h2>
+<a id="a2493ec02642fbd723205f775c7b31bca" name="a2493ec02642fbd723205f775c7b31bca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2493ec02642fbd723205f775c7b31bca">&#9670;&#160;</a></span>src_gains</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float binauraliser_data::src_gains[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::src_gains[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>]</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>Gains applied per source. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00137">137</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00143">143</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ae6bd299ac45fdaac254b04b8bc27656f" name="ae6bd299ac45fdaac254b04b8bc27656f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae6bd299ac45fdaac254b04b8bc27656f">&#9670;&#160;</a></span>useDefaultHRIRsFLAG</h2>
+<a id="aea81d504a07d9bea12c7129f6d426f16" name="aea81d504a07d9bea12c7129f6d426f16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea81d504a07d9bea12c7129f6d426f16">&#9670;&#160;</a></span>useDefaultHRIRsFLAG</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::useDefaultHRIRsFLAG</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::useDefaultHRIRsFLAG</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>1: use default HRIRs in database, 0: use those from SOFA file </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00127">127</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00133">133</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="a81cee1c58a9c79169bde814af57753ac" name="a81cee1c58a9c79169bde814af57753ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81cee1c58a9c79169bde814af57753ac">&#9670;&#160;</a></span>useRollPitchYawFlag</h2>
+<a id="a4985da1c74b4d6f05702bf7ea30cbc08" name="a4985da1c74b4d6f05702bf7ea30cbc08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4985da1c74b4d6f05702bf7ea30cbc08">&#9670;&#160;</a></span>useRollPitchYawFlag</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int binauraliser_data::useRollPitchYawFlag</td>
+          <td class="memname">_Atomic_INT32 binauraliser_data::useRollPitchYawFlag</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>rotation order flag, 1: r-p-y, 0: y-p-r </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00136">136</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00142">142</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1153,27 +1153,27 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Integration weights for the HRIR measurement grid. </p>
+<p>Integration weights for the HRIR measurement grid; N_hrir_dirs x 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00093">93</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00099">99</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
-<a id="ade5db229760f12e02eb4e9dd42de2f9a" name="ade5db229760f12e02eb4e9dd42de2f9a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade5db229760f12e02eb4e9dd42de2f9a">&#9670;&#160;</a></span>yaw</h2>
+<a id="a210f3c2a34f939a4712a893a6b07aa16" name="a210f3c2a34f939a4712a893a6b07aa16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a210f3c2a34f939a4712a893a6b07aa16">&#9670;&#160;</a></span>yaw</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">float binauraliser_data::yaw</td>
+          <td class="memname">_Atomic_FLOAT32 binauraliser_data::yaw</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p>yaw (Euler) rotation angle, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00130">130</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8h_source.html#l00136">136</a> of file <a class="el" href="binauraliser__internal_8h_source.html">binauraliser_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1187,7 +1187,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structbinauraliser__data.html">binauraliser_data</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

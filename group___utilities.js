@@ -33,11 +33,11 @@ var group___utilities =
     [ "saf_utility_veclib.c", "saf__utility__veclib_8c.html", null ],
     [ "saf_utility_veclib.h", "saf__utility__veclib_8h.html", null ],
     [ "quaternion_data", "structquaternion__data.html", [
-      [ "Q", "structquaternion__data.html#a09165a780c141af04de3ff5946839e68", null ],
-      [ "w", "structquaternion__data.html#af1832fdcc56fb0092abc715d7c670153", null ],
-      [ "x", "structquaternion__data.html#ac37b24ef97b8afb805157c26261d7ed3", null ],
-      [ "y", "structquaternion__data.html#aec412f5f83809222a8a6ba17974ebe1c", null ],
-      [ "z", "structquaternion__data.html#ac3b39de0ba9f49c25253e30c1ed7d296", null ]
+      [ "Q", "structquaternion__data.html#aebcc5665862702fdfda0cbf5e14f67d3", null ],
+      [ "w", "structquaternion__data.html#ab0eea8c0f99e050b0ae2ca88f7e4eb73", null ],
+      [ "x", "structquaternion__data.html#a46dd71678d13fadad439350a44a817fe", null ],
+      [ "y", "structquaternion__data.html#a2d1a23ffdb78a5f5b31b1bdafa436aed", null ],
+      [ "z", "structquaternion__data.html#a2a21630c2f1f8b73ca419c79730f87fa", null ]
     ] ],
     [ "voronoi_data", "structvoronoi__data.html", [
       [ "faces", "structvoronoi__data.html#a895d5272485efe4854f3ca1908494af4", null ],

@@ -15,6 +15,6 @@ var array2sh__internal_8h =
     [ "array2sh_createArray", "array2sh__internal_8h.html#affb579f24789aa7f3eb44bc549daadc5", null ],
     [ "array2sh_destroyArray", "array2sh__internal_8h.html#ae04f72b6e382349c767a75e7d89cc323", null ],
     [ "array2sh_evaluateSHTfilters", "array2sh__internal_8h.html#a4447b78abeb7725a873e535bf7485e78", null ],
-    [ "array2sh_initArray", "array2sh__internal_8h.html#a5c51fe82783dfab0a17259869ea45edd", null ],
+    [ "array2sh_initArray", "array2sh__internal_8h.html#a04c302cf1f614c133d0885ef92c0f01c", null ],
     [ "array2sh_initTFT", "array2sh__internal_8h.html#a5bbd0e88e0951bdc6454bc69a4033abc", null ]
 ];

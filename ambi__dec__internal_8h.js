@@ -11,5 +11,5 @@ var ambi__dec__internal_8h =
     [ "TIME_SLOTS", "ambi__dec__internal_8h.html#a22876a93fc8b37d1750bb2e1ac0285fc", null ],
     [ "ambi_dec_interpHRTFs", "ambi__dec__internal_8h.html#a9853b9a53dbac9fbe01b54fc06af5d17", null ],
     [ "ambi_dec_setCodecStatus", "ambi__dec__internal_8h.html#a326fe6ca4fa61f4d9fdc2e656c21c76e", null ],
-    [ "loadLoudspeakerArrayPreset", "ambi__dec__internal_8h.html#a2d1624fe9f14e384194c4e4dfb950a9f", null ]
+    [ "loadLoudspeakerArrayPreset", "ambi__dec__internal_8h.html#a306478f332e3babca03911db301a03b9", null ]
 ];

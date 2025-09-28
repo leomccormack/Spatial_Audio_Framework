@@ -158,12 +158,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a935ac144d0930c4a8f21025e613fcc7c" id="r_a935ac144d0930c4a8f21025e613fcc7c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a935ac144d0930c4a8f21025e613fcc7c">panner_initTFT</a> (void *const hPan)</td></tr>
 <tr class="memdesc:a935ac144d0930c4a8f21025e613fcc7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialise the filterbank used by panner.  <br /></td></tr>
 <tr class="separator:a935ac144d0930c4a8f21025e613fcc7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aebbd14dcb3b320eb6feb1e44a1f64f03" id="r_aebbd14dcb3b320eb6feb1e44a1f64f03"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aebbd14dcb3b320eb6feb1e44a1f64f03">panner_loadSourcePreset</a> (<a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset, float dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], int *newNCH, int *nDims)</td></tr>
-<tr class="memdesc:aebbd14dcb3b320eb6feb1e44a1f64f03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads source directions from preset.  <br /></td></tr>
-<tr class="separator:aebbd14dcb3b320eb6feb1e44a1f64f03"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fd67ee931340e58aed858081fdbd096" id="r_a2fd67ee931340e58aed858081fdbd096"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2fd67ee931340e58aed858081fdbd096">panner_loadLoudspeakerPreset</a> (<a class="el" href="__common_8h.html#a12a56921e43594c15c86a9fa62b023f7">LOUDSPEAKER_ARRAY_PRESETS</a> preset, float dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], int *newNCH, int *nDims)</td></tr>
-<tr class="memdesc:a2fd67ee931340e58aed858081fdbd096"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads source/loudspeaker directions from preset.  <br /></td></tr>
-<tr class="separator:a2fd67ee931340e58aed858081fdbd096"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a957720ca46772f2d0bea964575341b9f" id="r_a957720ca46772f2d0bea964575341b9f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a957720ca46772f2d0bea964575341b9f">panner_loadSourcePreset</a> (<a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], _Atomic_INT32 *newNCH, int *nDims)</td></tr>
+<tr class="memdesc:a957720ca46772f2d0bea964575341b9f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads source directions from preset.  <br /></td></tr>
+<tr class="separator:a957720ca46772f2d0bea964575341b9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa83198cd52d21a85aee9f1836209970d" id="r_aa83198cd52d21a85aee9f1836209970d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa83198cd52d21a85aee9f1836209970d">panner_loadLoudspeakerPreset</a> (<a class="el" href="__common_8h.html#a12a56921e43594c15c86a9fa62b023f7">LOUDSPEAKER_ARRAY_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], _Atomic_INT32 *newNCH, int *nDims)</td></tr>
+<tr class="memdesc:aa83198cd52d21a85aee9f1836209970d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads source/loudspeaker directions from preset.  <br /></td></tr>
+<tr class="separator:aa83198cd52d21a85aee9f1836209970d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A frequency-dependent 3D panner based on the Vector-base Amplitude Panning (VBAP) method [1], with an optional spread control [2]. </p>
@@ -311,12 +311,12 @@ Functions</h2></td></tr>
 <p>Initialise the filterbank used by panner. </p>
 <dl class="section note"><dt>Note</dt><dd>Call this function before <a class="el" href="#a05c753c1c135be897e9dfb125dc921a5" title="Intialises the VBAP gain table used for panning.">panner_initGainTables()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00099">99</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00102">102</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
-<a id="a2fd67ee931340e58aed858081fdbd096" name="a2fd67ee931340e58aed858081fdbd096"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2fd67ee931340e58aed858081fdbd096">&#9670;&#160;</a></span>panner_loadLoudspeakerPreset()</h2>
+<a id="aa83198cd52d21a85aee9f1836209970d" name="aa83198cd52d21a85aee9f1836209970d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa83198cd52d21a85aee9f1836209970d">&#9670;&#160;</a></span>panner_loadLoudspeakerPreset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -329,12 +329,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_INPUTS][2], </td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_INPUTS][2], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>newNCH</em></span>, </td>
+          <td class="paramtype">_Atomic_INT32 *</td>          <td class="paramname"><span class="paramname"><em>newNCH</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -355,12 +355,12 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00326">326</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00329">329</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
-<a id="aebbd14dcb3b320eb6feb1e44a1f64f03" name="aebbd14dcb3b320eb6feb1e44a1f64f03"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aebbd14dcb3b320eb6feb1e44a1f64f03">&#9670;&#160;</a></span>panner_loadSourcePreset()</h2>
+<a id="a957720ca46772f2d0bea964575341b9f" name="a957720ca46772f2d0bea964575341b9f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a957720ca46772f2d0bea964575341b9f">&#9670;&#160;</a></span>panner_loadSourcePreset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -373,12 +373,12 @@ Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">float</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_INPUTS][2], </td>
+          <td class="paramtype">_Atomic_FLOAT32</td>          <td class="paramname"><span class="paramname"><em>dirs_deg</em></span>[MAX_NUM_INPUTS][2], </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int *</td>          <td class="paramname"><span class="paramname"><em>newNCH</em></span>, </td>
+          <td class="paramtype">_Atomic_INT32 *</td>          <td class="paramname"><span class="paramname"><em>newNCH</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -399,7 +399,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00116">116</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00119">119</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
@@ -435,7 +435,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_10e9b9de17508c3d5c361b5c9613a609.html">panner</a></li><li class="navelem"><a class="el" href="panner__internal_8h.html">panner_internal.h</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:20 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:51 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

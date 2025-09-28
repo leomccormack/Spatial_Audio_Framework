@@ -147,47 +147,47 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a0afa932aefafc832eda740e2227e30f1" id="r_a0afa932aefafc832eda740e2227e30f1"><td class="memItemLeft" align="right" valign="top">float *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0afa932aefafc832eda740e2227e30f1">filters</a></td></tr>
 <tr class="memdesc:a0afa932aefafc832eda740e2227e30f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the matrix of filters; FLAT: nOutputChannels x nInputChannels x filter_length  <br /></td></tr>
 <tr class="separator:a0afa932aefafc832eda740e2227e30f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9546c6b25928f7c15a9445a229c9ba13" id="r_a9546c6b25928f7c15a9445a229c9ba13"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9546c6b25928f7c15a9445a229c9ba13">nfilters</a></td></tr>
-<tr class="memdesc:a9546c6b25928f7c15a9445a229c9ba13"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of filters (nOutputChannels x nInputChannels)  <br /></td></tr>
-<tr class="separator:a9546c6b25928f7c15a9445a229c9ba13"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a70f96b0d00fbf0a3cf0ed24cc52f58c1" id="r_a70f96b0d00fbf0a3cf0ed24cc52f58c1"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a70f96b0d00fbf0a3cf0ed24cc52f58c1">nfilters</a></td></tr>
+<tr class="memdesc:a70f96b0d00fbf0a3cf0ed24cc52f58c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">the number of filters (nOutputChannels x nInputChannels)  <br /></td></tr>
+<tr class="separator:a70f96b0d00fbf0a3cf0ed24cc52f58c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1aa77fd42eedf000ae5114278f9adb96" id="r_a1aa77fd42eedf000ae5114278f9adb96"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1aa77fd42eedf000ae5114278f9adb96">input_wav_length</a></td></tr>
 <tr class="memdesc:a1aa77fd42eedf000ae5114278f9adb96"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the wav files loaded in samples (inputs are concatenated)  <br /></td></tr>
 <tr class="separator:a1aa77fd42eedf000ae5114278f9adb96"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4a013464916120442cc82fc0b953532" id="r_ad4a013464916120442cc82fc0b953532"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad4a013464916120442cc82fc0b953532">filter_length</a></td></tr>
-<tr class="memdesc:ad4a013464916120442cc82fc0b953532"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the filters (input_wav_length/nInputChannels)  <br /></td></tr>
-<tr class="separator:ad4a013464916120442cc82fc0b953532"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad09855fc2430dd1f380c5512a5211cfb" id="r_ad09855fc2430dd1f380c5512a5211cfb"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad09855fc2430dd1f380c5512a5211cfb">filter_length</a></td></tr>
+<tr class="memdesc:ad09855fc2430dd1f380c5512a5211cfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the filters (input_wav_length/nInputChannels)  <br /></td></tr>
+<tr class="separator:ad09855fc2430dd1f380c5512a5211cfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae274562a3a71b9d9a85c674dbf960bb3" id="r_ae274562a3a71b9d9a85c674dbf960bb3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae274562a3a71b9d9a85c674dbf960bb3">filter_fs</a></td></tr>
 <tr class="memdesc:ae274562a3a71b9d9a85c674dbf960bb3"><td class="mdescLeft">&#160;</td><td class="mdescRight">current samplerate of the filters  <br /></td></tr>
 <tr class="separator:ae274562a3a71b9d9a85c674dbf960bb3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e4eff37cdac96e0d01fe1a546aa06ce" id="r_a5e4eff37cdac96e0d01fe1a546aa06ce"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e4eff37cdac96e0d01fe1a546aa06ce">host_fs</a></td></tr>
 <tr class="memdesc:a5e4eff37cdac96e0d01fe1a546aa06ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">current samplerate of the host  <br /></td></tr>
 <tr class="separator:a5e4eff37cdac96e0d01fe1a546aa06ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac94be364c170114f5a4533664ee49c28" id="r_ac94be364c170114f5a4533664ee49c28"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac94be364c170114f5a4533664ee49c28">reInitFilters</a></td></tr>
-<tr class="memdesc:ac94be364c170114f5a4533664ee49c28"><td class="mdescLeft">&#160;</td><td class="mdescRight">FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress.  <br /></td></tr>
-<tr class="separator:ac94be364c170114f5a4533664ee49c28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a192e413c52476af09b72c83a5338d1af" id="r_a192e413c52476af09b72c83a5338d1af"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a192e413c52476af09b72c83a5338d1af">nOutputChannels</a></td></tr>
-<tr class="memdesc:a192e413c52476af09b72c83a5338d1af"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of output channels (same as the number of channels in the loaded wav)  <br /></td></tr>
-<tr class="separator:a192e413c52476af09b72c83a5338d1af"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb95f91adf8c7a22b02e98d061292ff3" id="r_adb95f91adf8c7a22b02e98d061292ff3"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adb95f91adf8c7a22b02e98d061292ff3">nInputChannels</a></td></tr>
-<tr class="memdesc:adb95f91adf8c7a22b02e98d061292ff3"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of input channels  <br /></td></tr>
-<tr class="separator:adb95f91adf8c7a22b02e98d061292ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a821de65f99e3116534f77249a7a05c6e" id="r_a821de65f99e3116534f77249a7a05c6e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a821de65f99e3116534f77249a7a05c6e">enablePartitionedConv</a></td></tr>
-<tr class="memdesc:a821de65f99e3116534f77249a7a05c6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">0: disabled, 1: enabled  <br /></td></tr>
-<tr class="separator:a821de65f99e3116534f77249a7a05c6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4d93afbacc2049f52c2fc083cab9750" id="r_aa4d93afbacc2049f52c2fc083cab9750"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa4d93afbacc2049f52c2fc083cab9750">reInitFilters</a></td></tr>
+<tr class="memdesc:aa4d93afbacc2049f52c2fc083cab9750"><td class="mdescLeft">&#160;</td><td class="mdescRight">FLAG: 0: do not reinit, 1: reinit, 2: reinit in progress.  <br /></td></tr>
+<tr class="separator:aa4d93afbacc2049f52c2fc083cab9750"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c8bffeae7f6a70a4aa704234cdea1ec" id="r_a1c8bffeae7f6a70a4aa704234cdea1ec"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c8bffeae7f6a70a4aa704234cdea1ec">nOutputChannels</a></td></tr>
+<tr class="memdesc:a1c8bffeae7f6a70a4aa704234cdea1ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of output channels (same as the number of channels in the loaded wav)  <br /></td></tr>
+<tr class="separator:a1c8bffeae7f6a70a4aa704234cdea1ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac29909708083e00e94363efbdabbe149" id="r_ac29909708083e00e94363efbdabbe149"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac29909708083e00e94363efbdabbe149">nInputChannels</a></td></tr>
+<tr class="memdesc:ac29909708083e00e94363efbdabbe149"><td class="mdescLeft">&#160;</td><td class="mdescRight">number of input channels  <br /></td></tr>
+<tr class="separator:ac29909708083e00e94363efbdabbe149"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a995c4276fcc1f3cd12ea1800ad811916" id="r_a995c4276fcc1f3cd12ea1800ad811916"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a995c4276fcc1f3cd12ea1800ad811916">enablePartitionedConv</a></td></tr>
+<tr class="memdesc:a995c4276fcc1f3cd12ea1800ad811916"><td class="mdescLeft">&#160;</td><td class="mdescRight">0: disabled, 1: enabled  <br /></td></tr>
+<tr class="separator:a995c4276fcc1f3cd12ea1800ad811916"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Main structure for matrixconv. </p>
 
 <p class="definition">Definition at line <a class="el" href="matrixconv__internal_8h_source.html#l00049">49</a> of file <a class="el" href="matrixconv__internal_8h_source.html">matrixconv_internal.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
-<a id="a821de65f99e3116534f77249a7a05c6e" name="a821de65f99e3116534f77249a7a05c6e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a821de65f99e3116534f77249a7a05c6e">&#9670;&#160;</a></span>enablePartitionedConv</h2>
+<a id="a995c4276fcc1f3cd12ea1800ad811916" name="a995c4276fcc1f3cd12ea1800ad811916"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a995c4276fcc1f3cd12ea1800ad811916">&#9670;&#160;</a></span>enablePartitionedConv</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int matrixconv_data::enablePartitionedConv</td>
+          <td class="memname">_Atomic_INT32 matrixconv_data::enablePartitionedConv</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -234,14 +234,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ad4a013464916120442cc82fc0b953532" name="ad4a013464916120442cc82fc0b953532"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4a013464916120442cc82fc0b953532">&#9670;&#160;</a></span>filter_length</h2>
+<a id="ad09855fc2430dd1f380c5512a5211cfb" name="ad09855fc2430dd1f380c5512a5211cfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad09855fc2430dd1f380c5512a5211cfb">&#9670;&#160;</a></span>filter_length</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int matrixconv_data::filter_length</td>
+          <td class="memname">_Atomic_INT32 matrixconv_data::filter_length</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -396,14 +396,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a9546c6b25928f7c15a9445a229c9ba13" name="a9546c6b25928f7c15a9445a229c9ba13"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9546c6b25928f7c15a9445a229c9ba13">&#9670;&#160;</a></span>nfilters</h2>
+<a id="a70f96b0d00fbf0a3cf0ed24cc52f58c1" name="a70f96b0d00fbf0a3cf0ed24cc52f58c1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70f96b0d00fbf0a3cf0ed24cc52f58c1">&#9670;&#160;</a></span>nfilters</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int matrixconv_data::nfilters</td>
+          <td class="memname">_Atomic_INT32 matrixconv_data::nfilters</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -414,14 +414,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="adb95f91adf8c7a22b02e98d061292ff3" name="adb95f91adf8c7a22b02e98d061292ff3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb95f91adf8c7a22b02e98d061292ff3">&#9670;&#160;</a></span>nInputChannels</h2>
+<a id="ac29909708083e00e94363efbdabbe149" name="ac29909708083e00e94363efbdabbe149"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac29909708083e00e94363efbdabbe149">&#9670;&#160;</a></span>nInputChannels</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int matrixconv_data::nInputChannels</td>
+          <td class="memname">_Atomic_INT32 matrixconv_data::nInputChannels</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -432,14 +432,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="a192e413c52476af09b72c83a5338d1af" name="a192e413c52476af09b72c83a5338d1af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a192e413c52476af09b72c83a5338d1af">&#9670;&#160;</a></span>nOutputChannels</h2>
+<a id="a1c8bffeae7f6a70a4aa704234cdea1ec" name="a1c8bffeae7f6a70a4aa704234cdea1ec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c8bffeae7f6a70a4aa704234cdea1ec">&#9670;&#160;</a></span>nOutputChannels</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int matrixconv_data::nOutputChannels</td>
+          <td class="memname">_Atomic_INT32 matrixconv_data::nOutputChannels</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -486,14 +486,14 @@ Data Fields</h2></td></tr>
 
 </div>
 </div>
-<a id="ac94be364c170114f5a4533664ee49c28" name="ac94be364c170114f5a4533664ee49c28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac94be364c170114f5a4533664ee49c28">&#9670;&#160;</a></span>reInitFilters</h2>
+<a id="aa4d93afbacc2049f52c2fc083cab9750" name="aa4d93afbacc2049f52c2fc083cab9750"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa4d93afbacc2049f52c2fc083cab9750">&#9670;&#160;</a></span>reInitFilters</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int matrixconv_data::reInitFilters</td>
+          <td class="memname">_Atomic_INT32 matrixconv_data::reInitFilters</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -514,7 +514,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structmatrixconv__data.html">matrixconv_data</a></li>
-    <li class="footer">Generated on Sun Jul 13 2025 09:36:21 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sun Sep 28 2025 07:51:52 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

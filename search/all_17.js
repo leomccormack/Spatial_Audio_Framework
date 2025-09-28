@@ -1,7 +1,7 @@
 var searchData=
 [
   ['w_0',['W',['../structarray2sh__data.html#af55361b7317b6a0b7e6bcb058dee17cd',1,'array2sh_data::W'],['../structhades__analysis__data.html#a7699165eef03400d7dd19754375b1431',1,'hades_analysis_data::W'],['../structhades__synthesis__data.html#ab147cdee6cde8d9ab1d21a914548fd66',1,'hades_synthesis_data::W'],['../struct_m_c_s__data.html#a3c98571614b4a338966db244410a8537',1,'MCS_data::W']]],
-  ['w_1',['w',['../structdirass__codec_pars.html#a69cf3f451932f3ccef3d7aae9a42ebcf',1,'dirass_codecPars::w'],['../structquaternion__data.html#af1832fdcc56fb0092abc715d7c670153',1,'quaternion_data::w']]],
+  ['w_1',['w',['../structdirass__codec_pars.html#a69cf3f451932f3ccef3d7aae9a42ebcf',1,'dirass_codecPars::w'],['../structquaternion__data.html#ab0eea8c0f99e050b0ae2ca88f7e4eb73',1,'quaternion_data::w']]],
   ['w0_2',['W0',['../struct_m_c_s__data.html#aa9c16427de31bdaa7b55b8aad86b907e',1,'MCS_data::W0'],['../structtracker3d__data.html#a117ad702ac0226c06e68481b36650b61',1,'tracker3d_data::W0']]],
   ['w_5favg_5fcoeff_3',['W_avg_coeff',['../structtracker3d__config.html#af1c2cef508f119730a8d357feb1ce380',1,'tracker3d_config']]],
   ['w_5fdiffeq_4',['W_diffEQ',['../structarray2sh__data.html#a9da26cdbf2ce6d0b018f5dd42ac0a276',1,'array2sh_data']]],
@@ -13,7 +13,7 @@ var searchData=
   ['weight_5frigid_5fdipole_10',['WEIGHT_RIGID_DIPOLE',['../array2sh_8h.html#a8603b68eaa432f98f556a3592b8b15ffad9e8c8753ec4172a6ddc9ec5d3b3f469',1,'array2sh.h']]],
   ['weight_5frigid_5fomni_11',['WEIGHT_RIGID_OMNI',['../array2sh_8h.html#a8603b68eaa432f98f556a3592b8b15ffa45c7138bed7da47252c91d4ffcc44152',1,'array2sh.h']]],
   ['weights_12',['weights',['../structambi__bin__codec_pars.html#a4b2c63853bc5912c697977a75eb8262b',1,'ambi_bin_codecPars::weights'],['../structambi__dec__codec_pars.html#ad557eb895ea1766a3c0b68525e660d40',1,'ambi_dec_codecPars::weights'],['../structbinauraliser__data.html#a81b8fac03ca7b0b38023cbf4f6d245f4',1,'binauraliser_data::weights'],['../structbinauraliser_n_f__data.html#a7d68aa430451a759b4b11606848e4c41',1,'binauraliserNF_data::weights'],['../structspreader__data.html#ae558f376b7643dbfd3fffe352c41752d',1,'spreader_data::weights']]],
-  ['weighttype_13',['weightType',['../structarray2sh__array_pars.html#a694ac4eb0072db591f787507500fe1f7',1,'array2sh_arrayPars']]],
+  ['weighttype_13',['weightType',['../structarray2sh__array_pars.html#a340418e34236d74e9d96bc3f185bde90',1,'array2sh_arrayPars']]],
   ['widx_14',['wIdx',['../structims__scene__data.html#ac7ac40adcdce6a33d48b7dc713b1424c',1,'ims_scene_data']]],
   ['wigner_5f3j_15',['wigner_3j',['../saf__sh__internal_8c.html#afd8fe2b873871c49985b5924804bbc31',1,'wigner_3j(int j1, int j2, int j3, int m1, int m2, int m3):&#160;saf_sh_internal.c'],['../saf__sh__internal_8h.html#afd8fe2b873871c49985b5924804bbc31',1,'wigner_3j(int j1, int j2, int j3, int m1, int m2, int m3):&#160;saf_sh_internal.c']]],
   ['windowing_5ffunction_5fbartlett_16',['WINDOWING_FUNCTION_BARTLETT',['../group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a786290a882be585638a5ace1a6cad5e1',1,'saf_utility_filters.h']]],
