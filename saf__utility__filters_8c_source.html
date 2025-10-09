@@ -166,7 +166,7 @@ $(function(){initNavTree('saf__utility__filters_8c_source.html',''); initResizab
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            </div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a786290a882be585638a5ace1a6cad5e1">WINDOWING_FUNCTION_BARTLETT</a>:</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>            <span class="keywordflow">for</span>(i=0; i&lt;winlength; i++)</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                x[i] *= 1.0f - 2.0f * fabsf((<span class="keywordtype">float</span>)i-((<span class="keywordtype">float</span>)N/2.0f))/(float)N;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                x[i] *= 1.0f - 2.0f * (fabsf((<span class="keywordtype">float</span>)i-((<span class="keywordtype">float</span>)N/2.0f))/(<span class="keywordtype">float</span>)N);</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            </div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="keywordflow">case</span> <a class="code hl_enumvalue" href="group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a652e7e5cc836b353e4c1ab1d09ce570f">WINDOWING_FUNCTION_BLACKMAN</a>:</div>
@@ -1634,7 +1634,7 @@ $(function(){initNavTree('saf__utility__filters_8c_source.html',''); initResizab
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_644e041c3a6521da7b27eba0e4eb2b95.html">framework</a></li><li class="navelem"><a class="el" href="dir_56553b6b74e7f4a7717200a52c59b140.html">modules</a></li><li class="navelem"><a class="el" href="dir_ba0a5884162be49ca564693d469c3119.html">saf_utilities</a></li><li class="navelem"><a class="el" href="saf__utility__filters_8c.html">saf_utility_filters.c</a></li>
-    <li class="footer">Generated on Sun Sep 28 2025 07:51:50 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Thu Oct 9 2025 16:34:44 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
