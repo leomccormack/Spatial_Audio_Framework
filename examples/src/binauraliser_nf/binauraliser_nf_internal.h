@@ -69,6 +69,7 @@ typedef struct _binauraliserNF {
     float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
     float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
     _Atomic_FLOAT32 fs;              /**< Host sampling rate, in Hz */
+    int firstInit;                   /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
     void* hSTFT;                     /**< afSTFT handle */
     
@@ -125,6 +126,7 @@ typedef struct _binauraliserNF {
     _Atomic_INT32 bFlipRoll;                           /**< flag to flip the sign of the roll rotation angle */
     _Atomic_INT32 useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     _Atomic_FLOAT32 src_gains[MAX_NUM_INPUTS];         /**< Gains applied per source */
+
 
     /* End copied _binauraliser struct members. The following are unique to the _binauraliserNF struct */
 

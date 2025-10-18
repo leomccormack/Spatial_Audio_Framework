@@ -131,6 +131,9 @@ void test__saf_example_ambi_dec(void){
     ambi_dec_setOutputConfigPreset(hAmbi, LOUDSPEAKER_ARRAY_PRESET_22PX);
     ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 0/* low-freq decoder */);
     ambi_dec_setDecMethod(hAmbi, DECODING_METHOD_SAD, 1/* high-freq decoder */);
+    ambi_dec_init(hAmbi, fs); /* Should be called before calling "process"
+                               * Cannot be called while "process" is on-going */
+    
     ambi_dec_initCodec(hAmbi); /* Can be called whenever (thread-safe) */
     /* "initCodec" should be called after calling any of the "set" functions.
      * It should be noted that intialisations are only conducted if they are
@@ -138,9 +141,6 @@ void test__saf_example_ambi_dec(void){
      * thread is perfectly safe and viable. Also, if the intialisations take
      * longer than it takes to "process" the current block of samples, then the
      * output is simply muted/zeroed during this time. */
-
-    ambi_dec_init(hAmbi, fs); /* Should be called before calling "process"
-                               * Cannot be called while "process" is on-going */
 
     /* Define input mono signal */
     nSH = ORDER2NSH(order);

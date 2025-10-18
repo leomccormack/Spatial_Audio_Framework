@@ -73,6 +73,7 @@ typedef struct _pitch_shifter
     char* progressBarText;          /**< Current (re)initialisation step, string */
     _Atomic_PROC_STATUS procStatus; /**< see #PROC_STATUS */
     float sampleRate;               /**< Host sampling rate, in Hz */
+    int firstInit;                  /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     float inputFrame[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE];  /**< Current input frame */
     float outputFrame[MAX_NUM_CHANNELS][PITCH_SHIFTER_FRAME_SIZE]; /**< Current output frame */
     _Atomic_INT32 new_nChannels;    /**< (current value will be replaced by this after next re-init) */

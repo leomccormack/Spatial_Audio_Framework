@@ -71,6 +71,7 @@ void array2sh_create
     
     /* time-frequency transform + buffers */
     pData->fs = 48000.0f;
+    pData->firstInit = 1;
     pData->hSTFT = NULL;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_SENSORS, ARRAY2SH_FRAME_SIZE, sizeof(float));
     pData->SHframeTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, ARRAY2SH_FRAME_SIZE, sizeof(float));
@@ -153,10 +154,11 @@ void array2sh_init
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh); 
     
-    if(pData->fs != sampleRate){
+    if(pData->fs != sampleRate || pData->firstInit){
         pData->fs = sampleRate;
         pData->reinitSHTmatrixFLAG = 1;
         array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
+        pData->firstInit = 0;
     }
     afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, pData->freqVector);
     pData->freqVector[0] = pData->freqVector[1]/4.0f; /* avoids NaNs at DC */

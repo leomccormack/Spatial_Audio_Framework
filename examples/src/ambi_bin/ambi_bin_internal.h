@@ -122,7 +122,8 @@ typedef struct _ambi_bin_codecPars
 typedef struct _ambi_bin
 {
     /* audio buffers + afSTFT time-frequency transform handle */
-    _Atomic_INT32 fs;               /**< host sampling rate */ 
+    _Atomic_INT32 fs;               /**< host sampling rate */
+    int firstInit;                  /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     float** SHFrameTD;              /**< Input spherical harmonic (SH) signals in the time-domain; #MAX_NUM_SH_SIGNALS x #AMBI_BIN_FRAME_SIZE */
     float** binFrameTD;             /**< Output binaural signals in the time-domain; #NUM_EARS x #AMBI_BIN_FRAME_SIZE */
     float_complex*** SHframeTF;     /**< Input spherical harmonic (SH) signals in the time-frequency domain; #HYBRID_BANDS x #MAX_NUM_SH_SIGNALS x #TIME_SLOTS */

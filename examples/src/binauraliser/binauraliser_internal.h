@@ -84,6 +84,7 @@ typedef struct _binauraliser
     float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
     float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
     _Atomic_FLOAT32 fs;              /**< Host sampling rate, in Hz */
+    int firstInit;                   /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
     void* hSTFT;                     /**< afSTFT handle */
     

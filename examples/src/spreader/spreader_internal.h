@@ -86,6 +86,7 @@ typedef struct _spreader
     float_complex*** spreadframeTF;    /**< time-frequency domain spread frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
     float_complex*** outputframeTF;    /**< time-frequency domain output frame; #HYBRID_BANDS x #MAX_NUM_OUTPUTS x #TIME_SLOTS */
     int fs;                            /**< Host sampling rate, in Hz */
+    int firstInit;                     /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     float freqVector[HYBRID_BANDS];    /**< Frequency vector (filterbank centre frequencies) */
     void* hSTFT;                       /**< afSTFT handle */
 

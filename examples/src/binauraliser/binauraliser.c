@@ -59,6 +59,7 @@ void binauraliser_create
     /* time-frequency transform + buffers */
     pData->hSTFT = NULL;
     pData->fs = 48000.0f;
+    pData->firstInit = 1;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, BINAURALISER_FRAME_SIZE, sizeof(float));
     pData->outframeTD = (float**)malloc2d(NUM_EARS, BINAURALISER_FRAME_SIZE, sizeof(float));
     pData->inputframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_INPUTS, TIME_SLOTS, sizeof(float_complex));
@@ -144,10 +145,11 @@ void binauraliser_init
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    if(pData->fs != sampleRate){
+    if(pData->fs != sampleRate || pData->firstInit){
         pData->fs = sampleRate;
         pData->reInitHRTFsAndGainTables = 1;
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
+        pData->firstInit = 0;
     }
     if (pData->codecStatus == CODEC_STATUS_INITIALISED)
         afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);

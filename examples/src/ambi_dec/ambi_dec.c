@@ -74,7 +74,8 @@ void ambi_dec_create
     
     /* afSTFT stuff and audio buffers */
     pData->fs = 48000.0f;
-    pData->hSTFT = NULL; 
+    pData->firstInit = 1;
+    pData->hSTFT = NULL;
     pData->SHFrameTD = (float**)malloc2d(MAX_NUM_SH_SIGNALS, AMBI_DEC_FRAME_SIZE, sizeof(float));
     pData->outputFrameTD = (float**)malloc2d(SAF_MAX(MAX_NUM_LOUDSPEAKERS, NUM_EARS), AMBI_DEC_FRAME_SIZE, sizeof(float));
     pData->SHframeTF = (float_complex***)malloc3d(HYBRID_BANDS, MAX_NUM_SH_SIGNALS, TIME_SLOTS, sizeof(float_complex));
@@ -177,10 +178,11 @@ void ambi_dec_init
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
 
     /* define frequency vector */
-    if(pData->fs != sampleRate){
+    if(pData->fs != sampleRate || pData->firstInit){
         pData->fs = sampleRate;
         pData->reinit_hrtfsFLAG = 1;
         ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+        pData->firstInit = 0;
     }
     afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, pData->freqVector);
 }

@@ -148,6 +148,7 @@ typedef struct _array2sh
     _Atomic_FLOAT32 progressBar0_1;  /**< Current (re)initialisation progress, between [0..1] */
     char* progressBarText;           /**< Current (re)initialisation step, string */
     int fs;                          /**< sampling rate, hz */
+    int firstInit;                   /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     _Atomic_INT32 new_order;         /**< new encoding order (current value will be replaced by this after next re-init) */
 
     /* For diffuse-field equalisation */

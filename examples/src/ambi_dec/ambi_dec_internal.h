@@ -144,6 +144,7 @@ typedef struct _ambi_dec
     void* hSTFT;                         /**< afSTFT handle */
     int afSTFTdelay;                     /**< for host delay compensation */ 
     _Atomic_INT32 fs;                    /**< host sampling rate */
+    int firstInit;                       /**< flag, 1: `_init()` function has never been called, 0: `_init()` function has been called */
     float freqVector[HYBRID_BANDS];      /**< frequency vector for time-frequency transform, in Hz */
     
     /* our codec configuration */

@@ -55,6 +55,7 @@ void pitch_shifter_create
 
     /* set FIFO buffers */
     pData->sampleRate = 48000.0f;
+    pData->firstInit = 1;
     pData->FIFO_idx = 0;
     pData->inFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, PITCH_SHIFTER_FRAME_SIZE, sizeof(float));
     pData->outFIFO = (float**)calloc2d(MAX_NUM_CHANNELS, PITCH_SHIFTER_FRAME_SIZE, sizeof(float));
@@ -94,10 +95,11 @@ void pitch_shifter_init
 {
     pitch_shifter_data *pData = (pitch_shifter_data*)(hPS);
 
-    if(pData->sampleRate != (float)sampleRate){
+    if(pData->sampleRate != (float)sampleRate || pData->firstInit){
         pData->sampleRate = (float)sampleRate;
         pitch_shifter_setCodecStatus(hPS, CODEC_STATUS_NOT_INITIALISED);
-    } 
+        pData->firstInit = 0;
+    }
 }
 
 void pitch_shifter_initCodec

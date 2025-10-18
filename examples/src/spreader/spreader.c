@@ -51,6 +51,7 @@ void spreader_create
 
     /* time-frequency transform + buffers */
     pData->fs = 48000.0f;
+    pData->firstInit = 1;
     pData->hSTFT = NULL;
     pData->inputFrameTD = (float**)malloc2d(MAX_NUM_INPUTS, SPREADER_FRAME_SIZE, sizeof(float));
     pData->outframeTD = (float**)malloc2d(MAX_NUM_OUTPUTS, SPREADER_FRAME_SIZE, sizeof(float));
@@ -132,7 +133,7 @@ void spreader_destroy
             SAF_SLEEP(10);
         }
 
-    free(pData->sofa_filepath);
+        free(pData->sofa_filepath);
         
         /* free afSTFT and buffers */
         if(pData->hSTFT !=NULL)
@@ -201,9 +202,10 @@ void spreader_init
     spreader_data *pData = (spreader_data*)(hSpr);
     
     /* define frequency vector */
-    if(pData->fs != sampleRate){
+    if(pData->fs != sampleRate || pData->firstInit){
         pData->fs = sampleRate;
         spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED);
+        pData->firstInit = 0;
     }
     afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
 }

@@ -177,7 +177,7 @@ void binauraliserNF_destroy
 
 void binauraliserNF_init
 (
-      void * const hBin, int sampleRate
+    void * const hBin, int sampleRate
 )
 {
     binauraliser_init(hBin, sampleRate);
