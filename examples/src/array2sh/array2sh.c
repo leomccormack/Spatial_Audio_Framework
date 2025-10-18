@@ -153,7 +153,11 @@ void array2sh_init
 {
     array2sh_data *pData = (array2sh_data*)(hA2sh); 
     
-    pData->fs = sampleRate;
+    if(pData->fs != sampleRate){
+        pData->fs = sampleRate;
+        pData->reinitSHTmatrixFLAG = 1;
+        array2sh_setEvalStatus(hA2sh, EVAL_STATUS_NOT_EVALUATED);
+    }
     afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, pData->freqVector);
     pData->freqVector[0] = pData->freqVector[1]/4.0f; /* avoids NaNs at DC */
 }

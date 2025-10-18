@@ -69,8 +69,8 @@ void binauraliser_create
     pData->hrir_dirs_deg = NULL;
     pData->sofa_filepath = NULL;
     pData->weights = NULL;
-    pData->N_hrir_dirs = pData->hrir_loaded_len = pData->hrir_runtime_len = 0;
-    pData->hrir_loaded_fs = pData->hrir_runtime_fs = -1; /* unknown */
+    pData->N_hrir_dirs = pData->hrir_len = 0;
+    pData->hrir_orig_fs = __default_hrir_fs;
     
     /* vbap (amplitude normalised) */
     pData->hrtf_vbap_gtableIdx = NULL;
@@ -144,11 +144,13 @@ void binauraliser_init
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
-    if(pData->hrir_runtime_fs!=pData->fs){
+    if(pData->fs != sampleRate){
+        pData->fs = sampleRate;
         pData->reInitHRTFsAndGainTables = 1;
         binauraliser_setCodecStatus(hBin, CODEC_STATUS_NOT_INITIALISED);
     }
+    if (pData->codecStatus == CODEC_STATUS_INITIALISED)
+        afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
 
     /* defaults */
     pData->recalc_M_rotFLAG = 1;
@@ -563,13 +565,13 @@ float binauraliser_getHRIRElev_deg(void* const hBin, int index)
 int binauraliser_getHRIRlength(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->hrir_loaded_len;
+    return pData->hrir_len;
 }
 
 int binauraliser_getHRIRsamplerate(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    return pData->hrir_loaded_fs;
+    return pData->hrir_orig_fs;
 }
 
 int binauraliser_getUseDefaultHRIRsflag(void* const hBin)

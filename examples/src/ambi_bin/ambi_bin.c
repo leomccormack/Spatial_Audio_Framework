@@ -93,6 +93,7 @@ void ambi_bin_create
     pars->sofa_filepath = NULL;
     pars->hrirs = NULL;
     pars->hrir_dirs_deg = NULL;
+    pars->hrir_orig_fs = __default_hrir_fs;
     pars->itds_s = NULL;
     pars->hrtf_fb = NULL;
     pars->weights = NULL;
@@ -241,6 +242,25 @@ void ambi_bin_initCodec
             memcpy(pars->hrirs, (float*)__default_hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
             pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
             memcpy(pars->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+        }
+        
+        /* Resample HRIRs if needed */
+        pars->hrir_orig_fs = pars->hrir_fs;
+        if(pars->hrir_fs!=pData->fs){
+            strcpy(pData->progressBarText, "Resampling HRIRs");
+            pData->progressBar0_1 = 0.25f;
+            float* hrirs_resampled;
+            int hrir_length_resample;
+            resampleHRIRs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pData->fs, 1, &hrirs_resampled, &hrir_length_resample);
+            
+            /* Replace with resampled HRIRs */
+            pars->hrir_fs = pData->fs;
+            pars->hrir_len = hrir_length_resample;
+            pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            memcpy(pars->hrirs, hrirs_resampled, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            
+            /* Clean-up */
+            free(hrirs_resampled);
         }
  
         /* convert hrirs to filterbank coefficients */
@@ -826,7 +846,7 @@ int ambi_bin_getHRIRsamplerate(void* const hAmbi)
 {
     ambi_bin_data *pData = (ambi_bin_data*)(hAmbi);
     ambi_bin_codecPars* pars = pData->pars;
-    return pars->hrir_fs;
+    return pars->hrir_orig_fs;
 }
 
 int ambi_bin_getDAWsamplerate(void* const hAmbi)

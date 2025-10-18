@@ -84,12 +84,12 @@ void binauraliserNF_create /* FREQUENCY DOMAIN version */
     /* time-frequency transform + buffers */
     pData->hSTFT            = NULL;
     /* hrir data */
-    pData->hrirs            = NULL;
-    pData->hrir_dirs_deg    = NULL;
-    pData->sofa_filepath    = NULL;
-    pData->weights          = NULL;
-    pData->N_hrir_dirs      = pData->hrir_loaded_len = pData->hrir_runtime_len = 0;
-    pData->hrir_loaded_fs   = pData->hrir_runtime_fs = -1; /* unknown */
+    pData->hrirs = NULL;
+    pData->hrir_dirs_deg = NULL;
+    pData->sofa_filepath = NULL;
+    pData->weights = NULL;
+    pData->N_hrir_dirs = pData->hrir_len = 0;
+    pData->hrir_orig_fs = __default_hrir_fs;
 
     /* time domain buffers */
     pData->fs = 48000.0f;

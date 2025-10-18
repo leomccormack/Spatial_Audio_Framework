@@ -98,6 +98,7 @@ void ambi_dec_create
     }
     pars->sofa_filepath = NULL;
     pars->hrirs = NULL;
+    pars->hrir_orig_fs = __default_hrir_fs;
     pars->hrir_dirs_deg = NULL;
     pars->hrtf_vbap_gtableIdx = NULL;
     pars->hrtf_vbap_gtableComp = NULL;
@@ -176,9 +177,12 @@ void ambi_dec_init
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
 
     /* define frequency vector */
-    pData->fs = sampleRate;
-    if (pData->codecStatus == CODEC_STATUS_INITIALISED)
-        afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, pData->freqVector);
+    if(pData->fs != sampleRate){
+        pData->fs = sampleRate;
+        pData->reinit_hrtfsFLAG = 1;
+        ambi_dec_setCodecStatus(hAmbi, CODEC_STATUS_NOT_INITIALISED);
+    }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)pData->fs, HYBRID_BANDS, pData->freqVector);
 }
 
 void ambi_dec_initCodec
@@ -400,6 +404,25 @@ void ambi_dec_initCodec
             memcpy(pars->hrirs, (float*)__default_hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
             pars->hrir_dirs_deg = realloc1d(pars->hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
             memcpy(pars->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pars->N_hrir_dirs*2*sizeof(float));
+        }
+        
+        /* Resample HRIRs if needed */
+        pars->hrir_orig_fs = pars->hrir_fs;
+        if(pars->hrir_fs!=pData->fs){
+            strcpy(pData->progressBarText, "Resampling HRIRs");
+            pData->progressBar0_1 = 0.6f;
+            float* hrirs_resampled;
+            int hrir_length_resample;
+            resampleHRIRs(pars->hrirs, pars->N_hrir_dirs, pars->hrir_len, pars->hrir_fs, pData->fs, 1, &hrirs_resampled, &hrir_length_resample);
+            
+            /* Replace with resampled HRIRs */
+            pars->hrir_fs = pData->fs;
+            pars->hrir_len = hrir_length_resample;
+            pars->hrirs = realloc1d(pars->hrirs, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            memcpy(pars->hrirs, hrirs_resampled, pars->N_hrir_dirs*NUM_EARS*(pars->hrir_len)*sizeof(float));
+            
+            /* Clean-up */
+            free(hrirs_resampled);
         }
         
         /* estimate the ITDs for each HRIR */
@@ -995,7 +1018,7 @@ int ambi_dec_getHRIRsamplerate(void* const hAmbi)
 {
     ambi_dec_data *pData = (ambi_dec_data*)(hAmbi);
     ambi_dec_codecPars* pars = pData->pars;
-    return pars->hrir_fs;
+    return pars->hrir_orig_fs;
 }
 
 int ambi_dec_getDAWsamplerate(void* const hAmbi)

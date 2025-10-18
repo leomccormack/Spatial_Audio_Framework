@@ -68,7 +68,7 @@ typedef struct _binauraliserNF {
     float** outframeTD;              /**< time-domain output frame; #NUM_EARS x #BINAURALISER_FRAME_SIZE */
     float_complex*** inputframeTF;   /**< time-frequency domain input frame; #HYBRID_BANDS x #MAX_NUM_INPUTS x #TIME_SLOTS */
     float_complex*** outputframeTF;  /**< time-frequency domain input frame; #HYBRID_BANDS x #NUM_EARS x #TIME_SLOTS */
-    int fs;                          /**< Host sampling rate, in Hz */
+    _Atomic_FLOAT32 fs;              /**< Host sampling rate, in Hz */
     float freqVector[HYBRID_BANDS];  /**< Frequency vector (filterbank centre frequencies) */
     void* hSTFT;                     /**< afSTFT handle */
     
@@ -77,10 +77,9 @@ typedef struct _binauraliserNF {
     float* hrirs;                    /**< time domain HRIRs; FLAT: N_hrir_dirs x #NUM_EARS x hrir_len */
     float* hrir_dirs_deg;            /**< directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
     _Atomic_INT32 N_hrir_dirs;       /**< number of HRIR directions in the current sofa file */
-    _Atomic_INT32 hrir_loaded_len;   /**< length of the loaded HRIRs, in samples */
-    _Atomic_INT32 hrir_runtime_len;  /**< length of the HRIRs being used for processing (after any resampling), in samples */
-    _Atomic_INT32 hrir_loaded_fs;    /**< sampling rate of the loaded HRIRs  */
-    _Atomic_INT32 hrir_runtime_fs;   /**< sampling rate of the HRIRs being used for processing (after any resampling) */
+    _Atomic_INT32 hrir_len;          /**< length of the loaded HRIRs, in samples */
+    _Atomic_INT32 hrir_orig_fs;      /**< Can be different from hrir_fs if HRIRs were resampled */
+    _Atomic_INT32 hrir_fs;           /**< sampling rate of the HRIRs being used for processing (after any resampling) */
     float* weights;                  /**< Integration weights for the HRIR measurement grid; N_hrir_dirs x 1 */
     
     /* vbap gain table */
@@ -126,7 +125,6 @@ typedef struct _binauraliserNF {
     _Atomic_INT32 bFlipRoll;                           /**< flag to flip the sign of the roll rotation angle */
     _Atomic_INT32 useRollPitchYawFlag;                 /**< rotation order flag, 1: r-p-y, 0: y-p-r */
     _Atomic_FLOAT32 src_gains[MAX_NUM_INPUTS];         /**< Gains applied per source */
-
 
     /* End copied _binauraliser struct members. The following are unique to the _binauraliserNF struct */
 

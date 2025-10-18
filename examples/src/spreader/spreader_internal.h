@@ -93,6 +93,7 @@ typedef struct _spreader
     _Atomic_INT32 Q;                   /**< Number of channels in the target playback setup; for example: 2 for binaural */
     _Atomic_INT32 nGrid;               /**< Number of directions/measurements/HRTFs etc. */
     _Atomic_INT32 h_len;               /**< Length of time-domain filters, in samples */
+    _Atomic_INT32 h_orig_fs;           /**< Can be different from h_fs if IRs were resampled */
     _Atomic_FLOAT32 h_fs;              /**< Sample rate used to measure the filters */
     float* h_grid;                     /**< FLAT: nGrid x Q x h_len */
     float_complex* H_grid;             /**< FLAT: HYBRID_BANDS x Q x nGrid */

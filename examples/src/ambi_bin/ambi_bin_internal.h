@@ -103,6 +103,7 @@ typedef struct _ambi_bin_codecPars
     float* hrir_dirs_deg;   /**< directions of the HRIRs in degrees [azi elev]; FLAT: N_hrir_dirs x 2 */
     _Atomic_INT32 N_hrir_dirs; /**< number of HRIR directions in the current sofa file */
     _Atomic_INT32 hrir_len; /**< length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" */
+    _Atomic_INT32 hrir_orig_fs;   /**< Can be different from hrir_fs if HRIRs were resampled */
     _Atomic_INT32 hrir_fs;  /**< sampling rate of the HRIRs, should ideally match the host sampling rate, although not required */
    
     /* hrtf filterbank coefficients */

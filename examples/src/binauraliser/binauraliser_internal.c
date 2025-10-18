@@ -125,8 +125,8 @@ void binauraliser_interpHRTFs
 void binauraliser_initHRTFsAndGainTables(void* const hBin)
 {
     binauraliser_data *pData = (binauraliser_data*)(hBin);
-    int i, new_len;
-    float* hrtf_vbap_gtable, *hrirs_resampled;//, *hrir_dirs_rad;
+    int i;
+    float* hrtf_vbap_gtable;//, *hrir_dirs_rad;
 #ifdef SAF_ENABLE_SOFA_READER_MODULE
     SAF_SOFA_ERROR_CODES error;
     saf_sofa_container sofa;
@@ -148,11 +148,11 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
         }
         else{
             /* Copy SOFA data */
-            pData->hrir_loaded_fs = (int)sofa.DataSamplingRate;
-            pData->hrir_loaded_len = sofa.DataLengthIR;
+            pData->hrir_fs = (int)sofa.DataSamplingRate;
+            pData->hrir_len = sofa.DataLengthIR;
             pData->N_hrir_dirs = sofa.nSources;
-            pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_loaded_len)*sizeof(float));
-            memcpy(pData->hrirs, sofa.DataIR, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_loaded_len)*sizeof(float));
+            pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+            memcpy(pData->hrirs, sofa.DataIR, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
             pData->hrir_dirs_deg = realloc1d(pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
             cblas_scopy(pData->N_hrir_dirs, sofa.SourcePosition, 3, pData->hrir_dirs_deg, 2); /* azi */
             cblas_scopy(pData->N_hrir_dirs, &sofa.SourcePosition[1], 3, &pData->hrir_dirs_deg[1], 2); /* elev */ 
@@ -166,15 +166,34 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
 #endif
     if(pData->useDefaultHRIRsFLAG){
         /* Copy default HRIR data */
-        pData->hrir_loaded_fs = __default_hrir_fs;
-        pData->hrir_loaded_len = __default_hrir_len;
+        pData->hrir_fs = __default_hrir_fs;
+        pData->hrir_len = __default_hrir_len;
         pData->N_hrir_dirs = __default_N_hrir_dirs;
-        pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_loaded_len)*sizeof(float));
-        memcpy(pData->hrirs, (float*)__default_hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_loaded_len)*sizeof(float));
+        pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+        memcpy(pData->hrirs, (float*)__default_hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
         pData->hrir_dirs_deg = realloc1d(pData->hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
         memcpy(pData->hrir_dirs_deg, (float*)__default_hrir_dirs_deg, pData->N_hrir_dirs*2*sizeof(float));
     }
 
+    /* Resample HRIRs if needed */
+    pData->hrir_orig_fs = pData->hrir_fs;
+    if(pData->hrir_fs!=pData->fs){
+        strcpy(pData->progressBarText, "Resampling HRIRs");
+        pData->progressBar0_1 = 0.3f;
+        float* hrirs_resampled;
+        int hrir_length_resample;
+        resampleHRIRs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, pData->fs, 1, &hrirs_resampled, &hrir_length_resample);
+        
+        /* Replace with resampled HRIRs */
+        pData->hrir_fs = pData->fs;
+        pData->hrir_len = hrir_length_resample;
+        pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+        memcpy(pData->hrirs, hrirs_resampled, pData->N_hrir_dirs*NUM_EARS*(pData->hrir_len)*sizeof(float));
+        
+        /* Clean-up */
+        free(hrirs_resampled);
+    }
+    
     /* Convert from the 0..360 convention, to -180..180 */
     convert_0_360To_m180_180(pData->hrir_dirs_deg, pData->N_hrir_dirs);
 
@@ -182,25 +201,8 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     strcpy(pData->progressBarText,"Estimating ITDs");
     pData->progressBar0_1 = 0.4f;
     pData->itds_s = realloc1d(pData->itds_s, pData->N_hrir_dirs*sizeof(float));
-    estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_loaded_len, pData->hrir_loaded_fs, pData->itds_s);
+    estimateITDs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, pData->hrir_fs, pData->itds_s);
 
-    /* Resample the HRIRs if needed */
-    if(pData->hrir_loaded_fs!=pData->fs){
-        strcpy(pData->progressBarText,"Resampling the HRIRs");
-        pData->progressBar0_1 = 0.5f;
-        hrirs_resampled = NULL;
-        resampleHRIRs(pData->hrirs, pData->N_hrir_dirs, pData->hrir_loaded_len, pData->hrir_loaded_fs, pData->fs, 1, &hrirs_resampled, &new_len);
-        pData->hrirs = realloc1d(pData->hrirs, pData->N_hrir_dirs*NUM_EARS*new_len*sizeof(float));
-        cblas_scopy(pData->N_hrir_dirs*NUM_EARS*new_len, hrirs_resampled, 1, pData->hrirs, 1);
-        free(hrirs_resampled);
-        pData->hrir_runtime_fs = pData->fs;
-        pData->hrir_runtime_len = new_len;
-    }
-    else{
-        pData->hrir_runtime_fs = pData->hrir_loaded_fs;
-        pData->hrir_runtime_len = pData->hrir_loaded_len;
-    }
-    
     /* generate VBAP gain table */
     strcpy(pData->progressBarText,"Generating interpolation table");
     pData->progressBar0_1 = 0.6f;
@@ -223,7 +225,7 @@ void binauraliser_initHRTFsAndGainTables(void* const hBin)
     /* convert hrirs to filterbank coefficients */
     pData->progressBar0_1 = 0.6f;
     pData->hrtf_fb = realloc1d(pData->hrtf_fb, HYBRID_BANDS * NUM_EARS * (pData->N_hrir_dirs)*sizeof(float_complex));
-    HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_runtime_len, HOP_SIZE, 0, 1, pData->hrtf_fb);
+    HRIRs2HRTFs_afSTFT(pData->hrirs, pData->N_hrir_dirs, pData->hrir_len, HOP_SIZE, 0, 1, pData->hrtf_fb);
 
     /* HRIR pre-processing */
     if(pData->enableHRIRsDiffuseEQ){

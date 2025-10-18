@@ -62,6 +62,7 @@ void spreader_create
     
     /* Internal */
     pData->Q = pData->nGrid = pData->h_len = 0;
+    pData->h_orig_fs = __default_hrir_fs;
     pData->h_fs = 0.0f;
     pData->h_grid = NULL;
     pData->H_grid = NULL;
@@ -200,7 +201,10 @@ void spreader_init
     spreader_data *pData = (spreader_data*)(hSpr);
     
     /* define frequency vector */
-    pData->fs = sampleRate;
+    if(pData->fs != sampleRate){
+        pData->fs = sampleRate;
+        spreader_setCodecStatus(hSpr, CODEC_STATUS_NOT_INITIALISED);
+    }
     afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
 }
 
@@ -272,6 +276,25 @@ void spreader_initCodec
         saf_sofa_close(&sofa);
     }
 #endif
+    
+    /* Resample HRIRs if needed */
+    pData->h_orig_fs = pData->h_fs;
+    if(pData->h_fs!=pData->fs){
+        strcpy(pData->progressBarText, "Resampling IRs");
+        pData->progressBar0_1 = 0.5f;
+        float* h_grid_resampled;
+        int h_length_resample;
+        resampleHRIRs(pData->h_grid, pData->nGrid, pData->h_len, pData->h_fs, pData->fs, 1, &h_grid_resampled, &h_length_resample);
+        
+        /* Replace with resampled HRIRs */
+        pData->h_fs = pData->fs;
+        pData->h_len = h_length_resample;
+        pData->h_grid = realloc1d(pData->h_grid, pData->nGrid*NUM_EARS*(pData->h_len)*sizeof(float));
+        memcpy(pData->h_grid, h_grid_resampled, pData->nGrid*NUM_EARS*(pData->h_len)*sizeof(float));
+        
+        /* Clean-up */
+        free(h_grid_resampled);
+    }
 
     /* Convert from the 0..360 convention, to -180..180, and pre-compute unit Cartesian vectors */
     convert_0_360To_m180_180(pData->grid_dirs_deg, pData->nGrid);
@@ -883,7 +906,7 @@ int spreader_getIRlength(void* const hSpr)
 int spreader_getIRsamplerate(void* const hSpr)
 {
     spreader_data *pData = (spreader_data*)(hSpr);
-    return (int)pData->h_fs;
+    return (int)pData->h_orig_fs;
 }
 
 int spreader_getUseDefaultHRIRsflag(void* const hSpr)
