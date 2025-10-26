@@ -26,3 +26,24 @@
 #include "ambi_roomsim.h"
 #include "ambi_roomsim_internal.h"
  
+const float ambi_roomsim_default_abs_wall[6] = { 0.341055000f, 0.431295000f, 0.351295000f, 0.344335000f, 0.401775000f, 0.482095000f};
+
+const float ambi_roomsim_default_room_dims[3] = { 9.1f, 8.0f, 3.0f };
+
+const int ambi_roomsim_defaultNumSources = 1;
+
+const float ambi_roomsim_defaultSourcePositions[ROOM_SIM_MAX_NUM_SOURCES][3] = {
+    {5.2f, 1.5f, 1.4f}, {2.1f, 1.0f, 1.3f}, {3.1f, 5.0f, 2.3f}, {7.1f, 2.0f, 1.4f},
+    {4.2f, 1.5f, 1.8f}, {3.1f, 1.0f, 1.2f}, {4.1f, 5.0f, 2.3f}, {6.1f, 2.0f, 1.4f},
+    {3.2f, 1.5f, 2.2f}, {4.1f, 1.0f, 1.1f}, {5.1f, 5.0f, 2.3f}, {5.1f, 2.0f, 1.4f},
+    {2.2f, 1.5f, 2.6f}, {5.1f, 1.0f, 1.0f}, {6.1f, 5.0f, 2.3f}, {4.1f, 2.0f, 1.4f}
+};
+
+const int ambi_roomsim_defaultNumReceivers = 1;
+
+const float ambi_roomsim_defaultReceiverPositions[ROOM_SIM_MAX_NUM_RECEIVERS][3] = {
+    {5.2f, 3.5f, 1.4f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f},
+    {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 0.0f}
+};

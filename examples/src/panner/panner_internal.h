@@ -113,10 +113,10 @@ typedef struct _panner
     float src_dirs_rot_deg[MAX_NUM_INPUTS][2]; /**< Intermediate rotated source directions, in degrees */
     float src_dirs_rot_xyz[MAX_NUM_INPUTS][3]; /**< Intermediate rotated source directions, as unit-length Cartesian coordinates */
     float src_dirs_xyz[MAX_NUM_INPUTS][3];     /**< Intermediate source directions, as unit-length Cartesian coordinates */
-    int nTriangles;                 /**< Number of loudspeaker triangles */
-    int output_nDims;               /**< Dimensionality of the loudspeaker array, 2: 2-D, 3: 3-D */
-    _Atomic_INT32 new_nLoudpkrs;              /**< New number of loudspeakers in the array */
-    _Atomic_INT32 new_nSources;               /**< New number of inputs/sources */
+    int nTriangles;                            /**< Number of loudspeaker triangles */
+    int output_nDims;                          /**< Dimensionality of the loudspeaker array, 2: 2-D, 3: 3-D */
+    _Atomic_INT32 new_nLoudpkrs;               /**< New number of loudspeakers in the array */
+    _Atomic_INT32 new_nSources;                /**< New number of inputs/sources */
     
     /* pValue */
     float pValue[HYBRID_BANDS];     /**< Used for the frequency-dependent panning normalisation */

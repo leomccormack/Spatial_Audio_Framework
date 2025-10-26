@@ -26,11 +26,6 @@
 #include "ambi_roomsim.h"
 #include "ambi_roomsim_internal.h"
 
-/** Default absorption coefficients per wall */
-const float default_abs_wall[6] = { 0.341055000f, 0.431295000f, 0.351295000f, 0.344335000f, 0.401775000f, 0.482095000f};
-/** Default room dimensions */
-const float default_room_dims[3] = { 9.1f, 8.0f, 3.0f };
-
 void ambi_roomsim_create
 (
     void ** const phAmbi
@@ -43,29 +38,18 @@ void ambi_roomsim_create
     pData->enableReflections = 1;
     pData->sh_order = 3;
     pData->refl_order = 3;
-    pData->nSources = 1;
-    pData->nReceivers = 1;
-    memcpy(pData->abs_wall, default_abs_wall, 6*sizeof(float));
-    memcpy(pData->room_dims, default_room_dims, 3*sizeof(float));
+    pData->nSources = ambi_roomsim_defaultNumSources;
+    pData->nReceivers = ambi_roomsim_defaultNumReceivers;
+    memcpy(pData->abs_wall, ambi_roomsim_default_abs_wall, 6*sizeof(float));
+    memcpy(pData->room_dims, ambi_roomsim_default_room_dims, 3*sizeof(float));
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
-    memset(pData->src_pos, 0, ROOM_SIM_MAX_NUM_SOURCES*3*sizeof(float));
-    memset(pData->rec_pos, 0, ROOM_SIM_MAX_NUM_RECEIVERS*3*sizeof(float));
+    memcpy(pData->src_pos, ambi_roomsim_defaultSourcePositions, ROOM_SIM_MAX_NUM_SOURCES*3*sizeof(float));
+    memcpy(pData->rec_pos, ambi_roomsim_defaultReceiverPositions, ROOM_SIM_MAX_NUM_RECEIVERS*3*sizeof(float));
 
     /* Internal */
     pData->fs = 48000.0f;
     pData->hIms = NULL;
-    float src_pos[3]  = {5.2f, 1.5f, 1.4f};
-    memcpy(pData->src_pos[0], src_pos, 3*sizeof(float));
-    float src2_pos[3] = {2.1f, 1.0f, 1.3f};
-    memcpy(pData->src_pos[1], src2_pos, 3*sizeof(float));
-    float src3_pos[3] = {3.1f, 5.0f, 2.3f};
-    memcpy(pData->src_pos[2], src3_pos, 3*sizeof(float));
-    float src4_pos[3] = {7.1f, 2.0f, 1.4f};
-    memcpy(pData->src_pos[3], src4_pos, 3*sizeof(float));
-    float rec_pos[3]  = {5.2f, 3.5f, 1.4f};
-    memcpy(pData->rec_pos[0], rec_pos, 3*sizeof(float));
-    memcpy(pData->rec_pos[1], rec_pos, 3*sizeof(float));
     pData->new_sh_order = pData->sh_order;
     pData->new_nSources = pData->nSources;
     pData->new_nReceivers = pData->nReceivers;

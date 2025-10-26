@@ -70,6 +70,18 @@ extern "C" {
 /** Maximum supported spread angle, degrees */
 #define PANNER_SPREAD_MAX_VALUE ( 90.0f )
     
+/** Default number of Sources */
+extern const int panner_defaultNumSources;
+
+/** Default Loudspeaker directions */
+extern const float panner_defaultSourceDirections[MAX_NUM_INPUTS][2];
+
+/** Default number of Loudspeakers */
+extern const int panner_defaultNumLoudspeakers;
+
+/** Default Loudspeaker directions */
+extern const float panner_defaultLoudspeakerDirections[MAX_NUM_OUTPUTS][2];
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */

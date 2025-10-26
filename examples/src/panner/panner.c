@@ -53,11 +53,11 @@ void panner_create
     int ch, dummy;
 
     /* default user parameters */
-    panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
+    panner_loadSourcePreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /* must match panner_defaultSourceDirections */
     pData->nSources = pData->new_nSources;
     pData->DTT = 0.5f;
     pData->spread_deg = 0.0f;
-    panner_loadLoudspeakerPreset(LOUDSPEAKER_ARRAY_PRESET_STEREO, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /*check setStateInformation if you change default preset*/
+    panner_loadLoudspeakerPreset(LOUDSPEAKER_ARRAY_PRESET_STEREO, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->output_nDims)); /* must match panner_defaultLoudspeakerDirections */
     pData->nLoudpkrs = pData->new_nLoudpkrs;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
@@ -127,12 +127,10 @@ void panner_init
     
     /* define frequency vector */
     pData->fs = sampleRate;
-    if (pData->codecStatus == CODEC_STATUS_INITIALISED){
-        afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
-        
-        /* calculate pValue per frequency */
-        getPvalues(pData->DTT, pData->freqVector, HYBRID_BANDS, pData->pValue);
-    }
+    afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
+    
+    /* calculate pValue per frequency */
+    getPvalues(pData->DTT, pData->freqVector, HYBRID_BANDS, pData->pValue);
 
     /* reinitialise if needed */
     pData->recalc_M_rotFLAG = 1;

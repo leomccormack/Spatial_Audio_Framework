@@ -39,7 +39,7 @@ void ambi_enc_create
     pData->fs = 48000.0f;
     
     /* default user parameters */
-    loadSourceConfigPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources));
+    loadSourceConfigPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources)); /* must match ambi_enc_defaultSourceDirections */
     pData->nSources = pData->new_nSources;
     for(i=0; i<MAX_NUM_INPUTS; i++){
         pData->recalc_SH_FLAG[i] = 1;

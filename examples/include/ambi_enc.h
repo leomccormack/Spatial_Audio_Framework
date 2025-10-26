@@ -44,6 +44,17 @@ extern "C" {
 #endif /* __cplusplus */
 
 /* ========================================================================== */
+/*                             Presets + Constants                            */
+/* ========================================================================== */
+ 
+/** Default number of Sources */
+extern const int ambi_enc_defaultNumSources;
+
+/** Default Loudspeaker directions */
+extern const float ambi_enc_defaultSourceDirections[MAX_NUM_INPUTS][2];
+
+
+/* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */
 

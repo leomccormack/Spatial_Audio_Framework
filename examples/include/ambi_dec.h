@@ -101,6 +101,12 @@ typedef enum {
 /** Maximum transition value between low/high frequency decoders, in Hz */
 #define AMBI_DEC_TRANSITION_MAX_VALUE ( 2000.0f )
 
+/** Default number of Loudspeakers */
+extern const int ambi_dec_defaultNumLoudspeakers;
+
+/** Default Loudspeaker directions */
+extern const float ambi_dec_defaultLoudspeakerDirections[MAX_NUM_OUTPUTS][2];
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */

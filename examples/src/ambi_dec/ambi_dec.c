@@ -55,7 +55,7 @@ void ambi_dec_create
     int i, j, ch, band;
 
     /* default user parameters */
-    loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims));
+    loadLoudspeakerArrayPreset(LOUDSPEAKER_ARRAY_PRESET_T_DESIGN_24, pData->loudpkrs_dirs_deg, &(pData->new_nLoudpkrs), &(pData->loudpkrs_nDims)); /* must match ambi_dec_defaultLoudspeakerDirections */
     pData->masterOrder = pData->new_masterOrder = 1;
     for (band = 0; band<HYBRID_BANDS; band++)
         pData->orderPerBand[band] = 1;

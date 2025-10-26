@@ -42,10 +42,33 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/* ========================================================================== */
+/*                             Presets + Constants                            */
+/* ========================================================================== */
+
 /** Maximum supported number of receivers for the room sim example */
 #define ROOM_SIM_MAX_NUM_RECEIVERS ( 16 )
 /** Maximum supported number of sources for the room sim example */
 #define ROOM_SIM_MAX_NUM_SOURCES ( 16 )
+
+/** Default wall absorption coefficients */
+extern const float ambi_roomsim_default_abs_wall[6];
+
+/** Default room dimensions */
+extern const float ambi_roomsim_default_room_dims[3];
+
+/** Default number of sources in the simulation */
+extern const int ambi_roomsim_defaultNumSources;
+
+/** Default source positions */
+extern const float ambi_roomsim_defaultSourcePositions[ROOM_SIM_MAX_NUM_SOURCES][3];
+
+/** Default number of receivers in the simulation */
+extern const int ambi_roomsim_defaultNumReceivers;
+
+/** Default receiver positions */
+extern const float ambi_roomsim_defaultReceiverPositions[ROOM_SIM_MAX_NUM_RECEIVERS][3];
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */
