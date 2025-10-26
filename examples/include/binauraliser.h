@@ -60,6 +60,12 @@ typedef enum {
     INTERP_TRI_PS   /**< Triangular interpolation (with phase-simplification) */
 }INTERP_MODES;
 
+/** Default number of Sources */
+extern const int binauraliser_defaultNumSources;
+
+/** Default Loudspeaker directions */
+extern const float binauraliser_defaultSourceDirections[MAX_NUM_INPUTS][2];
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */

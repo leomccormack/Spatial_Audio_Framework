@@ -84,6 +84,123 @@ extern const float __22pX_dirs_deg[22][2];
  * BS 2051 recommedation: https://www.itu.int/rec/R-REC-BS.2051/en */
 extern const float __9_10_3p2_dirs_deg[24][2];
 /**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools stereo pair */
+extern const float __protools_stereo_dirs_deg[2][2];
+/**
+ * Indices to map a discrete bus to a stereo bus in ProTools */
+extern const int __protools_mapping_discrete_to_stereo[2];
+/**
+ * Indices to map a stereo bus to a discrete bus in ProTools */
+extern const int __protools_mapping_stereo_to_discrete[2];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools Left-centre-right */
+extern  const float __protools_LCR_dirs_deg[3][2];
+/**
+ * Indices to map a discrete bus to a LCR bus in ProTools */
+extern const int __protools_mapping_discrete_to_LCR[3];
+/**
+ * Indices to map a LCR bus to a discrete bus in ProTools */
+extern const int __protools_mapping_LCR_to_discrete[3];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools Quadraphonic */
+extern const float __protools_Quad_dirs_deg[4][2];
+/**
+ * Indices to map a discrete bus to a Quad bus in ProTools */
+extern const int __protools_mapping_discrete_to_Quad[4];
+/**
+ * Indices to map a Quad bus to a discrete bus in ProTools */
+extern const int __protools_mapping_Quad_to_discrete[4];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 5.0 surround (Film)
+ * L C R Ls Rs */
+extern const float __protools_5p0_dirs_deg[5][2];
+/**
+ * Indices to map a discrete bus to a 5p0 bus in ProTools */
+extern const int __protools_mapping_discrete_to_5p0[5];
+/**
+ * Indices to map a 5p0 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_5p0_to_discrete[5];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 5.0.2 surround
+ * L R C Ls Rs Ltm Rtm */
+extern const float __protools_5p0p2_dirs_deg[7][2];
+/**
+ * Indices to map a discrete bus to a 5p0p2 bus in ProTools */
+extern const int __protools_mapping_discrete_to_5p0p2[7];
+/**
+ * Indices to map a 5p0p2 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_5p0p2_to_discrete[7];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 5.0.4 surround
+ * L R C Ls Rs Ltf Rtf Ltr Rtr */
+extern const float __protools_5p0p4_dirs_deg[9][2];
+/**
+ * Indices to map a discrete bus to a 5p0p4 bus in ProTools */
+extern const int __protools_mapping_discrete_to_5p0p4[9];
+/**
+ * Indices to map a 5p0p4 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_5p0p4_to_discrete[9];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 7.0 surround
+ * L C R Lss Rss Lsr Rsr */
+extern const float __protools_7p0_dirs_deg[7][2];
+/**
+ * Indices to map a discrete bus to a 7p0 bus in ProTools */
+extern const int __protools_mapping_discrete_to_7p0[7];
+/**
+ * Indices to map a 7p0 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_7p0_to_discrete[7];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 7.0.2 surround
+ * L C R Lss Rss Lsr Rsr Lts Rts */
+extern const float __protools_7p0p2_dirs_deg[9][2];
+/**
+ * Indices to map a discrete bus to a 7p0p2 bus in ProTools */
+extern const int __protools_mapping_discrete_to_7p0p2[9];
+/**
+ * Indices to map a 7p0p2 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_7p0p2_to_discrete[9];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 7.0.4 surround
+ * L R C Lss Rss Lsr Rsr Ltf Rtf Ltr Rtr */
+extern const float __protools_7p0p4_dirs_deg[11][2];
+/**
+ * Indices to map a discrete bus to a 7p0p4 bus in ProTools */
+extern const int __protools_mapping_discrete_to_7p0p4[11];
+/**
+ * Indices to map a 7p0p4 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_7p0p4_to_discrete[11];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 7.0.6 surround
+ * L R C Lss Rss Lsr Rsr Ltf Rtf Ltm Rtm Ltr Rtr */
+extern const float __protools_7p0p6_dirs_deg[13][2];
+/**
+ * Indices to map a discrete bus to a 7p0p6 bus in ProTools */
+extern const int __protools_mapping_discrete_to_7p0p6[13];
+/**
+ * Indices to map a 7p0p6 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_7p0p6_to_discrete[13];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 9.0.4 surround
+ * L R C Lss Rss Lsr Rsr Lw Rw Ltf Rtf Ltr Rtr */
+extern const float __protools_9p0p4_dirs_deg[13][2];
+/**
+ * Indices to map a discrete bus to a 9p0p4 bus in ProTools */
+extern const int __protools_mapping_discrete_to_9p0p4[13];
+/**
+ * Indices to map a 9p0p4 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_9p0p4_to_discrete[13];
+/**
+ * Loudspeaker directions [azimuth, Elevation] in degrees, for ProTools 9.0.6 surround
+ * L R C Lss Rss Lsr Rsr Lw Rw Ltf Rtf Ltm Rtm Ltr Rtr */
+extern const float __protools_9p0p6_dirs_deg[15][2];
+/**
+ * Indices to map a discrete bus to a 9p0p6 bus in ProTools */
+extern const int __protools_mapping_discrete_to_9p0p6[15];
+/**
+ * Indices to map a 9p0p9 bus to a discrete bus in ProTools */
+extern const int __protools_mapping_9p0p6_to_discrete[15];
+/**
  * Loudspeaker directions [azimuth, Elevation] in degrees, for the multi-channel
  * anechoic chamber (MCC), at Aalto University. */
 extern const float __Aalto_MCC_dirs_deg[45][2];

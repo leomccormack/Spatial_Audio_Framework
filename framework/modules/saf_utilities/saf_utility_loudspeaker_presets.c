@@ -186,6 +186,164 @@ const float __9_10_3p2_dirs_deg[24][2] =
   { 45.0f,     -15.0f},
   { -45.0f,     -15.0f}};
 
+/* ProTools stereo pair */
+const float __protools_stereo_dirs_deg[2][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f}};
+const int __protools_mapping_discrete_to_stereo[2] = { 0, 1 };
+const int __protools_mapping_stereo_to_discrete[2] = { 0, 1 };
+
+/* ProTools Left-centre-right */
+const float __protools_LCR_dirs_deg[3][2] =
+{ { 30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { -30.0f,    0.0f}};
+const int __protools_mapping_discrete_to_LCR[3] = { 0, 2, 1 };
+const int __protools_mapping_LCR_to_discrete[3] = { 0, 2, 1 };
+
+/* ProTools Quadraphonic */
+const float __protools_Quad_dirs_deg[4][2] =
+{ { 45.0f,    0.0f},
+  { -45.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f}};
+const int __protools_mapping_discrete_to_Quad[4] = { 0, 1, 2, 3 };
+const int __protools_mapping_Quad_to_discrete[4] = { 0, 1, 2, 3 };
+
+/* ProTools 5.0 surround (Film) - L C R Ls Rs */
+const float __protools_5p0_dirs_deg[5][2] =
+{ { 30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 110.0f,    0.0f},
+  { -110.0f,    0.0f}};
+const int __protools_mapping_discrete_to_5p0[5] = { 0, 2, 1, 3, 4 };
+const int __protools_mapping_5p0_to_discrete[5] = { 0, 2, 1, 3, 4 };
+
+/* ProTools 5.0.2 surround - L R C Ls Rs Ltm Rtm */
+const float __protools_5p0p2_dirs_deg[7][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { 110.0f,    0.0f},
+  { -110.0f,    0.0f},
+  { 90.0f,    65.0f},
+  { -90.0f,    65.0f}};
+const int __protools_mapping_discrete_to_5p0p2[7] = { 0, 1, 2, 3, 4, 5, 6 };
+const int __protools_mapping_5p0p2_to_discrete[7] = { 0, 1, 2, 3, 4, 5, 6 };
+
+/* ProTools 5.0.4 surround - L R C Ls Rs Ltf Rtf Ltr Rtr */
+const float __protools_5p0p4_dirs_deg[9][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { 110.0f,    0.0f},
+  { -110.0f,    0.0f},
+  { 45.0f,    45.0f},
+  { -45.0f,    45.0f},
+  { 135.0f,    45.0f},
+  { -135.0f,    45.0f}};
+const int __protools_mapping_discrete_to_5p0p4[9] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+const int __protools_mapping_5p0p4_to_discrete[9] = { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
+
+/* ProTools 7.0 surround - L C R Lss Rss Lsr Rsr */
+const float __protools_7p0_dirs_deg[7][2] =
+{ { 30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 90.0f,    0.0f},
+  { -90.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f}};
+const int __protools_mapping_discrete_to_7p0[7] = { 0, 2, 1, 3, 4, 5, 6 };
+const int __protools_mapping_7p0_to_discrete[7] = { 0, 2, 1, 3, 4, 5, 6 };
+
+/* ProTools 7.0.2 surround - L C R Lss Rss Lsr Rsr Lts Rts */
+const float __protools_7p0p2_dirs_deg[9][2] =
+{ { 30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 90.0f,    0.0f},
+  { -90.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f},
+  { 90.0f,    65.0f},
+  { -90.0f,    65.0f}};
+const int __protools_mapping_discrete_to_7p0p2[9] = { 0, 2, 1, 3, 4, 5, 6, 7, 8};
+const int __protools_mapping_7p0p2_to_discrete[9] = { 0, 2, 1, 3, 4, 5, 6, 7, 8};
+
+/* ProTools 7.0.4 surround - L R C Lss Rss Lsr Rsr Ltf Rtf Ltr Rtr */
+const float __protools_7p0p4_dirs_deg[11][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { 90.0f,    0.0f},
+  { -90.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f},
+  { 45.0f,    45.0f},
+  { -45.0f,    45.0f},
+  { 135.0f,    45.0f},
+  { -135.0f,    45.0f}};
+const int __protools_mapping_discrete_to_7p0p4[11] = { 0, 1, 2, 3, 4, 7, 8, 9, 10, 5, 6 };
+const int __protools_mapping_7p0p4_to_discrete[11] = { 0, 1, 2, 3, 4, 9, 10, 5, 6, 7, 8 };
+
+/* ProTools 7.0.6 surround - L R C Lss Rss Lsr Rsr Ltf Rtf Ltm Rtm Ltr Rtr */
+const float __protools_7p0p6_dirs_deg[13][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { 90.0f,    0.0f},
+  { -90.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f},
+  { 45.0f,    45.0f},
+  { -45.0f,    45.0f},
+  { 90.0f,    45.0f},
+  { -90.0f,    45.0f},
+  { 135.0f,    45.0f},
+  { -135.0f,    45.0f}};
+const int __protools_mapping_discrete_to_7p0p6[13] = { 0, 1, 2, 3, 4, 7, 8, 11, 12, 5, 6, 9, 10 };
+const int __protools_mapping_7p0p6_to_discrete[13] = { 0, 1, 2, 3, 4, 9, 10, 5, 6, 11, 12, 7, 8 };
+
+/* ProTools 9.0.4 surround - L R C Lss Rss Lsr Rsr Lw Rw Ltf Rtf Ltr Rtr */
+const float __protools_9p0p4_dirs_deg[13][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { 90.0f,    0.0f},
+  { -90.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f},
+  { 55.0f,    0.0f},
+  { -55.0f,    0.0f},
+  { 45.0f,    45.0f},
+  { -45.0f,    45.0f},
+  { 135.0f,    45.0f},
+  { -135.0f,    45.0f}};
+const int __protools_mapping_discrete_to_9p0p4[13] = { 0, 1, 2, 5, 6, 9, 10, 11, 12, 7, 8, 3, 4 };
+const int __protools_mapping_9p0p4_to_discrete[13] = { 0, 1, 2, 11, 12, 3, 4, 9, 10, 5, 6, 7, 8 };
+
+/* ProTools 9.0.6 surround - L R C Lss Rss Lsr Rsr Lw Rw Ltf Rtf Ltm Rtm Ltr Rtr */
+const float __protools_9p0p6_dirs_deg[15][2] =
+{ { 30.0f,    0.0f},
+  { -30.0f,    0.0f},
+  { 0.0f,    0.0f},
+  { 90.0f,    0.0f},
+  { -90.0f,    0.0f},
+  { 135.0f,    0.0f},
+  { -135.0f,    0.0f},
+  { 55.0f,    0.0f},
+  { -55.0f,    0.0f},
+  { 45.0f,    45.0f},
+  { -45.0f,    45.0f},
+  { 90.0f,    45.0f},
+  { -90.0f,    45.0f},
+  { 135.0f,    45.0f},
+  { -135.0f,    45.0f}};
+const int __protools_mapping_discrete_to_9p0p6[15] = { 0, 1, 2, 5, 6, 9, 10, 13, 14, 7, 8, 3, 4, 11, 12 };
+const int __protools_mapping_9p0p6_to_discrete[15] = { 0, 1, 2, 11, 12, 3, 4, 9, 10, 5, 6, 13, 14, 7, 8 };
+
 /* Aalto MCC */
 const float __Aalto_MCC_dirs_deg[45][2] =
 { { 120.0f,     0.0f},

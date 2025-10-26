@@ -88,6 +88,7 @@ int main_test(void) {
     RUN_TEST(test__arraySHTmatrices);
 
     /* SAF utilities modules unit tests */
+    RUN_TEST(test__protoolsRemappingIndices);
     RUN_TEST(test__cylindricalBesselFunctions);
     RUN_TEST(test__sphericalBesselFunctions);
     RUN_TEST(test__cart2sph);

@@ -91,6 +91,9 @@ int main_test(void);
 /* ========================================================================== */
 
 /**
+ * Testing that the remapping indices are reversable */
+void test__protoolsRemappingIndices(void);
+/**
  * Testing bessel_Jn(), bessel_Yn() */
 void test__cylindricalBesselFunctions(void);
 /**

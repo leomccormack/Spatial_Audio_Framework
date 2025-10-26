@@ -473,6 +473,78 @@ void panner_loadSourcePreset
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __9_10_3p2_dirs_deg[ch][i];
             break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_STEREO:
+            nCH = 2;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_stereo_dirs_deg[__protools_mapping_stereo_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_LCR:
+            nCH = 3;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_LCR_dirs_deg[__protools_mapping_LCR_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_QUAD:
+            nCH = 4;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_Quad_dirs_deg[__protools_mapping_Quad_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_5_0:
+            nCH = 5;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0_dirs_deg[__protools_mapping_5p0_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_5_0_2:
+            nCH = 7;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0p2_dirs_deg[__protools_mapping_5p0p2_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_5_0_4:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0p4_dirs_deg[__protools_mapping_5p0p4_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_7_0:
+            nCH = 7;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0_dirs_deg[__protools_mapping_7p0_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_7_0_2:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p2_dirs_deg[__protools_mapping_7p0p2_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_7_0_4:
+            nCH = 11;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p4_dirs_deg[__protools_mapping_7p0p4_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_7_0_6:
+            nCH = 13;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p6_dirs_deg[__protools_mapping_7p0p6_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_9_0_4:
+            nCH = 13;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_9p0p4_dirs_deg[__protools_mapping_9p0p4_to_discrete[ch]][i];
+            break;
+        case SOURCE_CONFIG_PRESET_PROTOOLS_9_0_6:
+            nCH = 15;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_9p0p6_dirs_deg[__protools_mapping_9p0p6_to_discrete[ch]][i];
+            break;
         case SOURCE_CONFIG_PRESET_AALTO_MCC:
             nCH = 45;
             for(ch=0; ch<nCH; ch++)
@@ -671,6 +743,78 @@ void panner_loadLoudspeakerPreset
             for(ch=0; ch<nCH; ch++)
                 for(i=0; i<2; i++)
                     dirs_deg[ch][i] = __9_10_3p2_dirs_deg[ch][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_STEREO:
+            nCH = 2;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] =  __protools_stereo_dirs_deg[__protools_mapping_discrete_to_stereo[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_LCR:
+            nCH = 3;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_LCR_dirs_deg[__protools_mapping_discrete_to_LCR[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_QUAD:
+            nCH = 4;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_Quad_dirs_deg[__protools_mapping_discrete_to_Quad[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_5_0:
+            nCH = 5;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0_dirs_deg[__protools_mapping_discrete_to_5p0[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_5_0_2:
+            nCH = 7;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0p2_dirs_deg[__protools_mapping_discrete_to_5p0p2[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_5_0_4:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0p4_dirs_deg[__protools_mapping_discrete_to_5p0p4[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0:
+            nCH = 7;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0_dirs_deg[__protools_mapping_discrete_to_7p0[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0_2:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p2_dirs_deg[__protools_mapping_discrete_to_7p0p2[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0_4:
+            nCH = 11;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p4_dirs_deg[__protools_mapping_discrete_to_7p0p4[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0_6:
+            nCH = 13;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p6_dirs_deg[__protools_mapping_discrete_to_7p0p6[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_9_0_4:
+            nCH = 13;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_9p0p4_dirs_deg[__protools_mapping_discrete_to_9p0p4[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_9_0_6:
+            nCH = 15;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_9p0p6_dirs_deg[__protools_mapping_discrete_to_9p0p6[ch]][i];
             break;
         case LOUDSPEAKER_ARRAY_PRESET_AALTO_MCC:
             nCH = 45;

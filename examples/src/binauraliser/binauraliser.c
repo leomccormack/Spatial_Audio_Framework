@@ -42,11 +42,11 @@ void binauraliser_create
     int ch, dummy;
 
     /* user parameters */
-    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /*check setStateInformation if you change default preset*/
+    binauraliser_loadPreset(SOURCE_CONFIG_PRESET_DEFAULT, pData->src_dirs_deg, &(pData->new_nSources), &(dummy)); /* must match binauraliser_defaultSourceDirections */
     pData->useDefaultHRIRsFLAG = 1; /* pars->sofa_filepath must be valid to set this to 0 */
     pData->enableHRIRsDiffuseEQ = 1;
     pData->nSources = pData->new_nSources;
-    pData->interpMode = INTERP_TRI_PS;
+    pData->interpMode = INTERP_TRI;
     pData->yaw = 0.0f;
     pData->pitch = 0.0f;
     pData->roll = 0.0f;

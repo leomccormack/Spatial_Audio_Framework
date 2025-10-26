@@ -24,6 +24,33 @@
 
 #include "saf_test.h"
 
+void test__protoolsRemappingIndices(void){
+    for (int i = 0; i < 2; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_stereo_to_discrete[__protools_mapping_discrete_to_stereo[i]], i);
+    for (int i = 0; i < 3; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_LCR_to_discrete[__protools_mapping_discrete_to_LCR[i]], i);
+    for (int i = 0; i < 4; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_Quad_to_discrete[__protools_mapping_discrete_to_Quad[i]], i);
+    for (int i = 0; i < 5; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_5p0_to_discrete[__protools_mapping_discrete_to_5p0[i]], i);
+    for (int i = 0; i < 7; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_5p0p2_to_discrete[__protools_mapping_discrete_to_5p0p2[i]], i);
+    for (int i = 0; i < 9; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_5p0p4_to_discrete[__protools_mapping_discrete_to_5p0p4[i]], i);
+    for (int i = 0; i < 7; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_7p0_to_discrete[__protools_mapping_discrete_to_7p0[i]], i);
+    for (int i = 0; i < 9; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_7p0p2_to_discrete[__protools_mapping_discrete_to_7p0p2[i]], i);
+    for (int i = 0; i < 11; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_7p0p4_to_discrete[__protools_mapping_discrete_to_7p0p4[i]], i);
+    for (int i = 0; i < 13; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_7p0p6_to_discrete[__protools_mapping_discrete_to_7p0p6[i]], i);
+    for (int i = 0; i < 13; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_9p0p4_to_discrete[__protools_mapping_discrete_to_9p0p4[i]], i);
+    for (int i = 0; i < 15; i++)
+        TEST_ASSERT_EQUAL(__protools_mapping_9p0p6_to_discrete[__protools_mapping_discrete_to_9p0p6[i]], i);
+}
+
 void test__cylindricalBesselFunctions(void){ // TODO: may as well check the derivatives too...
     int i;
     double J_n[10], Y_n[10];
