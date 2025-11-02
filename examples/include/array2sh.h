@@ -224,6 +224,12 @@ typedef enum {
 /** Maximum baffle radius supported, mm */
 #define ARRAY2SH_BAFFLE_RADIUS_MAX_VALUE ( 400.0f ) 
 
+/** Default number of microphones */
+extern const int array2sh_defaultNumSensors;
+
+/** Default microphone directions (degrees) */
+extern const float array2sh_defaultSensorsDirections[MAX_NUM_INPUTS][2];
+
 
 /* ========================================================================== */
 /*                               Main Functions                               */

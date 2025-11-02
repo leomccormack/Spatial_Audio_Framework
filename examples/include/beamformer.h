@@ -44,6 +44,13 @@
 extern "C" {
 #endif /* __cplusplus */
 
+/** Default number of beams */
+extern const int beamformer_defaultNumBeams;
+
+/** Default beam directions */
+extern const float beamformer_defaultBeamDirections[MAX_NUM_INPUTS][2];
+
+
 /* ========================================================================== */
 /*                               Main Functions                               */
 /* ========================================================================== */

@@ -63,7 +63,7 @@ typedef enum {
 /** Default number of Sources */
 extern const int binauraliser_defaultNumSources;
 
-/** Default Loudspeaker directions */
+/** Default source directions */
 extern const float binauraliser_defaultSourceDirections[MAX_NUM_INPUTS][2];
 
 

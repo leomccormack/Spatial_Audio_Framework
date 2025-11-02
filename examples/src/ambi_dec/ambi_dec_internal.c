@@ -327,6 +327,78 @@ void loadLoudspeakerArrayPreset
         case LOUDSPEAKER_ARRAY_PRESET_22P2_9_10_3:
             saf_print_error("Not suitable, since it contains LFE channels");
             break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_STEREO:
+            nCH = 2;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] =  __protools_stereo_dirs_deg[__protools_mapping_discrete_to_stereo[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_LCR:
+            nCH = 3;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_LCR_dirs_deg[__protools_mapping_discrete_to_LCR[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_QUAD:
+            nCH = 4;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_Quad_dirs_deg[__protools_mapping_discrete_to_Quad[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_5_0:
+            nCH = 5;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0_dirs_deg[__protools_mapping_discrete_to_5p0[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_5_0_2:
+            nCH = 7;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0p2_dirs_deg[__protools_mapping_discrete_to_5p0p2[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_5_0_4:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_5p0p4_dirs_deg[__protools_mapping_discrete_to_5p0p4[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0:
+            nCH = 7;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0_dirs_deg[__protools_mapping_discrete_to_7p0[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0_2:
+            nCH = 9;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p2_dirs_deg[__protools_mapping_discrete_to_7p0p2[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0_4:
+            nCH = 11;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p4_dirs_deg[__protools_mapping_discrete_to_7p0p4[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_7_0_6:
+            nCH = 13;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_7p0p6_dirs_deg[__protools_mapping_discrete_to_7p0p6[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_9_0_4:
+            nCH = 13;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_9p0p4_dirs_deg[__protools_mapping_discrete_to_9p0p4[ch]][i];
+            break;
+        case LOUDSPEAKER_ARRAY_PRESET_PROTOOLS_9_0_6:
+            nCH = 15;
+            for(ch=0; ch<nCH; ch++)
+                for(i=0; i<2; i++)
+                    dirs_deg[ch][i] = __protools_9p0p6_dirs_deg[__protools_mapping_discrete_to_9p0p6[ch]][i];
+            break;
         case LOUDSPEAKER_ARRAY_PRESET_AALTO_MCC:
             nCH = 45;
             for(ch=0; ch<nCH; ch++)
