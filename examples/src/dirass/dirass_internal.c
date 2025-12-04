@@ -66,7 +66,8 @@ void dirass_initAna(void* const hDir)
     pData->progressBar0_1 = 0.4f;
     
     /* Determine scanning grid */
-    switch(pData->gridOption){
+    DIRASS_GRID_OPTIONS gridOption = pData->gridOption;
+    switch(gridOption){
         case T_DESIGN_3:           /* 6 points */
             td_degree = 3;
             pars->grid_dirs_deg = (float*)__HANDLES_Tdesign_dirs_deg[td_degree-1];
@@ -129,14 +130,17 @@ void dirass_initAna(void* const hDir)
     }
     
     /* generate interpolation table for current display config */
-    switch(pData->HFOVoption){
+    HFOV_OPTIONS HFOVoption = pData->HFOVoption;
+    switch(HFOVoption){
         default:
         case HFOV_360: hfov = 360.0f; break;
         case HFOV_180: hfov = 180.0f; break;
         case HFOV_90:  hfov = 90.0f;  break;
         case HFOV_60:  hfov = 60.0f;  break;
     }
-    switch(pData->aspectRatioOption){
+
+    ASPECT_RATIO_OPTIONS aspectRatioOption = pData->aspectRatioOption;
+    switch(aspectRatioOption){
         default:
         case ASPECT_RATIO_2_1:  aspectRatio = 2.0f; break;
         case ASPECT_RATIO_16_9: aspectRatio = 16.0f/9.0f; break;
@@ -174,7 +178,8 @@ void dirass_initAna(void* const hDir)
     A_xyz = malloc1d(nSH_order*nSH_sec*3*sizeof(float_complex));
     c_n = malloc1d((order_sec+1)*sizeof(float));
     computeVelCoeffsMtx(order_sec, A_xyz);
-    switch(pData->beamType){
+    STATIC_BEAM_TYPES beamType = pData->beamType;
+    switch(beamType){
         case STATIC_BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(order_sec, c_n); break;
         case STATIC_BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(order_sec, c_n); break;
         case STATIC_BEAM_TYPE_MAX_EV: beamWeightsMaxEV(order_sec, c_n); break;
@@ -192,7 +197,7 @@ void dirass_initAna(void* const hDir)
 
     /* get regular beamforming weights */
     c_n = malloc1d((order+1)*sizeof(float));
-    switch(pData->beamType){
+    switch(beamType){
         case STATIC_BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(order, c_n); break;
         case STATIC_BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(order, c_n); break;
         case STATIC_BEAM_TYPE_MAX_EV: beamWeightsMaxEV(order, c_n); break;
@@ -206,7 +211,7 @@ void dirass_initAna(void* const hDir)
  
     /* beamforming weights for upscaled */
     c_n = malloc1d((order_up+1)*sizeof(float)); 
-    switch(pData->beamType){
+    switch(beamType){
         case STATIC_BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(order_up, c_n); break;
         case STATIC_BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(order_up, c_n); break;
         case STATIC_BEAM_TYPE_MAX_EV: beamWeightsMaxEV(order_up, c_n); break;

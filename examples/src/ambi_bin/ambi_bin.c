@@ -314,7 +314,8 @@ void ambi_bin_initCodec
     pData->progressBar0_1 = 0.95f;
     float_complex* decMtx;
     decMtx = calloc1d(HYBRID_BANDS*NUM_EARS*nSH, sizeof(float_complex));
-    switch(pData->method){
+    AMBI_BIN_DECODING_METHODS method = pData->method;
+    switch(method){
         default:
         case DECODING_METHOD_LS:
             getBinauralAmbiDecoderMtx(pars->hrtf_fb, pars->hrir_dirs_deg, pars->N_hrir_dirs, HYBRID_BANDS,

@@ -130,7 +130,9 @@ void pitch_shifter_initCodec
         smb_pitchShift_destroy(&(pData->hSmb));
 
     /* Config */
-    switch(pData->osamp_option){
+
+    PITCH_SHIFTER_OSAMP_OPTIONS osamp_option = pData->osamp_option;
+    switch(osamp_option){
         default:
             /* fall through */
         case PITCH_SHIFTER_OSAMP_2:  osamp = 2; break;
@@ -139,7 +141,8 @@ void pitch_shifter_initCodec
         case PITCH_SHIFTER_OSAMP_16: osamp = 16; break;
         case PITCH_SHIFTER_OSAMP_32: osamp = 32; break;
     }
-    switch(pData->fftsize_option){
+    PITCH_SHIFTER_FFTSIZE_OPTIONS fftsize_option = pData->fftsize_option;
+    switch(fftsize_option){
         default:
             /* fall through */
         case PITCH_SHIFTER_FFTSIZE_512:   fftSize = 512; break;

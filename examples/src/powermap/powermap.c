@@ -728,13 +728,15 @@ int powermap_getPmap(void* const hPm, float** grid_dirs, float** pmap, int* nDir
         (*pmap) = pData->pmap_grid[pData->dispSlotIdx-1 < 0 ? NUM_DISP_SLOTS-1 : pData->dispSlotIdx-1];
         (*nDirs) = pars->interp_nDirs;
         (*pmapWidth) = pData->dispWidth;
-        switch(pData->HFOVoption){
+        HFOV_OPTIONS HFOVoption = pData->HFOVoption;
+        switch(HFOVoption){
             default:
             case HFOV_360:
                 (*hfov) = 360;
                 break;
         }
-        switch(pData->aspectRatioOption){
+        ASPECT_RATIO_OPTIONS aspectRatioOption = pData->aspectRatioOption;
+        switch(aspectRatioOption){
             default:
             case ASPECT_RATIO_2_1:
                 (*aspectRatio) = 2;

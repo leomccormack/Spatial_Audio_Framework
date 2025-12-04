@@ -141,7 +141,8 @@ void beamformer_process
         for(bi=0; bi<nBeams; bi++){
             if(pData->recalc_beamWeights[bi]){
                 memset(pData->beamWeights[bi], 0, MAX_NUM_SH_SIGNALS*sizeof(float));
-                switch(pData->beamType){
+                STATIC_BEAM_TYPES beamType = pData->beamType;
+                switch(beamType){
                     case STATIC_BEAM_TYPE_CARDIOID: beamWeightsCardioid2Spherical(beamOrder, c_n); break;
                     case STATIC_BEAM_TYPE_HYPERCARDIOID: beamWeightsHypercardioid2Spherical(beamOrder, c_n); break;
                     case STATIC_BEAM_TYPE_MAX_EV: beamWeightsMaxEV(beamOrder, c_n); break;
