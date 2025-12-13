@@ -22,7 +22,7 @@
  */
   
 #include "mex.h"
-#include "saf.h" 
+#include "saf.h"
 
 /** Warning/error message character length */
 #define MSG_STR_LENGTH ( 2048 )

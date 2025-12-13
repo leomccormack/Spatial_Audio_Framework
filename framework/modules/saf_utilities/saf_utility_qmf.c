@@ -373,7 +373,7 @@ void qmf_analysis
 
                 /* Subdivide first QMF band into 8 subbands, and form hybrid bands 1-6 */
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 8, 1, QMF_HYBRID_FILTER_LENGTH, &calpha,
-                            h->fb8bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
+                            (float_complex*)h->fb8bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
                             h->hybBuffer[ch][0], 1, &cbeta,
                             subBands8, 1);
                 h->hybQmfTF_frame[0] = subBands8[6];
@@ -390,7 +390,7 @@ void qmf_analysis
 
                 /* Subdivide second QMF band to get hybrid bands 7 and 8 */
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, 1, QMF_HYBRID_FILTER_LENGTH, &calpha,
-                            h->fb4bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
+                            (float_complex*)h->fb4bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
                             h->hybBuffer[ch][1], 1, &cbeta,
                             subBands2, 1);
                 h->hybQmfTF_frame[6] = subBands2[1]; /* Flipped! */
@@ -398,7 +398,7 @@ void qmf_analysis
 
                 /* Subdivide third QMF band to get hybrid bands 9 and 10 */
                 cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 2, 1, QMF_HYBRID_FILTER_LENGTH, &calpha,
-                            h->fb4bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
+                            (float_complex*)h->fb4bandCoeffs, QMF_HYBRID_FILTER_LENGTH,
                             h->hybBuffer[ch][2], 1, &cbeta,
                             subBands2, 1);
                 h->hybQmfTF_frame[8] = subBands2[0];

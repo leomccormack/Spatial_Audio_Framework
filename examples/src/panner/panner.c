@@ -267,9 +267,9 @@ void panner_process
             /* apply panning gains */
             for (band = 0; band < HYBRID_BANDS; band++) {
                 cblas_cgemm(CblasRowMajor, CblasTrans, CblasNoTrans, nLoudspeakers, TIME_SLOTS, nSources, &calpha,
-                    pData->G_src[band], MAX_NUM_OUTPUTS,
-                    FLATTEN2D(pData->inputframeTF[band]), TIME_SLOTS, &cbeta,
-                    outputTemp, TIME_SLOTS);
+                            (float_complex*)pData->G_src[band], MAX_NUM_OUTPUTS,
+                            FLATTEN2D(pData->inputframeTF[band]), TIME_SLOTS, &cbeta,
+                            (float_complex*)outputTemp, TIME_SLOTS);
                 for (i = 0; i < nLoudspeakers; i++)
                     for (t = 0; t < TIME_SLOTS; t++)
                         pData->outputframeTF[band][i][t] = ccaddf(pData->outputframeTF[band][i][t], outputTemp[i][t]);

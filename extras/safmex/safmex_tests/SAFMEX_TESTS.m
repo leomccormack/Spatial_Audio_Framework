@@ -1,3 +1,10 @@
+% Dependencies from https://github.com/polarch 
+% Replace with correct paths 
+addpath('/Users/janani/Documents/git/resources/Spherical-Harmonic-Transform/')
+addpath('/Users/janani/Documents/git/resources/Vector-Base-Amplitude-Panning/')
+
+% Must also first build SAF with -DSAF_BUILD_EXTRAS=1
+addpath('/Users/janani/Documents/git/Spatial_Audio_Framework/build/extras/safmex')
 
 %% TEST CONFIG
 nTests = 0; nPass = 0; nFail = 0;

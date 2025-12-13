@@ -1827,7 +1827,7 @@ void generateCroPaCLCMVmap
         cblas_cgemm(CblasRowMajor, CblasConjTrans, CblasNoTrans, 2, 2, nSH, &calpha,
                     A, 2,
                     invCxd_A_tmp, 2, &cbeta,
-                    A_invCxd_A, 2);
+                    (float_complex*)A_invCxd_A, 2);
         for(j=0; j<nSH; j++)
             for(k=0; k<2; k++)
                 invCxd_A_tmp[k*nSH+j] = invCxd_A[j*2+k];

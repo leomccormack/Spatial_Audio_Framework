@@ -5,12 +5,13 @@ The Spatial_Audio_Framework (SAF) requires any library (or combination of librar
 Currently, SAF supports [Intel MKL](https://software.intel.com/en-us/articles/free-ipsxe-tools-and-libraries), [OpenBLAS](https://github.com/xianyi/OpenBLAS), [Apple Accelerate](https://developer.apple.com/documentation/accelerate), and [ATLAS](http://math-atlas.sourceforge.net/). You may select which option you wish to use by adding one of the following pre-processor definitions:
 
 ```
-SAF_USE_INTEL_MKL_LP64        # great option, but only for x86 architectures (using the LP64 config [int32])
-SAF_USE_INTEL_MKL_ILP64       # great option, but only for x86 architectures (using the ILP64 config [int64])  
-SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
-SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
-SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
-SAF_USE...                    # please get in touch if you use something else! :-)
+SAF_USE_INTEL_MKL_LP64         # great option, but only for x86 architectures (using the LP64 config [int32])
+SAF_USE_INTEL_MKL_ILP64        # great option, but only for x86 architectures (using the ILP64 config [int64])
+SAF_USE_APPLE_ACCELERATE_LP64  # great option (x86 and ARM), but MacOSX only (using the LP64 config [int32])
+SAF_USE_APPLE_ACCELERATE_ILP64 # great option (x86 and ARM), but MacOSX only (using the ILP64 config [int64])
+SAF_USE_OPEN_BLAS_AND_LAPACKE  # good option, works on everything
+SAF_USE_ATLAS                  # bad option (x86 and ARM), many LAPACK functions are missing
+SAF_USE...                     # please get in touch if you use something else! :-)
 ```
 
 ## SAF_USE_INTEL_MKL_LP64 or SAF_USE_INTEL_MKL_ILP64
@@ -139,12 +140,14 @@ cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=0 -DBUILD_WITHOUT_LAPACK
 make 
 ```
 
-## SAF_USE_APPLE_ACCELERATE
+## SAF_USE_APPLE_ACCELERATE_LP64 or SAF_USE_APPLE_ACCELERATE_ILP64
 
 Only for MacOSX users. Simply link against the [**Accelerate**](https://developer.apple.com/documentation/accelerate) framework and you're good to go. 
 
 Note that Accelerate also includes an optimised DFT/FFT implementation and a number of additional vectorised utility functions which SAF is also able to make use of. 
 
+Adding ACCELERATE_NEW_LAPACK (supported in MacOS 13.3 or newer) is optional for SAF_USE_APPLE_ACCELERATE_LP64.
+However, both ACCELERATE_NEW_LAPACK and ACCELERATE_LAPACK_ILP64 are required for SAF_USE_APPLE_ACCELERATE_ILP64.
 
 ## SAF_USE_ATLAS
 

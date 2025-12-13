@@ -6,7 +6,7 @@ if(NOT DEFINED SAF_PERFORMANCE_LIB AND NOT APPLE)
     message(FATAL_ERROR "You must define the SAF_PERFORMANCE_LIB environment variable")
 endif()
 if(NOT DEFINED SAF_PERFORMANCE_LIB AND APPLE)
-    set(SAF_PERFORMANCE_LIB "SAF_USE_APPLE_ACCELERATE")
+    set(SAF_PERFORMANCE_LIB "SAF_USE_APPLE_ACCELERATE_LP64")
 endif()
 
 # Pull version number from the framework's main header file:
@@ -63,6 +63,7 @@ endif()
 # Framework include paths
 target_include_directories(${PROJECT_NAME} 
 PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include 
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
@@ -76,7 +77,6 @@ add_subdirectory(resources)
 if(UNIX AND NOT APPLE AND NOT ANDROID)
     target_link_libraries(${PROJECT_NAME} PUBLIC atomic)
 endif()
-
 
 ############################################################################
 # Performance library dependencies
@@ -172,13 +172,28 @@ elseif( ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_ATLAS")
     message(STATUS "Using ATLAS...")
     message(SEND_ERROR "Not yet supported! Please contribute if you use this library.")
 
-elseif(APPLE AND ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_APPLE_ACCELERATE")
-    message(STATUS "Using Apple Accelerate. Linking against the Accelerate framework...")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_APPLE_ACCELERATE=1) 
+elseif(APPLE AND ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_APPLE_ACCELERATE_LP64")
+    message(STATUS "Using Apple Accelerate (LP64). Linking against the Accelerate framework...")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_APPLE_ACCELERATE_LP64=1) 
     target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Accelerate") 
 
     # These are just because of zlib  
     target_compile_options(${PROJECT_NAME} PRIVATE -Wno-macro-redefined -Wno-strict-prototypes)
+
+elseif(APPLE AND ${SAF_PERFORMANCE_LIB} MATCHES "SAF_USE_APPLE_ACCELERATE_ILP64")
+    message(STATUS "Using Apple Accelerate (ILP64). Linking against the Accelerate framework...")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC SAF_USE_APPLE_ACCELERATE_ILP64=1) 
+    target_link_libraries(${PROJECT_NAME} PUBLIC "-framework Accelerate") 
+
+    # Extra flags are needed:
+    message(STATUS "Also enabling ACCELERATE_NEW_LAPACK")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ACCELERATE_NEW_LAPACK=1) 
+    message(STATUS "Also enabling ACCELERATE_LAPACK_ILP64")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC ACCELERATE_LAPACK_ILP64=1) 
+
+    # These are just because of zlib  
+    target_compile_options(${PROJECT_NAME} PRIVATE -Wno-macro-redefined -Wno-strict-prototypes)
+
 else()
     message(SEND_ERROR "The specified SAF_PERFORMANCE_LIB is not supported")
 

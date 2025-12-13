@@ -240,7 +240,7 @@ void array2sh_process
         /* Apply spherical harmonic transform (SHT) */
         for(band=0; band<HYBRID_BANDS; band++){
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, nSH, TIME_SLOTS, Q, &calpha,
-                        pData->W[band], MAX_NUM_SENSORS,
+                        (float_complex*)pData->W[band], MAX_NUM_SENSORS,
                         FLATTEN2D(pData->inputframeTF[band]), TIME_SLOTS, &cbeta,
                         FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS);
         }

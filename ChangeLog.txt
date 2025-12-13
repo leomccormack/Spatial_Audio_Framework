@@ -9,7 +9,18 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
-v1.3.4
+v1.3.5 (5th June 2025)
+ - Added the ability to select either the LP64 or ILP64 version of Apple Accelerate as the 
+   performance  library
+ - safmex (via SAF_BUILD_EXTRAS) now supports Apple Accelerate
+
+Breaking changes:
+
+The old flag "SAF_USE_APPLE_ACCELERATE" (which was always LP64), should be replaced with 
+"SAF_USE_APPLE_ACCELERATE_LP64" or "SAF_USE_APPLE_ACCELERATE_ILP64".
+
+====================================================================================================
+v1.3.4 (4th October 2025)
  - Added atomics support for the SAF examples (GCC and Clang) 
  - Updated saf_sofa_reader module with latest libmysofa version
  - Fixed memory leak in qmf and decor

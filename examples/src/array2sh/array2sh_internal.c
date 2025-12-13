@@ -353,7 +353,7 @@ void array2sh_calculate_sht_matrix
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, (arraySpecs->Q), nSH, &calpha,
                         diag_bN_inv_R, nSH,
                         pinv_Y_mic_cmplx, nSH, &cbeta,
-                        pData->W[band], MAX_NUM_SENSORS);
+                        (float_complex*)pData->W[band], MAX_NUM_SENSORS);
         }
         free(diag_bN_inv_R);
     }
@@ -509,7 +509,7 @@ void array2sh_calculate_sht_matrix
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasTrans, nSH, (arraySpecs->Q), nSH, &calpha,
                         diag_bN_inv_R, nSH,
                         pinv_Y_mic_cmplx, nSH, &cbeta,
-                        pData->W[band], MAX_NUM_SENSORS);
+                        (float_complex*)pData->W[band], MAX_NUM_SENSORS);
         }
         free(diag_bN_inv_R);
     }

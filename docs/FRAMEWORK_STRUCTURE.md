@@ -58,8 +58,6 @@ For more details, refer to: [**PERFORMANCE_LIBRARY_INSTRUCTIONS.md**](PERFORMANC
 
 In order to use the optional built-in [SOFA](https://www.sofaconventions.org/mediawiki/index.php/SOFA_(Spatially_Oriented_Format_for_Acoustics)) reader module (**saf_sofa_reader**), your project must also link against the [netCDF](https://www.unidata.ucar.edu/software/netcdf/) library (including its dependencies). 
 
-For more details, refer to: [**SOFA_READER_MODULE_DEPENDENCIES.md**](SOFA_READER_MODULE_DEPENDENCIES.md)
-
 Optionally, Intel's [Integrated Performance Primitives (IPP)](https://software.intel.com/content/www/us/en/develop/tools/integrated-performance-primitives.html) may be employed for the FFT with the following definition:
 ```
 SAF_USE_INTEL_IPP            
@@ -67,12 +65,7 @@ SAF_USE_INTEL_IPP
 
 ## Contributing
 
-Contributions are very much welcomed and encouraged. Please feel free to make suggestions, pull-requests, or get in touch (via leo.mccormack(at)aalto.fi or github "issues") if you would like to discuss additions to the framework. These additions can come in many forms; including:
-* bug fixes or optimisations to existing code
-* adding new functionality (which falls under the scope of an existing module) to an existing module
-* adding a new utility to the **saf_utilities** module or an entirely new module (see below)
-* using the framework to create new **examples**, **extras**, or unit tests
-* documentation improvements
+Contributions are very much welcomed and encouraged. Please feel free to make suggestions, pull-requests, or get in touch (via a GitHub "issue") if you would like to discuss additions to the framework.
 
 ## Module structure
 
@@ -170,4 +163,4 @@ Note: your module can only be added as a **core** module if it is free from larg
 
 All core modules must be released under the [ISC License](https://choosealicense.com/licenses/isc/) and only use third-party code that is provided under similar permissive licensing terms (ISC, MIT, BSD etc.). 
 
-Optional modules may be released under alternative licenses. If you would prefer (or are required) to release your module under a copyleft license, then you may do so. For example, the **saf_tracker** module is provided under the terms of the copyleft [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/). However, please discuss with us if you wish to use a license other than ISC or GPLv2.
+Optional modules may be released under alternative licenses. If you would prefer (or are required) to release your module under a copyleft license, then you may do so. For example, the **saf_tracker** module is provided under the terms of the copyleft [GNU GPLv2 License](https://choosealicense.com/licenses/gpl-2.0/). 

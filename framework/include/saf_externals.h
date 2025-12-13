@@ -39,8 +39,10 @@
  *       same as SAF_USE_INTEL_MKL except using int64 and LAPACKE interface
  *   - SAF_USE_OPENBLAS_WITH_LAPACKE:
  *       to enable OpenBLAS with the LAPACKE interface
- *   - SAF_USE_APPLE_ACCELERATE:
+ *   - SAF_USE_APPLE_ACCELERATE_LP64:
  *       to enable the Accelerate framework with the Fortran LAPACK interface
+ *   - SAF_USE_APPLE_ACCELERATE_ILP64:
+ *       same as SAF_USE_APPLE_ACCELERATE_LP64 except using int64
  *   - SAF_USE_ATLAS:
  *       to enable ATLAS BLAS routines and ATLAS's CLAPACK interface
  *
@@ -80,7 +82,8 @@ extern "C" {
      defined(SAF_USE_OPEN_BLAS_AND_LAPACKE) + \
      defined(SAF_USE_ATLAS) + \
      defined(SAF_USE_GSL) + \
-     defined(SAF_USE_APPLE_ACCELERATE)) != 1
+     defined(SAF_USE_APPLE_ACCELERATE_LP64) + \
+     defined(SAF_USE_APPLE_ACCELERATE_ILP64)) != 1
 # error One (and only one) performance library flag should be defined!
 #endif
 
@@ -158,11 +161,13 @@ extern "C" {
 # include "clapack.h"
 # warning Note: CLAPACK does not include all LAPACK routines!
 
-#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE_LP64)
 /*
  * Using Apple's Accelerate library
  * (Solid choice for both x86 and ARM, but only works under MacOSX and is not
  * quite as fast as Intel MKL for x86 systems)
+ *
+ * Adding ACCELERATE_NEW_LAPACK (supported in MacOS 13.3 or newer) is optional.
  *
  * Note that Apple Accelerate not only supports CBLAS and LAPACK, but also
  * offers:
@@ -177,6 +182,23 @@ extern "C" {
  * vDSP. Therefore, be aware that the default kissFFT library (included in
  * framework/resources) is still used as a fall-back option in such cases.
  */
+# include "Accelerate/Accelerate.h"
+
+#elif  defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE_ILP64)
+/*
+ * Using Apple's Accelerate library
+ * (Solid choice for both x86 and ARM, but only works under MacOSX and is not
+ * quite as fast as Intel MKL for x86 systems)
+ *
+ * Adding ACCELERATE_NEW_LAPACK (supported in MacOS 13.3 or newer) is required.
+ * Adding ACCELERATE_LAPACK_ILP64 (supported in MacOS 13.3 or newer) is required.
+ */
+# if !defined(ACCELERATE_NEW_LAPACK)
+#  error ACCELERATE_NEW_LAPACK should also be added to preprocessor definitions
+# endif
+# if !defined(ACCELERATE_LAPACK_ILP64)
+#  error ACCELERATE_LAPACK_ILP64 should also be added to preprocessor definitions
+# endif
 # include "Accelerate/Accelerate.h"
 
 #elif defined(SAF_USE_GSL)
@@ -313,8 +335,10 @@ extern "C" {
 # define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "OpenBLAS with LAPACKE"
 #elif defined(SAF_USE_ATLAS)
 # define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "ATLAS"
-#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE)
-# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Apple Accelerate"
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE_LP64)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Apple Accelerate (LP64)"
+#elif defined(__APPLE__) && defined(SAF_USE_APPLE_ACCELERATE_ILP64)
+# define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "Apple Accelerate (ILP64)"
 #else
 # define SAF_CURRENT_PERFORMANCE_LIBRARY_STRING "NONE"
 #endif

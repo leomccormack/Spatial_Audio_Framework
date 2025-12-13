@@ -37,7 +37,7 @@
 
 #include "saf_utilities.h"
 #include "saf_externals.h"
-#ifdef SAF_USE_APPLE_ACCELERATE
+#if defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
 # include "AvailabilityVersions.h"
 # ifdef __MAC_12_0
 //#  define SAF_USE_INTERLEAVED_VDSP /**< New interleaved implementation as of macOS 12.0+. UNFINISHED+UNTESTED! */
@@ -77,7 +77,7 @@ typedef struct _saf_rfft_data {
     Ipp8u* memSpec;
     Ipp8u* buffer;
     Ipp8u* memInit;
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
 # ifdef SAF_USE_INTERLEAVED_VDSP
     vDSP_DFT_Interleaved_Setup DFT_fwd;
     vDSP_DFT_Interleaved_Setup DFT_bwd;
@@ -117,7 +117,7 @@ typedef struct _saf_fft_data {
     Ipp8u* memSpec;
     Ipp8u* buffer;
     Ipp8u* memInit;
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
 # ifdef SAF_USE_INTERLEAVED_VDSP
     vDSP_DFT_Interleaved_Setup DFT_fwd;
     vDSP_DFT_Interleaved_Setup DFT_bwd;
@@ -570,7 +570,7 @@ void saf_rfft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
 # ifdef SAF_USE_INTERLEAVED_VDSP
     h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
     h->DFT_bwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_INVERSE, vDSP_DFT_Interleaved_RealtoComplex);
@@ -638,7 +638,7 @@ void saf_rfft_destroy
         }
         if(h->buffer)
             ippFree(h->buffer);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
         if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP
             vDSP_DFT_Interleaved_DestroySetup(h->DFT_fwd);
@@ -684,7 +684,7 @@ void saf_rfft_forward
         ippsFFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hFFTspec, h->buffer);
     else
         ippsDFTFwd_RToCCS_32f((Ipp32f*)inputTD, (Ipp32f*)outputFD, h->hDFTspec, h->buffer);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
     if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP
         saf_print_error("Not implemented yet");
@@ -730,7 +730,7 @@ void saf_rfft_backward
         ippsFFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hFFTspec, h->buffer);
     else
         ippsDFTInv_CCSToR_32f((Ipp32f*)inputFD, (Ipp32f*)outputTD, h->hDFTspec, h->buffer);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
     if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP
         saf_print_error("Not implemented yet");
@@ -800,7 +800,7 @@ void saf_fft_create
     }
     if (h->memInit)
         ippFree(h->memInit);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
 # ifdef SAF_USE_INTERLEAVED_VDSP
     h->DFT_fwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_FORWARD, vDSP_DFT_Interleaved_RealtoComplex);
     h->DFT_bwd = vDSP_DFT_Interleaved_CreateSetup(0, N, vDSP_DFT_INVERSE, vDSP_DFT_Interleaved_RealtoComplex);
@@ -866,7 +866,7 @@ void saf_fft_destroy
         }
         if (h->buffer)
             ippFree(h->buffer);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
         if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP
             vDSP_DFT_Interleaved_DestroySetup(h->DFT_fwd);
@@ -912,7 +912,7 @@ void saf_fft_forward
         ippsFFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hFFTspec, h->buffer);
     else
         ippsDFTFwd_CToC_32fc((Ipp32fc*)inputTD, (Ipp32fc*)outputFD, h->hDFTspec, h->buffer);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
     if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP
         saf_print_error("Not implemented yet");
@@ -950,7 +950,7 @@ void saf_fft_backward
         ippsFFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hFFTspec, h->buffer);
     else
         ippsDFTInv_CToC_32fc((Ipp32fc*)inputFD, (Ipp32fc*)outputTD, h->hDFTspec, h->buffer);
-#elif defined(SAF_USE_APPLE_ACCELERATE)
+#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
     if(!h->useKissFFT_FLAG){
 # ifdef SAF_USE_INTERLEAVED_VDSP
         saf_print_error("Not implemented yet");

@@ -177,7 +177,7 @@ void sldoa_estimateDoA
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, 4, TIME_SLOTS, nSH, &calpha,
                         sec_c, nSH,
                         FLATTEN2D(SHframeTF), TIME_SLOTS, &cbeta,
-                        secSig, TIME_SLOTS);
+                        (float_complex*)secSig, TIME_SLOTS);
         }
         
         /* convert N3D to SN3D */

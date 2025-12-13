@@ -23,12 +23,13 @@ The framework requires the following external libraries:
 
 In order to inform SAF which CBLAS/LAPACK supporting library/libraries you have linked to your project, simply add **one** of the following global pre-processor definitions:
 ```
-SAF_USE_INTEL_MKL_LP64        # great option, but only for x86 architectures (using the LP64 config [int32])
-SAF_USE_INTEL_MKL_ILP64       # great option, but only for x86 architectures (using the ILP64 config [int64])
-SAF_USE_OPEN_BLAS_AND_LAPACKE # good option, works on everything
-SAF_USE_APPLE_ACCELERATE      # good option (x86 and ARM), faster than OpenBLAS, but MacOSX only & slower than MKL
-SAF_USE_ATLAS                 # bad option (x86 and ARM), many LAPACK functions are missing
-SAF_USE...                    # please get in touch if you use something else! :-)
+SAF_USE_INTEL_MKL_LP64         # great option, but only for x86 architectures (using the LP64 config [int32])
+SAF_USE_INTEL_MKL_ILP64        # great option, but only for x86 architectures (using the ILP64 config [int64])
+SAF_USE_APPLE_ACCELERATE_LP64  # great option (x86 and ARM), but MacOSX only (using the LP64 config [int32])
+SAF_USE_APPLE_ACCELERATE_ILP64 # great option (x86 and ARM), but MacOSX only (using the ILP64 config [int64])
+SAF_USE_OPEN_BLAS_AND_LAPACKE  # good option, works on everything
+SAF_USE_ATLAS                  # bad option (x86 and ARM), many LAPACK functions are missing
+SAF_USE...                     # please get in touch if you use something else! :-)
 ```
 [Detailed instructions regarding how to build and link these libraries can be found here](docs/PERFORMANCE_LIBRARY_INSTRUCTIONS.md).
 

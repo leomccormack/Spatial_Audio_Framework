@@ -487,9 +487,9 @@ void ambi_bin_process
                 /* Bake the rotation into the decoding matrix */
                 for(band = 0; band < HYBRID_BANDS; band++) {
                     cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, nSH, nSH, &calpha,
-                                pars->M_dec[band], MAX_NUM_SH_SIGNALS,
-                                pData->M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
-                                pars->M_dec_rot[band], MAX_NUM_SH_SIGNALS);
+                                (float_complex*)pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                                (float_complex*)pData->M_rot, MAX_NUM_SH_SIGNALS, &cbeta,
+                                (float_complex*)pars->M_dec_rot[band], MAX_NUM_SH_SIGNALS);
                 }
                 pData->recalc_M_rotFLAG = 0;
             }
@@ -498,7 +498,7 @@ void ambi_bin_process
         /* Apply the decoder to go from SH input to binaural output */
         for(band = 0; band < HYBRID_BANDS; band++) {
             cblas_cgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, NUM_EARS, TIME_SLOTS, nSH, &calpha,
-                        enableRot ? pars->M_dec_rot[band] : pars->M_dec[band], MAX_NUM_SH_SIGNALS,
+                        enableRot ? (float_complex*)pars->M_dec_rot[band] : (float_complex*)pars->M_dec[band], MAX_NUM_SH_SIGNALS,
                         FLATTEN2D(pData->SHframeTF[band]), TIME_SLOTS, &cbeta,
                         FLATTEN2D(pData->binframeTF[band]), TIME_SLOTS);
         }
