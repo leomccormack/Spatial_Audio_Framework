@@ -55,7 +55,7 @@ void dirass_create
     pData->pmapAvgCoeff = 0.2f;
     pData->minFreq_hz = 100.0f;
     pData->maxFreq_hz = 8e3f;
-    pData->dispWidth = 120;
+    pData->dispWidth = 200;
     pData->chOrdering = CH_ACN;
     pData->norm = NORM_SN3D;
     pData->HFOVoption = HFOV_360;

@@ -77,7 +77,7 @@ void powermap_create
     strcpy(pData->progressBarText,"");
     pData->codecStatus = CODEC_STATUS_NOT_INITIALISED;
     pData->procStatus = PROC_STATUS_NOT_ONGOING;
-    pData->dispWidth = 140;
+    pData->dispWidth = 200;
 
     /* display */
     pData->pmap = NULL;

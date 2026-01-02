@@ -35,7 +35,7 @@ void matrixconv_create
 
     /* Default user parameters */
     pData->nInputChannels = 1;
-    pData->enablePartitionedConv = 0;
+    pData->enablePartitionedConv = 1;
 
     /* internal values */
     pData->hostBlockSize = -1; /* force initialisation */

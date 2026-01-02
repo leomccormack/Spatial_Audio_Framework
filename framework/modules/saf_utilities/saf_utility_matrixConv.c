@@ -568,10 +568,11 @@ void saf_TVConv_destroy
                 free(h->Hpart_f[np][no]);
         }
         free(h->Hpart_f);
-        }
+        
         free(h);
         h = NULL;
         *phTVC = NULL;
+    }
 }
 
 void saf_TVConv_apply

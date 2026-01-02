@@ -1137,7 +1137,7 @@ void utility_cvvmul
     /* The operation: */
 #if defined(SAF_USE_INTEL_IPP)
     ippsMul_32fc((Ipp32fc*)a, (Ipp32fc*)b, (Ipp32fc*)c, len);
-#elif defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)
+#elif (defined(SAF_USE_APPLE_ACCELERATE_LP64) || defined(SAF_USE_APPLE_ACCELERATE_ILP64)) && 0
     /* Imaginary part of the output */
     vDSP_vmul((float*)a/*real*/, 2, (float*)b+1/*imag*/, 2, (float*)c+1/*imag*/, 2, (vDSP_Length)len);
     vDSP_vma((float*)a+1/*imag*/, 2, (float*)b/*real*/, 2, (float*)c+1/*imag*/, 2, (float*)c/*real*/, 2, (vDSP_Length)len); /* Use the real part of c as a temporary buffer */
