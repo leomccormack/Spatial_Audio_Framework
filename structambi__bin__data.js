@@ -12,6 +12,7 @@ var structambi__bin__data =
     [ "enableMaxRE", "structambi__bin__data.html#a7ba884638319df2c3f91bc74fdf79267", null ],
     [ "enableRotation", "structambi__bin__data.html#a188ab47562f957609609cb4f3227d271", null ],
     [ "enableTruncationEQ", "structambi__bin__data.html#a2f3c44f49053a3f3cf665efa2ac93b97", null ],
+    [ "firstInit", "structambi__bin__data.html#a02b72604432a19c5bb19832c865e372c", null ],
     [ "freqVector", "structambi__bin__data.html#ab8c823f8410359aa26ed7649f3c4ec4e", null ],
     [ "fs", "structambi__bin__data.html#a06eaae06c01d026c3e5247b027ec7da4", null ],
     [ "hSTFT", "structambi__bin__data.html#a905979baae3ed572ce09d9e615c2dbe3", null ],

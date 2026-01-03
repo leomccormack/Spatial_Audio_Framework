@@ -63,5 +63,7 @@ var ambi__dec_8h =
     [ "ambi_dec_setSofaFilePath", "ambi__dec_8h.html#a718969bd1ae38b93b15380a1befbc078", null ],
     [ "ambi_dec_setSourcePreset", "ambi__dec_8h.html#a7794065ca6c1fbaf2bdb238e5d6d34a3", null ],
     [ "ambi_dec_setTransitionFreq", "ambi__dec_8h.html#ad7841c25bbf89b0faba55ba29bfaccb2", null ],
-    [ "ambi_dec_setUseDefaultHRIRsflag", "ambi__dec_8h.html#ac5d13f4307d6a6e0fc2403d51223467b", null ]
+    [ "ambi_dec_setUseDefaultHRIRsflag", "ambi__dec_8h.html#ac5d13f4307d6a6e0fc2403d51223467b", null ],
+    [ "ambi_dec_defaultLoudspeakerDirections", "ambi__dec_8h.html#aa5ab1250db763b9019ca0600797c2590", null ],
+    [ "ambi_dec_defaultNumLoudspeakers", "ambi__dec_8h.html#a43ed4c18576c9f34d59ceac9faa14b62", null ]
 ];

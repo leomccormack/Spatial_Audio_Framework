@@ -3,6 +3,7 @@ var structambi__dec__codec_pars =
     [ "hrir_dirs_deg", "structambi__dec__codec_pars.html#afc0d3b1519a390be4e1d440024601801", null ],
     [ "hrir_fs", "structambi__dec__codec_pars.html#a93d30e8c0d584436374ecc5944cf1518", null ],
     [ "hrir_len", "structambi__dec__codec_pars.html#a18a7ddbad8d891f33a7e32dad8a2a9bc", null ],
+    [ "hrir_orig_fs", "structambi__dec__codec_pars.html#aa5d60bdc87d00644492af9802ad497bc", null ],
     [ "hrirs", "structambi__dec__codec_pars.html#af320e4d368580ee1a59bc125ea5ab1db", null ],
     [ "hrtf_fb", "structambi__dec__codec_pars.html#a6de543aa73ff4f5dd0603eb251e915a1", null ],
     [ "hrtf_fb_mag", "structambi__dec__codec_pars.html#aa15d2a4952fbb543ab3247aa2f7d95fc", null ],

@@ -45,5 +45,9 @@ var panner_8h =
     [ "panner_setSourceAzi_deg", "panner_8h.html#a5a760f6d627eb877f46e8a88c0f0e8e0", null ],
     [ "panner_setSourceElev_deg", "panner_8h.html#ad9190baa101d663777c943af6513da5a", null ],
     [ "panner_setSpread", "panner_8h.html#a5559468d79c42faa69525042684e517d", null ],
-    [ "panner_setYaw", "panner_8h.html#afe63c34fa35f7b57f27ce5d55e8fec36", null ]
+    [ "panner_setYaw", "panner_8h.html#afe63c34fa35f7b57f27ce5d55e8fec36", null ],
+    [ "panner_defaultLoudspeakerDirections", "panner_8h.html#a56589ad4e12c72c39e8bab728da43d99", null ],
+    [ "panner_defaultNumLoudspeakers", "panner_8h.html#a2abb3c03fe477fea6b6d1723bb3dfe34", null ],
+    [ "panner_defaultNumSources", "panner_8h.html#a5e4921abda206d5fb2bc6adf39b7f4e2", null ],
+    [ "panner_defaultSourceDirections", "panner_8h.html#a0bb92554626b6f11cddfc36834e43152", null ]
 ];

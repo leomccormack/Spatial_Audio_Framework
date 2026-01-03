@@ -108,7 +108,8 @@ $(function(){initNavTree('binauraliser__internal_8c.html',''); initResizable(tru
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">binauraliser_internal.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -136,6 +137,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a17d3a47fce8ec82a5cdbf15e5297c952" id="r_a17d3a47fce8ec82a5cdbf15e5297c952"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a17d3a47fce8ec82a5cdbf15e5297c952">binauraliser_loadPreset</a> (<a class="el" href="__common_8h.html#a7ea45ad31bea000c76c733ace2441204">SOURCE_CONFIG_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], _Atomic_INT32 *newNCH, int *nDims)</td></tr>
 <tr class="memdesc:a17d3a47fce8ec82a5cdbf15e5297c952"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the source directions for a specified source config preset.  <br /></td></tr>
 <tr class="separator:a17d3a47fce8ec82a5cdbf15e5297c952"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:aaed478c077c7fe58a62e40a6c2ef1df2" id="r_aaed478c077c7fe58a62e40a6c2ef1df2"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaed478c077c7fe58a62e40a6c2ef1df2">binauraliser_defaultNumSources</a> = 1</td></tr>
+<tr class="memdesc:aaed478c077c7fe58a62e40a6c2ef1df2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of Sources.  <br /></td></tr>
+<tr class="separator:aaed478c077c7fe58a62e40a6c2ef1df2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8560ea2ba7534f3673d7aafa13d49307" id="r_a8560ea2ba7534f3673d7aafa13d49307"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8560ea2ba7534f3673d7aafa13d49307">binauraliser_defaultSourceDirections</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
+<tr class="memdesc:a8560ea2ba7534f3673d7aafa13d49307"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default source directions.  <br /></td></tr>
+<tr class="separator:a8560ea2ba7534f3673d7aafa13d49307"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Convolves input audio (up to 64 channels) with interpolated HRTFs in the time-frequency domain. </p>
@@ -164,7 +174,7 @@ Functions</h2></td></tr>
 <p>Initialise the HRTFs: either loading the default set or loading from a SOFA file; and then generate a VBAP gain table for interpolation. </p>
 <dl class="section note"><dt>Note</dt><dd>Call <a class="el" href="binauraliser__internal_8h.html#a25a37e00a6f41938884c304447b1503e" title="Initialise the filterbank used by binauraliser.">binauraliser_initTFT()</a> (if needed) before calling this function </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00125">125</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00258">258</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
 
 </div>
 </div>
@@ -186,7 +196,7 @@ Functions</h2></td></tr>
 <p>Initialise the filterbank used by binauraliser. </p>
 <dl class="section note"><dt>Note</dt><dd>Call this function before <a class="el" href="binauraliser__internal_8h.html#a0ba03cebca501177e0d5dc26c8323935" title="Initialise the HRTFs: either loading the default set or loading from a SOFA file; and then generate a...">binauraliser_initHRTFsAndGainTables()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00267">267</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00402">402</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
 
 </div>
 </div>
@@ -237,7 +247,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00046">46</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00179">179</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
 
 </div>
 </div>
@@ -282,7 +292,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00283">283</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00418">418</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
 
 </div>
 </div>
@@ -307,7 +317,44 @@ Functions</h2></td></tr>
 
 <p>Sets codec status (see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> enum) </p>
 
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00168">168</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="aaed478c077c7fe58a62e40a6c2ef1df2" name="aaed478c077c7fe58a62e40a6c2ef1df2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaed478c077c7fe58a62e40a6c2ef1df2">&#9670;&#160;</a></span>binauraliser_defaultNumSources</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int binauraliser_defaultNumSources = 1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default number of Sources. </p>
+
 <p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00035">35</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a8560ea2ba7534f3673d7aafa13d49307" name="a8560ea2ba7534f3673d7aafa13d49307"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8560ea2ba7534f3673d7aafa13d49307">&#9670;&#160;</a></span>binauraliser_defaultSourceDirections</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float binauraliser_defaultSourceDirections[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default source directions. </p>
+
+<p class="definition">Definition at line <a class="el" href="binauraliser__internal_8c_source.html#l00038">38</a> of file <a class="el" href="binauraliser__internal_8c_source.html">binauraliser_internal.c</a>.</p>
 
 </div>
 </div>
@@ -318,7 +365,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_6c7646edab85eb27cefda7b4e9fd2cc5.html">binauraliser</a></li><li class="navelem"><a class="el" href="binauraliser__internal_8c.html">binauraliser_internal.c</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:45 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:18 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

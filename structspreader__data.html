@@ -144,6 +144,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a10aaa45e80c62e29b3263a4ce05b4ee6" id="r_a10aaa45e80c62e29b3263a4ce05b4ee6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a10aaa45e80c62e29b3263a4ce05b4ee6">fs</a></td></tr>
 <tr class="memdesc:a10aaa45e80c62e29b3263a4ce05b4ee6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Host sampling rate, in Hz.  <br /></td></tr>
 <tr class="separator:a10aaa45e80c62e29b3263a4ce05b4ee6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b228dae130ef9d8c18d054a119907ab" id="r_a1b228dae130ef9d8c18d054a119907ab"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1b228dae130ef9d8c18d054a119907ab">firstInit</a></td></tr>
+<tr class="memdesc:a1b228dae130ef9d8c18d054a119907ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag, 1: <code>_init()</code> function has never been called, 0: <code>_init()</code> function has been called  <br /></td></tr>
+<tr class="separator:a1b228dae130ef9d8c18d054a119907ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac0933ba9c35837b2384899543221d6b" id="r_aac0933ba9c35837b2384899543221d6b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac0933ba9c35837b2384899543221d6b">freqVector</a> [<a class="el" href="spreader__internal_8h.html#a8b686c1291e75b81f91064272c45aed5">HYBRID_BANDS</a>]</td></tr>
 <tr class="memdesc:aac0933ba9c35837b2384899543221d6b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Frequency vector (filterbank centre frequencies)  <br /></td></tr>
 <tr class="separator:aac0933ba9c35837b2384899543221d6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,6 +162,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a0dc554060145765b5fd9667169031ad7" id="r_a0dc554060145765b5fd9667169031ad7"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0dc554060145765b5fd9667169031ad7">h_len</a></td></tr>
 <tr class="memdesc:a0dc554060145765b5fd9667169031ad7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Length of time-domain filters, in samples.  <br /></td></tr>
 <tr class="separator:a0dc554060145765b5fd9667169031ad7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d3aae4b8e66b6ff04b5f29b4fe0ab84" id="r_a1d3aae4b8e66b6ff04b5f29b4fe0ab84"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1d3aae4b8e66b6ff04b5f29b4fe0ab84">h_orig_fs</a></td></tr>
+<tr class="memdesc:a1d3aae4b8e66b6ff04b5f29b4fe0ab84"><td class="mdescLeft">&#160;</td><td class="mdescRight">Can be different from h_fs if IRs were resampled.  <br /></td></tr>
+<tr class="separator:a1d3aae4b8e66b6ff04b5f29b4fe0ab84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36d3de6f4489740bcfa41aa42ecf4b66" id="r_a36d3de6f4489740bcfa41aa42ecf4b66"><td class="memItemLeft" align="right" valign="top">_Atomic_FLOAT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a36d3de6f4489740bcfa41aa42ecf4b66">h_fs</a></td></tr>
 <tr class="memdesc:a36d3de6f4489740bcfa41aa42ecf4b66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sample rate used to measure the filters.  <br /></td></tr>
 <tr class="separator:a36d3de6f4489740bcfa41aa42ecf4b66"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -312,7 +318,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00131">131</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00133">133</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -328,7 +334,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00129">129</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00131">131</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -344,7 +350,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00130">130</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00132">132</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -360,7 +366,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00130">130</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00132">132</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -376,7 +382,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00129">129</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00131">131</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -392,7 +398,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00129">129</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00131">131</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +414,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00130">130</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00132">132</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -426,7 +432,7 @@ Data Fields</h2></td></tr>
 
 <p>angles; nGrid x 1 </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00104">104</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00106">106</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -444,7 +450,7 @@ Data Fields</h2></td></tr>
 
 <p>see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00134">134</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00136">136</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -462,7 +468,7 @@ Data Fields</h2></td></tr>
 
 <p>Covariance matrix averaging coefficient, [0..1]. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00148">148</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00150">150</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -480,7 +486,7 @@ Data Fields</h2></td></tr>
 
 <p>Current prototype covariance matrices; HYBRID_BANDS x FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00105">105</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00107">107</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -498,7 +504,7 @@ Data Fields</h2></td></tr>
 
 <p>Residual covariance; FLAT: Q x Q. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00125">125</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00127">127</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -516,7 +522,7 @@ Data Fields</h2></td></tr>
 
 <p>Residual covariance; FLAT: Q x Q. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00126">126</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00128">128</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -534,7 +540,7 @@ Data Fields</h2></td></tr>
 
 <p>Target covariance matrices; HYBRID_BANDS x FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00106">106</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00108">108</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +576,25 @@ Data Fields</h2></td></tr>
 
 <p>1: IR direction currently used for spreading, 0: not </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00118">118</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00120">120</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+
+</div>
+</div>
+<a id="a1b228dae130ef9d8c18d054a119907ab" name="a1b228dae130ef9d8c18d054a119907ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b228dae130ef9d8c18d054a119907ab">&#9670;&#160;</a></span>firstInit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int spreader_data::firstInit</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>flag, 1: <code>_init()</code> function has never been called, 0: <code>_init()</code> function has been called </p>
+
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00089">89</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -588,7 +612,7 @@ Data Fields</h2></td></tr>
 
 <p>Frequency vector (filterbank centre frequencies) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00089">89</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00090">90</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -624,7 +648,7 @@ Data Fields</h2></td></tr>
 
 <p>Grid directions, in degrees; FLAT: nGrid x 2. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00100">100</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00102">102</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -642,7 +666,7 @@ Data Fields</h2></td></tr>
 
 <p>Grid directions as unit-length Cartesian coordinates; FLAT: nGrid x 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00101">101</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00103">103</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -660,7 +684,7 @@ Data Fields</h2></td></tr>
 
 <p>Sample rate used to measure the filters. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00096">96</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00098">98</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -678,7 +702,7 @@ Data Fields</h2></td></tr>
 
 <p>FLAT: HYBRID_BANDS x Q x nGrid. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00098">98</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00100">100</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -696,7 +720,7 @@ Data Fields</h2></td></tr>
 
 <p>FLAT: nGrid x Q x h_len. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00097">97</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00099">99</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -714,7 +738,25 @@ Data Fields</h2></td></tr>
 
 <p>Length of time-domain filters, in samples. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00095">95</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00096">96</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+
+</div>
+</div>
+<a id="a1d3aae4b8e66b6ff04b5f29b4fe0ab84" name="a1d3aae4b8e66b6ff04b5f29b4fe0ab84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d3aae4b8e66b6ff04b5f29b4fe0ab84">&#9670;&#160;</a></span>h_orig_fs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">_Atomic_INT32 spreader_data::h_orig_fs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Can be different from h_fs if IRs were resampled. </p>
+
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00097">97</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -732,7 +774,7 @@ Data Fields</h2></td></tr>
 
 <p>covariance domain framework handle </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00121">121</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00123">123</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -750,7 +792,7 @@ Data Fields</h2></td></tr>
 
 <p>covariance domain framework handle for the residual </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00122">122</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00124">124</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -768,7 +810,7 @@ Data Fields</h2></td></tr>
 
 <p>handles for decorrelators </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00103">103</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00105">105</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -786,7 +828,7 @@ Data Fields</h2></td></tr>
 
 <p>Pre-computed array outer-products; HYBRID_BANDS x nGrid x FLAT: (Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00099">99</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00101">101</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -804,7 +846,7 @@ Data Fields</h2></td></tr>
 
 <p>afSTFT handle </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00090">90</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00091">91</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -858,7 +900,7 @@ Data Fields</h2></td></tr>
 
 <p>Interpolated mixing matrix; FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00111">111</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00113">113</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -876,7 +918,7 @@ Data Fields</h2></td></tr>
 
 <p>Interpolated residual mixing matrix; FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00112">112</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00114">114</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -894,7 +936,7 @@ Data Fields</h2></td></tr>
 
 <p>Complex variant of interp_Mr. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00113">113</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00115">115</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -912,7 +954,7 @@ Data Fields</h2></td></tr>
 
 <p>Linear Interpolator - Fade in. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00114">114</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00116">116</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -930,7 +972,7 @@ Data Fields</h2></td></tr>
 
 <p>Linear Interpolator - Fade out. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00115">115</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00117">117</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -948,7 +990,7 @@ Data Fields</h2></td></tr>
 
 <p>mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00109">109</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00111">111</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -966,7 +1008,7 @@ Data Fields</h2></td></tr>
 
 <p>residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00110">110</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00112">112</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -984,7 +1026,7 @@ Data Fields</h2></td></tr>
 
 <p>New number of input signals (current value will be replaced by this after next re-init) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00138">138</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00140">140</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1002,7 +1044,7 @@ Data Fields</h2></td></tr>
 
 <p>See <a class="el" href="spreader_8h.html#a7d787e391c17a4be57bc97e68a3b9b72" title="Available processing modes.">SPREADER_PROC_MODES</a> (current value will be replaced by this after next re-init) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00139">139</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00141">141</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1020,7 +1062,7 @@ Data Fields</h2></td></tr>
 
 <p>Number of directions/measurements/HRTFs etc. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00094">94</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00095">95</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1038,7 +1080,7 @@ Data Fields</h2></td></tr>
 
 <p>Current number of input signals. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00144">144</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00146">146</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1092,7 +1134,7 @@ Data Fields</h2></td></tr>
 
 <p>previous mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00107">107</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00109">109</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1110,7 +1152,7 @@ Data Fields</h2></td></tr>
 
 <p>previous residual mixing matrices; HYBRID_BANDS x FLAT:(Q x Q) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00108">108</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00110">110</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1128,7 +1170,7 @@ Data Fields</h2></td></tr>
 
 <p>See <a class="el" href="spreader_8h.html#a7d787e391c17a4be57bc97e68a3b9b72" title="Available processing modes.">SPREADER_PROC_MODES</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00142">142</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00144">144</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1146,7 +1188,7 @@ Data Fields</h2></td></tr>
 
 <p>see <a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec" title="Current status of the processing loop.">PROC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00137">137</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00139">139</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1164,7 +1206,7 @@ Data Fields</h2></td></tr>
 
 <p>Current (re)initialisation progress, between [0..1]. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00135">135</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00137">137</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1182,7 +1224,7 @@ Data Fields</h2></td></tr>
 
 <p>Current (re)initialisation step, string. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00136">136</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00138">138</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1218,7 +1260,7 @@ Data Fields</h2></td></tr>
 
 <p>Number of channels in the target playback setup; for example: 2 for binaural. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00093">93</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00094">94</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1236,7 +1278,7 @@ Data Fields</h2></td></tr>
 
 <p>Identity; FLAT: Q x Q. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00123">123</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00125">125</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1254,7 +1296,7 @@ Data Fields</h2></td></tr>
 
 <p>Identity; FLAT: Q x Q. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00124">124</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00126">126</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1272,7 +1314,7 @@ Data Fields</h2></td></tr>
 
 <p>SOFA file path. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00143">143</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00145">145</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1308,7 +1350,7 @@ Data Fields</h2></td></tr>
 
 <p>Source directions, in degrees. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00146">146</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00148">148</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1326,7 +1368,7 @@ Data Fields</h2></td></tr>
 
 <p>Source spreading, in degrees. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00145">145</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00147">147</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1344,7 +1386,7 @@ Data Fields</h2></td></tr>
 
 <p>1: use default HRIRs in database, 0: use the measurements from SOFA file (can be anything, not just HRTFs) </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00147">147</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00149">149</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1362,7 +1404,7 @@ Data Fields</h2></td></tr>
 
 <p>Integration weights; nGrid x 1. </p>
 
-<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00102">102</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="spreader__internal_8h_source.html#l00104">104</a> of file <a class="el" href="spreader__internal_8h_source.html">spreader_internal.h</a>.</p>
 
 </div>
 </div>
@@ -1376,7 +1418,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structspreader__data.html">spreader_data</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:47 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:19 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

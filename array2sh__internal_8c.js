@@ -8,5 +8,7 @@ var array2sh__internal_8c =
     [ "array2sh_evaluateSHTfilters", "array2sh__internal_8c.html#a4447b78abeb7725a873e535bf7485e78", null ],
     [ "array2sh_initArray", "array2sh__internal_8c.html#a7cb2663464edcb69be16413da2d06a18", null ],
     [ "array2sh_initTFT", "array2sh__internal_8c.html#a5bbd0e88e0951bdc6454bc69a4033abc", null ],
-    [ "array2sh_replicate_order", "array2sh__internal_8c.html#af0addc8fe5a8febaa92f8c110fdd653e", null ]
+    [ "array2sh_replicate_order", "array2sh__internal_8c.html#af0addc8fe5a8febaa92f8c110fdd653e", null ],
+    [ "array2sh_defaultNumSensors", "array2sh__internal_8c.html#a019080a4e17518e58f78f63c89547702", null ],
+    [ "array2sh_defaultSensorsDirections", "array2sh__internal_8c.html#a97fa391fa96cdb4d32d1786f8a058750", null ]
 ];

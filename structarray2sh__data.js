@@ -14,6 +14,7 @@ var structarray2sh__data =
     [ "evalRequestedFLAG", "structarray2sh__data.html#abf23bbbdc9c6556513666369535b500f", null ],
     [ "evalStatus", "structarray2sh__data.html#ac6803fe7a3cf2ca56ac3ef0b89005edf", null ],
     [ "filterType", "structarray2sh__data.html#ac403d7d14654b9434a2998def67d8faa", null ],
+    [ "firstInit", "structarray2sh__data.html#a873f79ea0b998fdad7d6bf1f787258f0", null ],
     [ "freqVector", "structarray2sh__data.html#a28767a110d7aa2f874b982c6f68e40fc", null ],
     [ "fs", "structarray2sh__data.html#a18bbe30b6c1b8b3e1a9bd5bbc17e6d4c", null ],
     [ "gain_dB", "structarray2sh__data.html#a13f7c209ca45436e6f69eef01523a58b", null ],

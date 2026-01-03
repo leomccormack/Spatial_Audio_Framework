@@ -45,5 +45,11 @@ var ambi__roomsim_8h =
     [ "ambi_roomsim_setSourceX", "ambi__roomsim_8h.html#a5433bb51e762d664cc47c535da810753", null ],
     [ "ambi_roomsim_setSourceY", "ambi__roomsim_8h.html#ad9990d1852de47d8bb03dcc50e5b4363", null ],
     [ "ambi_roomsim_setSourceZ", "ambi__roomsim_8h.html#a7feeec85926a48b42552f7b2f1576789", null ],
-    [ "ambi_roomsim_setWallAbsCoeff", "ambi__roomsim_8h.html#abc41ed0a5018870c2d54fd587dfc1433", null ]
+    [ "ambi_roomsim_setWallAbsCoeff", "ambi__roomsim_8h.html#abc41ed0a5018870c2d54fd587dfc1433", null ],
+    [ "ambi_roomsim_default_abs_wall", "ambi__roomsim_8h.html#ac97716e775157e8d42d6254c52a0b3b1", null ],
+    [ "ambi_roomsim_default_room_dims", "ambi__roomsim_8h.html#a351b2a6ac61d992f73134921c0c8fa78", null ],
+    [ "ambi_roomsim_defaultNumReceivers", "ambi__roomsim_8h.html#a877fd2f0fd5adfce4e803102300187c8", null ],
+    [ "ambi_roomsim_defaultNumSources", "ambi__roomsim_8h.html#a8a325afd8a3fb7124054d81e343b618c", null ],
+    [ "ambi_roomsim_defaultReceiverPositions", "ambi__roomsim_8h.html#a58a481f4b2e970ed5ce2e0e956e8bd61", null ],
+    [ "ambi_roomsim_defaultSourcePositions", "ambi__roomsim_8h.html#aa1a42e27cbad2b4e39fc612acd11beff", null ]
 ];

@@ -22,5 +22,7 @@ var beamformer_8h =
     [ "beamformer_setBeamType", "beamformer_8h.html#a0cc0e3a71490a941f7b1874fb144726a", null ],
     [ "beamformer_setChOrder", "beamformer_8h.html#a558e55b75b83c7cb27d86b69c8d9ebb2", null ],
     [ "beamformer_setNormType", "beamformer_8h.html#afda03f25bfdf1fdf3086a82575a41d9a", null ],
-    [ "beamformer_setNumBeams", "beamformer_8h.html#a65a7df1619af654943f2e4147dbc096e", null ]
+    [ "beamformer_setNumBeams", "beamformer_8h.html#a65a7df1619af654943f2e4147dbc096e", null ],
+    [ "beamformer_defaultBeamDirections", "beamformer_8h.html#a5cf64ea558d56982a555c8eb37b5de65", null ],
+    [ "beamformer_defaultNumBeams", "beamformer_8h.html#afcec686d72413a3120bd47055436a4c6", null ]
 ];

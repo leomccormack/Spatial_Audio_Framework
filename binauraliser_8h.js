@@ -57,5 +57,7 @@ var binauraliser_8h =
     [ "binauraliser_setSourceSolo", "binauraliser_8h.html#add009167f571b9f6f94cb1f53dde0463", null ],
     [ "binauraliser_setUnSolo", "binauraliser_8h.html#abd4f9537a0a40e892eb8ff8f27067971", null ],
     [ "binauraliser_setUseDefaultHRIRsflag", "binauraliser_8h.html#ab84d5d108bb01078ac6308914893dda9", null ],
-    [ "binauraliser_setYaw", "binauraliser_8h.html#aaae50d24fe39de90e3fb0fe9fe0d9d48", null ]
+    [ "binauraliser_setYaw", "binauraliser_8h.html#aaae50d24fe39de90e3fb0fe9fe0d9d48", null ],
+    [ "binauraliser_defaultNumSources", "binauraliser_8h.html#aaed478c077c7fe58a62e40a6c2ef1df2", null ],
+    [ "binauraliser_defaultSourceDirections", "binauraliser_8h.html#a8560ea2ba7534f3673d7aafa13d49307", null ]
 ];

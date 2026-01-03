@@ -183,6 +183,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a18bbe30b6c1b8b3e1a9bd5bbc17e6d4c" id="r_a18bbe30b6c1b8b3e1a9bd5bbc17e6d4c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18bbe30b6c1b8b3e1a9bd5bbc17e6d4c">fs</a></td></tr>
 <tr class="memdesc:a18bbe30b6c1b8b3e1a9bd5bbc17e6d4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate, hz  <br /></td></tr>
 <tr class="separator:a18bbe30b6c1b8b3e1a9bd5bbc17e6d4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873f79ea0b998fdad7d6bf1f787258f0" id="r_a873f79ea0b998fdad7d6bf1f787258f0"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a873f79ea0b998fdad7d6bf1f787258f0">firstInit</a></td></tr>
+<tr class="memdesc:a873f79ea0b998fdad7d6bf1f787258f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag, 1: <code>_init()</code> function has never been called, 0: <code>_init()</code> function has been called  <br /></td></tr>
+<tr class="separator:a873f79ea0b998fdad7d6bf1f787258f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba3d3832b62ce585dff9a11f7e8314c9" id="r_aba3d3832b62ce585dff9a11f7e8314c9"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aba3d3832b62ce585dff9a11f7e8314c9">new_order</a></td></tr>
 <tr class="memdesc:aba3d3832b62ce585dff9a11f7e8314c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">new encoding order (current value will be replaced by this after next re-init)  <br /></td></tr>
 <tr class="separator:aba3d3832b62ce585dff9a11f7e8314c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -379,7 +382,7 @@ Data Fields</h2></td></tr>
 
 <p>speed of sound, m/s </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00172">172</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00173">173</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -397,7 +400,7 @@ Data Fields</h2></td></tr>
 
 <p>Ambisonic channel order convention (see <a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892" title="Available Ambisonic channel ordering conventions.">CH_ORDER</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00170">170</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00171">171</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -431,7 +434,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00156">156</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00157">157</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -449,7 +452,7 @@ Data Fields</h2></td></tr>
 
 <p>0: disabled, 1: enabled </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00174">174</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00175">175</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -467,7 +470,7 @@ Data Fields</h2></td></tr>
 
 <p>0: do not reinit; 1: reinit; </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00163">163</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00164">164</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -503,7 +506,25 @@ Data Fields</h2></td></tr>
 
 <p>encoding filter approach </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00168">168</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00169">169</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+
+</div>
+</div>
+<a id="a873f79ea0b998fdad7d6bf1f787258f0" name="a873f79ea0b998fdad7d6bf1f787258f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a873f79ea0b998fdad7d6bf1f787258f0">&#9670;&#160;</a></span>firstInit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int array2sh_data::firstInit</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>flag, 1: <code>_init()</code> function has never been called, 0: <code>_init()</code> function has been called </p>
+
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00151">151</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -557,7 +578,7 @@ Data Fields</h2></td></tr>
 
 <p>post gain, dB </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00173">173</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00174">174</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -627,7 +648,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00155">155</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00156">156</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -643,7 +664,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00154">154</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00155">155</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -679,7 +700,7 @@ Data Fields</h2></td></tr>
 
 <p>new encoding order (current value will be replaced by this after next re-init) </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00151">151</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00152">152</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -697,7 +718,7 @@ Data Fields</h2></td></tr>
 
 <p>Ambisonic normalisation convention (see <a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be" title="Available Ambisonic normalisation conventions.">NORM_TYPES</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00171">171</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00172">172</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -715,7 +736,7 @@ Data Fields</h2></td></tr>
 
 <p>current encoding order </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00166">166</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00167">167</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -733,7 +754,7 @@ Data Fields</h2></td></tr>
 
 <p>currently selected MIC preset </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00167">167</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00168">168</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -751,7 +772,7 @@ Data Fields</h2></td></tr>
 
 <p>see <a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec" title="Current status of the processing loop.">PROC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00161">161</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00162">162</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -805,7 +826,7 @@ Data Fields</h2></td></tr>
 
 <p>regularisation upper gain limit, dB; </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00169">169</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00170">170</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -823,7 +844,7 @@ Data Fields</h2></td></tr>
 
 <p>0: do not reinit; 1: reinit; </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00162">162</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00163">163</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -911,7 +932,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00157">157</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00158">158</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -927,7 +948,7 @@ Data Fields</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00158">158</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8h_source.html#l00159">159</a> of file <a class="el" href="array2sh__internal_8h_source.html">array2sh_internal.h</a>.</p>
 
 </div>
 </div>
@@ -941,7 +962,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structarray2sh__data.html">array2sh_data</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:46 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:19 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

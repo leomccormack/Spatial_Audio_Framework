@@ -108,5 +108,7 @@ var array2sh_8h =
     [ "array2sh_setSensorAzi_rad", "array2sh_8h.html#a91fa6798470882cd72ad9e429c49db93", null ],
     [ "array2sh_setSensorElev_deg", "array2sh_8h.html#a6b3fd5ab211c9586f98e5de2daf4dd6f", null ],
     [ "array2sh_setSensorElev_rad", "array2sh_8h.html#a27ca865aa27c65d263b4a3af1cb92e58", null ],
-    [ "array2sh_setWeightType", "array2sh_8h.html#a9bda20eb2a017b289d61c7321ca72a34", null ]
+    [ "array2sh_setWeightType", "array2sh_8h.html#a9bda20eb2a017b289d61c7321ca72a34", null ],
+    [ "array2sh_defaultNumSensors", "array2sh_8h.html#a019080a4e17518e58f78f63c89547702", null ],
+    [ "array2sh_defaultSensorsDirections", "array2sh_8h.html#a97fa391fa96cdb4d32d1786f8a058750", null ]
 ];

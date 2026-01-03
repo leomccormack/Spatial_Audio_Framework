@@ -26,12 +26,15 @@ var searchData=
   ['windowing_5ffunction_5frectangular_23',['WINDOWING_FUNCTION_RECTANGULAR',['../group___utilities.html#gga11cf92ddf3389349c5dd4d7ccab6c619a1b887d46d91b1e9b70abd3fab25f4a94',1,'saf_utility_filters.h']]],
   ['windowing_5ffunction_5ftypes_24',['WINDOWING_FUNCTION_TYPES',['../group___utilities.html#ga11cf92ddf3389349c5dd4d7ccab6c619',1,'saf_utility_filters.h']]],
   ['windows_20users_25',['Windows users',['../md_docs_2_p_e_r_f_o_r_m_a_n_c_e___l_i_b_r_a_r_y___i_n_s_t_r_u_c_t_i_o_n_s.html#autotoc_md15',1,'']]],
-  ['with_20cmake_26',['Building with CMake',['../index.html#autotoc_md100',1,'']]],
-  ['wxyzcoeffs_27',['wxyzCoeffs',['../saf__sh_8c.html#af820c3e3d132463710c6a56317a6266f',1,'saf_sh.c']]],
-  ['wz12_5fhpf_28',['Wz12_hpf',['../structdirass__data.html#a3b2e2b15fe2f9032f01cc4169674464b',1,'dirass_data']]],
-  ['wz12_5flpf_29',['Wz12_lpf',['../structdirass__data.html#a62011ff7aafec5f7d213dfbeca0ba7d6',1,'dirass_data']]],
-  ['wz_5fapf1_30',['wz_apf1',['../structfaf___i_i_r_f_b__data.html#a54c7113f9e6ea0882d752417fff84b2a',1,'faf_IIRFB_data']]],
-  ['wz_5fapf2_31',['wz_apf2',['../structfaf___i_i_r_f_b__data.html#a738ba50cdd98218bc332bbbd23790314',1,'faf_IIRFB_data']]],
-  ['wz_5fhpf_32',['wz_hpf',['../structfaf___i_i_r_f_b__data.html#a13721ffcb65a2339cf5b47b13f7ed855',1,'faf_IIRFB_data']]],
-  ['wz_5flpf_33',['wz_lpf',['../structfaf___i_i_r_f_b__data.html#a61108da89b4c9ba5956214a6155f0d16',1,'faf_IIRFB_data']]]
+  ['with_20cmake_20img_20src_20https_3a_20img_20shields_20io_20github_20actions_20workflow_20status_20leomccormack_20spatial_5faudio_5fframework_20cmake_20yml_20alt_20github_20actions_20workflow_20status_26',['Building with CMake  &lt;img src=&quot;https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/cmake.yml&quot; alt=&quot;GitHub Actions Workflow Status&quot;/&gt;',['../index.html#autotoc_md100',1,'']]],
+  ['workflow_20status_27',['Workflow Status',['../index.html#autotoc_md100',1,'Building with CMake  &lt;img src=&quot;https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/cmake.yml&quot; alt=&quot;GitHub Actions Workflow Status&quot;/&gt;'],['../index.html#autotoc_md101',1,'Documentation  &lt;img src=&quot;https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/doxygen.yml&quot; alt=&quot;GitHub Actions Workflow Status&quot;/&gt;']]],
+  ['workflow_20status_20leomccormack_20spatial_5faudio_5fframework_20cmake_20yml_20alt_20github_20actions_20workflow_20status_28',['Building with CMake  &lt;img src=&quot;https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/cmake.yml&quot; alt=&quot;GitHub Actions Workflow Status&quot;/&gt;',['../index.html#autotoc_md100',1,'']]],
+  ['workflow_20status_20leomccormack_20spatial_5faudio_5fframework_20doxygen_20yml_20alt_20github_20actions_20workflow_20status_29',['Documentation  &lt;img src=&quot;https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/doxygen.yml&quot; alt=&quot;GitHub Actions Workflow Status&quot;/&gt;',['../index.html#autotoc_md101',1,'']]],
+  ['wxyzcoeffs_30',['wxyzCoeffs',['../saf__sh_8c.html#af820c3e3d132463710c6a56317a6266f',1,'saf_sh.c']]],
+  ['wz12_5fhpf_31',['Wz12_hpf',['../structdirass__data.html#a3b2e2b15fe2f9032f01cc4169674464b',1,'dirass_data']]],
+  ['wz12_5flpf_32',['Wz12_lpf',['../structdirass__data.html#a62011ff7aafec5f7d213dfbeca0ba7d6',1,'dirass_data']]],
+  ['wz_5fapf1_33',['wz_apf1',['../structfaf___i_i_r_f_b__data.html#a54c7113f9e6ea0882d752417fff84b2a',1,'faf_IIRFB_data']]],
+  ['wz_5fapf2_34',['wz_apf2',['../structfaf___i_i_r_f_b__data.html#a738ba50cdd98218bc332bbbd23790314',1,'faf_IIRFB_data']]],
+  ['wz_5fhpf_35',['wz_hpf',['../structfaf___i_i_r_f_b__data.html#a13721ffcb65a2339cf5b47b13f7ed855',1,'faf_IIRFB_data']]],
+  ['wz_5flpf_36',['wz_lpf',['../structfaf___i_i_r_f_b__data.html#a61108da89b4c9ba5956214a6155f0d16',1,'faf_IIRFB_data']]]
 ];

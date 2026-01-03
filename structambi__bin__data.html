@@ -123,6 +123,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a06eaae06c01d026c3e5247b027ec7da4" id="r_a06eaae06c01d026c3e5247b027ec7da4"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a06eaae06c01d026c3e5247b027ec7da4">fs</a></td></tr>
 <tr class="memdesc:a06eaae06c01d026c3e5247b027ec7da4"><td class="mdescLeft">&#160;</td><td class="mdescRight">host sampling rate  <br /></td></tr>
 <tr class="separator:a06eaae06c01d026c3e5247b027ec7da4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02b72604432a19c5bb19832c865e372c" id="r_a02b72604432a19c5bb19832c865e372c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a02b72604432a19c5bb19832c865e372c">firstInit</a></td></tr>
+<tr class="memdesc:a02b72604432a19c5bb19832c865e372c"><td class="mdescLeft">&#160;</td><td class="mdescRight">flag, 1: <code>_init()</code> function has never been called, 0: <code>_init()</code> function has been called  <br /></td></tr>
+<tr class="separator:a02b72604432a19c5bb19832c865e372c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0db4c2dfcbad65cba1a72cbaec58aa7" id="r_af0db4c2dfcbad65cba1a72cbaec58aa7"><td class="memItemLeft" align="right" valign="top">float **&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af0db4c2dfcbad65cba1a72cbaec58aa7">SHFrameTD</a></td></tr>
 <tr class="memdesc:af0db4c2dfcbad65cba1a72cbaec58aa7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Input spherical harmonic (SH) signals in the time-domain; <a class="el" href="__common_8h.html#ac547d62eef0f07c08865cf3d2aab3286" title="Maximum number of spherical harmonic components/signals supported.">MAX_NUM_SH_SIGNALS</a> x <a class="el" href="ambi__bin__internal_8h.html#a21f3364db20349a7ae854bfc9b4ed28e" title="Framesize, in time-domain samples.">AMBI_BIN_FRAME_SIZE</a>.  <br /></td></tr>
 <tr class="separator:af0db4c2dfcbad65cba1a72cbaec58aa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -230,7 +233,7 @@ Data Fields</h2></td></tr>
 <div class="textblock"><p>Main structure for ambi_bin. </p>
 <p>Contains variables for audio buffers, afSTFT, rotation matrices, internal variables, flags, user parameters </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00121">121</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00122">122</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 </div><h2 class="groupheader">Field Documentation</h2>
 <a id="a36a87c5c3bdcd7e64e0d595dbf155749" name="a36a87c5c3bdcd7e64e0d595dbf155749"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a36a87c5c3bdcd7e64e0d595dbf155749">&#9670;&#160;</a></span>afSTFTdelay</h2>
@@ -246,7 +249,7 @@ Data Fields</h2></td></tr>
 
 <p>for host delay compensation </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00130">130</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00132">132</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -264,7 +267,7 @@ Data Fields</h2></td></tr>
 
 <p>flag to flip the sign of the pitch rotation angle </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00164">164</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00166">166</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -282,7 +285,7 @@ Data Fields</h2></td></tr>
 
 <p>flag to flip the sign of the roll rotation angle </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00165">165</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00167">167</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -300,7 +303,7 @@ Data Fields</h2></td></tr>
 
 <p>flag to flip the sign of the yaw rotation angle </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00163">163</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00165">165</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -318,7 +321,7 @@ Data Fields</h2></td></tr>
 
 <p>Output binaural signals in the time-domain; <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x <a class="el" href="ambi__bin__internal_8h.html#a21f3364db20349a7ae854bfc9b4ed28e" title="Framesize, in time-domain samples.">AMBI_BIN_FRAME_SIZE</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00126">126</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00128">128</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -336,7 +339,7 @@ Data Fields</h2></td></tr>
 
 <p>Output binaural signals in the time-frequency domain; <a class="el" href="ambi__bin__internal_8h.html#a8b686c1291e75b81f91064272c45aed5" title="Number of frequency bands.">HYBRID_BANDS</a> x <a class="el" href="group___utilities.html#ga39b45c9e65aebd2a8ef72c3081baea84" title="2 (true for most humans)">NUM_EARS</a> x <a class="el" href="ambi__bin__internal_8h.html#a22876a93fc8b37d1750bb2e1ac0285fc" title="Number of STFT timeslots.">TIME_SLOTS</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00128">128</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00130">130</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -354,7 +357,7 @@ Data Fields</h2></td></tr>
 
 <p>Ambisonic channel order convention (see <a class="el" href="__common_8h.html#abd88c2985ab89630502f5a417d2b7892" title="Available Ambisonic channel ordering conventions.">CH_ORDER</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00157">157</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00159">159</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -372,7 +375,7 @@ Data Fields</h2></td></tr>
 
 <p>see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00134">134</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00136">136</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -390,7 +393,7 @@ Data Fields</h2></td></tr>
 
 <p>0: disabled, 1: enabled </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00152">152</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00154">154</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -408,7 +411,7 @@ Data Fields</h2></td></tr>
 
 <p>0: disabled, 1: enabled </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00151">151</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00153">153</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -426,7 +429,7 @@ Data Fields</h2></td></tr>
 
 <p>Whether rotation should be enabled (1) or disabled (0) </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00159">159</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00161">161</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -444,7 +447,25 @@ Data Fields</h2></td></tr>
 
 <p>0: disabled, 1: enabled </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00153">153</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00155">155</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+
+</div>
+</div>
+<a id="a02b72604432a19c5bb19832c865e372c" name="a02b72604432a19c5bb19832c865e372c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02b72604432a19c5bb19832c865e372c">&#9670;&#160;</a></span>firstInit</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ambi_bin_data::firstInit</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>flag, 1: <code>_init()</code> function has never been called, 0: <code>_init()</code> function has been called </p>
+
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00126">126</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -462,7 +483,7 @@ Data Fields</h2></td></tr>
 
 <p>frequency vector for time-frequency transform, in Hz </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00131">131</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00133">133</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -480,7 +501,7 @@ Data Fields</h2></td></tr>
 
 <p>host sampling rate </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00124">124</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00125">125</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -498,7 +519,7 @@ Data Fields</h2></td></tr>
 
 <p>afSTFT handle </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00129">129</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00131">131</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -516,7 +537,7 @@ Data Fields</h2></td></tr>
 
 <p>Current SH rotation matrix. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00141">141</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00143">143</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -534,7 +555,7 @@ Data Fields</h2></td></tr>
 
 <p>current decoding method (see <a class="el" href="ambi__bin_8h.html#a4cf0b805b8dc84c14b27d26a68fd82a8" title="Available decoding methods for the ambi_bin example.">AMBI_BIN_DECODING_METHODS</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00154">154</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00156">156</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -552,7 +573,7 @@ Data Fields</h2></td></tr>
 
 <p>new decoding order (current value will be replaced by this after next re-init) </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00142">142</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00144">144</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -570,7 +591,7 @@ Data Fields</h2></td></tr>
 
 <p>Ambisonic normalisation convention (see <a class="el" href="__common_8h.html#a9d0a41517784f33989ba258d6fd889be" title="Available Ambisonic normalisation conventions.">NORM_TYPES</a>) </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00158">158</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00160">160</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -588,7 +609,7 @@ Data Fields</h2></td></tr>
 
 <p>number of spherical harmonic signals </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00143">143</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00145">145</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -606,7 +627,7 @@ Data Fields</h2></td></tr>
 
 <p>current decoding order </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00150">150</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00152">152</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -624,7 +645,7 @@ Data Fields</h2></td></tr>
 
 <p>Decoding specific data. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00137">137</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00139">139</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -642,7 +663,7 @@ Data Fields</h2></td></tr>
 
 <p>pitch (Euler) rotation angle, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00162">162</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00164">164</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -660,7 +681,7 @@ Data Fields</h2></td></tr>
 
 <p>HRIR pre-processing strategy. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00156">156</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00158">158</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -678,7 +699,7 @@ Data Fields</h2></td></tr>
 
 <p>see <a class="el" href="__common_8h.html#a818d3c650d98e2a6203c16c6e4fe72ec" title="Current status of the processing loop.">PROC_STATUS</a> </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00140">140</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00142">142</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -696,7 +717,7 @@ Data Fields</h2></td></tr>
 
 <p>Current (re)initialisation progress, between [0..1]. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00135">135</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00137">137</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -714,7 +735,7 @@ Data Fields</h2></td></tr>
 
 <p>Current (re)initialisation step, string. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00136">136</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00138">138</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -732,7 +753,7 @@ Data Fields</h2></td></tr>
 
 <p>0: no init required, 1: init required </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00146">146</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00148">148</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -750,7 +771,7 @@ Data Fields</h2></td></tr>
 
 <p>0: no init required, 1: init required </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00147">147</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00149">149</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -768,7 +789,7 @@ Data Fields</h2></td></tr>
 
 <p>roll (Euler) rotation angle, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00161">161</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00163">163</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -786,7 +807,7 @@ Data Fields</h2></td></tr>
 
 <p>Input spherical harmonic (SH) signals in the time-domain; <a class="el" href="__common_8h.html#ac547d62eef0f07c08865cf3d2aab3286" title="Maximum number of spherical harmonic components/signals supported.">MAX_NUM_SH_SIGNALS</a> x <a class="el" href="ambi__bin__internal_8h.html#a21f3364db20349a7ae854bfc9b4ed28e" title="Framesize, in time-domain samples.">AMBI_BIN_FRAME_SIZE</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00125">125</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00127">127</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -804,7 +825,7 @@ Data Fields</h2></td></tr>
 
 <p>Input spherical harmonic (SH) signals in the time-frequency domain; <a class="el" href="ambi__bin__internal_8h.html#a8b686c1291e75b81f91064272c45aed5" title="Number of frequency bands.">HYBRID_BANDS</a> x <a class="el" href="__common_8h.html#ac547d62eef0f07c08865cf3d2aab3286" title="Maximum number of spherical harmonic components/signals supported.">MAX_NUM_SH_SIGNALS</a> x <a class="el" href="ambi__bin__internal_8h.html#a22876a93fc8b37d1750bb2e1ac0285fc" title="Number of STFT timeslots.">TIME_SLOTS</a>. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00127">127</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00129">129</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -822,7 +843,7 @@ Data Fields</h2></td></tr>
 
 <p>1: use default HRIRs in database, 0: use those from SOFA file </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00155">155</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00157">157</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -840,7 +861,7 @@ Data Fields</h2></td></tr>
 
 <p>rotation order flag, 1: r-p-y, 0: y-p-r </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00166">166</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00168">168</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -858,7 +879,7 @@ Data Fields</h2></td></tr>
 
 <p>yaw (Euler) rotation angle, in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00160">160</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__bin__internal_8h_source.html#l00162">162</a> of file <a class="el" href="ambi__bin__internal_8h_source.html">ambi_bin_internal.h</a>.</p>
 
 </div>
 </div>
@@ -872,7 +893,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structambi__bin__data.html">ambi_bin_data</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:46 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:19 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

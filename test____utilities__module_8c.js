@@ -13,6 +13,7 @@ var test____utilities__module_8c =
     [ "test__getVoronoiWeights", "test____utilities__module_8c.html#a195368bc46775c4a9370249c54b0bc35", null ],
     [ "test__gexpm", "test____utilities__module_8c.html#aaf23bc179bbcae07de5ae4a83cfc6bba", null ],
     [ "test__latticeDecorrelator", "test____utilities__module_8c.html#aeb7e6c04ac91cc3d90025bcac95e8549", null ],
+    [ "test__protoolsRemappingIndices", "test____utilities__module_8c.html#a0dce716f20310abb94a78da77424e35d", null ],
     [ "test__qmf", "test____utilities__module_8c.html#aac1d57603ebc37f0088e3fc83c804402", null ],
     [ "test__quaternion", "test____utilities__module_8c.html#affac516deac2b319765430a4088f8a07", null ],
     [ "test__saf_fft", "test____utilities__module_8c.html#a112cd16c0fc8cc3658050a45c607cf0d", null ],

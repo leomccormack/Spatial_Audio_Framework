@@ -108,7 +108,8 @@ $(function(){initNavTree('ambi__dec__internal_8c.html',''); initResizable(true);
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">ambi_dec_internal.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -130,6 +131,15 @@ Functions</h2></td></tr>
 <tr class="memitem:aa64f636de34d6294e1ea171cab40cd2d" id="r_aa64f636de34d6294e1ea171cab40cd2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa64f636de34d6294e1ea171cab40cd2d">loadLoudspeakerArrayPreset</a> (<a class="el" href="__common_8h.html#a12a56921e43594c15c86a9fa62b023f7">LOUDSPEAKER_ARRAY_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="ambi__dec__internal_8h.html#aa1acc61ccffefcd6530c30fa9cd736da">MAX_NUM_LOUDSPEAKERS</a>][2], _Atomic_INT32 *newNCH, int *nDims)</td></tr>
 <tr class="memdesc:aa64f636de34d6294e1ea171cab40cd2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the loudspeaker directions for a specified loudspeaker array preset.  <br /></td></tr>
 <tr class="separator:aa64f636de34d6294e1ea171cab40cd2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a43ed4c18576c9f34d59ceac9faa14b62" id="r_a43ed4c18576c9f34d59ceac9faa14b62"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43ed4c18576c9f34d59ceac9faa14b62">ambi_dec_defaultNumLoudspeakers</a> = 24</td></tr>
+<tr class="memdesc:a43ed4c18576c9f34d59ceac9faa14b62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of Loudspeakers.  <br /></td></tr>
+<tr class="separator:a43ed4c18576c9f34d59ceac9faa14b62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5ab1250db763b9019ca0600797c2590" id="r_aa5ab1250db763b9019ca0600797c2590"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5ab1250db763b9019ca0600797c2590">ambi_dec_defaultLoudspeakerDirections</a> [<a class="el" href="__common_8h.html#a62fb27119907cfe34d62ccda757c2e74">MAX_NUM_OUTPUTS</a>][2]</td></tr>
+<tr class="memdesc:aa5ab1250db763b9019ca0600797c2590"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Loudspeaker directions.  <br /></td></tr>
+<tr class="separator:aa5ab1250db763b9019ca0600797c2590"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A frequency-dependent Ambisonic decoder for reproducing Ambisonic sound scenes over loudspeakers. </p>
@@ -186,7 +196,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00059">59</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00192">192</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
 
 </div>
 </div>
@@ -211,7 +221,7 @@ Functions</h2></td></tr>
 
 <p>Sets codec status (see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> enum) </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00048">48</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00181">181</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
 
 </div>
 </div>
@@ -256,7 +266,44 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00117">117</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00250">250</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="aa5ab1250db763b9019ca0600797c2590" name="aa5ab1250db763b9019ca0600797c2590"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5ab1250db763b9019ca0600797c2590">&#9670;&#160;</a></span>ambi_dec_defaultLoudspeakerDirections</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float ambi_dec_defaultLoudspeakerDirections[<a class="el" href="__common_8h.html#a62fb27119907cfe34d62ccda757c2e74">MAX_NUM_OUTPUTS</a>][2]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default Loudspeaker directions. </p>
+
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00051">51</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a43ed4c18576c9f34d59ceac9faa14b62" name="a43ed4c18576c9f34d59ceac9faa14b62"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a43ed4c18576c9f34d59ceac9faa14b62">&#9670;&#160;</a></span>ambi_dec_defaultNumLoudspeakers</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int ambi_dec_defaultNumLoudspeakers = 24</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default number of Loudspeakers. </p>
+
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8c_source.html#l00048">48</a> of file <a class="el" href="ambi__dec__internal_8c_source.html">ambi_dec_internal.c</a>.</p>
 
 </div>
 </div>
@@ -267,7 +314,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_b4092ce66456cdf78d489666b375f9fd.html">ambi_dec</a></li><li class="navelem"><a class="el" href="ambi__dec__internal_8c.html">ambi_dec_internal.c</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:45 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:18 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

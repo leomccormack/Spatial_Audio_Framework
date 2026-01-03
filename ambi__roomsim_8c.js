@@ -43,7 +43,5 @@ var ambi__roomsim_8c =
     [ "ambi_roomsim_setSourceX", "ambi__roomsim_8c.html#a5433bb51e762d664cc47c535da810753", null ],
     [ "ambi_roomsim_setSourceY", "ambi__roomsim_8c.html#ad9990d1852de47d8bb03dcc50e5b4363", null ],
     [ "ambi_roomsim_setSourceZ", "ambi__roomsim_8c.html#a7feeec85926a48b42552f7b2f1576789", null ],
-    [ "ambi_roomsim_setWallAbsCoeff", "ambi__roomsim_8c.html#abc41ed0a5018870c2d54fd587dfc1433", null ],
-    [ "default_abs_wall", "ambi__roomsim_8c.html#af827bc10e28b3ea16d95f58073ed3da1", null ],
-    [ "default_room_dims", "ambi__roomsim_8c.html#afeed6b8d290a4f96c868769f1400ac3a", null ]
+    [ "ambi_roomsim_setWallAbsCoeff", "ambi__roomsim_8c.html#abc41ed0a5018870c2d54fd587dfc1433", null ]
 ];

@@ -108,7 +108,8 @@ $(function(){initNavTree('panner__internal_8c.html',''); initResizable(true); })
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">panner_internal.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -137,6 +138,21 @@ Functions</h2></td></tr>
 <tr class="memitem:aa83198cd52d21a85aee9f1836209970d" id="r_aa83198cd52d21a85aee9f1836209970d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa83198cd52d21a85aee9f1836209970d">panner_loadLoudspeakerPreset</a> (<a class="el" href="__common_8h.html#a12a56921e43594c15c86a9fa62b023f7">LOUDSPEAKER_ARRAY_PRESETS</a> preset, _Atomic_FLOAT32 dirs_deg[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2], _Atomic_INT32 *newNCH, int *nDims)</td></tr>
 <tr class="memdesc:aa83198cd52d21a85aee9f1836209970d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads source/loudspeaker directions from preset.  <br /></td></tr>
 <tr class="separator:aa83198cd52d21a85aee9f1836209970d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a5e4921abda206d5fb2bc6adf39b7f4e2" id="r_a5e4921abda206d5fb2bc6adf39b7f4e2"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5e4921abda206d5fb2bc6adf39b7f4e2">panner_defaultNumSources</a> = 1</td></tr>
+<tr class="memdesc:a5e4921abda206d5fb2bc6adf39b7f4e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of Sources.  <br /></td></tr>
+<tr class="separator:a5e4921abda206d5fb2bc6adf39b7f4e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bb92554626b6f11cddfc36834e43152" id="r_a0bb92554626b6f11cddfc36834e43152"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0bb92554626b6f11cddfc36834e43152">panner_defaultSourceDirections</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
+<tr class="memdesc:a0bb92554626b6f11cddfc36834e43152"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Loudspeaker directions.  <br /></td></tr>
+<tr class="separator:a0bb92554626b6f11cddfc36834e43152"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2abb3c03fe477fea6b6d1723bb3dfe34" id="r_a2abb3c03fe477fea6b6d1723bb3dfe34"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2abb3c03fe477fea6b6d1723bb3dfe34">panner_defaultNumLoudspeakers</a> = 2</td></tr>
+<tr class="memdesc:a2abb3c03fe477fea6b6d1723bb3dfe34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of Loudspeakers.  <br /></td></tr>
+<tr class="separator:a2abb3c03fe477fea6b6d1723bb3dfe34"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56589ad4e12c72c39e8bab728da43d99" id="r_a56589ad4e12c72c39e8bab728da43d99"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a56589ad4e12c72c39e8bab728da43d99">panner_defaultLoudspeakerDirections</a> [<a class="el" href="__common_8h.html#a62fb27119907cfe34d62ccda757c2e74">MAX_NUM_OUTPUTS</a>][2]</td></tr>
+<tr class="memdesc:a56589ad4e12c72c39e8bab728da43d99"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Loudspeaker directions.  <br /></td></tr>
+<tr class="separator:a56589ad4e12c72c39e8bab728da43d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A frequency-dependent 3D panner based on the Vector-base Amplitude Panning (VBAP) method [1], with an optional spread control [2]. </p>
@@ -170,7 +186,7 @@ Functions</h2></td></tr>
 <p>Intialises the VBAP gain table used for panning. </p>
 <dl class="section note"><dt>Note</dt><dd>Call ambi_dec_initTFT() (if needed) before calling this function </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00058">58</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00324">324</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
@@ -192,7 +208,7 @@ Functions</h2></td></tr>
 <p>Initialise the filterbank used by panner. </p>
 <dl class="section note"><dt>Note</dt><dd>Call this function before <a class="el" href="panner__internal_8h.html#a05c753c1c135be897e9dfb125dc921a5" title="Intialises the VBAP gain table used for panning.">panner_initGainTables()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00102">102</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00368">368</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
@@ -236,7 +252,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00329">329</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00667">667</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
@@ -280,7 +296,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00119">119</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00385">385</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
@@ -305,7 +321,80 @@ Functions</h2></td></tr>
 
 <p>Sets codec status (see <a class="el" href="__common_8h.html#af0ded734eade63c6af9f797988fffcd9" title="Current status of the codec.">CODEC_STATUS</a> enum) </p>
 
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00313">313</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a56589ad4e12c72c39e8bab728da43d99" name="a56589ad4e12c72c39e8bab728da43d99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56589ad4e12c72c39e8bab728da43d99">&#9670;&#160;</a></span>panner_defaultLoudspeakerDirections</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float panner_defaultLoudspeakerDirections[<a class="el" href="__common_8h.html#a62fb27119907cfe34d62ccda757c2e74">MAX_NUM_OUTPUTS</a>][2]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default Loudspeaker directions. </p>
+
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00183">183</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a2abb3c03fe477fea6b6d1723bb3dfe34" name="a2abb3c03fe477fea6b6d1723bb3dfe34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2abb3c03fe477fea6b6d1723bb3dfe34">&#9670;&#160;</a></span>panner_defaultNumLoudspeakers</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int panner_defaultNumLoudspeakers = 2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default number of Loudspeakers. </p>
+
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00180">180</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a5e4921abda206d5fb2bc6adf39b7f4e2" name="a5e4921abda206d5fb2bc6adf39b7f4e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e4921abda206d5fb2bc6adf39b7f4e2">&#9670;&#160;</a></span>panner_defaultNumSources</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int panner_defaultNumSources = 1</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default number of Sources. </p>
+
 <p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00047">47</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a0bb92554626b6f11cddfc36834e43152" name="a0bb92554626b6f11cddfc36834e43152"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0bb92554626b6f11cddfc36834e43152">&#9670;&#160;</a></span>panner_defaultSourceDirections</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float panner_defaultSourceDirections[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default Loudspeaker directions. </p>
+
+<p class="definition">Definition at line <a class="el" href="panner__internal_8c_source.html#l00050">50</a> of file <a class="el" href="panner__internal_8c_source.html">panner_internal.c</a>.</p>
 
 </div>
 </div>
@@ -316,7 +405,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_10e9b9de17508c3d5c361b5c9613a609.html">panner</a></li><li class="navelem"><a class="el" href="panner__internal_8c.html">panner_internal.c</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:45 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:18 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

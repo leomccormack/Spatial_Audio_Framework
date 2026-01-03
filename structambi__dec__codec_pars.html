@@ -150,6 +150,9 @@ Data Fields</h2></td></tr>
 <tr class="memitem:a18a7ddbad8d891f33a7e32dad8a2a9bc" id="r_a18a7ddbad8d891f33a7e32dad8a2a9bc"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a18a7ddbad8d891f33a7e32dad8a2a9bc">hrir_len</a></td></tr>
 <tr class="memdesc:a18a7ddbad8d891f33a7e32dad8a2a9bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">length of the HRIRs, this can be truncated, see "saf_sofa_reader.h"  <br /></td></tr>
 <tr class="separator:a18a7ddbad8d891f33a7e32dad8a2a9bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa5d60bdc87d00644492af9802ad497bc" id="r_aa5d60bdc87d00644492af9802ad497bc"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa5d60bdc87d00644492af9802ad497bc">hrir_orig_fs</a></td></tr>
+<tr class="memdesc:aa5d60bdc87d00644492af9802ad497bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Can be different from hrir_fs if HRIRs were resampled.  <br /></td></tr>
+<tr class="separator:aa5d60bdc87d00644492af9802ad497bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a93d30e8c0d584436374ecc5944cf1518" id="r_a93d30e8c0d584436374ecc5944cf1518"><td class="memItemLeft" align="right" valign="top">_Atomic_INT32&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a93d30e8c0d584436374ecc5944cf1518">hrir_fs</a></td></tr>
 <tr class="memdesc:a93d30e8c0d584436374ecc5944cf1518"><td class="mdescLeft">&#160;</td><td class="mdescRight">sampling rate of the HRIRs, should ideally match the host sampling rate, although not required  <br /></td></tr>
 <tr class="separator:a93d30e8c0d584436374ecc5944cf1518"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -221,7 +224,7 @@ Data Fields</h2></td></tr>
 
 <p>sampling rate of the HRIRs, should ideally match the host sampling rate, although not required </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00111">111</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00112">112</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -240,6 +243,24 @@ Data Fields</h2></td></tr>
 <p>length of the HRIRs, this can be truncated, see "saf_sofa_reader.h" </p>
 
 <p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00110">110</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+
+</div>
+</div>
+<a id="aa5d60bdc87d00644492af9802ad497bc" name="aa5d60bdc87d00644492af9802ad497bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5d60bdc87d00644492af9802ad497bc">&#9670;&#160;</a></span>hrir_orig_fs</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">_Atomic_INT32 ambi_dec_codecPars::hrir_orig_fs</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Can be different from hrir_fs if HRIRs were resampled. </p>
+
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00111">111</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -275,7 +296,7 @@ Data Fields</h2></td></tr>
 
 <p>HRTF filterbank coefficients; nBands x nCH x N_hrirs. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00122">122</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00123">123</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -293,7 +314,7 @@ Data Fields</h2></td></tr>
 
 <p>magnitudes of the HRTF filterbank coefficients; nBands x nCH x N_hrirs </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00123">123</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00124">124</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -311,7 +332,7 @@ Data Fields</h2></td></tr>
 
 <p>interpolated HRTFs </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00124">124</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00125">125</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -329,7 +350,7 @@ Data Fields</h2></td></tr>
 
 <p>number of triangle groups after triangulation </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00116">116</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00117">117</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -347,7 +368,7 @@ Data Fields</h2></td></tr>
 
 <p>N_hrtf_vbap_gtable x 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00118">118</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00119">119</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -365,7 +386,7 @@ Data Fields</h2></td></tr>
 
 <p>N_hrtf_vbap_gtable x 3. </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00117">117</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00118">118</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -383,7 +404,7 @@ Data Fields</h2></td></tr>
 
 <p>[azi elev] step sizes in degrees </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00114">114</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00115">115</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -401,7 +422,7 @@ Data Fields</h2></td></tr>
 
 <p>interaural-time differences for each HRIR (in seconds); N_hrirs x 1 </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00121">121</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00122">122</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -527,7 +548,7 @@ Data Fields</h2></td></tr>
 
 <p>number of interpolation directions </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00115">115</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00116">116</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -563,7 +584,7 @@ Data Fields</h2></td></tr>
 
 <p>grid integration weights of hrirs; N_hrirs x 1 </p>
 
-<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00127">127</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
+<p class="definition">Definition at line <a class="el" href="ambi__dec__internal_8h_source.html#l00128">128</a> of file <a class="el" href="ambi__dec__internal_8h_source.html">ambi_dec_internal.h</a>.</p>
 
 </div>
 </div>
@@ -577,7 +598,7 @@ Data Fields</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="structambi__dec__codec_pars.html">ambi_dec_codecPars</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:46 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:19 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">

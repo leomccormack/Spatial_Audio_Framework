@@ -35,6 +35,7 @@ var saf__test_8h =
     [ "test__malloc5d", "saf__test_8h.html#ad4dd54c3c50e42071a049ae757b2d336", null ],
     [ "test__malloc6d", "saf__test_8h.html#a7db532da9149476197cc6818ca229e1f", null ],
     [ "test__mysofa_load", "saf__test_8h.html#abfe554f9c4ffbafcd45af3ca7a28423d", null ],
+    [ "test__protoolsRemappingIndices", "saf__test_8h.html#a0dce716f20310abb94a78da77424e35d", null ],
     [ "test__qmf", "saf__test_8h.html#aac1d57603ebc37f0088e3fc83c804402", null ],
     [ "test__quaternion", "saf__test_8h.html#affac516deac2b319765430a4088f8a07", null ],
     [ "test__real2complexSHMtx", "saf__test_8h.html#a073d3c584fce77cc00fd2d11237436d9", null ],

@@ -4,6 +4,7 @@ var structpitch__shifter__data =
     [ "fftFrameSize", "structpitch__shifter__data.html#a479871e50215ac86fe3c4bf262a279b5", null ],
     [ "fftsize_option", "structpitch__shifter__data.html#a42abe2d9754c312441baa1fdc606e8a3", null ],
     [ "FIFO_idx", "structpitch__shifter__data.html#a96107751e6d7e75f8f1fc4001bd66a7e", null ],
+    [ "firstInit", "structpitch__shifter__data.html#abc5d4111bc1f17a344a53235354dd292", null ],
     [ "hSmb", "structpitch__shifter__data.html#ab16b94e30241dd95bc9889b0c737a645", null ],
     [ "inFIFO", "structpitch__shifter__data.html#a2e1a4104661ab8646da9dcd656644541", null ],
     [ "inputFrame", "structpitch__shifter__data.html#a02bc2ef63c5891131c4d7be807677e57", null ],

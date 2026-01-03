@@ -81,7 +81,8 @@ var menudata={children:[
 {text:"y",url:"globals_func_y.html#index_y"}]},
 {text:"Variables",url:"globals_vars.html",children:[
 {text:"_",url:"globals_vars.html#index__5F"},
-{text:"d",url:"globals_vars_d.html#index_d"},
+{text:"a",url:"globals_vars_a.html#index_a"},
+{text:"b",url:"globals_vars_b.html#index_b"},
 {text:"f",url:"globals_vars_f.html#index_f"},
 {text:"m",url:"globals_vars_m.html#index_m"},
 {text:"p",url:"globals_vars_p.html#index_p"},

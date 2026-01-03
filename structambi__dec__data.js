@@ -8,6 +8,7 @@ var structambi__dec__data =
     [ "dec_method", "structambi__dec__data.html#a697287d27c19028c7fd2d048299b35b8", null ],
     [ "diffEQmode", "structambi__dec__data.html#a010db30e1da7a2554f3cde351dc35a3d", null ],
     [ "enableHRIRsPreProc", "structambi__dec__data.html#a4e1031e97cc7fc03de90d9c9f405b8b8", null ],
+    [ "firstInit", "structambi__dec__data.html#a9a319eb2d6ff268f2c20be76d5025d4d", null ],
     [ "freqVector", "structambi__dec__data.html#aca35fd8e320c235523a37a491d0e54ce", null ],
     [ "fs", "structambi__dec__data.html#ab81693642a207f76a9f8417fc2d50a75", null ],
     [ "hSTFT", "structambi__dec__data.html#a6f67eda4518a4c0c53e32c8fab4246e3", null ],

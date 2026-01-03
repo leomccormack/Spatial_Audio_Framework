@@ -45,20 +45,20 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "__common_8h.html",
-"ambi__bin_8h.html#a11e3e1a08ba3a65a269e13fc117d8f40",
-"ambi__drc_8h.html#a171a9d682332fd6da4e89945eb8e3ee8",
-"array2sh_8c.html#a0d1d1909c7ec9fc3910dc5589b473218",
-"binauraliser_8c.html#a0628549e0203c0f65bb8737526e88be6",
-"dir_4d5d96da7aef0c547de2935de820c5da.html",
-"globals_k.html",
-"group___utilities.html#ga258f2fd95d9a460c7805b77134042d74",
-"group___utilities.html#ga9617efb5795b0122dd2be667c18426b5",
-"group___utilities.html#gga3b7b87de5c1612d3318f014fe787fa7da61ad96c5dd5488003d05a792cd8500fe",
-"panner_8c_source.html",
-"powermap__internal_8h.html#a9e4550786ead8a141c19d982702642a0",
-"saf__tracker__internal_8c.html",
-"spreader_8h.html#a7968bed2e929d9cf765ff4466a67b16c",
-"tvconv_8h.html#a0a7137dc9b8649a66cc82adaf7013a5ba225ebc6aa74072f082c910fda2c1b5ba"
+"ambi__bin_8c.html#a903b32f698a9a5b1bc26e774a14e9f43",
+"ambi__drc_8c.html#a7c47a290b62b7d551115205510c322c9",
+"ambi__roomsim_8h.html#aadfc185b6b824db9ebb7167989a517a5",
+"beamformer_8c.html#a7f3256bbf8c9e54067d0d3e89c8aa714",
+"decorrelator_8c.html#ab7043ba4eb786185879d70287ecbb737",
+"globals_defs_s.html",
+"group___utilities.html#ga0881ba2caf293c6452a207e8714e53ee",
+"group___utilities.html#ga72c90c1b5727ba4318a05bf7cb588029",
+"group___utilities.html#gae190ef14372ec0af61a4ac2da3b2c77d",
+"multiconv_8c.html#ad1ff0aa602e5db93b1f53ce7ffd22551",
+"powermap_8c.html#a38ac9f90753c84ec80b71ed3950e508d",
+"saf__hades__analysis_8c.html",
+"sldoa__internal_8c.html#a3f9b75e54fc7d54748eda20008706dfc",
+"test____sh__module_8c.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronization';

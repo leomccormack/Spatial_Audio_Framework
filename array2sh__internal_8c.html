@@ -108,7 +108,8 @@ $(function(){initNavTree('array2sh__internal_8c.html',''); initResizable(true); 
 
 <div class="header">
   <div class="summary">
-<a href="#func-members">Functions</a>  </div>
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle"><div class="title">array2sh_internal.c File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -148,6 +149,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a7cb2663464edcb69be16413da2d06a18" id="r_a7cb2663464edcb69be16413da2d06a18"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7cb2663464edcb69be16413da2d06a18">array2sh_initArray</a> (void *const hPars, <a class="el" href="array2sh_8h.html#a13da780a45290f17ee04cbce20b37e94">ARRAY2SH_MICROPHONE_ARRAY_PRESETS</a> preset, _Atomic_INT32 *arrayOrder, int firstInitFlag)</td></tr>
 <tr class="memdesc:a7cb2663464edcb69be16413da2d06a18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Intialises an instance of a struct based on a preset, which contains the array configuration data.  <br /></td></tr>
 <tr class="separator:a7cb2663464edcb69be16413da2d06a18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a019080a4e17518e58f78f63c89547702" id="r_a019080a4e17518e58f78f63c89547702"><td class="memItemLeft" align="right" valign="top">const int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a019080a4e17518e58f78f63c89547702">array2sh_defaultNumSensors</a> = 4</td></tr>
+<tr class="memdesc:a019080a4e17518e58f78f63c89547702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default number of microphones.  <br /></td></tr>
+<tr class="separator:a019080a4e17518e58f78f63c89547702"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97fa391fa96cdb4d32d1786f8a058750" id="r_a97fa391fa96cdb4d32d1786f8a058750"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a97fa391fa96cdb4d32d1786f8a058750">array2sh_defaultSensorsDirections</a> [<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td></tr>
+<tr class="memdesc:a97fa391fa96cdb4d32d1786f8a058750"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default microphone directions (degrees)  <br /></td></tr>
+<tr class="separator:a97fa391fa96cdb4d32d1786f8a058750"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Spatially encodes spherical microphone array signals into spherical harmonic signals (aka: Ambisonic signals) utilising theoretical encoding filters. </p>
@@ -184,7 +194,7 @@ Functions</h2></td></tr>
 
 <p>Applies diffuse-field equalisation at frequencies above the spatial aliasing limit. </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00385">385</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00528">528</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -205,7 +215,7 @@ Functions</h2></td></tr>
 
 <p>Computes the magnitude responses of the equalisation filters; the absolute values of the regularised inversed modal coefficients. </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00506">506</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00652">652</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -226,7 +236,7 @@ Functions</h2></td></tr>
 
 <p>Computes the spherical harmonic transform (SHT) matrix, to spatially encode input microphone/hydrophone signals into spherical harmonic signals. </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00095">95</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00227">227</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -253,7 +263,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00616">616</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00766">766</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -280,7 +290,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00622">622</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00772">772</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -302,7 +312,7 @@ Functions</h2></td></tr>
 <p>Evaluates the spherical harmonic transform performance with the currently configured microphone/hydrophone array. </p>
 <dl class="section note"><dt>Note</dt><dd>This is based on an analytical model of the array, so may differ in practice (although, it is usually pretty close, and saves from having to measure the array) </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00519">519</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00665">665</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -346,7 +356,7 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00631">631</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00781">781</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -368,7 +378,7 @@ Functions</h2></td></tr>
 <p>Initialise the filterbank used by array2sh. </p>
 <dl class="section note"><dt>Note</dt><dd>Call this function before <a class="el" href="array2sh__internal_8h.html#a457a1bb8d7d48c788931d938092e32bb" title="Computes the spherical harmonic transform (SHT) matrix, to spatially encode input microphone/hydropho...">array2sh_calculate_sht_matrix()</a> </dd></dl>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00074">74</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00206">206</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -401,7 +411,44 @@ Functions</h2></td></tr>
 
 <p>Takes the bNs computed up to N+1, and replicates them to be of length (N+1)^2 (replicating the 1st order bNs 3 times, 2nd -&gt; 5 times etc.) </p>
 
-<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00056">56</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00188">188</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a019080a4e17518e58f78f63c89547702" name="a019080a4e17518e58f78f63c89547702"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a019080a4e17518e58f78f63c89547702">&#9670;&#160;</a></span>array2sh_defaultNumSensors</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const int array2sh_defaultNumSensors = 4</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default number of microphones. </p>
+
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00052">52</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
+
+</div>
+</div>
+<a id="a97fa391fa96cdb4d32d1786f8a058750" name="a97fa391fa96cdb4d32d1786f8a058750"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97fa391fa96cdb4d32d1786f8a058750">&#9670;&#160;</a></span>array2sh_defaultSensorsDirections</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const float array2sh_defaultSensorsDirections[<a class="el" href="__common_8h.html#a50864b1823f51c9acf5c71e0e6bac35d">MAX_NUM_INPUTS</a>][2]</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Default microphone directions (degrees) </p>
+
+<p class="definition">Definition at line <a class="el" href="array2sh__internal_8c_source.html#l00054">54</a> of file <a class="el" href="array2sh__internal_8c_source.html">array2sh_internal.c</a>.</p>
 
 </div>
 </div>
@@ -412,7 +459,7 @@ Functions</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d28a4824dc47e487b107a5db32ef43c4.html">examples</a></li><li class="navelem"><a class="el" href="dir_95b57effb8038f90624a8a5b60361b2e.html">src</a></li><li class="navelem"><a class="el" href="dir_d312e3ce76956974ca362d482c5b1f90.html">array2sh</a></li><li class="navelem"><a class="el" href="array2sh__internal_8c.html">array2sh_internal.c</a></li>
-    <li class="footer">Generated on Thu Oct 9 2025 16:34:45 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
+    <li class="footer">Generated on Sat Jan 3 2026 14:18:18 for SAF by <a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.13.2 </li>
   </ul>
 </div>
 <script type="text/javascript">
