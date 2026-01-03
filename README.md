@@ -83,7 +83,7 @@ The framework's master include header is then:
 
 ## Building with CMake 
 
-![CMake Build](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/CMake%20Build/badge.svg?branch=master)
+CMake: ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/cmake.yml)
 
 The framework may also be included within an existing CMake workflow with simply:
 ```
@@ -142,7 +142,7 @@ saf_test.exe
 
 ## Documentation 
 
-![Doxygen Generate](https://github.com/leomccormack/Spatial_Audio_Framework/workflows/Doxygen%20Generate/badge.svg?branch=master)
+Doxygen: ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leomccormack/Spatial_Audio_Framework/doxygen.yml)
 
 [Doxygen](http://www.doxygen.nl/index.html)-based documentation is generated via a GitHub Action everytime a commit is pushed to the master branch. The documentation is hosted [here](https://leomccormack.github.io/Spatial_Audio_Framework/).
 
