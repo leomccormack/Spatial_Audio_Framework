@@ -9,7 +9,7 @@ Major and/or breaking changes to the Spatial_Audio_Framework are listed here.
 For descriptions of minor changes and bug fixes, please refer to the git log.
 
 ====================================================================================================
-v1.3.5 (5th June 2025)
+v1.3.5
  - Added the ability to select either the LP64 or ILP64 version of Apple Accelerate as the 
    performance  library
  - safmex (via SAF_BUILD_EXTRAS) now supports Apple Accelerate
