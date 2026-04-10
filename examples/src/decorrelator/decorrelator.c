@@ -105,7 +105,7 @@ void decorrelator_init
     /* define frequency vector */
     pData->fs = sampleRate;
     afSTFT_getCentreFreqs(pData->hSTFT, (float)sampleRate, HYBRID_BANDS, pData->freqVector);
-    if(pData->hDecor!=NULL)
+    if(pData->hDecor!=NULL && pData->codecStatus == CODEC_STATUS_INITIALISED)
         latticeDecorrelator_reset(pData->hDecor);
 }
 

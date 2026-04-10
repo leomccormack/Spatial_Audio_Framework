@@ -150,7 +150,7 @@ void powermap_init
     
     /* intialise parameters */
     memset(pData->Cx, 0 , MAX_NUM_SH_SIGNALS*MAX_NUM_SH_SIGNALS*HYBRID_BANDS*sizeof(float_complex));
-    if(pData->prev_pmap!=NULL)
+    if(pData->prev_pmap!=NULL && pData->codecStatus == CODEC_STATUS_INITIALISED)
         memset(pData->prev_pmap, 0, pars->grid_nDirs*sizeof(float));
     pData->pmapReady = 0;
     pData->dispSlotIdx = 0;
