@@ -74,7 +74,7 @@ add_subdirectory(modules)
 add_subdirectory(resources)
 
 # Needed for C11 Atomics on GCC
-if(UNIX AND NOT APPLE AND NOT ANDROID)
+if(UNIX AND NOT APPLE AND NOT ANDROID AND NOT EMSCRIPTEN)
     target_link_libraries(${PROJECT_NAME} PUBLIC atomic)
 endif()
 
