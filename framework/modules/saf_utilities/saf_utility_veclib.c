@@ -1672,6 +1672,9 @@ void utility_ssvd
     float wkopt;
 
     m = dim1; n = dim2; lda = dim1; ldu = dim1; ldvt = dim2;
+    /* Only compute the singular vectors that are asked for */
+    const char jobu = (U != NULL) ? 'A' : 'N';
+    const char jobvt = (V != NULL) ? 'A' : 'N';
 
     /* Work struct */
     if(hWork==NULL)
@@ -1692,11 +1695,11 @@ void utility_ssvd
     /* Query how much "work" memory is required */
     lwork = -1;
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgesvd_( "A", "A", &m, &n, h->a, &lda, h->s, h->u, &ldu, h->vt, &ldvt, &wkopt, &lwork, &info );
+    sgesvd_( &jobu, &jobvt, &m, &n, h->a, &lda, h->s, h->u, &ldu, h->vt, &ldvt, &wkopt, &lwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_sgesvd_work(CblasColMajor, 'A', 'A', m, n, h->a, lda, h->s, h->u, ldu, h->vt, ldvt, &wkopt, lwork);
+    info = LAPACKE_sgesvd_work(CblasColMajor, jobu, jobvt, m, n, h->a, lda, h->s, h->u, ldu, h->vt, ldvt, &wkopt, lwork);
 #endif
     lwork = (veclib_int)wkopt;
     if(lwork>h->currentWorkSize){
@@ -1706,11 +1709,11 @@ void utility_ssvd
 
     /* perform the singular value decomposition */
 #if defined(SAF_VECLIB_USE_LAPACK_FORTRAN_INTERFACE)
-    sgesvd_( "A", "A", &m, &n, h->a, &lda, h->s, h->u, &ldu, h->vt, &ldvt, h->work, &lwork, &info );
+    sgesvd_( &jobu, &jobvt, &m, &n, h->a, &lda, h->s, h->u, &ldu, h->vt, &ldvt, h->work, &lwork, &info );
 #elif defined(SAF_VECLIB_USE_CLAPACK_INTERFACE)
     saf_print_error("No such implementation available in ATLAS CLAPACK");
 #elif defined(SAF_VECLIB_USE_LAPACKE_INTERFACE)
-    info = LAPACKE_sgesvd_work(CblasColMajor, 'A', 'A', m, n, h->a, lda, h->s, h->u, ldu, h->vt, ldvt, h->work, lwork);
+    info = LAPACKE_sgesvd_work(CblasColMajor, jobu, jobvt, m, n, h->a, lda, h->s, h->u, ldu, h->vt, ldvt, h->work, lwork);
 #endif
 
     /* svd failed to converge */
